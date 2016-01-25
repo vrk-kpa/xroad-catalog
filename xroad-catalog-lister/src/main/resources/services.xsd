@@ -1,25 +1,6 @@
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://xroad.vrk.fi/xroad-catalog-lister"
            targetNamespace="http://xroad.vrk.fi/xroad-catalog-lister" elementFormDefault="qualified">
 
-<!--
-
-    <xs:element name="listServices">
-        <xs:complexType>
-            <xs:sequence>
-                <xs:element name="changedAfter" type="xs:dateTime"/>
-            </xs:sequence>
-        </xs:complexType>
-    </xs:element>
--->
-
-    <xs:element name="listServicesResponse">
-        <xs:complexType>
-            <xs:sequence minOccurs="0" maxOccurs="unbounded">
-                <xs:element name="services" type="tns:service"/>
-            </xs:sequence>
-        </xs:complexType>
-    </xs:element>
-
 
     <xs:element name="ListMembersRequest">
         <xs:complexType>
@@ -30,7 +11,7 @@
     </xs:element>
 
 
-    <xs:element name="ListMembersResponse" type="tns:MemberList">
+    <xs:element name="ListMembersResponse">
         <xs:complexType>
             <xs:sequence>
                 <xs:element name="memberList" type="tns:MemberList"/>
@@ -61,7 +42,7 @@
         <xs:sequence>
             <xs:element name="subsystem" type="tns:Subsystem" minOccurs="0" maxOccurs="unbounded"/>
         </xs:sequence>
-    </xs:complexType>
+    </xs:complexType>s
 
     <xs:complexType name="Subsystem">
         <xs:sequence>
@@ -75,21 +56,22 @@
 
     <xs:complexType name="ServiceList">
         <xs:sequence>
-            <xs:element name="service" type="tns:service" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:element name="service" type="tns:Service" minOccurs="0" maxOccurs="unbounded"/>
         </xs:sequence>
     </xs:complexType>
 
-    <xs:complexType name="service">
+    <xs:complexType name="Service">
         <xs:sequence>
             <xs:element name="serviceCode" type="xs:string"/>
             <xs:element name="serviceVersion" type="xs:string"/>
+            <xs:element name="wsdl" type="tns:WSDL" />
             <xs:element name="created" type="xs:dateTime"/>
             <xs:element name="updated" type="xs:dateTime"/>
             <xs:element name="removed" type="xs:dateTime"/>
         </xs:sequence>
     </xs:complexType>
 
-    <xs:complexType name="wsdl">
+    <xs:complexType name="WSDL">
         <xs:sequence>
             <xs:element name="data" type="xs:string"/>
             <xs:element name="dataHash" type="xs:string"/>
