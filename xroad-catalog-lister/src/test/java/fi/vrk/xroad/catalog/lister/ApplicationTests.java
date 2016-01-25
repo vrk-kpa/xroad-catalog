@@ -16,7 +16,7 @@
 
 package fi.vrk.xroad.catalog.lister;
 
-import fi.vrk.xroad.xroad_catalog_lister.ListServices;
+import fi.vrk.xroad.xroad_catalog_lister.ListMembersRequest;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -42,14 +42,14 @@ public class ApplicationTests {
 
 	@Before
 	public void init() throws Exception {
-		marshaller.setPackagesToScan(ClassUtils.getPackageName(ListServices.class));
+		marshaller.setPackagesToScan(ClassUtils.getPackageName(ListMembersRequest.class));
 		marshaller.afterPropertiesSet();
 	}
 
 
 	@Test
 	public void testListServices() {
-		ListServices request = new ListServices();
+		ListMembersRequest request = new ListMembersRequest();
 		assertNotNull(new WebServiceTemplate(marshaller).marshalSendAndReceive("http://localhost:"
 				+ port + "/ws", request));
 	}

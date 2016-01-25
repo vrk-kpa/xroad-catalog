@@ -1,5 +1,6 @@
 package fi.vrk.xroad.catalog.lister;
 
+import fi.vrk.xroad.xroad_catalog_lister.Member;
 import fi.vrk.xroad.xroad_catalog_lister.Service;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
@@ -16,36 +17,33 @@ import java.util.List;
 
 @Component
 public class ServiceRepository {
-	private static final List<Service> services = new ArrayList<Service>();
+	private static final List<Member> members = new ArrayList<Member>();
 
 	@PostConstruct
 	public void initData() {
-		Service s = new Service();
-		s.setMemberClass("ABC");
-		s.setMemberCode("122");
-		s.setName("palvelu");
-		s.setServiceVersion("v1");
-		s.setUpdated(toXMLGregorianCalendar(LocalDate.now()));
+		Member member = new Member();
+		member.setMemberClass("ABC");
+		member.setMemberCode("122");
+		member.setName("palvelu");
+		member.setUpdated(toXMLGregorianCalendar(LocalDate.now()));
 
-		services.add(s);
+		members.add(member);
 
-		s = new Service();
-		s.setMemberClass("WEE");
-		s.setMemberCode("22233");
-		s.setName("toinen palvelu");
-		s.setServiceVersion("v1");
-		s.setUpdated(toXMLGregorianCalendar(LocalDate.now()));
+		member = new Member();
+		member.setMemberClass("WEE");
+		member.setMemberCode("22233");
+		member.setName("toinen palvelu");
+		member.setUpdated(toXMLGregorianCalendar(LocalDate.now()));
 
-		services.add(s);
+		members.add(member);
 
-		s = new Service();
-		s.setMemberClass("FOOBAR");
-		s.setMemberCode("333");
-		s.setName("mikä tämä on");
-		s.setServiceVersion("v2");
-		s.setUpdated(toXMLGregorianCalendar(LocalDate.now()));
+		member = new Member();
+		member.setMemberClass("FOOBAR");
+		member.setMemberCode("333");
+		member.setName("mikä tämä on");
+		member.setUpdated(toXMLGregorianCalendar(LocalDate.now()));
 
-		services.add(s);
+		members.add(member);
 	}
 
 	private XMLGregorianCalendar toXMLGregorianCalendar(LocalDate date) {
@@ -57,9 +55,9 @@ public class ServiceRepository {
 		}
 	}
 
-	public List<Service> listServices(LocalTime name) {
+	public List<Member> listServices(LocalTime name) {
 		Assert.notNull(name);
 
-		return services;
-	}
+		return members;
+	}		
 }

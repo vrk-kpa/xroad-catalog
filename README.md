@@ -18,8 +18,8 @@ gradle bootRun
 
 ## Test
 
-| Command  |     Result  |
-|----------|-------------|
+| Command                                                                                |           Result            |
+|----------------------------------------------------------------------------------------|-----------------------------|
 | curl --header "content-type: text/xml" -d @servicerequest.xml http://localhost:8080/ws |  All services in the system |
 | curl http://localhost:8080/ws/services.wsdl                                            |  Get WSDL                   |
 
