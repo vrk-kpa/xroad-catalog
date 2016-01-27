@@ -286,19 +286,19 @@ public class ServiceRepository {
 		ss = new Subsystem();
 		ss.setSubsystemCode("sub1");
 
-		Service s = new Service();
+		s = new Service();
 		s.setServiceVersion("V1");
 		s.setServiceCode("getRandom");
-		WSDL w = new WSDL();
+		w = new WSDL();
 		w.setExternalId("EXTID2");
 
 
 		s.setWsdl(w);
-		ServiceList sl = new ServiceList();
+		sl = new ServiceList();
 		sl.getService().add(s);
 		ss.setServices(sl);
 
-		SubsystemList ssl = new SubsystemList();
+		ssl = new SubsystemList();
 		ssl.getSubsystem().add(ss);
 		member.setSubsystems(ssl);
 
