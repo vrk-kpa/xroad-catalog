@@ -1,0 +1,20 @@
+# Place in /etc/init
+
+description "List services on X-Road"
+author "Sami Kallio <sami.kallio@gofore.com>"
+
+start on runlevel [2345]
+stop on runlevel [!2345]
+
+respawn
+respawn limit 10 5
+umask 007
+setuid xroad
+setgid xroad
+console log
+
+script
+
+exec java -jar /usr/share/xroad/jlib/webapps/xroad-catalog-lister-0.1.0.jar
+
+end script

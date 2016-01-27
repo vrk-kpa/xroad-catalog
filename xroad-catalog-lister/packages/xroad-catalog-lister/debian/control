@@ -1,0 +1,10 @@
+Source: xroad-catalog-lister
+Section: X-Road
+Priority: extra
+Maintainer: Sami Kallio <sami.kallio@gofore.com>
+Build-Depends: debhelper (>= 7)
+Standards-Version: 3.8.3
+
+Package: xroad-catalog-lister
+Architecture: all
+Description: List services on X-Road
