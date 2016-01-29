@@ -1,3 +1,4 @@
 .gradle/
-xroad-catalog-lister.ipr
-xroad-catalog-lister.iws
+settings.gradle
+xroad-catalog-persistence.ipr
+xroad-catalog-persistence.iws
