@@ -1,0 +1,2 @@
+chmod 755 /usr/share/xroad/jlib/xroad-catalog-lister.jar
+chown xroad:xroad /usr/share/xroad/jlib/xroad-catalog-lister.jar
