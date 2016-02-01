@@ -7,6 +7,7 @@ import lombok.ToString;
 import javax.persistence.*;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Getter
@@ -26,7 +27,7 @@ public class Subsystem {
     @JoinColumn(name = "MEMBER_ID")
     private Member member;
     @OneToMany(mappedBy = "subsystem")
-    private List<Service> services;
+    private Set<Service> services;
 
     public Subsystem() {}
 

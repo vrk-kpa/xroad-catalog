@@ -29,6 +29,7 @@ dependencies {
     compile("com.h2database:h2")
     compile("org.postgresql:postgresql:9.4.1207.jre7")
     compile("org.projectlombok:lombok:1.16.6")
+    compile('com.google.guava:guava:19.0')
     testCompile("junit:junit")
 }
 

@@ -6,10 +6,28 @@ import lombok.ToString;
 
 import javax.persistence.*;
 import java.util.Date;
-import java.util.List;
+import java.util.Set;
 
 @Entity
 @Getter @Setter @ToString(exclude = "subsystems")
+/*
+ Entity graph defining tree member-subsystem-service.
+ Wsdl does not need to be explicitly defined since OnToOne is EAGER fetched by default.
+ */
+@NamedEntityGraph(
+        name = "member.full-tree.graph",
+        attributeNodes = {
+                @NamedAttributeNode(value = "subsystems", subgraph = "subsystem.services.graph")
+        },
+        subgraphs = {
+                @NamedSubgraph(
+                        name="subsystem.services.graph",
+                        attributeNodes = @NamedAttributeNode(value = "services", subgraph = "service.wsdl.graph")),
+                @NamedSubgraph(
+                        name="service.wsdl.graph",
+                        attributeNodes = @NamedAttributeNode(value = "wsdl")),
+        }
+)
 public class Member {
 
     // TODO: from sequence
@@ -24,7 +42,7 @@ public class Member {
     private Date updated;
     private Date removed;
     @OneToMany(mappedBy = "member")
-    private List<Subsystem> subsystems;
+    private Set<Subsystem> subsystems;
 
     public Member() {}
 
