@@ -31,8 +31,14 @@ dependencies {
     compile("org.projectlombok:lombok:1.16.6")
     compile('com.google.guava:guava:19.0')
     testCompile("junit:junit")
+    testCompile("org.springframework.boot:spring-boot-starter-test")
 }
 
 task wrapper(type: Wrapper) {
     gradleVersion = '2.3'
 }
+
+tasks.withType(org.springframework.boot.gradle.run.BootRunTask) {
+    systemProperty 'spring.profiles.active', System.getProperty('spring.profiles.active', 'default')
+}
+

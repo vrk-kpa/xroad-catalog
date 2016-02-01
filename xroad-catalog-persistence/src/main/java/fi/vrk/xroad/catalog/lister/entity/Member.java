@@ -6,13 +6,13 @@ import lombok.ToString;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.List;
 import java.util.Set;
 
 @Entity
 @Getter @Setter @ToString(exclude = "subsystems")
 /*
  Entity graph defining tree member-subsystem-service.
- Wsdl does not need to be explicitly defined since OnToOne is EAGER fetched by default.
  */
 @NamedEntityGraph(
         name = "member.full-tree.graph",
