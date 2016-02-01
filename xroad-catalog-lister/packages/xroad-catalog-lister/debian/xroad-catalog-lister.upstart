@@ -9,12 +9,12 @@ stop on runlevel [!2345]
 respawn
 respawn limit 10 5
 umask 007
-setuid xroad
-setgid xroad
+setuid xroad-catalog
+setgid xroad-catalog
 console log
 
 script
 
-exec java -jar /usr/share/xroad/jlib/xroad-catalog-lister.jar
+exec java -jar /usr/share/xroad-catalog/xroad-catalog-lister.jar
 
 end script

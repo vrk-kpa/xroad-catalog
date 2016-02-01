@@ -1,2 +1,10 @@
-chmod 755 /usr/share/xroad/jlib/xroad-catalog-lister.jar
-chown xroad:xroad /usr/share/xroad/jlib/xroad-catalog-lister.jar
+#!/bin/sh
+
+if ! id xroad-catalog > /dev/null 2>&1 ; then
+
+    adduser --system --home /usr/share/xroad-catalog --no-create-home \
+                --group xroad-catalog --disabled-password --shell /bin/false \
+                xroad-catalog
+fi                
+chmod 755 /usr/share/xroad-catalog/xroad-catalog-lister.jar
+chown -R xroad-catalog:xroad-catalog /usr/share/xroad-catalog
