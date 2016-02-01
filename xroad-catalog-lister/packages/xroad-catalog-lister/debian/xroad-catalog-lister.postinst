@@ -2,9 +2,9 @@
 
 if ! id xroad-catalog > /dev/null 2>&1 ; then
 
-    adduser --system --home /usr/share/xroad-catalog --no-create-home \
+    adduser --system --no-create-home \
                 --group --disabled-password --shell /bin/false \
                 xroad-catalog
 fi                
-chmod 755 /usr/share/xroad-catalog/xroad-catalog-lister.jar
-chown -R xroad-catalog:xroad-catalog /usr/share/xroad-catalog
+chmod 755 /usr/lib/xroad-catalog/xroad-catalog-lister.jar
+chown -R xroad-catalog:xroad-catalog /usr/lib/xroad-catalog

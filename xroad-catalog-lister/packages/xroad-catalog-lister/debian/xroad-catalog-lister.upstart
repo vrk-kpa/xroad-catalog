@@ -15,6 +15,6 @@ console log
 
 script
 
-exec java -jar /usr/share/xroad-catalog/xroad-catalog-lister.jar
+exec java -jar /usr/lib/xroad-catalog/xroad-catalog-lister.jar
 
 end script
