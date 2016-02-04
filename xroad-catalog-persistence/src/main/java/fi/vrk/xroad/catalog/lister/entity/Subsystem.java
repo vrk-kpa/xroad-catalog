@@ -15,9 +15,10 @@ import java.util.Set;
 @ToString(exclude = {"member","services"})
 public class Subsystem {
 
-    // TODO: from sequence
     @Id
-    @GeneratedValue(strategy= GenerationType.AUTO)
+    @Column(nullable = false)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SUBSYSTEM_GEN")
+    @SequenceGenerator(name = "SUBSYSTEM_GEN", sequenceName = "SUBSYSTEM_ID_SEQ", allocationSize = 1)
     private long id;
     private String subsystemCode;
     private Date created;
@@ -26,7 +27,7 @@ public class Subsystem {
     @ManyToOne
     @JoinColumn(name = "MEMBER_ID")
     private Member member;
-    @OneToMany(mappedBy = "subsystem")
+    @OneToMany(mappedBy = "subsystem", cascade = CascadeType.ALL)
     private Set<Service> services;
 
     public Subsystem() {}

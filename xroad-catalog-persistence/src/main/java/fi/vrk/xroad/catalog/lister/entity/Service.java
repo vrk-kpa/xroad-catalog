@@ -12,9 +12,10 @@ import java.util.Date;
 @Setter
 @ToString(exclude = {"subsystem","wsdl"})
 public class Service {
-    // TODO: from sequence
     @Id
-    @GeneratedValue(strategy= GenerationType.AUTO)
+    @Column(nullable = false)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SERVICE_GEN")
+    @SequenceGenerator(name = "SERVICE_GEN", sequenceName = "SERVICE_ID_SEQ", allocationSize = 1)
     private long id;
     @ManyToOne
     @JoinColumn(name = "SUBSYSTEM_ID")
@@ -24,7 +25,7 @@ public class Service {
     private Date created;
     private Date updated;
     private Date removed;
-    @OneToOne(optional=false, mappedBy="service")
+    @OneToOne(optional=true, mappedBy="service", cascade = CascadeType.ALL)
     private Wsdl wsdl;
 
     public Service() {

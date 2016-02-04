@@ -6,14 +6,11 @@ import lombok.ToString;
 
 import javax.persistence.*;
 import java.util.Date;
-import java.util.List;
 import java.util.Set;
 
 @Entity
 @Getter @Setter @ToString(exclude = "subsystems")
-/*
- Entity graph defining tree member-subsystem-service.
- */
+// Entity graph defining tree member-subsystem-service.
 @NamedEntityGraph(
         name = "member.full-tree.graph",
         attributeNodes = {
@@ -28,11 +25,38 @@ import java.util.Set;
                         attributeNodes = @NamedAttributeNode(value = "wsdl")),
         }
 )
+@NamedQueries({
+        // query fetches all members that have been updated, or have child entities
+        // (subsystems, services, wsdls) that have been updated since given date
+        @NamedQuery(name = "Member.findUpdatedSince",
+                query = "SELECT DISTINCT mem " +
+                        "FROM Member mem " +
+                        "LEFT JOIN FETCH mem.subsystems fetchedSubs " +
+                        "LEFT JOIN FETCH fetchedSubs.services fetchedSers " +
+                        "LEFT JOIN FETCH fetchedSers.wsdl fetchedWsdl " +
+                        "WHERE mem.updated > :since " +
+                        "OR EXISTS ( " +
+                        "SELECT sub " +
+                        "FROM Subsystem sub " +
+                        "WHERE sub.member = mem " +
+                        "AND sub.updated > :since)" +
+                        "OR EXISTS ( " +
+                        "SELECT service " +
+                        "FROM Service service " +
+                        "WHERE service.subsystem.member = mem " +
+                        "AND service.updated > :since)" +
+                        "OR EXISTS ( " +
+                        "SELECT wsdl " +
+                        "FROM Wsdl wsdl " +
+                        "WHERE wsdl.service.subsystem.member = mem " +
+                        "AND wsdl.updated > :since)"),
+})
 public class Member {
 
-    // TODO: from sequence
     @Id
-    @GeneratedValue(strategy=GenerationType.AUTO)
+    @Column(nullable = false)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "MEMBER_GEN")
+    @SequenceGenerator(name = "MEMBER_GEN", sequenceName = "MEMBER_ID_SEQ", allocationSize = 1)
     private long id;
     private String xRoadInstance;
     private String memberClass;
@@ -41,7 +65,7 @@ public class Member {
     private Date created;
     private Date updated;
     private Date removed;
-    @OneToMany(mappedBy = "member")
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
     private Set<Subsystem> subsystems;
 
     public Member() {}

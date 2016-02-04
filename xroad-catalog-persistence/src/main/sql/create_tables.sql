@@ -97,10 +97,10 @@ ALTER TABLE public.member OWNER TO postgres;
 
 --
 -- TOC entry 170 (class 1259 OID 16397)
--- Name: client_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+-- Name: member_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
-CREATE SEQUENCE client_id_seq
+CREATE SEQUENCE member_id_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
@@ -108,15 +108,15 @@ CREATE SEQUENCE client_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.client_id_seq OWNER TO postgres;
+ALTER TABLE public.member_id_seq OWNER TO postgres;
 
 --
 -- TOC entry 2012 (class 0 OID 0)
 -- Dependencies: 170
--- Name: client_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+-- Name: member_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
 
-ALTER SEQUENCE client_id_seq OWNED BY member.id;
+ALTER SEQUENCE member_id_seq OWNED BY member.id;
 
 
 --
@@ -210,7 +210,7 @@ ALTER SEQUENCE subsystem_id_seq OWNED BY subsystem.id;
 CREATE TABLE wsdl (
     id bigint NOT NULL,
     service_id bigint NOT NULL,
-    data xml NOT NULL,
+    data text NOT NULL,
     data_hash text NOT NULL,
     external_id text NOT NULL,
     created timestamp with time zone NOT NULL,
@@ -244,39 +244,7 @@ ALTER TABLE public.wsdl_id_seq OWNER TO postgres;
 
 ALTER SEQUENCE wsdl_id_seq OWNED BY wsdl.id;
 
-
 --
--- TOC entry 1881 (class 2604 OID 16402)
--- Name: id; Type: DEFAULT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY member ALTER COLUMN id SET DEFAULT nextval('client_id_seq'::regclass);
-
-
---
--- TOC entry 1882 (class 2604 OID 16449)
--- Name: id; Type: DEFAULT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY service ALTER COLUMN id SET DEFAULT nextval('service_id_seq'::regclass);
-
-
---
--- TOC entry 1884 (class 2604 OID 16537)
--- Name: id; Type: DEFAULT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY subsystem ALTER COLUMN id SET DEFAULT nextval('subsystem_id_seq'::regclass);
-
-
---
--- TOC entry 1883 (class 2604 OID 16467)
--- Name: id; Type: DEFAULT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY wsdl ALTER COLUMN id SET DEFAULT nextval('wsdl_id_seq'::regclass);
-
-
 --
 -- TOC entry 1886 (class 2606 OID 16456)
 -- Name: primary_key_client; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace:
@@ -319,6 +287,17 @@ ALTER TABLE ONLY wsdl
 --
 
 CREATE UNIQUE INDEX idx_wsdl_external_id ON wsdl USING btree (external_id);
+
+
+-- additional indexes for performance
+CREATE INDEX idx_wsdl_updated ON wsdl(updated);
+CREATE INDEX idx_service_updated ON service(updated);
+CREATE INDEX idx_subsystem_updated ON subsystem(updated);
+CREATE INDEX idx_member_updated ON member(updated);
+CREATE INDEX idx_wsdl_service_id ON wsdl(service_id);
+CREATE INDEX idx_service_subsystem_id ON service(subsystem_id);
+CREATE INDEX idx_subsystem_member_id ON subsystem(member_id);
+
 
 
 --
