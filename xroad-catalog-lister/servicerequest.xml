@@ -2,9 +2,9 @@
 				  xmlns:xr="http://xroad.vrk.fi/xroad-catalog-lister">
    <soapenv:Header/>
    <soapenv:Body>
-      <xr:ListMembersRequest>
+      <xr:ListMembers>
          <xr:changedAfter>2011-01-01</xr:changedAfter>
-      </xr:ListMembersRequest>
+      </xr:ListMembers>
    </soapenv:Body>
 </soapenv:Envelope>
 

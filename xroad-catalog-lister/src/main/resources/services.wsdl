@@ -109,7 +109,7 @@ http://x-road.eu/xsd/identifiers ">
                    targetNamespace="http://xroad.vrk.fi/xroad-catalog-lister">
 
 
-            <xs:element name="ListMembersRequest">
+            <xs:element name="ListMembers">
                 <xs:complexType>
                     <xs:sequence>
                         <xs:element name="changedAfter" type="xs:dateTime"/>
@@ -208,13 +208,13 @@ http://x-road.eu/xsd/identifiers ">
         <wsdl:part element="tns:ListMembersResponse" name="ListMembersResponse">
         </wsdl:part>
     </wsdl:message>
-    <wsdl:message name="ListMembersRequest">
-        <wsdl:part element="tns:ListMembersRequest" name="ListMembersRequest">
+    <wsdl:message name="ListMembers">
+        <wsdl:part element="tns:ListMembers" name="ListMembers">
         </wsdl:part>
     </wsdl:message>
     <wsdl:portType name="ServicesPort">
         <wsdl:operation name="ListMembers">
-            <wsdl:input message="tns:ListMembersRequest" name="ListMembersRequest">
+            <wsdl:input message="tns:ListMembers" name="ListMembers">
             </wsdl:input>
             <wsdl:output message="tns:ListMembersResponse" name="ListMembersResponse">
             </wsdl:output>
@@ -224,7 +224,8 @@ http://x-road.eu/xsd/identifiers ">
         <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
         <wsdl:operation name="ListMembers">
             <soap:operation soapAction=""/>
-            <wsdl:input name="ListMembersRequest">
+            <id:version>v1</id:version>
+            <wsdl:input name="ListMembers">
                 <soap:body use="literal"/>
             </wsdl:input>
             <wsdl:output name="ListMembersResponse">
