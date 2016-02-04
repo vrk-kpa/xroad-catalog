@@ -205,11 +205,11 @@ http://x-road.eu/xsd/identifiers ">
     </wsdl:message>
 
     <wsdl:message name="ListMembersResponse">
-        <wsdl:part element="tns:ListMembersResponse" name="ListMembersResponse">
+        <wsdl:part element="tns:ListMembersResponse" name="body">
         </wsdl:part>
     </wsdl:message>
     <wsdl:message name="ListMembers">
-        <wsdl:part element="tns:ListMembers" name="ListMembers">
+        <wsdl:part element="tns:ListMembers" name="body">
         </wsdl:part>
     </wsdl:message>
     <wsdl:portType name="ServicesPort">
@@ -226,7 +226,7 @@ http://x-road.eu/xsd/identifiers ">
             <soap:operation soapAction=""/>
             <id:version>v1</id:version>
             <wsdl:input name="ListMembers">
-                <soap:body use="literal"/>
+                <soap:body parts="body" use="literal"/>
                 <soap:header message="tns:requestheader" part="client" use="literal"/>
                 <soap:header message="tns:requestheader" part="service" use="literal"/>
                 <soap:header message="tns:requestheader" part="userId" use="literal"/>
@@ -235,7 +235,7 @@ http://x-road.eu/xsd/identifiers ">
                 <soap:header message="tns:requestheader" part="protocolVersion" use="literal"/>
             </wsdl:input>
             <wsdl:output name="ListMembersResponse">
-                <soap:body use="literal"/>
+                <soap:body parts="body" use="literal"/>
                 <soap:header message="tns:requestheader" part="client" use="literal"/>
                 <soap:header message="tns:requestheader" part="service" use="literal"/>
                 <soap:header message="tns:requestheader" part="userId" use="literal"/>
