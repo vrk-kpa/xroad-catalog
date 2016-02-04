@@ -1,6 +1,6 @@
 package fi.vrk.xroad.catalog.lister;
 
-import fi.vrk.xroad.xroad_catalog_lister.ListMembersRequest;
+import fi.vrk.xroad.xroad_catalog_lister.ListMembers;
 import fi.vrk.xroad.xroad_catalog_lister.ListMembersResponse;
 import fi.vrk.xroad.xroad_catalog_lister.MemberList;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,9 +18,9 @@ public class ServiceEndpoint {
 	@Autowired
 	private ServiceRepository serviceRepository;
 
-	@PayloadRoot(namespace = NAMESPACE_URI, localPart = "ListMembersRequest")
+	@PayloadRoot(namespace = NAMESPACE_URI, localPart = "ListMembers")
 	@ResponsePayload
-	public ListMembersResponse listMembers(@RequestPayload ListMembersRequest request) {
+	public ListMembersResponse listMembers(@RequestPayload ListMembers request) {
 		ListMembersResponse response = new ListMembersResponse();
 		response.setMemberList(new MemberList());
 		response.getMemberList().getMembers().addAll(serviceRepository.listServices(LocalTime.now

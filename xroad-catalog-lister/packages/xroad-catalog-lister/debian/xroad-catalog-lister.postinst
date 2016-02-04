@@ -8,3 +8,6 @@ if ! id xroad-catalog > /dev/null 2>&1 ; then
 fi                
 chmod 755 /usr/lib/xroad-catalog/xroad-catalog-lister.jar
 chown -R xroad-catalog:xroad-catalog /usr/lib/xroad-catalog
+
+
+invoke-rc.d xroad-catalog-lister start

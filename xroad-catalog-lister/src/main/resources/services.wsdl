@@ -1,0 +1,253 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+                  xmlns:sch="http://xroad.vrk.fi/xroad-catalog-lister"
+                  xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+                  xmlns:tns="http://xroad.vrk.fi/xroad-catalog-lister"
+                  xmlns:xrd="http://x-road.eu/xsd/xroad.xsd"
+                  xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+                  xmlns:id="http://x-road.eu/xsd/identifiers"
+                  targetNamespace="http://xroad.vrk.fi/xroad-catalog-lister"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xsi:schemaLocation="http://x-road.eu/xsd/xroad.xsd
+http://x-road.eu/xsd/identifiers ">
+    <wsdl:types>
+
+        <!-- Schema for identifiers (reduced) -->
+        <xsd:schema elementFormDefault="qualified"
+                    targetNamespace="http://x-road.eu/xsd/identifiers"
+                    xmlns="http://x-road.eu/xsd/identifiers">
+            <xsd:simpleType name="XRoadObjectType">
+                <xsd:annotation>
+                    <xsd:documentation>Enumeration for X-Road identifier
+                        types that can be used in requests.
+                    </xsd:documentation>
+                </xsd:annotation>
+                <xsd:restriction base="xsd:string">
+                    <xsd:enumeration value="MEMBER" />
+                    <xsd:enumeration value="SUBSYSTEM" />
+                    <xsd:enumeration value="SERVICE" />
+                </xsd:restriction>
+            </xsd:simpleType>
+            <xsd:element name="xRoadInstance" type="xsd:string">
+                <xsd:annotation>
+                    <xsd:documentation>Identifies the X-Road instance.
+                        This field is applicable to all identifier
+                        types.
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="memberClass" type="xsd:string">
+                <xsd:annotation>
+                    <xsd:documentation>Type of the member (company,
+                        government institution, private person, etc.)
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="memberCode" type="xsd:string">
+                <xsd:annotation>
+                    <xsd:documentation>Code that uniquely identifies a
+                        member of given member type.
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="subsystemCode" type="xsd:string">
+                <xsd:annotation>
+                    <xsd:documentation>Code that uniquely identifies a
+                        subsystem of given X-Road member.
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="serviceCode" type="xsd:string">
+                <xsd:annotation>
+                    <xsd:documentation>Code that uniquely identifies a
+                        service offered by given X-Road member or
+                        subsystem.
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="serviceVersion" type="xsd:string">
+                <xsd:annotation>
+                    <xsd:documentation>Version of the service.
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:attribute name="objectType" type="XRoadObjectType" />
+            <xsd:complexType name="XRoadClientIdentifierType">
+                <xsd:sequence>
+                    <xsd:element ref="xRoadInstance" />
+                    <xsd:element ref="memberClass" />
+                    <xsd:element ref="memberCode" />
+                    <xsd:element minOccurs="0" ref="subsystemCode" />
+                </xsd:sequence>
+                <xsd:attribute ref="objectType" use="required" />
+            </xsd:complexType>
+            <xsd:complexType name="XRoadServiceIdentifierType">
+                <xsd:sequence>
+                    <xsd:element ref="xRoadInstance" />
+                    <xsd:element ref="memberClass" />
+                    <xsd:element ref="memberCode" />
+                    <xsd:element minOccurs="0" ref="subsystemCode" />
+                    <xsd:element ref="serviceCode" />
+                    <xsd:element minOccurs="0" ref="serviceVersion" />
+                </xsd:sequence>
+                <xsd:attribute ref="objectType" use="required" />
+            </xsd:complexType>
+        </xsd:schema>
+
+        <!-- Schema for request headers -->
+        <xsd:schema xmlns="http://www.w3.org/2001/XMLSchema"
+                    targetNamespace="http://x-road.eu/xsd/xroad.xsd"
+                    elementFormDefault="qualified">
+
+            <xsd:element name="client" type="id:XRoadClientIdentifierType" />
+            <xsd:element name="service" type="id:XRoadServiceIdentifierType" />
+            <xsd:element name="userId" type="xsd:string" />
+            <xsd:element name="id" type="xsd:string" />
+            <xsd:element name="protocolVersion" type="xsd:string" />
+        </xsd:schema>
+        <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified"
+                   targetNamespace="http://xroad.vrk.fi/xroad-catalog-lister">
+
+
+            <xs:element name="ListMembers">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="changedAfter" type="xs:dateTime"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+
+
+            <xs:element name="ListMembersResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="memberList" type="tns:MemberList"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+
+            <xs:complexType name="MemberList">
+                <xs:sequence>
+                    <xs:element maxOccurs="unbounded" minOccurs="0" name="members" type="tns:Member"/>
+                </xs:sequence>
+            </xs:complexType>
+
+            <xs:complexType name="Member">
+                <xs:sequence>
+                    <xs:element name="xRoadInstance" type="xs:string"/>
+                    <xs:element name="memberClass" type="xs:string"/>
+                    <xs:element name="memberCode" type="xs:string"/>
+                    <xs:element name="name" type="xs:string"/>
+                    <xs:element name="subsystems" type="tns:SubsystemList"/>
+                    <xs:element name="created" type="xs:dateTime"/>
+                    <xs:element name="updated" type="xs:dateTime"/>
+                    <xs:element name="removed" type="xs:dateTime"/>
+                </xs:sequence>
+            </xs:complexType>
+
+            <xs:complexType name="SubsystemList">
+                <xs:sequence>
+                    <xs:element maxOccurs="unbounded" minOccurs="0" name="subsystem" type="tns:Subsystem"/>
+                </xs:sequence>
+            </xs:complexType>
+            s
+
+            <xs:complexType name="Subsystem">
+                <xs:sequence>
+                    <xs:element name="subsystemCode" type="xs:string"/>
+                    <xs:element name="services" type="tns:ServiceList"/>
+                    <xs:element name="created" type="xs:dateTime"/>
+                    <xs:element name="updated" type="xs:dateTime"/>
+                    <xs:element name="removed" type="xs:dateTime"/>
+                </xs:sequence>
+            </xs:complexType>
+
+            <xs:complexType name="ServiceList">
+                <xs:sequence>
+                    <xs:element maxOccurs="unbounded" minOccurs="0" name="service" type="tns:Service"/>
+                </xs:sequence>
+            </xs:complexType>
+
+            <xs:complexType name="Service">
+                <xs:sequence>
+                    <xs:element name="serviceCode" type="xs:string"/>
+                    <xs:element name="serviceVersion" type="xs:string"/>
+                    <xs:element name="wsdl" type="tns:WSDL"/>
+                    <xs:element name="created" type="xs:dateTime"/>
+                    <xs:element name="updated" type="xs:dateTime"/>
+                    <xs:element name="removed" type="xs:dateTime"/>
+                </xs:sequence>
+            </xs:complexType>
+
+            <xs:complexType name="WSDL">
+                <xs:sequence>
+                    <xs:element name="data" type="xs:string"/>
+                    <xs:element name="dataHash" type="xs:string"/>
+                    <xs:element name="externalId" type="xs:string"/>
+                    <xs:element name="created" type="xs:dateTime"/>
+                    <xs:element name="updated" type="xs:dateTime"/>
+                    <xs:element name="removed" type="xs:dateTime"/>
+                </xs:sequence>
+            </xs:complexType>
+
+
+        </xs:schema>
+    </wsdl:types>
+
+
+    <wsdl:message name="requestheader">
+        <wsdl:part name="client" element="xrd:client" />
+        <wsdl:part name="service" element="xrd:service" />
+        <wsdl:part name="userId" element="xrd:userId" />
+        <wsdl:part name="id" element="xrd:id" />
+        <wsdl:part name="issue" element="xrd:issue"/>
+        <wsdl:part name="protocolVersion" element="xrd:protocolVersion" />
+    </wsdl:message>
+
+    <wsdl:message name="ListMembersResponse">
+        <wsdl:part element="tns:ListMembersResponse" name="body">
+        </wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="ListMembers">
+        <wsdl:part element="tns:ListMembers" name="body">
+        </wsdl:part>
+    </wsdl:message>
+    <wsdl:portType name="ServicesPort">
+        <wsdl:operation name="ListMembers">
+            <wsdl:input message="tns:ListMembers" name="ListMembers">
+            </wsdl:input>
+            <wsdl:output message="tns:ListMembersResponse" name="ListMembersResponse">
+            </wsdl:output>
+        </wsdl:operation>
+    </wsdl:portType>
+    <wsdl:binding name="ServicesPortSoap11" type="tns:ServicesPort">
+        <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <wsdl:operation name="ListMembers">
+            <soap:operation soapAction=""/>
+            <id:version>v1</id:version>
+            <wsdl:input name="ListMembers">
+                <soap:body parts="body" use="literal"/>
+                <soap:header message="tns:requestheader" part="client" use="literal"/>
+                <soap:header message="tns:requestheader" part="service" use="literal"/>
+                <soap:header message="tns:requestheader" part="userId" use="literal"/>
+                <soap:header message="tns:requestheader" part="id" use="literal"/>
+                <soap:header message="tns:requestheader" part="issue" use="literal"/>
+                <soap:header message="tns:requestheader" part="protocolVersion" use="literal"/>
+            </wsdl:input>
+            <wsdl:output name="ListMembersResponse">
+                <soap:body parts="body" use="literal"/>
+                <soap:header message="tns:requestheader" part="client" use="literal"/>
+                <soap:header message="tns:requestheader" part="service" use="literal"/>
+                <soap:header message="tns:requestheader" part="userId" use="literal"/>
+                <soap:header message="tns:requestheader" part="id" use="literal"/>
+                <soap:header message="tns:requestheader" part="issue" use="literal"/>
+                <soap:header message="tns:requestheader" part="protocolVersion" use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:service name="ServicesPortService">
+        <wsdl:port binding="tns:ServicesPortSoap11" name="ServicesPortSoap11">
+            <soap:address location="http://localhost:8080/ws"/>
+        </wsdl:port>
+    </wsdl:service>
+</wsdl:definitions>
