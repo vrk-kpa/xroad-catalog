@@ -150,7 +150,7 @@ http://x-road.eu/xsd/identifiers ">
                     <xs:element maxOccurs="unbounded" minOccurs="0" name="subsystem" type="tns:Subsystem"/>
                 </xs:sequence>
             </xs:complexType>
-            s
+
 
             <xs:complexType name="Subsystem">
                 <xs:sequence>

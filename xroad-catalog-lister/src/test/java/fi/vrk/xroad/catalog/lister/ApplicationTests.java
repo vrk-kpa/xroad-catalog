@@ -17,6 +17,8 @@
 package fi.vrk.xroad.catalog.lister;
 
 import fi.vrk.xroad.xroad_catalog_lister.ListMembers;
+import fi.vrk.xroad.xroad_catalog_lister.ListMembersResponse;
+import fi.vrk.xroad.xroad_catalog_lister.MemberList;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -28,6 +30,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.util.ClassUtils;
 import org.springframework.ws.client.core.WebServiceTemplate;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -50,8 +53,10 @@ public class ApplicationTests {
 	@Test
 	public void testListServices() {
 		ListMembers request = new ListMembers();
-		assertNotNull(new WebServiceTemplate(marshaller).marshalSendAndReceive("http://localhost:"
-				+ port + "/ws", request));
+		ListMembersResponse result = (ListMembersResponse)new WebServiceTemplate(marshaller).marshalSendAndReceive("http://localhost:"
+				+ port + "/ws", request);
+		assertNotNull(result);
+		assertEquals("MemberList size", 3, result.getMemberList().getMembers().size());
 	}
 
 }
