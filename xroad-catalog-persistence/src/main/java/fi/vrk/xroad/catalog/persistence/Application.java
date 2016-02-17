@@ -1,4 +1,4 @@
-package fi.vrk.xroad.catalog.lister;
+package fi.vrk.xroad.catalog.persistence;
 
 import com.google.common.collect.Iterables;
 import org.slf4j.Logger;

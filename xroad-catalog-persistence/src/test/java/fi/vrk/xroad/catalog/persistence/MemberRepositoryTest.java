@@ -1,10 +1,10 @@
-package fi.vrk.xroad.catalog.lister;
+package fi.vrk.xroad.catalog.persistence;
 
 import com.google.common.collect.Iterables;
-import fi.vrk.xroad.catalog.lister.entity.Member;
-import fi.vrk.xroad.catalog.lister.entity.Service;
-import fi.vrk.xroad.catalog.lister.entity.Subsystem;
-import fi.vrk.xroad.catalog.lister.entity.Wsdl;
+import fi.vrk.xroad.catalog.persistence.entity.Member;
+import fi.vrk.xroad.catalog.persistence.entity.Service;
+import fi.vrk.xroad.catalog.persistence.entity.Subsystem;
+import fi.vrk.xroad.catalog.persistence.entity.Wsdl;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 import org.junit.runner.RunWith;

@@ -12,7 +12,7 @@ import akka.routing.SmallestMailboxRoutingLogic;
 import eu.x_road.xsd.xroad.ClientListType;
 import eu.x_road.xsd.xroad.ClientType;
 import fi.vrk.xroad.catalog.collector.extension.SpringExtension;
-import fi.vrk.xroad.catalog.lister.CatalogService;
+import fi.vrk.xroad.catalog.persistence.CatalogService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;

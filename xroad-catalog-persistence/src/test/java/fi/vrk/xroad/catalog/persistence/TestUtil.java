@@ -1,9 +1,9 @@
-package fi.vrk.xroad.catalog.lister;
+package fi.vrk.xroad.catalog.persistence;
 
-import fi.vrk.xroad.catalog.lister.entity.Member;
-import fi.vrk.xroad.catalog.lister.entity.Service;
-import fi.vrk.xroad.catalog.lister.entity.Subsystem;
-import fi.vrk.xroad.catalog.lister.entity.Wsdl;
+import fi.vrk.xroad.catalog.persistence.entity.Member;
+import fi.vrk.xroad.catalog.persistence.entity.Service;
+import fi.vrk.xroad.catalog.persistence.entity.Subsystem;
+import fi.vrk.xroad.catalog.persistence.entity.Wsdl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

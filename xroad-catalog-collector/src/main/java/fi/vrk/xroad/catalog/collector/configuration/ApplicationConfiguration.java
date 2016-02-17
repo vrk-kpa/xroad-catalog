@@ -19,7 +19,7 @@ import java.util.Properties;
 @Lazy
 @ComponentScan(basePackages = { "fi.vrk.xroad.catalog.collector.services",
     "fi.vrk.xroad.catalog.collector.actors", "fi.vrk.xroad.catalog.collector.extension", "fi.vrk.xroad.catalog" +
-        ".lister" })
+        ".persistence" })
 public class ApplicationConfiguration {
 
     // The application context is needed to initialize the Akka Spring

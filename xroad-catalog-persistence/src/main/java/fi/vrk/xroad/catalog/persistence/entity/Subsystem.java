@@ -1,4 +1,4 @@
-package fi.vrk.xroad.catalog.lister.entity;
+package fi.vrk.xroad.catalog.persistence.entity;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -6,7 +6,6 @@ import lombok.ToString;
 
 import javax.persistence.*;
 import java.util.Date;
-import java.util.List;
 import java.util.Set;
 
 @Entity

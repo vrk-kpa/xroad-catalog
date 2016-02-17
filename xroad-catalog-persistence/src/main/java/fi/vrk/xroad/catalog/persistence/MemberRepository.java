@@ -1,12 +1,11 @@
-package fi.vrk.xroad.catalog.lister;
+package fi.vrk.xroad.catalog.persistence;
 
-import fi.vrk.xroad.catalog.lister.entity.Member;
+import fi.vrk.xroad.catalog.persistence.entity.Member;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 
 import java.util.Date;
-import java.util.List;
 import java.util.Set;
 
 public interface MemberRepository extends CrudRepository<Member, Long> {

@@ -1,4 +1,4 @@
-package fi.vrk.xroad.catalog.lister.entity;
+package fi.vrk.xroad.catalog.persistence.entity;
 
 import lombok.Getter;
 import lombok.Setter;

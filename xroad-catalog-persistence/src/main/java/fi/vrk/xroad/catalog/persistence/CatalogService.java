@@ -1,10 +1,9 @@
-package fi.vrk.xroad.catalog.lister;
+package fi.vrk.xroad.catalog.persistence;
 
-import fi.vrk.xroad.catalog.lister.entity.Member;
-import fi.vrk.xroad.catalog.lister.entity.Wsdl;
+import fi.vrk.xroad.catalog.persistence.entity.Member;
+import fi.vrk.xroad.catalog.persistence.entity.Wsdl;
 
 import java.util.Date;
-import java.util.List;
 
 /**
  * CRUD methods for catalog objects. no business logic (e.g. hash calculation),

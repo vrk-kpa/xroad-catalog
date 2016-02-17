@@ -1,9 +1,9 @@
-package fi.vrk.xroad.catalog.lister;
+package fi.vrk.xroad.catalog.persistence;
 
 import com.google.common.collect.Iterables;
-import fi.vrk.xroad.catalog.lister.entity.Member;
-import fi.vrk.xroad.catalog.lister.entity.Service;
-import fi.vrk.xroad.catalog.lister.entity.Subsystem;
+import fi.vrk.xroad.catalog.persistence.entity.Member;
+import fi.vrk.xroad.catalog.persistence.entity.Service;
+import fi.vrk.xroad.catalog.persistence.entity.Subsystem;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -11,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import java.util.Date;
 import java.util.Optional;
 
 import static org.junit.Assert.assertEquals;
