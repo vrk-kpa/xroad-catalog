@@ -80,11 +80,6 @@ dependencies {
     compile group: 'org.springframework.boot', name: 'spring-boot-starter', version:'1.3.2.RELEASE'
     compile("org.springframework:spring-web")
     compile group: 'org.springframework', name: 'spring-jdbc', version:'4.2.4.RELEASE'
-    //compile("com.fasterxml.jackson.core:jackson-databind")
-    //compile'com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.7.1'
-    compile 'javax.ws.rs:javax.ws.rs-api:2.0'
-    compile 'org.glassfish.jersey.core:jersey-client:2.0'
-    compile group: 'org.simpleframework', name: 'simple-xml', version:'2.7.1'
     compile group: 'com.typesafe.akka', name: 'akka-actor_2.11', version:'2.3.14'
     compile group: 'com.typesafe.akka', name: 'akka-slf4j_2.11', version:'2.3.14'
     compile group: 'c3p0', name: 'c3p0', version:'0.9.1.2'
