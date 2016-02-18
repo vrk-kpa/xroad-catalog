@@ -15,7 +15,8 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 
 /**
- * Tool to trigger messages passed to actors.
+ * Main collector application.
+ * Initiates a supervisor
  */
 @Configuration
 @EnableAutoConfiguration

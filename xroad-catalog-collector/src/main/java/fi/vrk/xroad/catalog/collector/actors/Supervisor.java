@@ -16,8 +16,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestOperations;
 
 /**
- * A sample supervisor which should handle exceptions and general feedback
- * for the actual {@link ClientActor}
+ * Supervisor to get list of all clients in system and initiate a ClientActor for each
  * <p/>
  * A router is configured at startup time, managing a pool of task actors.
  */
