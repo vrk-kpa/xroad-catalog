@@ -10,9 +10,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
 @Component
 @Scope("prototype")
 public class ClientActor extends UntypedActor {
+
+    private static AtomicInteger COUNTER = new AtomicInteger(0);
+    // to test fault handling
+    private static boolean FORCE_FAILURES = false;
 
     private final LoggingAdapter log = Logging
         .getLogger(getContext().system(), "ClientActor");
@@ -21,10 +27,33 @@ public class ClientActor extends UntypedActor {
     protected CatalogService catalogService;
 
     @Override
+    public void preStart() throws Exception {
+        log.info("preStart {}", this.hashCode());
+        super.preStart();
+    }
+
+    @Override
+    public void postStop() throws Exception {
+        log.info("postStop {}", this.hashCode());
+        super.postStop();
+    }
+
+    private void maybeFail() {
+        if (FORCE_FAILURES) {
+            if (COUNTER.get() % 3 == 0) {
+                log.info("sending test failure {}", hashCode());
+                throw new RuntimeException("test failure at " + hashCode());
+            }
+        }
+    }
+
+    @Override
     public void onReceive(Object message) throws Exception {
 
-        log.info("onReceive {}",message.toString());
+        log.info("onReceive {} {} {}", COUNTER.addAndGet(1), message.toString(), this.hashCode());
         ClientType clientType = (ClientType)message;
+
+        maybeFail();
 
         Member member = new Member();
         member.setName(clientType.getName());

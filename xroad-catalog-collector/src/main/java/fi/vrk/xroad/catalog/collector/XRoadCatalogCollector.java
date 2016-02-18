@@ -39,13 +39,13 @@ public class XRoadCatalogCollector {
 
         // Use the Spring Extension to create props for a named actor bean
         ActorRef supervisor = system.actorOf(
-            ext.props("supervisor").withMailbox("akka.priority-mailbox"));
-
-
-
+                ext.props("supervisor").withMailbox("akka.priority-mailbox"));
 
 
         supervisor.tell(new ClientListType(), null);
+
+        // (kludge, for now) to let all actors process their mailboxes
+        Thread.sleep(5000);
 
         // Poison pill will be queued with a priority of 100 as the last
         // message
