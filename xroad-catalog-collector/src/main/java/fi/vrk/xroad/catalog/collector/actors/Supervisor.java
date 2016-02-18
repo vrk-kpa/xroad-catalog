@@ -13,7 +13,7 @@ import fi.vrk.xroad.catalog.persistence.CatalogService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.web.client.RestOperations;
 
 /**
  * A sample supervisor which should handle exceptions and general feedback
@@ -39,6 +39,10 @@ public class Supervisor extends UntypedActor {
     protected CatalogService catalogService;
 
 
+    @Autowired
+    private RestOperations restOperations;
+
+
     @Override
     public void preStart() throws Exception {
 
@@ -61,8 +65,8 @@ public class Supervisor extends UntypedActor {
     public void onReceive(Object message) throws Exception {
 
         if (message instanceof ClientListType) {
-            RestTemplate restTemplate = new RestTemplate();
-            ClientListType clientList = restTemplate.getForObject("http://localhost/listClients.xml", ClientListType
+
+            ClientListType clientList = restOperations.getForObject("http://localhost/listClients", ClientListType
                     .class);
 
             log.info("clientlist {}", clientList.toString());

@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ns2:clientList xmlns:ns1="http://x-road.eu/xsd/identifiers" xmlns:ns2="http://x-road.eu/xsd/xroad.xsd">
+    <ns2:member>
+        <ns2:id ns1:objectType="MEMBER">
+            <ns1:xRoadInstance>FI</ns1:xRoadInstance>
+            <ns1:memberClass>GOV</ns1:memberClass>
+            <ns1:memberCode>1710128-9</ns1:memberCode>
+        </ns2:id>
+        <ns2:name>Gofore</ns2:name>
+    </ns2:member>
+    <ns2:member>
+        <ns2:id ns1:objectType="SUBSYSTEM">
+            <ns1:xRoadInstance>FI</ns1:xRoadInstance>
+            <ns1:memberClass>GOV</ns1:memberClass>
+            <ns1:memberCode>1710128-9</ns1:memberCode>
+            <ns1:subsystemCode>Management</ns1:subsystemCode>
+        </ns2:id>
+        <ns2:name>Gofore</ns2:name>
+    </ns2:member>
+    <ns2:member>
+        <ns2:id ns1:objectType="SUBSYSTEM">
+            <ns1:xRoadInstance>FI</ns1:xRoadInstance>
+            <ns1:memberClass>GOV</ns1:memberClass>
+            <ns1:memberCode>1710128-9</ns1:memberCode>
+            <ns1:subsystemCode>SS1</ns1:subsystemCode>
+        </ns2:id>
+        <ns2:name>Gofore</ns2:name>
+    </ns2:member>
+    <ns2:member>
+        <ns2:id ns1:objectType="SUBSYSTEM">
+            <ns1:xRoadInstance>FI</ns1:xRoadInstance>
+            <ns1:memberClass>GOV</ns1:memberClass>
+            <ns1:memberCode>1710128-9</ns1:memberCode>
+            <ns1:subsystemCode>JANNEN</ns1:subsystemCode>
+        </ns2:id>
+        <ns2:name>Gofore</ns2:name>
+    </ns2:member>
+    <ns2:member>
+        <ns2:id ns1:objectType="SUBSYSTEM">
+            <ns1:xRoadInstance>FI</ns1:xRoadInstance>
+            <ns1:memberClass>GOV</ns1:memberClass>
+            <ns1:memberCode>1710128-9</ns1:memberCode>
+            <ns1:subsystemCode>MANSIKKA</ns1:subsystemCode>
+        </ns2:id>
+        <ns2:name>Gofore</ns2:name>
+    </ns2:member>
+    <ns2:member>
+        <ns2:id ns1:objectType="SUBSYSTEM">
+            <ns1:xRoadInstance>FI</ns1:xRoadInstance>
+            <ns1:memberClass>GOV</ns1:memberClass>
+            <ns1:memberCode>1710128-9</ns1:memberCode>
+            <ns1:subsystemCode>KIRSIKKA</ns1:subsystemCode>
+        </ns2:id>
+        <ns2:name>Gofore</ns2:name>
+    </ns2:member>
+    <ns2:member>
+        <ns2:id ns1:objectType="SUBSYSTEM">
+            <ns1:xRoadInstance>FI</ns1:xRoadInstance>
+            <ns1:memberClass>GOV</ns1:memberClass>
+            <ns1:memberCode>1710128-9</ns1:memberCode>
+            <ns1:subsystemCode>HERUKKA</ns1:subsystemCode>
+        </ns2:id>
+        <ns2:name>Gofore</ns2:name>
+    </ns2:member>
+    <ns2:member>
+        <ns2:id ns1:objectType="SUBSYSTEM">
+            <ns1:xRoadInstance>FI</ns1:xRoadInstance>
+            <ns1:memberClass>GOV</ns1:memberClass>
+            <ns1:memberCode>1710128-9</ns1:memberCode>
+            <ns1:subsystemCode>VAMMA/MARJA</ns1:subsystemCode>
+        </ns2:id>
+        <ns2:name>Gofore</ns2:name>
+    </ns2:member>
+    <ns2:member>
+        <ns2:id ns1:objectType="SUBSYSTEM">
+            <ns1:xRoadInstance>FI</ns1:xRoadInstance>
+            <ns1:memberClass>GOV</ns1:memberClass>
+            <ns1:memberCode>1710128-9</ns1:memberCode>
+            <ns1:subsystemCode>Catalog</ns1:subsystemCode>
+        </ns2:id>
+        <ns2:name>Gofore</ns2:name>
+    </ns2:member>
+    <ns2:member>
+        <ns2:id ns1:objectType="MEMBER">
+            <ns1:xRoadInstance>FI</ns1:xRoadInstance>
+            <ns1:memberClass>GOV</ns1:memberClass>
+            <ns1:memberCode>1945065-0</ns1:memberCode>
+        </ns2:id>
+        <ns2:name>Vaakon Nakki</ns2:name>
+    </ns2:member>
+    <ns2:member>
+        <ns2:id ns1:objectType="SUBSYSTEM">
+            <ns1:xRoadInstance>FI</ns1:xRoadInstance>
+            <ns1:memberClass>GOV</ns1:memberClass>
+            <ns1:memberCode>1945065-0</ns1:memberCode>
+            <ns1:subsystemCode>VAAKKO1</ns1:subsystemCode>
+        </ns2:id>
+        <ns2:name>Vaakon Nakki</ns2:name>
+    </ns2:member>
+    <ns2:member>
+        <ns2:id ns1:objectType="MEMBER">
+            <ns1:xRoadInstance>FI</ns1:xRoadInstance>
+            <ns1:memberClass>GOV</ns1:memberClass>
+            <ns1:memberCode>15334513</ns1:memberCode>
+        </ns2:id>
+        <ns2:name>Pepe Design</ns2:name>
+    </ns2:member>
+    <ns2:member>
+        <ns2:id ns1:objectType="MEMBER">
+            <ns1:xRoadInstance>FI</ns1:xRoadInstance>
+            <ns1:memberClass>GOV</ns1:memberClass>
+            <ns1:memberCode>13775550</ns1:memberCode>
+        </ns2:id>
+        <ns2:name>Kampaamo Lissu</ns2:name>
+    </ns2:member>
+    <ns2:member>
+        <ns2:id ns1:objectType="MEMBER">
+            <ns1:xRoadInstance>FI</ns1:xRoadInstance>
+            <ns1:memberClass>GOV</ns1:memberClass>
+            <ns1:memberCode>88834888</ns1:memberCode>
+        </ns2:id>
+        <ns2:name>Ritvan Kala-Kahvila</ns2:name>
+    </ns2:member>
+    <ns2:member>
+        <ns2:id ns1:objectType="MEMBER">
+            <ns1:xRoadInstance>FI</ns1:xRoadInstance>
+            <ns1:memberClass>GOV</ns1:memberClass>
+            <ns1:memberCode>PWNED&lt;script&gt;console.log("OWNED!")&lt;/script&gt;</ns1:memberCode>
+        </ns2:id>
+        <ns2:name>&lt;a href="#"&gt;hacker&lt;/a&gt;</ns2:name>
+    </ns2:member>
+    <ns2:member>
+        <ns2:id ns1:objectType="MEMBER">
+            <ns1:xRoadInstance>FI</ns1:xRoadInstance>
+            <ns1:memberClass>GOV</ns1:memberClass>
+            <ns1:memberCode>ÖÖÖÄÄÄ</ns1:memberCode>
+        </ns2:id>
+        <ns2:name>&lt;i&gt;HACKER&lt;/i&gt;</ns2:name>
+    </ns2:member>
+</ns2:clientList>
