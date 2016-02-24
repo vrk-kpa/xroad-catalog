@@ -1,9 +1,12 @@
 package fi.vrk.xroad.catalog.collector.actors;
 
+import akka.actor.ActorRef;
 import akka.actor.UntypedActor;
 import akka.event.Logging;
 import akka.event.LoggingAdapter;
+import akka.routing.SmallestMailboxPool;
 import eu.x_road.xsd.xroad.ClientType;
+import fi.vrk.xroad.catalog.collector.extension.SpringExtension;
 import fi.vrk.xroad.catalog.persistence.CatalogService;
 import fi.vrk.xroad.catalog.persistence.entity.Member;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +23,14 @@ public class ClientActor extends UntypedActor {
     // to test fault handling
     private static boolean FORCE_FAILURES = false;
 
+    private static final int NO_OF_ACTORS = 1;
+
+    @Autowired
+    private SpringExtension springExtension;
+
+
+    private ActorRef router;
+
     private final LoggingAdapter log = Logging
         .getLogger(getContext().system(), "ClientActor");
 
@@ -29,6 +40,10 @@ public class ClientActor extends UntypedActor {
     @Override
     public void preStart() throws Exception {
         log.info("preStart {}", this.hashCode());
+
+        router = getContext().actorOf(new SmallestMailboxPool(NO_OF_ACTORS)
+                .props(springExtension.props("methodActor")), "method-actor-router");
+
         super.preStart();
     }
 
@@ -50,8 +65,9 @@ public class ClientActor extends UntypedActor {
     @Override
     public void onReceive(Object message) throws Exception {
 
-        log.info("onReceive {} {} {}", COUNTER.addAndGet(1), message.toString(), this.hashCode());
         ClientType clientType = (ClientType)message;
+        log.info("onReceive {} {} {}", COUNTER.addAndGet(1), clientType.getId(), this.hashCode());
+
 
         maybeFail();
 
@@ -61,6 +77,8 @@ public class ClientActor extends UntypedActor {
         member.setMemberClass(clientType.getId().getMemberClass());
 
         member = catalogService.saveMember(member);
+
+        router.tell(member, getSender());
 
         log.info("Member {} saved", member);
 

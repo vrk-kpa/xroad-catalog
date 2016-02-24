@@ -28,11 +28,51 @@ repositories {
     mavenLocal()
 }
 
-// tag::xsd[]
+
+
 task genJaxb {
     ext.sourcesDir = "${buildDir}/generated-sources/jaxb"
     ext.classesDir = "${buildDir}/classes/jaxb"
-    ext.schema = "src/main/resources/list-clients-schema.xsd"
+    ext.schemaDir = "${projectDir}/src/main/resources/schema"
+
+    outputs.dir classesDir
+
+    doLast() {
+        project.ant {
+            taskdef name: "xjc", classname: "com.sun.tools.xjc.XJCTask",
+                    classpath: configurations.jaxb.asPath
+            mkdir(dir: sourcesDir)
+            mkdir(dir: classesDir)
+
+            xjc(destdir: sourcesDir) {
+                schema(dir: schemaDir, includes: "**/*")
+                arg(value: "-wsdl")
+                produces(dir: sourcesDir, includes: "**/*.java")
+            }
+
+            javac(destdir: classesDir, source: 1.8, target: 1.8, debug: true,
+                    debugLevel: "lines,vars,source",
+                    classpath: configurations.jaxb.asPath,
+                    includeantruntime: "false") {
+                src(path: sourcesDir)
+                include(name: "**/*.java")
+                include(name: "*.java")
+            }
+
+            copy(todir: classesDir) {
+                fileset(dir: sourcesDir, erroronmissingdir: false) {
+                    exclude(name: "**/*.java")
+                }
+            }
+        }
+    }
+}
+
+// tag::xsd[]
+task genJaxbbb {
+    ext.sourcesDir = "${buildDir}/generated-sources/jaxb"
+    ext.classesDir = "${buildDir}/classes/jaxb"
+    ext.schemaDir = "src/main/resources/schema"
 
     outputs.dir classesDir
 
@@ -48,7 +88,12 @@ task genJaxb {
                 produces(dir: sourcesDir, includes: "**/*.java")
             }
 
-            javac(destdir: classesDir, source: 1.8, target: 1.8, debug: true,
+//            xjc(destdir: sourcesDir) {
+//                arg(value: "-wsdl")
+//                schema(dir: ${schemaDir}, includes: "**/*.xsd")
+//            }
+
+                javac(destdir: classesDir, source: 1.8, target: 1.8, debug: true,
                     debugLevel: "lines,vars,source",
                     classpath: configurations.jaxb.asPath) {
                 src(path: sourcesDir)
@@ -79,6 +124,7 @@ dependencies {
     compile group: 'org.springframework.boot', name: 'spring-boot-autoconfigure', version:'1.3.2.RELEASE'
     compile group: 'org.springframework.boot', name: 'spring-boot-starter', version:'1.3.2.RELEASE'
     compile("org.springframework:spring-web")
+    compile("org.springframework.boot:spring-boot-starter-ws")
     compile group: 'org.springframework', name: 'spring-jdbc', version:'4.2.4.RELEASE'
     compile group: 'com.typesafe.akka', name: 'akka-actor_2.11', version:'2.3.14'
     compile group: 'com.typesafe.akka', name: 'akka-slf4j_2.11', version:'2.3.14'
