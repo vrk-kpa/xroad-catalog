@@ -38,7 +38,7 @@ rm -rf %{buildroot}
 %files
 %attr(644,root,root) %{_unitdir}/xroad-catalog-lister.service
 %{jlib}/xroad-catalog-lister.jar
-%attr(744,root,root) /usr/share/xroad/bin/%{name}
+%attr(744,xroad-catalog,xroad-catalog) /usr/share/xroad/bin/%{name}
 
 %post
 %systemd_post xroad-catalog-lister.service
