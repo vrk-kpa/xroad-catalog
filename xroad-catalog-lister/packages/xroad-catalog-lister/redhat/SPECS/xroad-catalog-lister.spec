@@ -43,7 +43,7 @@ rm -rf %{buildroot}
 %post
 %systemd_post xroad-catalog-lister.service
 if ! id xroad-catalog > /dev/null 2>&1 ; then
-    adduser --system --no-create-home --group --disabled-password --shell /bin/false xroad-catalog
+    adduser --system --no-create-home --shell /bin/false xroad-catalog
 fi                
 chmod 755 /usr/lib/xroad-catalog/xroad-catalog-lister.jar
 chown -R xroad-catalog:xroad-catalog /usr/lib/xroad-catalog
