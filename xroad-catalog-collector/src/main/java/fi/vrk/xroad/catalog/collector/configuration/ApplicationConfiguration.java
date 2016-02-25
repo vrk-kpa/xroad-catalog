@@ -67,7 +67,7 @@ public class ApplicationConfiguration {
         return new MockRestTemplate();
     }
 
-    @Bean
+  /*  @Bean
     public WebServiceTemplate getWebServiceTemplate() {
         Jaxb2Marshaller marshaller = new Jaxb2Marshaller();
         marshaller.setContextPath("list-methods.wsdl");
@@ -82,15 +82,15 @@ public class ApplicationConfiguration {
         return marshaller;
     }
 
-
+*/
     @Bean
-    public XRoadClient xRoadClient(Jaxb2Marshaller marshaller) {
+    public XRoadClient xRoadClient() {
         XRoadClient client = new XRoadClient();
-        client.setWebServiceTemplate(getWebServiceTemplate());
+        /*client.setWebServiceTemplate(getWebServiceTemplate());
         client.setDefaultUri("http://localhost/listMethods");
         client.setMarshaller(marshaller);
         client.setUnmarshaller(marshaller);
-
+*/
         return client;
     }
 }

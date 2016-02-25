@@ -8,11 +8,15 @@ import akka.event.Logging;
 import akka.event.LoggingAdapter;
 import eu.x_road.xsd.xroad.ClientListType;
 import fi.vrk.xroad.catalog.collector.extension.SpringExtension;
+import fi.vrk.xroad.catalog.collector.util.XRoadClient;
+import fi.vrk.xroad.catalog.collector.wsimport.XRoadServiceIdentifierType;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+
+import java.util.List;
 
 /**
  * Main collector application.
@@ -36,6 +40,12 @@ public class XRoadCatalogCollector {
 
         log.info("Starting up");
 
+        List<XRoadServiceIdentifierType> result = XRoadClient.getMethods();
+
+        log.info("ListMethodsResponse {} ", result.toString());
+        log.info("Servicecodes {} ", result.stream().map(s -> s.getServiceCode().toString()));
+
+/*
         SpringExtension ext = context.getBean(SpringExtension.class);
 
         // Use the Spring Extension to create props for a named actor bean
@@ -56,7 +66,7 @@ public class XRoadCatalogCollector {
             Thread.sleep(100);
         }
 
-
+*/
         log.info("Shutting down");
 
         system.shutdown();

@@ -28,7 +28,10 @@ repositories {
     mavenLocal()
 }
 
-
+configurations {
+    wsimport
+    jaxb
+}
 
 task genJaxb {
     ext.sourcesDir = "${buildDir}/generated-sources/jaxb"
@@ -68,56 +71,44 @@ task genJaxb {
     }
 }
 
-// tag::xsd[]
-task genJaxbbb {
-    ext.sourcesDir = "${buildDir}/generated-sources/jaxb"
-    ext.classesDir = "${buildDir}/classes/jaxb"
-    ext.schemaDir = "src/main/resources/schema"
 
+task wsImport {
+    ext.outputDir = "${buildDir}/generated-sources/wsimport"
+    ext.classesDir = "${buildDir}/classes/wsimport"
+    ext.wsdl = "${projectDir}/src/main/resources/schema/list-methods.wsdl"
+
+    inputs.files wsdl
     outputs.dir classesDir
 
     doLast() {
         project.ant {
-            taskdef name: "xjc", classname: "com.sun.tools.xjc.XJCTask",
-                    classpath: configurations.jaxb.asPath
-            mkdir(dir: sourcesDir)
+            taskdef name: "wsimport", classname: "com.sun.tools.ws.ant.WsImport",
+                    classpath: configurations.wsimport.asPath
+            mkdir(dir: outputDir)
             mkdir(dir: classesDir)
 
-            xjc(destdir: sourcesDir, schema: schema) {
-                arg(value: "-wsdl")
-                produces(dir: sourcesDir, includes: "**/*.java")
+
+            wsimport(destdir: outputDir, wsdl: wsdl,
+                    package: "fi.vrk.xroad.catalog.collector.wsimport") {
+                produces(dir: outputDir, includes: "**/*.class")
             }
 
-//            xjc(destdir: sourcesDir) {
-//                arg(value: "-wsdl")
-//                schema(dir: ${schemaDir}, includes: "**/*.xsd")
-//            }
-
-                javac(destdir: classesDir, source: 1.8, target: 1.8, debug: true,
+            javac(destdir: classesDir, source: 1.8, target: 1.8, debug: true,
                     debugLevel: "lines,vars,source",
-                    classpath: configurations.jaxb.asPath) {
-                src(path: sourcesDir)
+                    classpath: configurations.wsimport.asPath,
+                    includeantruntime: "false") {
+                src(path: outputDir)
                 include(name: "**/*.java")
                 include(name: "*.java")
             }
 
             copy(todir: classesDir) {
-                fileset(dir: sourcesDir, erroronmissingdir: false) {
+                fileset(dir: outputDir, erroronmissingdir: false) {
                     exclude(name: "**/*.java")
                 }
             }
         }
     }
-}
-// end::xsd[]
-
-task afterEclipseImport {
-    dependsOn "genJaxb"
-}
-
-// tag::jaxb[]
-configurations {
-    jaxb
 }
 
 dependencies {
@@ -135,7 +126,11 @@ dependencies {
     compile 'org.projectlombok:lombok:1.16.6'
     testCompile("org.springframework.boot:spring-boot-starter-test")
     jaxb("com.sun.xml.bind:jaxb-xjc:2.2.4-1")
+    wsimport "com.sun.xml.ws:jaxws-tools:2.1.7"
     compile(files(genJaxb.classesDir).builtBy(genJaxb))
+    compile(files(wsImport.classesDir).builtBy(wsImport))
+
+
 }
 
 idea {

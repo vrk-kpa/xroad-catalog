@@ -5,21 +5,18 @@ import akka.actor.UntypedActor;
 import akka.event.Logging;
 import akka.event.LoggingAdapter;
 import akka.routing.SmallestMailboxPool;
-import eu.x_road.metadata.ListMethods;
-import eu.x_road.metadata.ListMethodsResponse;
-import eu.x_road.xsd.xroad.ClientListType;
 import eu.x_road.xsd.xroad.ClientType;
 import fi.vrk.xroad.catalog.collector.extension.SpringExtension;
 import fi.vrk.xroad.catalog.collector.util.XRoadClient;
+import fi.vrk.xroad.catalog.collector.wsimport.XRoadServiceIdentifierType;
 import fi.vrk.xroad.catalog.persistence.CatalogService;
 import fi.vrk.xroad.catalog.persistence.entity.Member;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
-import org.springframework.oxm.jaxb.Jaxb2Marshaller;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestOperations;
-import org.springframework.ws.client.core.WebServiceTemplate;
 
+import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @Component
@@ -95,7 +92,7 @@ public class ClientActor extends UntypedActor {
         member = catalogService.saveMember(member);
 
 
-        ListMethodsResponse result = xRoadClient.getMethods();
+        List<XRoadServiceIdentifierType> result = xRoadClient.getMethods();
         maybeFail();
         /*for (ClientType clientType : RESU.getMember()) {
             log.info("clientType {} {} {}", counter++, clientType.getName(), clientType.getId().getMemberCode());
@@ -103,7 +100,7 @@ public class ClientActor extends UntypedActor {
         }*/
 
         log.info("ListMethodsResponse {} ", result.toString());
-        log.info("Servicecodes {} ", result.getServiceCode().stream().map(s -> s.toString()));
+        log.info("Servicecodes {} ", result.stream().map(s -> s.getServiceCode()));
         router.tell(member, getSender());
 
         log.info("Member {} saved", member);

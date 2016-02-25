@@ -50,6 +50,11 @@
 
     <wsdl:message name="listMethods">
         <wsdl:part name="listMethods" element="meta:listMethods" />
+        <wsdl:part name="client" element="xrd:client" />
+        <wsdl:part name="service" element="xrd:service" />
+        <wsdl:part name="userId" element="xrd:userId" />
+        <wsdl:part name="id" element="xrd:id" />
+        <wsdl:part name="protocolVersion" element="xrd:protocolVersion" />
     </wsdl:message>
 
     <wsdl:message name="allowedMethodsResponse">
@@ -123,16 +128,16 @@
         <wsdl:operation name="listMethods">
             <soap:operation soapAction="" />
             <wsdl:input name="listMethods">
-                <soap:body use="literal" />
-                <soap:header message="meta:requestheader" part="client"
+                <soap:body parts="listMethods" use="literal" />
+                <soap:header message="meta:listMethods" part="client"
                              use="literal" />
-                <soap:header message="meta:requestheader" part="service"
+                <soap:header message="meta:listMethods" part="service"
                              use="literal" />
-                <soap:header message="meta:requestheader" part="userId"
+                <soap:header message="meta:listMethods" part="userId"
                              use="literal" />
-                <soap:header message="meta:requestheader" part="id"
+                <soap:header message="meta:listMethods" part="id"
                              use="literal" />
-                <soap:header message="meta:requestheader" part="protocolVersion"
+                <soap:header message="meta:listMethods" part="protocolVersion"
                              use="literal" />
             </wsdl:input>
             <wsdl:output name="listMethodsResponse">
@@ -154,7 +159,7 @@
     <wsdl:service name="producerPortService">
         <wsdl:port name="metaServicesPortSoap11"
                    binding="meta:metaServicesPortSoap11">
-            <soap:address location="https://SECURITYSERVER/" />
+            <soap:address location="http://localhost:2000/" />
         </wsdl:port>
     </wsdl:service>
 </wsdl:definitions>
