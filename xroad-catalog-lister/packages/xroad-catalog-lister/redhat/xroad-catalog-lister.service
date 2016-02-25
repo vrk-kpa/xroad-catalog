@@ -1,5 +1,5 @@
 [Unit]
-Description=X-Road Monitor
+Description=X-Road Catalog Lister
 After=network.target
 
 [Service]
@@ -8,7 +8,7 @@ ExecStartPre=/bin/mkdir -p -m0755 /var/run/xroad
 ExecStartPre=/bin/chown xroad:xroad /var/run/xroad
 User=xroad
 Group=xroad
-ExecStart=/usr/share/xroad/bin/xroad-monitor
+ExecStart=/usr/share/xroad/bin/xroad-catalog-lister
 Restart=on-failure
 
 [Install]

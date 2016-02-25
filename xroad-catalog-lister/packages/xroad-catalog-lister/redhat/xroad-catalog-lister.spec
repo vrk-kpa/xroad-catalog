@@ -4,61 +4,47 @@
 %define dist %(/usr/lib/rpm/redhat/dist.sh)
 
 Name:               xroad-catalog-lister
-Version:            %{xroad_version}
-Release:            %{rel}%{?snapshot}%{?dist}
-Summary:            X-Road Monitoring
+Version:            0.1.0
+Release:            1
+Summary:            X-Road Service Listing
 Group:              Applications/Internet
 License:            MIT
-Requires:           systemd, xroad-common >= %version
+Requires:           systemd
 Requires(post):     systemd
 Requires(preun):    systemd
 Requires(postun):   systemd
 
-%define src %{_topdir}/..
-%define jlib /usr/share/xroad/jlib
+%define src .
+%define jlib /usr/lib/xroad-catalog
 
 %description
-X-Road monitoring component
+X-Road service listing
 
 %prep
 
 %build
 
 %install
-mkdir -p %{buildroot}%{jlib}
-mkdir -p %{buildroot}%{_sysconfdir}
-mkdir -p %{buildroot}%{_sysconfdir}/xroad/conf.d
-mkdir -p %{buildroot}%{_unitdir}
-mkdir -p %{buildroot}/usr/share/xroad/bin
-
-cp -p %{src}/../../monitor/build/libs/monitor-1.0.jar %{buildroot}%{jlib}
-cp -a %{src}/monitor/etc/* %{buildroot}%{_sysconfdir}
-cp -p %{src}/monitor/systemd/%{name}.service %{buildroot}%{_unitdir}
-cp -p %{src}/monitor/systemd/%{name}  %{buildroot}/usr/share/xroad/bin
-cp -p %{src}/../default-configuration/monitor.ini %{buildroot}%{_sysconfdir}/xroad/conf.d/
-cp -p %{src}/../default-configuration/monitor-logback.xml %{buildroot}%{_sysconfdir}/xroad/conf.d/
-ln -s %{jlib}/monitor-1.0.jar %{buildroot}%{jlib}/monitor.jar
+cp -p ../../build/libs/xroad-catalog-lister.jar %{buildroot}%{jlib}
+cp -p %{src}/%{name}.service %{buildroot}%{_unitdir}
+cp -p %{src}/%{name} %{buildroot}/usr/share/xroad/bin
 
 %clean
 rm -rf %{buildroot}
 
 %files
-%defattr(-,xroad,xroad,-)
-%config %{_sysconfdir}/xroad/services/monitor.conf
-%config %{_sysconfdir}/xroad/conf.d/monitor.ini
-%config %{_sysconfdir}/xroad/conf.d/monitor-logback.xml
-%attr(644,root,root) %{_unitdir}/xroad-monitor.service
-%{jlib}/monitor-1.0.jar
-%{jlib}/monitor.jar
+%attr(644,root,root) %{_unitdir}/xroad-catalog-lister.service
+%{jlib}/xroad-catalog-lister.jar
 %attr(744,xroad,xroad) /usr/share/xroad/bin/%{name}
 
 %post
-%systemd_post xroad-monitor.service
+%systemd_post xroad-catalog-lister.service
 
 %preun
-%systemd_preun xroad-monitor.service
+%systemd_preun xroad-catalog-lister.service
 
 %postun
-%systemd_postun_with_restart xroad-monitor.service
+%systemd_postun_with_restart xroad-catalog-lister.service
 
 %changelog
+
