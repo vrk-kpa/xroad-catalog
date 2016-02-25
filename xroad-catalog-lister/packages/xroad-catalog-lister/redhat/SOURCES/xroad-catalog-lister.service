@@ -4,10 +4,8 @@ After=network.target
 
 [Service]
 PermissionsStartOnly=true
-ExecStartPre=/bin/mkdir -p -m0755 /var/run/xroad
-ExecStartPre=/bin/chown xroad:xroad /var/run/xroad
-User=xroad
-Group=xroad
+User=xroad-catalog
+Group=xroad-catalog
 ExecStart=/usr/share/xroad/bin/xroad-catalog-lister
 Restart=on-failure
 
