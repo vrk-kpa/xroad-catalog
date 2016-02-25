@@ -14,7 +14,7 @@ Requires(post):     systemd
 Requires(preun):    systemd
 Requires(postun):   systemd
 
-%define src .
+%define src %{_topdir}
 %define jlib /usr/lib/xroad-catalog
 
 %description
@@ -25,9 +25,12 @@ X-Road service listing
 %build
 
 %install
-cp -p ../../build/libs/xroad-catalog-lister.jar %{buildroot}%{jlib}
-cp -p %{src}/%{name}.service %{buildroot}%{_unitdir}
-cp -p %{src}/%{name} %{buildroot}/usr/share/xroad/bin
+mkdir -p %{buildroot}%{jlib}
+mkdir -p %{buildroot}%{_unitdir}
+mkdir -p %{buildroot}/usr/share/xroad/bin
+cp -p %{src}/../../../build/libs/xroad-catalog-lister.jar %{buildroot}%{jlib}
+cp -p %{src}/SOURCES/%{name}.service %{buildroot}%{_unitdir}
+cp -p %{src}/SOURCES/%{name} %{buildroot}/usr/share/xroad/bin
 
 %clean
 rm -rf %{buildroot}
