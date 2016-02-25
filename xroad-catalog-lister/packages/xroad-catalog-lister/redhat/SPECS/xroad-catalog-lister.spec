@@ -38,7 +38,7 @@ rm -rf %{buildroot}
 %files
 %attr(644,root,root) %{_unitdir}/xroad-catalog-lister.service
 %{jlib}/xroad-catalog-lister.jar
-%attr(744,xroad-catalog,xroad-catalog) /usr/share/xroad/bin/%{name}
+%attr(744,root,root) /usr/share/xroad/bin/%{name}
 
 %post
 %systemd_post xroad-catalog-lister.service
@@ -47,6 +47,7 @@ if ! id xroad-catalog > /dev/null 2>&1 ; then
 fi                
 chmod 755 /usr/lib/xroad-catalog/xroad-catalog-lister.jar
 chown -R xroad-catalog:xroad-catalog /usr/lib/xroad-catalog
+chown xroad-catalog:xroad-catalog /usr/share/xroad/bin/%{name}
 
 %preun
 %systemd_preun xroad-catalog-lister.service
