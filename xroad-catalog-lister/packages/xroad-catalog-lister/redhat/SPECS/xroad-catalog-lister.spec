@@ -38,10 +38,15 @@ rm -rf %{buildroot}
 %files
 %attr(644,root,root) %{_unitdir}/xroad-catalog-lister.service
 %{jlib}/xroad-catalog-lister.jar
-%attr(744,xroad,xroad) /usr/share/xroad/bin/%{name}
+%attr(744,root,root) /usr/share/xroad/bin/%{name}
 
 %post
 %systemd_post xroad-catalog-lister.service
+if ! id xroad-catalog > /dev/null 2>&1 ; then
+    adduser --system --no-create-home --group --disabled-password --shell /bin/false xroad-catalog
+fi                
+chmod 755 /usr/lib/xroad-catalog/xroad-catalog-lister.jar
+chown -R xroad-catalog:xroad-catalog /usr/lib/xroad-catalog
 
 %preun
 %systemd_preun xroad-catalog-lister.service
