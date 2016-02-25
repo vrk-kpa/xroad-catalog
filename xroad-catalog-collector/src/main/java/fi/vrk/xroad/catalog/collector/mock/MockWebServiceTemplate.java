@@ -1,12 +1,18 @@
 package fi.vrk.xroad.catalog.collector.mock;
 
 import com.sun.net.httpserver.HttpServer;
+import org.springframework.oxm.Marshaller;
+import org.springframework.oxm.jaxb.Jaxb2Marshaller;
 import org.springframework.ws.client.core.WebServiceTemplate;
 
 /**
  * Created by sjk on 22.2.2016.
  */
 public class MockWebServiceTemplate extends WebServiceTemplate implements MockHttpServer {
+
+    public MockWebServiceTemplate(Marshaller marshaller) {
+        super(marshaller);
+    }
 
     @Override
     public Object marshalSendAndReceive(String uri, Object requestPayload) {

@@ -5,13 +5,20 @@ import akka.actor.UntypedActor;
 import akka.event.Logging;
 import akka.event.LoggingAdapter;
 import akka.routing.SmallestMailboxPool;
+import eu.x_road.metadata.ListMethods;
+import eu.x_road.metadata.ListMethodsResponse;
+import eu.x_road.xsd.xroad.ClientListType;
 import eu.x_road.xsd.xroad.ClientType;
 import fi.vrk.xroad.catalog.collector.extension.SpringExtension;
+import fi.vrk.xroad.catalog.collector.util.XRoadClient;
 import fi.vrk.xroad.catalog.persistence.CatalogService;
 import fi.vrk.xroad.catalog.persistence.entity.Member;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
+import org.springframework.oxm.jaxb.Jaxb2Marshaller;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.RestOperations;
+import org.springframework.ws.client.core.WebServiceTemplate;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -25,8 +32,16 @@ public class ClientActor extends UntypedActor {
 
     private static final int NO_OF_ACTORS = 1;
 
+
+
     @Autowired
     private SpringExtension springExtension;
+
+    @Autowired
+    private XRoadClient xRoadClient;
+
+    @Autowired
+    private RestOperations restOperations;
 
 
     private ActorRef router;
@@ -69,6 +84,7 @@ public class ClientActor extends UntypedActor {
         log.info("onReceive {} {} {}", COUNTER.addAndGet(1), clientType.getId(), this.hashCode());
 
 
+
         maybeFail();
 
         Member member = new Member();
@@ -78,6 +94,16 @@ public class ClientActor extends UntypedActor {
 
         member = catalogService.saveMember(member);
 
+
+        ListMethodsResponse result = xRoadClient.getMethods();
+        maybeFail();
+        /*for (ClientType clientType : RESU.getMember()) {
+            log.info("clientType {} {} {}", counter++, clientType.getName(), clientType.getId().getMemberCode());
+            router.tell(clientType, getSender());
+        }*/
+
+        log.info("ListMethodsResponse {} ", result.toString());
+        log.info("Servicecodes {} ", result.getServiceCode().stream().map(s -> s.toString()));
         router.tell(member, getSender());
 
         log.info("Member {} saved", member);

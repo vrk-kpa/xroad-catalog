@@ -25,7 +25,7 @@ public class MethodActor extends UntypedActor {
     // to test fault handling
     private static boolean FORCE_FAILURES = false;
 
-    private Jaxb2Marshaller marshaller = new Jaxb2Marshaller();
+
 
     @Value("${local.server.port}")
     private int port = 0;
@@ -60,18 +60,6 @@ public class MethodActor extends UntypedActor {
 
         log.info("onReceive {} {} {}", COUNTER.addAndGet(1), message.toString(), this.hashCode());
 
-
-
-
-        ListMethods request = new ListMethods();
-
-        ListMethodsResponse result = (ListMethodsResponse)new WebServiceTemplate(marshaller).marshalSendAndReceive("http://gdev-ss1.i.palveluvayla.com"
-                + "/listMethods", request);
-        maybeFail();
-
-
-        log.info("ListMethodsResponse {} ", result.toString());
-        log.info("Servicecodes {} ", result.getServiceCode().stream().map(s -> s.toString()));
 
 
     }

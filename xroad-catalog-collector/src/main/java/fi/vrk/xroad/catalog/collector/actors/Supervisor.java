@@ -73,6 +73,7 @@ public class Supervisor extends UntypedActor {
             for (ClientType clientType : clientList.getMember()) {
                 log.info("clientType {} {} {}", counter++, clientType.getName(), clientType.getId().getMemberCode());
                 router.tell(clientType, getSender());
+                break;//TODO TEST REMOVE
             }
             log.info("all clients (" + (counter-1) + ") sent to actor");
 
