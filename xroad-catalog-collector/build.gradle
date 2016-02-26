@@ -36,7 +36,7 @@ configurations {
 task genJaxb {
     ext.sourcesDir = "${buildDir}/generated-sources/jaxb"
     ext.classesDir = "${buildDir}/classes/jaxb"
-    ext.schemaDir = "${projectDir}/src/main/resources/schema"
+    ext.schemaDir = "${projectDir}/src/main/resources/schema/"
 
     outputs.dir classesDir
 
@@ -48,7 +48,7 @@ task genJaxb {
             mkdir(dir: classesDir)
 
             xjc(destdir: sourcesDir) {
-                schema(dir: schemaDir, includes: "**/*")
+                schema(dir: schemaDir, includes: "**/*xsd")
                 arg(value: "-wsdl")
                 produces(dir: sourcesDir, includes: "**/*.java")
             }

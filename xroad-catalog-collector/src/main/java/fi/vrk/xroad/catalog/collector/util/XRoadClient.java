@@ -31,7 +31,7 @@ public class XRoadClient {
         ListMethodsResponse response = service.getMetaServicesPortSoap11().listMethods(new ListMethods(),
                 clientIdentifierType, serviceIdentifierType, "EE1234567890", "ID11234", "4.x");
 
-        List<XRoadServiceIdentifierType> methods = response.getServiceCode();
+        List<XRoadServiceIdentifierType> methods = response.getService();
         log.info("Methods {} ", methods.toString());
 
 
