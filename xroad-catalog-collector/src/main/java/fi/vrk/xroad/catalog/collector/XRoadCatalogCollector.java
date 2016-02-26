@@ -40,12 +40,7 @@ public class XRoadCatalogCollector {
 
         log.info("Starting up");
 
-        List<XRoadServiceIdentifierType> result = XRoadClient.getMethods();
 
-        log.info("ListMethodsResponse {} ", result.toString());
-        log.info("Servicecodes {} ", result.stream().map(s -> s.getServiceCode().toString()));
-
-/*
         SpringExtension ext = context.getBean(SpringExtension.class);
 
         // Use the Spring Extension to create props for a named actor bean
@@ -66,7 +61,7 @@ public class XRoadCatalogCollector {
             Thread.sleep(100);
         }
 
-*/
+
         log.info("Shutting down");
 
         system.shutdown();

@@ -3,6 +3,7 @@ package fi.vrk.xroad.catalog.collector.actors;
 import akka.actor.UntypedActor;
 import akka.event.Logging;
 import akka.event.LoggingAdapter;
+import fi.vrk.xroad.catalog.collector.wsimport.XRoadServiceIdentifierType;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -53,7 +54,11 @@ public class MethodActor extends UntypedActor {
     @Override
     public void onReceive(Object message) throws Exception {
 
-        log.info("onReceive {} {} {}", COUNTER.addAndGet(1), message.toString(), this.hashCode());
+        XRoadServiceIdentifierType serviceIdentifierType = (XRoadServiceIdentifierType) message;
+
+        log.info("{} onReceive Service {} {}", COUNTER.addAndGet(1), serviceIdentifierType.getServiceCode(), this
+                .hashCode
+                ());
 
 
 

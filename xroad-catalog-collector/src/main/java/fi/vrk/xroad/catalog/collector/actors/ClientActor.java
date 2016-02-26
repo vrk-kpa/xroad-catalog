@@ -76,34 +76,34 @@ public class ClientActor extends UntypedActor {
 
     @Override
     public void onReceive(Object message) throws Exception {
+        log.info("{} onReceive {}", COUNTER.addAndGet(1), this.hashCode());
 
         ClientType clientType = (ClientType)message;
-        log.info("onReceive {} {} {}", COUNTER.addAndGet(1), clientType.getId(), this.hashCode());
+
+        log.info("{} ClientType. XRoadInstance: {} memberCode: {} subsystemCode {}", COUNTER, clientType.getId()
+                .getXRoadInstance()
+                , clientType.getId().getMemberClass(),
+                clientType.getId().getMemberCode());
 
 
 
         maybeFail();
 
-        Member member = new Member();
-        member.setName(clientType.getName());
-        member.setMemberCode(clientType.getId().getMemberCode());
-        member.setMemberClass(clientType.getId().getMemberClass());
+        Member member = new Member(clientType.getId().getXRoadInstance(), clientType.getId().getMemberClass(),
+                clientType.getId().getMemberCode(), clientType.getName());
 
         member = catalogService.saveMember(member);
+        log.info("{} Member {} saved", COUNTER, member);
 
+        List<XRoadServiceIdentifierType> result = XRoadClient.getMethods(clientType);
 
-        List<XRoadServiceIdentifierType> result = xRoadClient.getMethods();
+        log.info("{} ListMethodsResponse {} ", COUNTER, result.toString());
+
         maybeFail();
-        /*for (ClientType clientType : RESU.getMember()) {
-            log.info("clientType {} {} {}", counter++, clientType.getName(), clientType.getId().getMemberCode());
-            router.tell(clientType, getSender());
-        }*/
-
-        log.info("ListMethodsResponse {} ", result.toString());
-        log.info("Servicecodes {} ", result.stream().map(s -> s.getServiceCode()));
-        router.tell(member, getSender());
-
-        log.info("Member {} saved", member);
+        for (XRoadServiceIdentifierType service : result){
+            log.info("{} Sending service {} to new MethodActor ", COUNTER, service.getServiceCode());
+            router.tell(service, getSender());
+        }
 
     }
 }

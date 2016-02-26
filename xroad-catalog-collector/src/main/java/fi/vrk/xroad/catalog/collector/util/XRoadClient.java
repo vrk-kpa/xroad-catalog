@@ -1,6 +1,12 @@
 package fi.vrk.xroad.catalog.collector.util;
 
+import eu.x_road.xsd.identifiers.*;
+import eu.x_road.xsd.xroad.ClientType;
 import fi.vrk.xroad.catalog.collector.wsimport.*;
+import fi.vrk.xroad.catalog.collector.wsimport.XRoadClientIdentifierType;
+import fi.vrk.xroad.catalog.collector.wsimport.XRoadIdentifierType;
+import fi.vrk.xroad.catalog.collector.wsimport.XRoadObjectType;
+import fi.vrk.xroad.catalog.collector.wsimport.XRoadServiceIdentifierType;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
@@ -11,11 +17,11 @@ import java.util.List;
 @Slf4j
 public class XRoadClient {
 
-    public static List<XRoadServiceIdentifierType> getMethods() {
+    public static List<XRoadServiceIdentifierType> getMethods(ClientType client) {
 
-        XRoadClientIdentifierType clientIdentifierType = new XRoadClientIdentifierType();
-        setHeaders(clientIdentifierType);
-        clientIdentifierType.setObjectType(XRoadObjectType.MEMBER);
+
+        fi.vrk.xroad.catalog.collector.wsimport.XRoadClientIdentifierType clientIdentifierType =
+                (fi.vrk.xroad.catalog.collector.wsimport.XRoadClientIdentifierType) convertIdentifierType(client.getId());
 
         XRoadServiceIdentifierType serviceIdentifierType = new XRoadServiceIdentifierType();
         setHeaders(serviceIdentifierType);
@@ -32,10 +38,33 @@ public class XRoadClient {
                 clientIdentifierType, serviceIdentifierType, "EE1234567890", "ID11234", "4.x");
 
         List<XRoadServiceIdentifierType> methods = response.getService();
-        log.info("Methods {} ", methods.toString());
-
 
         return methods;
+    }
+
+    //TODO two different wsdl generations and two different types. This should be fixed
+    protected static XRoadIdentifierType convertIdentifierType
+    (eu.x_road.xsd.identifiers.XRoadIdentifierType source) {
+        XRoadIdentifierType result = null;
+        if (source instanceof eu.x_road.xsd.identifiers.XRoadClientIdentifierType) {
+            result = new XRoadClientIdentifierType();
+        } else if (source instanceof eu.x_road.xsd.identifiers.XRoadServiceIdentifierType) {
+            result = new XRoadServiceIdentifierType();
+        } else {
+            result = new XRoadIdentifierType();
+        }
+        result.setGroupCode(source.getGroupCode());
+        result.setObjectType(XRoadObjectType.fromValue(source.getObjectType().value()));
+        result.setMemberCode(source.getMemberCode());
+        result.setServiceVersion(source.getServiceVersion());
+        result.setMemberClass(source.getMemberClass());
+        result.setServiceCode(source.getServiceCode());
+        result.setSecurityCategoryCode(source.getSecurityCategoryCode());
+        result.setServerCode(source.getServerCode());
+        result.setXRoadInstance(source.getXRoadInstance());
+        result.setSubsystemCode(source.getSubsystemCode());
+
+        return result;
     }
 
     protected static void setHeaders(XRoadIdentifierType type) {
