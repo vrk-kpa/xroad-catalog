@@ -7,6 +7,7 @@ import akka.event.LoggingAdapter;
 import akka.routing.SmallestMailboxPool;
 import eu.x_road.xsd.xroad.ClientType;
 import fi.vrk.xroad.catalog.collector.extension.SpringExtension;
+import fi.vrk.xroad.catalog.collector.util.ClientTypeUtil;
 import fi.vrk.xroad.catalog.collector.util.XRoadClient;
 import fi.vrk.xroad.catalog.collector.wsimport.XRoadServiceIdentifierType;
 import fi.vrk.xroad.catalog.persistence.CatalogService;
@@ -33,9 +34,6 @@ public class ClientActor extends UntypedActor {
 
     @Autowired
     private SpringExtension springExtension;
-
-    @Autowired
-    private XRoadClient xRoadClient;
 
     @Autowired
     private RestOperations restOperations;
@@ -80,11 +78,7 @@ public class ClientActor extends UntypedActor {
 
         ClientType clientType = (ClientType)message;
 
-        log.info("{} ClientType. XRoadInstance: {} memberCode: {} subsystemCode {}", COUNTER, clientType.getId()
-                .getXRoadInstance()
-                , clientType.getId().getMemberClass(),
-                clientType.getId().getMemberCode());
-
+        log.info("{} ClientType {} ", COUNTER, ClientTypeUtil.toString(clientType));
 
 
         maybeFail();

@@ -9,6 +9,7 @@ import akka.routing.SmallestMailboxPool;
 import eu.x_road.xsd.xroad.ClientListType;
 import eu.x_road.xsd.xroad.ClientType;
 import fi.vrk.xroad.catalog.collector.extension.SpringExtension;
+import fi.vrk.xroad.catalog.collector.util.ClientTypeUtil;
 import fi.vrk.xroad.catalog.persistence.CatalogService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
@@ -68,10 +69,9 @@ public class Supervisor extends UntypedActor {
             ClientListType clientList = restOperations.getForObject("http://localhost/listClients", ClientListType
                     .class);
 
-            log.info("clientlist {}", clientList.toString());
             int counter = 1;
             for (ClientType clientType : clientList.getMember()) {
-                log.info("clientType {} {} {}", counter++, clientType.getName(), clientType.getId().getMemberCode());
+                log.info("{} - ClientType {}  ", counter++, ClientTypeUtil.toString(clientType));
                 router.tell(clientType, getSender());
             }
             log.info("all clients (" + (counter-1) + ") sent to actor");
