@@ -1,20 +1,24 @@
 package fi.vrk.xroad.catalog.collector.actors;
 
-import akka.actor.ActorRef;
-import akka.actor.Terminated;
-import akka.actor.UntypedActor;
+import akka.actor.*;
 import akka.event.Logging;
 import akka.event.LoggingAdapter;
 import akka.routing.SmallestMailboxPool;
+import akka.util.Timeout;
 import eu.x_road.xsd.xroad.ClientListType;
 import eu.x_road.xsd.xroad.ClientType;
 import fi.vrk.xroad.catalog.collector.extension.SpringExtension;
 import fi.vrk.xroad.catalog.collector.util.ClientTypeUtil;
 import fi.vrk.xroad.catalog.persistence.CatalogService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestOperations;
+import scala.concurrent.Await;
+import scala.concurrent.duration.Duration;
+
+import java.util.concurrent.TimeUnit;
 
 /**
  * Supervisor to get list of all clients in system and initiate a ClientActor for each
@@ -23,40 +27,41 @@ import org.springframework.web.client.RestOperations;
  */
 @Component
 @Scope("prototype")
+@Slf4j
 public class Supervisor extends UntypedActor {
 
-    private static final int NO_OF_ACTORS = 1;
+    public static final String START_COLLECTING = "StartCollecting";
 
-    private final LoggingAdapter log = Logging
-        .getLogger(getContext().system(), "Supervisor");
+    public static final String LIST_CLIENTS_ACTOR_ROUTER = "list-clients-actor-router";
+    public static final String LIST_METHODS_ACTOR_ROUTER = "list-methods-actor-router";
+    public static final String FETCH_WSDL_ACTOR_ROUTER = "fetch-wsdl-actor-router";
 
     @Autowired
     private SpringExtension springExtension;
 
-    private ActorRef router;
-
     @Autowired
     protected CatalogService catalogService;
 
-
-    @Autowired
-    private RestOperations restOperations;
-
+    private ActorRef listClientsPoolRouter;
+    private ActorRef listMethodsPoolRouter;
+    private ActorRef fetchWsdlPoolRouter;
 
     @Override
     public void preStart() throws Exception {
 
         log.info("Starting up");
 
-        router = getContext().actorOf(new SmallestMailboxPool(NO_OF_ACTORS)
-                .props(springExtension.props("clientActor")), "client-actor-router");
+        listClientsPoolRouter = getContext().actorOf(new SmallestMailboxPool(1)
+                .props(springExtension.props("listClientsActor")),
+                LIST_CLIENTS_ACTOR_ROUTER);
 
-        // TODO: according to documentation, we should be defining supervisor strategy
-        // so that the router (and all routees) are not restarted when actor fails.
-        // however this does not work that way now, and something (correctly)
-        // restarts only the failing actor
-        // http://doc.akka.io/docs/akka/2.4.1/java/routing.html
-        // This means that if you have not specified supervisorStrategy of the router or its parent a failure in a routee will escalate to the parent of the router, which will by default restart the router, which will restart all routees (it uses Escalate and does not stop routees during restart). The reason is to make the default behave such that adding withRouter to a child’s definition does not change the supervision strategy applied to the child. This might be an inefficiency that you can avoid by specifying the strategy when defining the router.
+        listMethodsPoolRouter = getContext().actorOf(new SmallestMailboxPool(5)
+                        .props(springExtension.props("listMethodsActor")),
+                LIST_METHODS_ACTOR_ROUTER);
+
+        fetchWsdlPoolRouter = getContext().actorOf(new SmallestMailboxPool(10)
+                        .props(springExtension.props("fetchWsdlActor")),
+                FETCH_WSDL_ACTOR_ROUTER);
 
         super.preStart();
     }
@@ -64,20 +69,8 @@ public class Supervisor extends UntypedActor {
     @Override
     public void onReceive(Object message) throws Exception {
 
-        if (message instanceof ClientListType) {
-
-            ClientListType clientList = restOperations.getForObject("http://localhost/listClients", ClientListType
-                    .class);
-
-            int counter = 1;
-            for (ClientType clientType : clientList.getMember()) {
-                log.info("{} - ClientType {}  ", counter++, ClientTypeUtil.toString(clientType));
-                router.tell(clientType, getSender());
-            }
-            log.info("all clients (" + (counter-1) + ") sent to actor");
-
-            //stream().forEach(c -> log.info("clientType {}", c));
-
+        if (START_COLLECTING.equals(message)) {
+            listClientsPoolRouter.tell(ListClientsActor.START_COLLECTING, getSelf());
         } else if (message instanceof Terminated) {
             throw new RuntimeException("Terminated: " + message);
         } else {
@@ -87,10 +80,8 @@ public class Supervisor extends UntypedActor {
 
     @Override
     public void postStop() throws Exception {
-
-        log.info("PostStop");
-        log.info("Found members from database: {}", catalogService.getMembers());
-        log.info("Shutting down");
+        log.info("postStop");
         super.postStop();
     }
+
 }

@@ -4,9 +4,11 @@ package fi.vrk.xroad.catalog.collector;
 import akka.actor.ActorRef;
 import akka.actor.ActorSystem;
 import akka.actor.PoisonPill;
+import akka.actor.TypedActor;
 import akka.event.Logging;
 import akka.event.LoggingAdapter;
 import eu.x_road.xsd.xroad.ClientListType;
+import fi.vrk.xroad.catalog.collector.actors.Supervisor;
 import fi.vrk.xroad.catalog.collector.extension.SpringExtension;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.SpringApplication;
@@ -48,7 +50,7 @@ public class XRoadCatalogCollector  {
 
         final boolean START_COLLECTING = true;
         if (START_COLLECTING) {
-            supervisor.tell(new ClientListType(), null);
+            supervisor.tell(Supervisor.START_COLLECTING, null);
         }
 
         // (kludge, for now) to let all actors process their mailboxes

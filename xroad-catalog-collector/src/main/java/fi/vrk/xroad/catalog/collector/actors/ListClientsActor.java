@@ -1,10 +1,11 @@
 package fi.vrk.xroad.catalog.collector.actors;
 
-import akka.actor.ActorRef;
-import akka.actor.UntypedActor;
+import akka.actor.*;
 import akka.event.Logging;
 import akka.event.LoggingAdapter;
 import akka.routing.SmallestMailboxPool;
+import akka.util.Timeout;
+import eu.x_road.xsd.xroad.ClientListType;
 import eu.x_road.xsd.xroad.ClientType;
 import fi.vrk.xroad.catalog.collector.extension.SpringExtension;
 import fi.vrk.xroad.catalog.collector.util.ClientTypeUtil;
@@ -12,43 +13,53 @@ import fi.vrk.xroad.catalog.collector.util.XRoadClient;
 import fi.vrk.xroad.catalog.collector.wsimport.XRoadServiceIdentifierType;
 import fi.vrk.xroad.catalog.persistence.CatalogService;
 import fi.vrk.xroad.catalog.persistence.entity.Member;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.RestOperations;
+import scala.concurrent.Await;
+import scala.concurrent.CanAwait;
+import scala.concurrent.duration.Duration;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
+/**
+ * Actor which fetches all clients, and delegates listing
+ * their methods to ListMethodsActors
+ */
 @Component
 @Scope("prototype")
-public class ClientActor extends UntypedActor {
+@Slf4j
+public class ListClientsActor extends UntypedActor {
+
+    public static final String START_COLLECTING = "StartCollecting";
 
     private static AtomicInteger COUNTER = new AtomicInteger(0);
     // to test fault handling
     private static boolean FORCE_FAILURES = false;
 
-    private static final int NO_OF_ACTORS = 1;
+    private static final int NO_OF_ACTORS = 5;
 
-
+    @Autowired
+    private RestOperations restOperations;
 
     @Autowired
     private SpringExtension springExtension;
 
-    private ActorRef router;
-
-    private final LoggingAdapter log = Logging
-        .getLogger(getContext().system(), "ClientActor");
-
     @Autowired
     protected CatalogService catalogService;
+
+    // supervisor-created pool of list methods actors
+    private ActorRef listMethodsPoolRef;
 
     @Override
     public void preStart() throws Exception {
         log.info("preStart {}", this.hashCode());
-
-        router = getContext().actorOf(new SmallestMailboxPool(NO_OF_ACTORS)
-                .props(springExtension.props("methodActor")), "method-actor-router");
-
+        listMethodsPoolRef = new RelativeActorRefUtil(getContext())
+                .resolvePoolRef(Supervisor.LIST_METHODS_ACTOR_ROUTER);
         super.preStart();
     }
 
@@ -69,32 +80,22 @@ public class ClientActor extends UntypedActor {
 
     @Override
     public void onReceive(Object message) throws Exception {
-        log.info("{} onReceive {}", COUNTER.addAndGet(1), this.hashCode());
 
-        ClientType clientType = (ClientType)message;
+        if (START_COLLECTING.equals(message)) {
 
-        log.info("{} ClientType {} ", COUNTER, ClientTypeUtil.toString(clientType));
+            ClientListType clientList = restOperations.getForObject("http://localhost/listClients", ClientListType
+                    .class);
 
-
-        maybeFail();
-
-        Member member = new Member(clientType.getId().getXRoadInstance(), clientType.getId().getMemberClass(),
-                clientType.getId().getMemberCode(), clientType.getName());
-
-        member = catalogService.saveMember(member);
-        log.info("{} Member {} saved", COUNTER, member);
-        log.info("Fetching methods for the client with listMethods -service...");
-
-        List<XRoadServiceIdentifierType> result = XRoadClient.getMethods(clientType);
-
-        log.info("Received all methods for client {} ", clientType);
-        log.info("{} ListMethodsResponse {} ", COUNTER, result.toString());
-
-        maybeFail();
-        for (XRoadServiceIdentifierType service : result){
-            log.info("{} Sending service {} to new MethodActor ", COUNTER, service.getServiceCode());
-            router.tell(service, getSender());
+            int counter = 1;
+            for (ClientType clientType : clientList.getMember()) {
+                log.info("{} - ClientType {}  ", counter++, ClientTypeUtil.toString(clientType));
+                listMethodsPoolRef.tell(clientType, getSelf());
+            }
+            log.info("all clients (" + (counter-1) + ") sent to actor");
+        } else if (message instanceof Terminated) {
+            throw new RuntimeException("Terminated: " + message);
+        } else {
+            log.error("Unable to handle message {}", message);
         }
-
     }
 }
