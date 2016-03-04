@@ -15,7 +15,6 @@ import fi.vrk.xroad.catalog.persistence.entity.Member;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.RestOperations;
 
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -34,10 +33,6 @@ public class ClientActor extends UntypedActor {
 
     @Autowired
     private SpringExtension springExtension;
-
-    @Autowired
-    private RestOperations restOperations;
-
 
     private ActorRef router;
 
@@ -88,9 +83,11 @@ public class ClientActor extends UntypedActor {
 
         member = catalogService.saveMember(member);
         log.info("{} Member {} saved", COUNTER, member);
+        log.info("Fetching methods for the client with listMethods -service...");
 
         List<XRoadServiceIdentifierType> result = XRoadClient.getMethods(clientType);
 
+        log.info("Received all methods for client {} ", clientType);
         log.info("{} ListMethodsResponse {} ", COUNTER, result.toString());
 
         maybeFail();

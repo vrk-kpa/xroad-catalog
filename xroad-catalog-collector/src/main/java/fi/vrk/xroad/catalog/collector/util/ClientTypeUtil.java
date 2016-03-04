@@ -1,5 +1,6 @@
 package fi.vrk.xroad.catalog.collector.util;
 
+import eu.x_road.xsd.identifiers.XRoadIdentifierType;
 import eu.x_road.xsd.xroad.ClientType;
 
 /**
@@ -21,6 +22,21 @@ public class ClientTypeUtil {
         sb.append(c.getId().getMemberCode());
         sb.append(" SubsystemCode: ");
         sb.append(c.getId().getSubsystemCode());
+        return sb.toString();
+    }
+
+    public static String toString(fi.vrk.xroad.catalog.collector.wsimport.XRoadIdentifierType c) {
+        StringBuilder sb = new StringBuilder("");
+        sb.append("ObjectType: ");
+        sb.append(c.getObjectType());
+        sb.append(" XRoadInstance: ");
+        sb.append(c.getXRoadInstance());
+        sb.append(" MemberClass: ");
+        sb.append(c.getMemberClass());
+        sb.append(" MemberCode: ");
+        sb.append(c.getMemberCode());
+        sb.append(" SubsystemCode: ");
+        sb.append(c.getSubsystemCode());
         return sb.toString();
     }
 }

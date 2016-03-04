@@ -15,7 +15,6 @@ import org.springframework.web.client.RestTemplate;
 @Slf4j
 public class ProductionConfiguration extends ApplicationConfiguration {
 
-
     @Override
     @Bean
     public RestOperations getRestOperations() {

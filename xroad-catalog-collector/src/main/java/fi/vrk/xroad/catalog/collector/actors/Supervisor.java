@@ -76,7 +76,6 @@ public class Supervisor extends UntypedActor {
             }
             log.info("all clients (" + (counter-1) + ") sent to actor");
 
-
             //stream().forEach(c -> log.info("clientType {}", c));
 
         } else if (message instanceof Terminated) {

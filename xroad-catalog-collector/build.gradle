@@ -124,6 +124,9 @@ dependencies {
     compile group: 'ch.qos.logback', name: 'logback-classic', version:'1.1.2'
     compile 'fi.vrk.xroad:xroad-catalog-persistence:1.0-SNAPSHOT'
     compile 'org.projectlombok:lombok:1.16.6'
+    compile 'org.apache.cxf:cxf-rt-frontend-jaxws:3.1.4'
+    compile 'org.apache.cxf:cxf-rt-transports-http:3.1.4'
+    compile 'org.apache.cxf:cxf-core:3.1.4'
     testCompile("org.springframework.boot:spring-boot-starter-test")
     jaxb("com.sun.xml.bind:jaxb-xjc:2.2.4-1")
     wsimport "com.sun.xml.ws:jaxws-tools:2.1.7"

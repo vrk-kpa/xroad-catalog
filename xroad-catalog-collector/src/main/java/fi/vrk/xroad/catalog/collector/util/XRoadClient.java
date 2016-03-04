@@ -9,6 +9,7 @@ import fi.vrk.xroad.catalog.collector.wsimport.XRoadObjectType;
 import fi.vrk.xroad.catalog.collector.wsimport.XRoadServiceIdentifierType;
 import lombok.extern.slf4j.Slf4j;
 
+import javax.xml.ws.Holder;
 import java.util.List;
 
 /**
@@ -17,29 +18,33 @@ import java.util.List;
 @Slf4j
 public class XRoadClient {
 
+    /**
+     * Calls the service using JAX-WS endpoints that have been generated from wsdl
+     * @param client
+     * @return
+     */
     public static List<XRoadServiceIdentifierType> getMethods(ClientType client) {
 
-
-        XRoadClientIdentifierType clientIdentifierType = new XRoadClientIdentifierType();
-        copyIdentifierType(clientIdentifierType, client.getId());
+        // use dummy values for now
+        XRoadClientIdentifierType clientIdentifierType = getDummyClientId();
 
         XRoadServiceIdentifierType serviceIdentifierType = new XRoadServiceIdentifierType();
         copyIdentifierType(serviceIdentifierType, client.getId());
 
-
-        //setHeaders(serviceIdentifierType);
-        //serviceIdentifierType.setSubsystemCode("SS1");
         serviceIdentifierType.setServiceCode("listMethods");
         serviceIdentifierType.setServiceVersion("v1");
-
 
         serviceIdentifierType.setObjectType(XRoadObjectType.SERVICE);
 
         ProducerPortService service = new ProducerPortService();
 
-
-        ListMethodsResponse response = service.getMetaServicesPortSoap11().listMethods(new ListMethods(),
-                clientIdentifierType, serviceIdentifierType, "EE1234567890", "ID11234", "4.x");
+        ListMethodsResponse response = service.getMetaServicesPortSoap11().listMethods(
+                new ListMethods(),
+                new Holder<>(clientIdentifierType),
+                new Holder<>(serviceIdentifierType),
+                new Holder<>("EE1234567890"),
+                new Holder<>("ID11234"),
+                new Holder<>("4.x"));
 
         List<XRoadServiceIdentifierType> methods = response.getService();
 
@@ -62,10 +67,18 @@ public class XRoadClient {
         target.setSubsystemCode(source.getSubsystemCode());
     }
 
-    protected static void setHeaders(XRoadIdentifierType type) {
-        type.setXRoadInstance("FI");
-        type.setMemberClass("GOV");
-        type.setMemberCode("1710128-9");
-
+    /**
+     * Static values for testing my local vagrant ss1
+     * @return
+     */
+    protected static XRoadClientIdentifierType getDummyClientId() {
+        XRoadClientIdentifierType target = new XRoadClientIdentifierType();
+        target.setGroupCode("PUB");
+        target.setObjectType(XRoadObjectType.MEMBER);
+        target.setMemberCode("88855888");
+        target.setMemberClass("PUB");
+        target.setXRoadInstance("dev-cs");
+        return target;
     }
+
 }

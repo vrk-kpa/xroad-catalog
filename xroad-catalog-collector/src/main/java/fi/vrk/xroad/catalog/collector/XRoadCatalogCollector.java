@@ -8,24 +8,22 @@ import akka.event.Logging;
 import akka.event.LoggingAdapter;
 import eu.x_road.xsd.xroad.ClientListType;
 import fi.vrk.xroad.catalog.collector.extension.SpringExtension;
-import fi.vrk.xroad.catalog.collector.util.XRoadClient;
-import fi.vrk.xroad.catalog.collector.wsimport.XRoadServiceIdentifierType;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 
-import java.util.List;
-
 /**
  * Main collector application.
  * Initiates a supervisor
  */
+@Slf4j
 @Configuration
 @EnableAutoConfiguration
 @ComponentScan("fi.vrk.xroad.catalog.collector.configuration")
-public class XRoadCatalogCollector {
+public class XRoadCatalogCollector  {
 
 
 
@@ -48,7 +46,10 @@ public class XRoadCatalogCollector {
                 ext.props("supervisor").withMailbox("akka.priority-mailbox"));
 
 
-        supervisor.tell(new ClientListType(), null);
+        final boolean START_COLLECTING = true;
+        if (START_COLLECTING) {
+            supervisor.tell(new ClientListType(), null);
+        }
 
         // (kludge, for now) to let all actors process their mailboxes
         Thread.sleep(5000);
@@ -67,4 +68,5 @@ public class XRoadCatalogCollector {
         system.shutdown();
         system.awaitTermination();
     }
+
 }
