@@ -25,11 +25,4 @@ public interface MemberRepository extends CrudRepository<Member, Long> {
                             @Param("memberClass") String memberClass,
                             @Param("memberCode") String memberCode);
 
-    // TODO: make all markAllRemoved() methods shared same code?
-    // http://docs.spring.io/spring-data/jpa/docs/current/reference/html/#repositories.single-repository-behaviour
-    // "Example 23. Custom repository base class"
-
-    @Modifying
-    @Query("UPDATE Member m SET m.statusInfo.removed = :when")
-    void markAllRemoved(@Param("when") Date when);
 }

@@ -50,9 +50,6 @@ public interface CatalogService {
      */
     Wsdl getWsdl(String externalId);
 
-    // TODO: search for member based on unique fields (instance, class, code)
-    // TODO: indexes for those
-
     /**
      * Stores given members and subsystems. This should be the full dataset of both items
      * - items not included in the parameters are marked as removed, if the existed previously.
