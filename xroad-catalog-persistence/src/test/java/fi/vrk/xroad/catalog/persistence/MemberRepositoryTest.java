@@ -15,8 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(Application.class)
@@ -29,6 +28,25 @@ public class MemberRepositoryTest {
 
     @Autowired
     TestUtil testUtil;
+
+    @Test
+    public void testFindByNaturalKey() {
+        Member member = memberRepository.findByNaturalKey("dev-cs", "PUB", "14151328");
+        assertNotNull(member);
+        member = memberRepository.findByNaturalKey("dev-cs-NOT-EXISTING", "PUB", "14151328");
+        assertNull(member);
+    }
+
+    @Test
+    public void testRemoveAll() {
+        Date now = new Date();
+        memberRepository.deleteAll();
+        Iterable<Member> members = memberRepository.findAll();
+        for (Member member: members) {
+            assertEquals(now, member.getRemoved());
+        }
+    }
+
 
     @Test
     public void testFindAll() {

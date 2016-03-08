@@ -31,6 +31,27 @@ public class Subsystem {
 
     public Subsystem() {}
 
+    public SubsystemId createKey() {
+        return new SubsystemId(
+                getMember().getXRoadInstance(),
+                getMember().getMemberClass(),
+                getMember().getMemberCode(),
+                subsystemCode);
+    }
+
+    /**
+     * Sets timestamps to correct values for new instance
+     */
+    public void setTimestampsForNew(Date timestamp) {
+        created = (Date) timestamp.clone();
+        updated = (Date) timestamp.clone();
+        removed = null;
+    }
+
+    public boolean isRemoved() {
+        return getRemoved() != null;
+    }
+
     public Subsystem(Member member, String subsystemCode) {
         this.member = member;
         this.subsystemCode = subsystemCode;

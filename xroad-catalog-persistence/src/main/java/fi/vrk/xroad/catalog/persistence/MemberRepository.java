@@ -2,6 +2,8 @@ package fi.vrk.xroad.catalog.persistence;
 
 import fi.vrk.xroad.catalog.persistence.entity.Member;
 import org.springframework.data.jpa.repository.EntityGraph;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 
@@ -15,4 +17,19 @@ public interface MemberRepository extends CrudRepository<Member, Long> {
 
     Set<Member> findUpdatedSince(@Param("since") Date since);
 
+    // TODO: index for keys for Member, and other tables too
+    @Query("SELECT m FROM Member m WHERE m.xRoadInstance = :xRoadInstance "
+            + "AND m.memberClass = :memberClass "
+            + "AND m.memberCode = :memberCode ")
+    Member findByNaturalKey(@Param("xRoadInstance") String xRoadInstance,
+                            @Param("memberClass") String memberClass,
+                            @Param("memberCode") String memberCode);
+
+    // TODO: make all markAllRemoved() methods shared same code?
+    // http://docs.spring.io/spring-data/jpa/docs/current/reference/html/#repositories.single-repository-behaviour
+    // "Example 23. Custom repository base class"
+
+    @Modifying
+    @Query("UPDATE Member m SET m.removed = :when")
+    void markAllRemoved(@Param("when") Date when);
 }

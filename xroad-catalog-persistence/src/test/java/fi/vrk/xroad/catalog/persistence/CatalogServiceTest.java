@@ -1,9 +1,12 @@
 package fi.vrk.xroad.catalog.persistence;
 
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import fi.vrk.xroad.catalog.persistence.entity.Member;
 import fi.vrk.xroad.catalog.persistence.entity.Service;
 import fi.vrk.xroad.catalog.persistence.entity.Subsystem;
+import fi.vrk.xroad.catalog.persistence.entity.Wsdl;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -11,6 +14,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.Assert.assertEquals;
@@ -25,7 +31,54 @@ public class CatalogServiceTest {
     CatalogService catalogService;
 
     @Autowired
+    SubsystemRepository subsystemRepository;
+
+    @Autowired
+    ServiceRepository serviceRepository;
+
+    @Autowired
+    WsdlRepository wsdlRepository;
+
+    @Autowired
     TestUtil testUtil;
+
+    // TODO: test after save with detach / refresh
+
+    @Test
+    public void testInsertNewMemberAndSubsystems() {
+        Member fooMember = new Member("dev-cs", "PUB", "333111", "UnitTestMember");
+        Subsystem subsystem1 = new Subsystem(null, "subsystem1");
+        Subsystem subsystem2 = new Subsystem(null, "subsystem2");
+        fooMember.setSubsystems(Sets.newHashSet(subsystem1, subsystem2));
+        subsystem1.setMember(fooMember);
+        subsystem2.setMember(fooMember);
+        List<Member> members = Lists.newArrayList(fooMember);
+        catalogService.save(members);
+
+        // before tests: 7 members 9 subsystems
+        assertEquals(8, Iterables.size(catalogService.getMembers()));
+        assertEquals(12, Iterables.size(subsystemRepository.findAll()));
+    }
+
+    @Test
+    public void testInsertMultipleMembersAndSubsystems() {
+        throw new RuntimeException("not done yet");
+    }
+
+    @Test
+    public void testMissingMemberIsRemoved() {
+        throw new RuntimeException("not done yet");
+    }
+
+    @Test
+    public void testMissingSubsystemIsRemoved() {
+        throw new RuntimeException("not done yet");
+    }
+
+    @Test
+    public void testMemberIsUpdatedOnlyWhenNameIsChanged() {
+        throw new RuntimeException("not done yet");
+    }
 
     @Test
     public void testGetMembersSince() {

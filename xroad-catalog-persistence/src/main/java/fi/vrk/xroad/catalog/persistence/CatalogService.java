@@ -1,8 +1,11 @@
 package fi.vrk.xroad.catalog.persistence;
 
 import fi.vrk.xroad.catalog.persistence.entity.Member;
+import fi.vrk.xroad.catalog.persistence.entity.Service;
+import fi.vrk.xroad.catalog.persistence.entity.Subsystem;
 import fi.vrk.xroad.catalog.persistence.entity.Wsdl;
 
+import java.util.Collection;
 import java.util.Date;
 
 /**
@@ -15,12 +18,16 @@ import java.util.Date;
  */
 public interface CatalogService {
 
+    // TODO: make it NOT fetch wsdl yet
+
     /**
      * Gets all members, regardless of when they were updated.
      * Fetches all data from graph member->subsystem->service->wsdl
      * @return
      */
     Iterable<Member> getMembers();
+
+    // TODO: make it NOT fetch wsdl yet
 
     /**
      * Gets all members that have been changed (created) after given time.
@@ -32,29 +39,39 @@ public interface CatalogService {
     Iterable<Member> getMembers(Date updatedAfter);
 
     /**
-     * Saves member->subsystem->service->wsdl graph.
-     * Creates items that are new, updates ones that are updated.
-     * Marks previously existing subsystems and services that now do not exist anymore,
-     * as deleted.
-     * @param member
+     * Mainly for testing use
      * @return
      */
-    Member saveMember(Member member);
+    Iterable<Member> getSubsystems();
 
     /**
-     * Saves one wsdl. Overwrites previous one if there was one.
-     * @param serviceId
-     * @param wsdl
+     * Returns the full Wsdl object.
      * @return
      */
+    Wsdl getWsdl(String externalId);
+
+    // TODO: search for member based on unique fields (instance, class, code)
+    // TODO: indexes for those
+
+    /**
+     * Stores given members and subsystems. These represent the full dataset of both items
+     * - items not included in the parameters are marked as removed, if the existed previously.
+     * "Full service": updates all status timestamps (created/updated/removed) automatically,
+     * and knows whether to update existing item or create a new one.
+     *
+     * Does not touch the child items (service, wsdl). If creating new subsystems, the
+     * service collection will be empty
+     */
+    // TODO: document, needs subsystem collections in place
+    void save(Collection<Member> members);
+
+    /**
+     * Stores services for given subsystem.
+     * @param subsystem identifier info for subsystem
+     * @param service services
+     */
+    void save(Subsystem subsystem, Collection<Service> service);
+
     Wsdl saveWsdl(long serviceId, Wsdl wsdl);
 
-    /**
-     * Marks one member as deleted.
-     * Member is also marked as "updated".
-     * Marks the items from full graph member->subsystem->service->wsdl as deleted (and updated).
-     * @param memberId
-     * @throws Exception if member does not exist or was already deleted
-     */
-    void deleteMember(long memberId);
 }
