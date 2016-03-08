@@ -52,9 +52,9 @@ public class CatalogServiceImpl implements CatalogService {
             Member oldMember = unprocessedOldMembers.get(member.createKey());
             if (oldMember == null) {
                 // brand new item
-                member.setTimestampsForNew(now);
+                member.getStatusInfo().setTimestampsForNew(now);
                 for (Subsystem subsystem: member.getSubsystems()) {
-                    subsystem.setTimestampsForNew(now);
+                    subsystem.getStatusInfo().setTimestampsForNew(now);
                     subsystem.setMember(member);
                 }
                 member = memberRepository.save(member);
@@ -69,7 +69,7 @@ public class CatalogServiceImpl implements CatalogService {
                     Member oldSubsystem = unprocessedOldMembers.get(subsystem.createKey());
                     if (oldSubsystem == null) {
                         // brand new item, add it
-                        subsystem.setTimestampsForNew(now);
+                        subsystem.getStatusInfo().setTimestampsForNew(now);
                         subsystem.setMember(oldMember);
                         oldMember.getSubsystems().add(subsystem);
                     }
@@ -78,10 +78,9 @@ public class CatalogServiceImpl implements CatalogService {
                     unprocessedOldSubsystems.remove(subsystem.createKey());
                     // remaining old subsystems are removed (if not already)
                     for (Subsystem oldToRemove: unprocessedOldSubsystems.values()) {
-                        if (!oldToRemove.isRemoved()) {
-                            // TODO: markRemoved(now)
-                            oldToRemove.setRemoved(now);
-                            oldToRemove.setUpdated(now);
+                        StatusInfo status = oldToRemove.getStatusInfo();
+                        if (!status.isRemoved()) {
+                            status.setTimestampsForRemoved(now);
                         }
                     }
                 }
@@ -92,43 +91,17 @@ public class CatalogServiceImpl implements CatalogService {
         }
         // now unprocessedOldMembers are all removed (either already removed, or will be now)
         for (Member oldToRemove: unprocessedOldMembers.values()) {
-            if (!oldToRemove.isRemoved()) {
-                oldToRemove.setRemoved(now);
-                oldToRemove.setUpdated(now);
+            StatusInfo status = oldToRemove.getStatusInfo();
+            if (!status.isRemoved()) {
+                status.setTimestampsForRemoved(now);
             }
         }
     }
-
-    // cant use markallremoved, after all....could do it
-    // with ugly way (update updated-flag maybe after "resurrection" of initially removed ones),
-    // or by adding a "processed" stamp to data, but it all gets quite ugly
-//    @Override
-//    public void save(Collection<Member> members, Collection<Subsystem> subsystems) {
-//
-//        memberRepository.markAllRemoved(new Date());
-//
-//        Set<Member> storedMembers = new HashSet<>();
-//
-//        for (Member member: members) {
-//            Member storedMember = memberRepository.findByNaturalKey(member.getXRoadInstance(),
-//                    member.getMemberClass(), member.getMemberCode());
-//            if (storedMember == null) {
-//                // new one
-////                memberRepository.sa
-//            }
-//        }
-//    }
 
     @Override
     public void save(Subsystem subsystem, Collection<Service> service) {
 
     }
-
-//    @Override
-//    public Member saveMember(Member member) {
-//        // TODO proper merge, marking items deleted, etc. See javadoc at @Overridden method
-//        return memberRepository.save(member);
-//    }
 
     @Override
     public Wsdl saveWsdl(long serviceId, Wsdl wsdl) {

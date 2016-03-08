@@ -22,9 +22,8 @@ public class Service {
     private Subsystem subsystem;
     private String serviceCode;
     private String serviceVersion;
-    private Date created;
-    private Date updated;
-    private Date removed;
+    @Embedded
+    private StatusInfo statusInfo = new StatusInfo();
     @OneToOne(optional=true, mappedBy="service", cascade = CascadeType.ALL)
     private Wsdl wsdl;
 
@@ -35,16 +34,15 @@ public class Service {
         this.subsystem = subsystem;
         this.serviceCode = serviceCode;
         this.serviceVersion = serviceVersion;
-        this.created = new Date();
-        this.updated = this.created;
+        statusInfo.setTimestampsForNew(new Date());
     }
 
     public Service(Subsystem subsystem, String serviceCode, String serviceVersion, Date created, Date updated, Date removed) {
         this.subsystem = subsystem;
         this.serviceCode = serviceCode;
         this.serviceVersion = serviceVersion;
-        this.created = created;
-        this.updated = updated;
-        this.removed = removed;
+        statusInfo.setCreated(created);
+        statusInfo.setUpdated(updated);
+        statusInfo.setRemoved(removed);
     }
 }

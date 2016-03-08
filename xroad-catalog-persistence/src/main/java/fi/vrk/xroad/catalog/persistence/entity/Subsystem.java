@@ -20,14 +20,13 @@ public class Subsystem {
     @SequenceGenerator(name = "SUBSYSTEM_GEN", sequenceName = "SUBSYSTEM_ID_SEQ", allocationSize = 1)
     private long id;
     private String subsystemCode;
-    private Date created;
-    private Date updated;
-    private Date removed;
     @ManyToOne
     @JoinColumn(name = "MEMBER_ID")
     private Member member;
     @OneToMany(mappedBy = "subsystem", cascade = CascadeType.ALL)
     private Set<Service> services;
+    @Embedded
+    private StatusInfo statusInfo = new StatusInfo();
 
     public Subsystem() {}
 
@@ -39,32 +38,18 @@ public class Subsystem {
                 subsystemCode);
     }
 
-    /**
-     * Sets timestamps to correct values for new instance
-     */
-    public void setTimestampsForNew(Date timestamp) {
-        created = (Date) timestamp.clone();
-        updated = (Date) timestamp.clone();
-        removed = null;
-    }
-
-    public boolean isRemoved() {
-        return getRemoved() != null;
-    }
-
     public Subsystem(Member member, String subsystemCode) {
         this.member = member;
         this.subsystemCode = subsystemCode;
-        this.created = new Date();
-        this.updated = this.created;
+        statusInfo.setTimestampsForNew(new Date());
     }
 
     public Subsystem(Member member, String subsystemCode, Date created, Date updated, Date removed) {
         this.member = member;
         this.subsystemCode = subsystemCode;
-        this.created = created;
-        this.updated = updated;
-        this.removed = removed;
+        statusInfo.setCreated(created);
+        statusInfo.setUpdated(updated);
+        statusInfo.setRemoved(removed);
     }
 
 }

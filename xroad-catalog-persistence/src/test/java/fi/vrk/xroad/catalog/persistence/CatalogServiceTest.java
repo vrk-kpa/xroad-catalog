@@ -13,6 +13,7 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -24,6 +25,7 @@ import static org.junit.Assert.assertTrue;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(Application.class)
+@Transactional
 @Slf4j
 public class CatalogServiceTest {
 
@@ -59,6 +61,7 @@ public class CatalogServiceTest {
         assertEquals(8, Iterables.size(catalogService.getMembers()));
         assertEquals(12, Iterables.size(subsystemRepository.findAll()));
     }
+
 
     @Test
     public void testInsertMultipleMembersAndSubsystems() {

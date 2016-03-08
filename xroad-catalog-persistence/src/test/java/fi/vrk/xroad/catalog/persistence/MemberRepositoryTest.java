@@ -43,7 +43,7 @@ public class MemberRepositoryTest {
         memberRepository.deleteAll();
         Iterable<Member> members = memberRepository.findAll();
         for (Member member: members) {
-            assertEquals(now, member.getRemoved());
+            assertEquals(now, member.getStatusInfo().getRemoved());
         }
     }
 
@@ -54,6 +54,7 @@ public class MemberRepositoryTest {
         assertEquals(7, Iterables.size(members));
     }
 
+    // TODO: why does this fail when we run all xroad.catalog.persistence.* tests? also, check from >gradle test
     @Test
     public void testAddMember() {
         String name = "memberx";

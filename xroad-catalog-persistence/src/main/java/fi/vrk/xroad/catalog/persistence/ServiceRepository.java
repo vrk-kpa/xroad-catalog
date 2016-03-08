@@ -10,6 +10,6 @@ import java.util.Date;
 
 public interface ServiceRepository extends CrudRepository<Service, Long> {
     @Modifying
-    @Query("UPDATE Service s SET s.removed = :when")
+    @Query("UPDATE Service s SET s.statusInfo.removed = :when")
     void markAllRemoved(@Param("when") Date when);
 }

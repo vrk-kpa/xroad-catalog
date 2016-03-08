@@ -63,8 +63,8 @@ public class TestUtil {
         member.setXRoadInstance("FI");
         member.setMemberClass("GOV");
         member.setMemberCode("code-" + name);
-        member.setCreated(now);
-        member.setUpdated(now);
+        member.getStatusInfo().setCreated(now);
+        member.getStatusInfo().setUpdated(now);
 
         Subsystem ss1 = createSubsystem(name, now, "ss1");
         Subsystem ss2 = createSubsystem(name, now, "ss2");
@@ -88,8 +88,7 @@ public class TestUtil {
         wsdl.setData("<?xml version=\"1.0\" standalone=\"no\"?><wsdl/>");
         wsdl.setDataHash("foohash");
         wsdl.setExternalId("external-id-" + name);
-        wsdl.setCreated(now);
-        wsdl.setUpdated(now);
+        wsdl.getStatusInfo().setTimestampsForNew(now);
 
         return member;
     }
@@ -98,16 +97,14 @@ public class TestUtil {
         Service s1 = new Service();
         s1.setServiceCode(memberName + "-" + serviceName);
         s1.setServiceVersion("v1");
-        s1.setCreated(d);
-        s1.setUpdated(d);
+        s1.getStatusInfo().setTimestampsForNew(d);
         return s1;
     }
 
     private Subsystem createSubsystem(String memberName, Date date, String ssName) {
         Subsystem ss1 = new Subsystem();
         ss1.setSubsystemCode(memberName + "-" + ssName);
-        ss1.setCreated(date);
-        ss1.setUpdated(date);
+        ss1.getStatusInfo().setTimestampsForNew(date);
         return ss1;
     }
 

@@ -24,9 +24,8 @@ public class Wsdl {
     private String data;
     private String dataHash;
     private String externalId;
-    private Date created;
-    private Date updated;
-    private Date removed;
+    @Embedded
+    private StatusInfo statusInfo = new StatusInfo();
 
     public Wsdl() {
     }
@@ -36,8 +35,7 @@ public class Wsdl {
         this.data = data;
         this.dataHash = dataHash;
         this.externalId = externalId;
-        this.created = new Date();
-        this.updated = this.created;
+        statusInfo.setTimestampsForNew(new Date());
     }
 
     public Wsdl(Service service, String data, String dataHash, String externalId, Date created, Date updated, Date removed) {
@@ -45,8 +43,8 @@ public class Wsdl {
         this.data = data;
         this.dataHash = dataHash;
         this.externalId = externalId;
-        this.created = created;
-        this.updated = updated;
-        this.removed = removed;
+        statusInfo.setCreated(created);
+        statusInfo.setUpdated(updated);
+        statusInfo.setRemoved(removed);
     }
 }

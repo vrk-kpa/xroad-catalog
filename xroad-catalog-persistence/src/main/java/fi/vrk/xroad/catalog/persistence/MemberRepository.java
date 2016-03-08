@@ -30,6 +30,6 @@ public interface MemberRepository extends CrudRepository<Member, Long> {
     // "Example 23. Custom repository base class"
 
     @Modifying
-    @Query("UPDATE Member m SET m.removed = :when")
+    @Query("UPDATE Member m SET m.statusInfo.removed = :when")
     void markAllRemoved(@Param("when") Date when);
 }

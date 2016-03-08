@@ -35,22 +35,22 @@ import java.util.Set;
                         "LEFT JOIN FETCH mem.subsystems fetchedSubs " +
                         "LEFT JOIN FETCH fetchedSubs.services fetchedSers " +
                         "LEFT JOIN FETCH fetchedSers.wsdl fetchedWsdl " +
-                        "WHERE mem.updated > :since " +
+                        "WHERE mem.statusInfo.updated > :since " +
                         "OR EXISTS ( " +
                         "SELECT sub " +
                         "FROM Subsystem sub " +
                         "WHERE sub.member = mem " +
-                        "AND sub.updated > :since)" +
+                        "AND sub.statusInfo.updated > :since)" +
                         "OR EXISTS ( " +
                         "SELECT service " +
                         "FROM Service service " +
                         "WHERE service.subsystem.member = mem " +
-                        "AND service.updated > :since)" +
+                        "AND service.statusInfo.updated > :since)" +
                         "OR EXISTS ( " +
                         "SELECT wsdl " +
                         "FROM Wsdl wsdl " +
                         "WHERE wsdl.service.subsystem.member = mem " +
-                        "AND wsdl.updated > :since)"),
+                        "AND wsdl.statusInfo.updated > :since)"),
 })
 public class Member {
 
@@ -63,18 +63,11 @@ public class Member {
     private String memberClass;
     private String memberCode;
     private String name;
-    private Date created;
-    // TODO: this field indicates when the data was updated, ie. it was created/updated/deleted
-    // we should add one more field for "fetched", indicating when data was last read from source
-    // (even if it was identical)
-    // hmmm....should "updated" be "modified"? (deletion = modification, but maybe not updating?)
-    private Date updated;
-    private Date removed;
+    @Embedded
+    private StatusInfo statusInfo = new StatusInfo();
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
     private Set<Subsystem> subsystems;
 
-    // TODO: may need to clean up so that same timestamp-updating code is reused
-    // in other entities
     /**
      * Updates data with values from a transient non-deleted Member object,
      * and sets all data fields accordingly
@@ -82,37 +75,21 @@ public class Member {
      * @param timestamp
      */
     public void updateWithDataFrom(Member transientMember, Date timestamp) {
-        assert transientMember.getRemoved() == null;
-        if (!isDataIdentical(transientMember)) {
-            updated = (Date) timestamp.clone();
-        }
-        if (removed != null) {
-            // updating data for previously removed item -> updated
-            updated = (Date) timestamp.clone();
-        }
+        assert transientMember.getStatusInfo().getRemoved() == null;
+        boolean isModifiedData = !isDataIdentical(transientMember);
         name = transientMember.getName();
-        removed = null;
+        statusInfo.setTimestampsForSaved(timestamp, isModifiedData);
+    }
+
+    public StatusInfo getStatusInfo() {
+        return statusInfo;
     }
 
     /**
-     * Sets timestamps to correct values for new instance
-     */
-    public void setTimestampsForNew(Date timestamp) {
-        created = (Date) timestamp.clone();
-        updated = (Date) timestamp.clone();
-        removed = null;
-    }
-
-    /**
-     * TODO: embeddable
      * @return comparable & equals-able natural key
      */
     public MemberId createKey() {
         return new MemberId(xRoadInstance, memberClass, memberCode);
-    }
-
-    public boolean isRemoved() {
-        return getRemoved() != null;
     }
 
     /**
@@ -129,7 +106,8 @@ public class Member {
                 .result() == 0;
     }
 
-    public Member() {}
+    public Member() {
+    }
 
     public Member(String xRoadInstance,
                   String memberClass,
@@ -139,8 +117,7 @@ public class Member {
         this.memberClass = memberClass;
         this.memberCode = memberCode;
         this.name = name;
-        this.created = new Date();
-        this.updated = this.created;
+        statusInfo.setTimestampsForNew(new Date());
     }
 
     public Member(String xRoadInstance, String memberClass, String memberCode, String name,
@@ -149,10 +126,12 @@ public class Member {
         this.memberClass = memberClass;
         this.memberCode = memberCode;
         this.name = name;
-        this.created = created;
-        this.updated = updated;
-        this.removed = removed;
+        statusInfo.setCreated(created);
+        statusInfo.setUpdated(updated);
+        statusInfo.setRemoved(removed);
     }
+
+
 
 }
 

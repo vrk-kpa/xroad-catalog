@@ -10,6 +10,6 @@ import java.util.Date;
 
 public interface SubsystemRepository extends CrudRepository<Subsystem, Long> {
     @Modifying
-    @Query("UPDATE Subsystem s SET s.removed = :when")
+    @Query("UPDATE Subsystem s SET s.statusInfo.removed = :when")
     void markAllRemoved(@Param("when") Date when);
 }

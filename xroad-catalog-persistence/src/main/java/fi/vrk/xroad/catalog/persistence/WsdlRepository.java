@@ -10,6 +10,6 @@ import java.util.Date;
 
 public interface WsdlRepository extends CrudRepository<Wsdl, Long> {
     @Modifying
-    @Query("UPDATE Wsdl w SET w.removed = :when")
+    @Query("UPDATE Wsdl w SET w.statusInfo.removed = :when")
     void markAllRemoved(@Param("when") Date when);
 }
