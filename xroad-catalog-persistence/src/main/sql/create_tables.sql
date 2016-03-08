@@ -88,7 +88,8 @@ CREATE TABLE member (
     member_code text NOT NULL,
     name text NOT NULL,
     created timestamp with time zone NOT NULL,
-    updated timestamp with time zone NOT NULL,
+    changed timestamp with time zone NOT NULL,
+    fetched timestamp with time zone NOT NULL,
     removed timestamp with time zone
 );
 
@@ -130,7 +131,8 @@ CREATE TABLE service (
     service_code text NOT NULL,
     service_version text NOT NULL,
     created timestamp with time zone NOT NULL,
-    updated timestamp with time zone NOT NULL,
+    changed timestamp with time zone NOT NULL,
+    fetched timestamp with time zone NOT NULL,
     removed timestamp with time zone
 );
 
@@ -171,7 +173,8 @@ CREATE TABLE subsystem (
     member_id bigint NOT NULL,
     subsystem_code text NOT NULL,
     created timestamp with time zone NOT NULL,
-    updated timestamp with time zone NOT NULL,
+    changed timestamp with time zone NOT NULL,
+    fetched timestamp with time zone NOT NULL,
     removed timestamp with time zone
 );
 
@@ -214,7 +217,8 @@ CREATE TABLE wsdl (
     data_hash text NOT NULL,
     external_id text NOT NULL,
     created timestamp with time zone NOT NULL,
-    updated timestamp with time zone NOT NULL,
+    changed timestamp with time zone NOT NULL,
+    fetched timestamp with time zone NOT NULL,
     removed timestamp with time zone
 );
 
@@ -290,10 +294,10 @@ CREATE UNIQUE INDEX idx_wsdl_external_id ON wsdl USING btree (external_id);
 
 
 -- additional indexes for performance
-CREATE INDEX idx_wsdl_updated ON wsdl(updated);
-CREATE INDEX idx_service_updated ON service(updated);
-CREATE INDEX idx_subsystem_updated ON subsystem(updated);
-CREATE INDEX idx_member_updated ON member(updated);
+CREATE INDEX idx_wsdl_changed ON wsdl(changed);
+CREATE INDEX idx_service_changed ON service(changed);
+CREATE INDEX idx_subsystem_changed ON subsystem(changed);
+CREATE INDEX idx_member_changed ON member(changed);
 CREATE INDEX idx_wsdl_service_id ON wsdl(service_id);
 CREATE INDEX idx_service_subsystem_id ON service(subsystem_id);
 CREATE INDEX idx_subsystem_member_id ON subsystem(member_id);

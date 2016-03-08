@@ -1,7 +1,7 @@
 package fi.vrk.xroad.catalog.persistence.entity;
 
 /**
- * Created by janne.mattila on 8.3.2016.
+ * Utility class to works as a key for Subsystems in Maps etc
  */
 public class SubsystemId extends MemberId {
     private String subsystemCode;

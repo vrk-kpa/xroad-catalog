@@ -21,7 +21,7 @@ public interface CatalogService {
     // TODO: make it NOT fetch wsdl yet
 
     /**
-     * Gets all members, regardless of when they were updated.
+     * Gets all members, regardless of when they were changed.
      * Fetches all data from graph member->subsystem->service->wsdl
      * @return
      */
@@ -31,12 +31,12 @@ public interface CatalogService {
 
     /**
      * Gets all members that have been changed (created) after given time.
-     * Change is determined by field "updated".
+     * Change is determined by field "changed".
      * Fetches all data from graph member->subsystem->service->wsdl.
-     * @param updatedAfter
+     * @param changedAfter
      * @return
      */
-    Iterable<Member> getMembers(Date updatedAfter);
+    Iterable<Member> getMembers(Date changedAfter);
 
     /**
      * Mainly for testing use
@@ -54,16 +54,21 @@ public interface CatalogService {
     // TODO: indexes for those
 
     /**
-     * Stores given members and subsystems. These represent the full dataset of both items
+     * Stores given members and subsystems. This should be the full dataset of both items
      * - items not included in the parameters are marked as removed, if the existed previously.
-     * "Full service": updates all status timestamps (created/updated/removed) automatically,
-     * and knows whether to update existing item or create a new one.
+     *
+     * "Full service": updates all status timestamps (created/changed/fetched/removed) automatically,
+     * and knows whether to update existing items or create new ones.
      *
      * Does not touch the child items (service, wsdl). If creating new subsystems, the
-     * service collection will be empty
+     * service collection will be empty.
+     *
+     * @param members all Members that currently exist. If some members are missing from
+     *                the collection, they are (marked) removed. Member should have
+     *                member.subsystems collection populated, and each subsystem should
+     *                have subsystem.member populated as well.
      */
-    // TODO: document, needs subsystem collections in place
-    void save(Collection<Member> members);
+    void saveAllMembersAndSubsystems(Collection<Member> members);
 
     /**
      * Stores services for given subsystem.

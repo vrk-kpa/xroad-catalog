@@ -36,13 +36,4 @@ public class Service {
         this.serviceVersion = serviceVersion;
         statusInfo.setTimestampsForNew(new Date());
     }
-
-    public Service(Subsystem subsystem, String serviceCode, String serviceVersion, Date created, Date updated, Date removed) {
-        this.subsystem = subsystem;
-        this.serviceCode = serviceCode;
-        this.serviceVersion = serviceVersion;
-        statusInfo.setCreated(created);
-        statusInfo.setUpdated(updated);
-        statusInfo.setRemoved(removed);
-    }
 }

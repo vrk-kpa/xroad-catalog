@@ -64,7 +64,7 @@ public class TestUtil {
         member.setMemberClass("GOV");
         member.setMemberCode("code-" + name);
         member.getStatusInfo().setCreated(now);
-        member.getStatusInfo().setUpdated(now);
+        member.getStatusInfo().setChanged(now);
 
         Subsystem ss1 = createSubsystem(name, now, "ss1");
         Subsystem ss2 = createSubsystem(name, now, "ss2");

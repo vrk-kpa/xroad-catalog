@@ -27,30 +27,30 @@ import java.util.Set;
         }
 )
 @NamedQueries({
-        // query fetches all members that have been updated, or have child entities
-        // (subsystems, services, wsdls) that have been updated since given date
-        @NamedQuery(name = "Member.findUpdatedSince",
+        // query fetches all members that have been changed, or have child entities
+        // (subsystems, services, wsdls) that have been changed since given date
+        @NamedQuery(name = "Member.findChangedSince",
                 query = "SELECT DISTINCT mem " +
                         "FROM Member mem " +
                         "LEFT JOIN FETCH mem.subsystems fetchedSubs " +
                         "LEFT JOIN FETCH fetchedSubs.services fetchedSers " +
                         "LEFT JOIN FETCH fetchedSers.wsdl fetchedWsdl " +
-                        "WHERE mem.statusInfo.updated > :since " +
+                        "WHERE mem.statusInfo.changed > :since " +
                         "OR EXISTS ( " +
                         "SELECT sub " +
                         "FROM Subsystem sub " +
                         "WHERE sub.member = mem " +
-                        "AND sub.statusInfo.updated > :since)" +
+                        "AND sub.statusInfo.changed > :since)" +
                         "OR EXISTS ( " +
                         "SELECT service " +
                         "FROM Service service " +
                         "WHERE service.subsystem.member = mem " +
-                        "AND service.statusInfo.updated > :since)" +
+                        "AND service.statusInfo.changed > :since)" +
                         "OR EXISTS ( " +
                         "SELECT wsdl " +
                         "FROM Wsdl wsdl " +
                         "WHERE wsdl.service.subsystem.member = mem " +
-                        "AND wsdl.statusInfo.updated > :since)"),
+                        "AND wsdl.statusInfo.changed > :since)"),
 })
 public class Member {
 
@@ -119,20 +119,6 @@ public class Member {
         this.name = name;
         statusInfo.setTimestampsForNew(new Date());
     }
-
-    public Member(String xRoadInstance, String memberClass, String memberCode, String name,
-                  Date created, Date updated, Date removed) {
-        this.xRoadInstance = xRoadInstance;
-        this.memberClass = memberClass;
-        this.memberCode = memberCode;
-        this.name = name;
-        statusInfo.setCreated(created);
-        statusInfo.setUpdated(updated);
-        statusInfo.setRemoved(removed);
-    }
-
-
-
 }
 
 

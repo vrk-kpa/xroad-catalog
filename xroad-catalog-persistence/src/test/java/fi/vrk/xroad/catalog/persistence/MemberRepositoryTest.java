@@ -104,10 +104,10 @@ public class MemberRepositoryTest {
 
     @Test
     public void testModified() {
-        Date updatedSince = testUtil.createDate(1, 1, 2017);
-        Iterable<Member> members = memberRepository.findUpdatedSince(updatedSince);
-        // members 3-7 have been updated since 1/1/2017,
-        // 3-6 have different parts updated, #7 has all parts updated
+        Date changedSince = testUtil.createDate(1, 1, 2017);
+        Iterable<Member> members = memberRepository.findChangedSince(changedSince);
+        // members 3-7 have been changed since 1/1/2017,
+        // 3-6 have different parts changed, #7 has all parts changed
         log.info("found changed members with ids: " + testUtil.getIds(members));
         assertEquals(5, Iterables.size(members));
         Set ids = testUtil.getIds(members);

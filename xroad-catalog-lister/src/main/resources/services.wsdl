@@ -140,7 +140,8 @@ http://x-road.eu/xsd/identifiers ">
                     <xs:element name="name" type="xs:string"/>
                     <xs:element name="subsystems" type="tns:SubsystemList"/>
                     <xs:element name="created" type="xs:dateTime"/>
-                    <xs:element name="updated" type="xs:dateTime"/>
+                    <xs:element name="changed" type="xs:dateTime"/>
+                    <xs:element name="fetched" type="xs:dateTime"/>
                     <xs:element name="removed" type="xs:dateTime"/>
                 </xs:sequence>
             </xs:complexType>
@@ -157,7 +158,8 @@ http://x-road.eu/xsd/identifiers ">
                     <xs:element name="subsystemCode" type="xs:string"/>
                     <xs:element name="services" type="tns:ServiceList"/>
                     <xs:element name="created" type="xs:dateTime"/>
-                    <xs:element name="updated" type="xs:dateTime"/>
+                    <xs:element name="changed" type="xs:dateTime"/>
+                    <xs:element name="fetched" type="xs:dateTime"/>
                     <xs:element name="removed" type="xs:dateTime"/>
                 </xs:sequence>
             </xs:complexType>
@@ -174,7 +176,8 @@ http://x-road.eu/xsd/identifiers ">
                     <xs:element name="serviceVersion" type="xs:string"/>
                     <xs:element name="wsdl" type="tns:WSDL"/>
                     <xs:element name="created" type="xs:dateTime"/>
-                    <xs:element name="updated" type="xs:dateTime"/>
+                    <xs:element name="changed" type="xs:dateTime"/>
+                    <xs:element name="fetched" type="xs:dateTime"/>
                     <xs:element name="removed" type="xs:dateTime"/>
                 </xs:sequence>
             </xs:complexType>
@@ -185,7 +188,8 @@ http://x-road.eu/xsd/identifiers ">
                     <xs:element name="dataHash" type="xs:string"/>
                     <xs:element name="externalId" type="xs:string"/>
                     <xs:element name="created" type="xs:dateTime"/>
-                    <xs:element name="updated" type="xs:dateTime"/>
+                    <xs:element name="changed" type="xs:dateTime"/>
+                    <xs:element name="fetched" type="xs:dateTime"/>
                     <xs:element name="removed" type="xs:dateTime"/>
                 </xs:sequence>
             </xs:complexType>

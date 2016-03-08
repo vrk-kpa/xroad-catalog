@@ -15,7 +15,7 @@ public interface MemberRepository extends CrudRepository<Member, Long> {
     @EntityGraph(value = "member.full-tree.graph", type = EntityGraph.EntityGraphType.LOAD)
     Set<Member> findAll();
 
-    Set<Member> findUpdatedSince(@Param("since") Date since);
+    Set<Member> findChangedSince(@Param("since") Date since);
 
     // TODO: index for keys for Member, and other tables too
     @Query("SELECT m FROM Member m WHERE m.xRoadInstance = :xRoadInstance "

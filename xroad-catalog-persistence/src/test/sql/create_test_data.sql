@@ -32,8 +32,8 @@ SELECT pg_catalog.setval('client_id_seq', 1, false);
 -- Data for Name: member; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-INSERT INTO member (id, x_road_instance, member_class, member_code, name, created, updated, removed) VALUES (1, 'dev-cs', 'PUB', '14151328', 'Nahka-Albert', '2016-01-01 00:00:00+02', '2016-01-01 00:00:00+02', NULL);
-INSERT INTO member (id, x_road_instance, member_class, member_code, name, created, updated, removed) VALUES (2, 'dev-cs', 'PUB', '88855888', 'Suutari Simo', '2016-01-01 00:00:00+02', '2016-01-01 00:00:00+02', NULL);
+INSERT INTO member (id, x_road_instance, member_class, member_code, name, created, changed, fetched, removed) VALUES (1, 'dev-cs', 'PUB', '14151328', 'Nahka-Albert', '2016-01-01 00:00:00+02', '2016-01-01 00:00:00+02', '2016-01-01 00:00:00+02', NULL);
+INSERT INTO member (id, x_road_instance, member_class, member_code, name, created, changed, fetched, removed) VALUES (2, 'dev-cs', 'PUB', '88855888', 'Suutari Simo', '2016-01-01 00:00:00+02', '2016-01-01 00:00:00+02', '2016-01-01 00:00:00+02', NULL);
 
 
 --
@@ -42,9 +42,9 @@ INSERT INTO member (id, x_road_instance, member_class, member_code, name, create
 -- Data for Name: subsystem; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-INSERT INTO subsystem (id, member_id, subsystem_code, created, updated, removed) VALUES (1, 1, 'subsystem_a1', '2016-01-01 00:00:00+02', '2016-01-01 00:00:00+02', NULL);
-INSERT INTO subsystem (id, member_id, subsystem_code, created, updated, removed) VALUES (2, 1, 'subsystem_a2', '2016-01-01 00:00:00+02', '2016-01-01 00:00:00+02', NULL);
-INSERT INTO subsystem (id, member_id, subsystem_code, created, updated, removed) VALUES (3, 2, 'subsystem_b1', '2016-01-01 00:00:00+02', '2016-01-01 00:00:00+02', NULL);
+INSERT INTO subsystem (id, member_id, subsystem_code, created, changed, fetched, removed) VALUES (1, 1, 'subsystem_a1', '2016-01-01 00:00:00+02', '2016-01-01 00:00:00+02', '2016-01-01 00:00:00+02', NULL);
+INSERT INTO subsystem (id, member_id, subsystem_code, created, changed, fetched, removed) VALUES (2, 1, 'subsystem_a2', '2016-01-01 00:00:00+02', '2016-01-01 00:00:00+02', '2016-01-01 00:00:00+02', NULL);
+INSERT INTO subsystem (id, member_id, subsystem_code, created, changed, fetched, removed) VALUES (3, 2, 'subsystem_b1', '2016-01-01 00:00:00+02', '2016-01-01 00:00:00+02', '2016-01-01 00:00:00+02', NULL);
 
 
 --
@@ -53,8 +53,8 @@ INSERT INTO subsystem (id, member_id, subsystem_code, created, updated, removed)
 -- Data for Name: service; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-INSERT INTO service (id, subsystem_id, service_code, service_version, created, updated, removed) VALUES (1, 2, 'testService', 'v1', '2016-01-01 00:00:00+02', '2016-01-01 00:00:00+02', NULL);
-INSERT INTO service (id, subsystem_id, service_code, service_version, created, updated, removed) VALUES (2, 1, 'getRandom', 'v1', '2016-01-01 00:00:00+02', '2016-01-01 00:00:00+02', NULL);
+INSERT INTO service (id, subsystem_id, service_code, service_version, created, changed, fetched, removed) VALUES (1, 2, 'testService', 'v1', '2016-01-01 00:00:00+02', '2016-01-01 00:00:00+02', '2016-01-01 00:00:00+02', NULL);
+INSERT INTO service (id, subsystem_id, service_code, service_version, created, changed, fetched, removed) VALUES (2, 1, 'getRandom', 'v1', '2016-01-01 00:00:00+02', '2016-01-01 00:00:00+02', '2016-01-01 00:00:00+02', NULL);
 
 
 --
@@ -81,7 +81,7 @@ SELECT pg_catalog.setval('subsystem_id_seq', 1, false);
 -- Data for Name: wsdl; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-INSERT INTO wsdl (id, service_id, data, data_hash, external_id, created, updated, removed) VALUES (1, 1, '<?xml version="1.0" standalone="no"?>
+INSERT INTO wsdl (id, service_id, data, data_hash, external_id, created, changed, fetched, removed) VALUES (1, 1, '<?xml version="1.0" standalone="no"?>
 <wsdl:definitions xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
                   xmlns:tns="http://test.x-road.fi/producer"
                   xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
@@ -291,8 +291,8 @@ INSERT INTO wsdl (id, service_id, data, data_hash, external_id, created, updated
             <soap:address location="http://localhost:8080/test-service-0.0.2-SNAPSHOT/Endpoint"/>
         </wsdl:port>
     </wsdl:service>
-</wsdl:definitions>', '123asd', '1000', '2016-01-01 00:00:00+02', '2016-01-01 00:00:00+02', NULL);
-INSERT INTO wsdl (id, service_id, data, data_hash, external_id, created, updated, removed) VALUES (2, 2, '<?xml version="1.0" standalone="no"?>
+</wsdl:definitions>', '123asd', '1000', '2016-01-01 00:00:00+02', '2016-01-01 00:00:00+02', '2016-01-01 00:00:00+02', NULL);
+INSERT INTO wsdl (id, service_id, data, data_hash, external_id, created, changed, fetched, removed) VALUES (2, 2, '<?xml version="1.0" standalone="no"?>
 <wsdl:definitions xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
                   xmlns:tns="http://test.x-road.fi/producer"
                   xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
@@ -552,7 +552,7 @@ INSERT INTO wsdl (id, service_id, data, data_hash, external_id, created, updated
         </wsdl:port>
     </wsdl:service>
 </wsdl:definitions>
-', '456efg', '2050', '2016-01-01 00:00:00+02', '2016-01-01 00:00:00+02', NULL);
+', '456efg', '2050', '2016-01-01 00:00:00+02', '2016-01-01 00:00:00+02', '2016-01-01 00:00:00+02', NULL);
 
 
 --

@@ -6,7 +6,6 @@ import com.google.common.collect.Sets;
 import fi.vrk.xroad.catalog.persistence.entity.Member;
 import fi.vrk.xroad.catalog.persistence.entity.Service;
 import fi.vrk.xroad.catalog.persistence.entity.Subsystem;
-import fi.vrk.xroad.catalog.persistence.entity.Wsdl;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -15,8 +14,6 @@ import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -44,7 +41,7 @@ public class CatalogServiceTest {
     @Autowired
     TestUtil testUtil;
 
-    // TODO: test after save with detach / refresh
+    // TODO: test after saveAllMembersAndSubsystems with detach / refresh
 
     @Test
     public void testInsertNewMemberAndSubsystems() {
@@ -55,7 +52,7 @@ public class CatalogServiceTest {
         subsystem1.setMember(fooMember);
         subsystem2.setMember(fooMember);
         List<Member> members = Lists.newArrayList(fooMember);
-        catalogService.save(members);
+        catalogService.saveAllMembersAndSubsystems(members);
 
         // before tests: 7 members 9 subsystems
         assertEquals(8, Iterables.size(catalogService.getMembers()));
@@ -79,7 +76,7 @@ public class CatalogServiceTest {
     }
 
     @Test
-    public void testMemberIsUpdatedOnlyWhenNameIsChanged() {
+    public void testMemberIsChangedOnlyWhenNameIsChanged() {
         throw new RuntimeException("not done yet");
     }
 

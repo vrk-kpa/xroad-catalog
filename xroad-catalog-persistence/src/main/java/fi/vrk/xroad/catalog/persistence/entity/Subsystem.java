@@ -43,13 +43,4 @@ public class Subsystem {
         this.subsystemCode = subsystemCode;
         statusInfo.setTimestampsForNew(new Date());
     }
-
-    public Subsystem(Member member, String subsystemCode, Date created, Date updated, Date removed) {
-        this.member = member;
-        this.subsystemCode = subsystemCode;
-        statusInfo.setCreated(created);
-        statusInfo.setUpdated(updated);
-        statusInfo.setRemoved(removed);
-    }
-
 }

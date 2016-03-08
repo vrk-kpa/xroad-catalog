@@ -7,6 +7,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
+import java.util.stream.StreamSupport;
 
 @Slf4j
 @Component("catalogService")
@@ -23,7 +24,7 @@ public class CatalogServiceImpl implements CatalogService {
 
     @Override
     public Iterable<Member> getMembers(Date changedAfter) {
-        return memberRepository.findUpdatedSince(changedAfter);
+        return memberRepository.findChangedSince(changedAfter);
     }
 
     @Override
@@ -37,17 +38,13 @@ public class CatalogServiceImpl implements CatalogService {
     }
 
     @Override
-    public void save(Collection<Member> members) {
+    public void saveAllMembersAndSubsystems(Collection<Member> members) {
         Date now = new Date();
-        Iterable<Member> oldMembers = memberRepository.findAll();
         // process members
         Map<MemberId, Member> unprocessedOldMembers = new HashMap<>();
-        // TODO: maybe Java 8 streams this (these?)
-        for (Member member: oldMembers) {
-            unprocessedOldMembers.put(member.createKey(), member);
-        }
-        // do we need this at all?
-        Map<MemberId, Member> savedProcessedMembers = new HashMap<>();
+        StreamSupport.stream(memberRepository.findAll().spliterator(), false)
+                .forEach(member -> unprocessedOldMembers.put(member.createKey(), member));
+
         for (Member member: members) {
             Member oldMember = unprocessedOldMembers.get(member.createKey());
             if (oldMember == null) {
@@ -86,7 +83,6 @@ public class CatalogServiceImpl implements CatalogService {
                 }
                 member = memberRepository.save(oldMember);
             }
-            savedProcessedMembers.put(member.createKey(), member);
             unprocessedOldMembers.remove(member.createKey());
         }
         // now unprocessedOldMembers are all removed (either already removed, or will be now)

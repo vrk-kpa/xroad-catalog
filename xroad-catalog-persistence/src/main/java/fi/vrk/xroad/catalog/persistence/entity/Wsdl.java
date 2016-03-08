@@ -37,14 +37,4 @@ public class Wsdl {
         this.externalId = externalId;
         statusInfo.setTimestampsForNew(new Date());
     }
-
-    public Wsdl(Service service, String data, String dataHash, String externalId, Date created, Date updated, Date removed) {
-        this.service = service;
-        this.data = data;
-        this.dataHash = dataHash;
-        this.externalId = externalId;
-        statusInfo.setCreated(created);
-        statusInfo.setUpdated(updated);
-        statusInfo.setRemoved(removed);
-    }
 }

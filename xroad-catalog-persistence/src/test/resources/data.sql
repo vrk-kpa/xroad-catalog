@@ -6,67 +6,67 @@ ALTER SEQUENCE subsystem_id_seq RESTART WITH 1000;
 ALTER SEQUENCE service_id_seq RESTART WITH 1000;
 ALTER SEQUENCE wsdl_id_seq RESTART WITH 1000;
 
--- members with ids 3-7 contain graphs of member-subsystem-service-wsdl with different parts updated after 1.1.2017
+-- members with ids 3-7 contain graphs of member-subsystem-service-wsdl with different parts changed after 1.1.2017
 -- (for testing find(date updatedSince))
-INSERT INTO member (id, x_road_instance, member_class, member_code, name, created, updated, removed)
-VALUES (1, 'dev-cs', 'PUB', '14151328', 'Nahka-Albert', '2016-01-01 00:00:00+02', '2016-01-01 00:00:00+02', NULL);
-INSERT INTO member (id, x_road_instance, member_class, member_code, name, created, updated, removed)
-VALUES (2, 'dev-cs', 'PUB', '88855888', 'Suutari Simo', '2016-01-01 00:00:00+02', '2016-01-01 00:00:00+02', NULL);
-INSERT INTO member (id, x_road_instance, member_class, member_code, name, created, updated, removed)
-VALUES (3, 'dev-cs', 'PUB', '11', 'Updated Member', '2016-01-01 00:00:00+02', '2017-02-01 00:00:00+02', NULL);
-INSERT INTO member (id, x_road_instance, member_class, member_code, name, created, updated, removed)
-VALUES (4, 'dev-cs', 'PUB', '12', 'Updated Subsystem', '2016-01-01 00:00:00+02', '2016-01-01 00:00:00+02', NULL);
-INSERT INTO member (id, x_road_instance, member_class, member_code, name, created, updated, removed)
-VALUES (5, 'dev-cs', 'PUB', '13', 'Updated Service', '2016-01-01 00:00:00+02', '2016-01-01 00:00:00+02', NULL);
-INSERT INTO member (id, x_road_instance, member_class, member_code, name, created, updated, removed)
-VALUES (6, 'dev-cs', 'PUB', '14', 'Updated Wsdl', '2016-01-01 00:00:00+02', '2016-01-01 00:00:00+02', NULL);
-INSERT INTO member (id, x_road_instance, member_class, member_code, name, created, updated, removed)
-VALUES (7, 'dev-cs', 'PUB', '15', 'Updated Everything', '2016-01-01 00:00:00+02', '2017-01-02 00:00:00+02', NULL);
+INSERT INTO member (id, x_road_instance, member_class, member_code, name, created, changed, fetched,  removed)
+VALUES (1, 'dev-cs', 'PUB', '14151328', 'Nahka-Albert', '2016-01-01 00:00:00+02', '2016-01-01 00:00:00+02', '2016-01-01 00:00:00+02', NULL);
+INSERT INTO member (id, x_road_instance, member_class, member_code, name, created, changed, fetched,  removed)
+VALUES (2, 'dev-cs', 'PUB', '88855888', 'Suutari Simo', '2016-01-01 00:00:00+02', '2016-01-01 00:00:00+02', '2016-01-01 00:00:00+02', NULL);
+INSERT INTO member (id, x_road_instance, member_class, member_code, name, created, changed, fetched,  removed)
+VALUES (3, 'dev-cs', 'PUB', '11', 'Updated Member', '2016-01-01 00:00:00+02', '2017-02-01 00:00:00+02', '2016-01-01 00:00:00+02', NULL);
+INSERT INTO member (id, x_road_instance, member_class, member_code, name, created, changed, fetched,  removed)
+VALUES (4, 'dev-cs', 'PUB', '12', 'Updated Subsystem', '2016-01-01 00:00:00+02', '2016-01-01 00:00:00+02', '2016-01-01 00:00:00+02', NULL);
+INSERT INTO member (id, x_road_instance, member_class, member_code, name, created, changed, fetched,  removed)
+VALUES (5, 'dev-cs', 'PUB', '13', 'Updated Service', '2016-01-01 00:00:00+02', '2016-01-01 00:00:00+02', '2016-01-01 00:00:00+02', NULL);
+INSERT INTO member (id, x_road_instance, member_class, member_code, name, created, changed, fetched,  removed)
+VALUES (6, 'dev-cs', 'PUB', '14', 'Updated Wsdl', '2016-01-01 00:00:00+02', '2016-01-01 00:00:00+02', '2016-01-01 00:00:00+02', NULL);
+INSERT INTO member (id, x_road_instance, member_class, member_code, name, created, changed, fetched,  removed)
+VALUES (7, 'dev-cs', 'PUB', '15', 'Updated Everything', '2016-01-01 00:00:00+02', '2017-01-02 00:00:00+02', '2017-01-02 00:00:00+02', NULL);
 
-INSERT INTO subsystem (id, member_id, subsystem_code, created, updated, removed)
-VALUES (1, 1, 'subsystem_a1', '2016-01-01 00:00:00+02', '2016-01-01 00:00:00+02', NULL);
-INSERT INTO subsystem (id, member_id, subsystem_code, created, updated, removed)
-VALUES (2, 1, 'subsystem_a2', '2016-01-01 00:00:00+02', '2016-01-01 00:00:00+02', NULL);
-INSERT INTO subsystem (id, member_id, subsystem_code, created, updated, removed)
-VALUES (3, 2, 'subsystem_b1', '2016-01-01 00:00:00+02', '2016-01-01 00:00:00+02', NULL);
-INSERT INTO subsystem (id, member_id, subsystem_code, created, updated, removed)
-VALUES (4, 3, 'subsystem_3-1', '2016-01-01 00:00:00+02', '2016-01-01 00:00:00+02', NULL);
-INSERT INTO subsystem (id, member_id, subsystem_code, created, updated, removed)
-VALUES (5, 4, 'subsystem_4-1-updated', '2016-01-01 00:00:00+02', '2017-01-02 00:00:00+02', NULL);
-INSERT INTO subsystem (id, member_id, subsystem_code, created, updated, removed)
-VALUES (6, 5, 'subsystem_5-1', '2016-01-01 00:00:00+02', '2016-01-01 00:00:00+02', NULL);
-INSERT INTO subsystem (id, member_id, subsystem_code, created, updated, removed)
-VALUES (7, 6, 'subsystem_6-1', '2016-01-01 00:00:00+02', '2016-01-01 00:00:00+02', NULL);
-INSERT INTO subsystem (id, member_id, subsystem_code, created, updated, removed)
-VALUES (8, 7, 'subsystem_7-1', '2016-01-01 00:00:00+02', '2016-01-01 00:00:00+02', NULL);
-INSERT INTO subsystem (id, member_id, subsystem_code, created, updated, removed)
-VALUES (9, 7, 'subsystem_7-2-updated', '2016-01-01 00:00:00+02', '2017-01-02 00:00:00+02', NULL);
-INSERT INTO subsystem (id, member_id, subsystem_code, created, updated, removed)
-VALUES (10, 7, 'subsystem_7-3', '2016-01-01 00:00:00+02', '2016-01-01 00:00:00+02', NULL);
+INSERT INTO subsystem (id, member_id, subsystem_code, created, changed, fetched,  removed)
+VALUES (1, 1, 'subsystem_a1', '2016-01-01 00:00:00+02', '2016-01-01 00:00:00+02', '2016-01-01 00:00:00+02', NULL);
+INSERT INTO subsystem (id, member_id, subsystem_code, created, changed, fetched,  removed)
+VALUES (2, 1, 'subsystem_a2', '2016-01-01 00:00:00+02', '2016-01-01 00:00:00+02', '2016-01-01 00:00:00+02', NULL);
+INSERT INTO subsystem (id, member_id, subsystem_code, created, changed, fetched,  removed)
+VALUES (3, 2, 'subsystem_b1', '2016-01-01 00:00:00+02', '2016-01-01 00:00:00+02', '2016-01-01 00:00:00+02', NULL);
+INSERT INTO subsystem (id, member_id, subsystem_code, created, changed, fetched,  removed)
+VALUES (4, 3, 'subsystem_3-1', '2016-01-01 00:00:00+02', '2016-01-01 00:00:00+02', '2016-01-01 00:00:00+02', NULL);
+INSERT INTO subsystem (id, member_id, subsystem_code, created, changed, fetched,  removed)
+VALUES (5, 4, 'subsystem_4-1-changed', '2016-01-01 00:00:00+02', '2017-01-02 00:00:00+02', '2017-01-02 00:00:00+02', NULL);
+INSERT INTO subsystem (id, member_id, subsystem_code, created, changed, fetched,  removed)
+VALUES (6, 5, 'subsystem_5-1', '2016-01-01 00:00:00+02', '2016-01-01 00:00:00+02', '2016-01-01 00:00:00+02', NULL);
+INSERT INTO subsystem (id, member_id, subsystem_code, created, changed, fetched,  removed)
+VALUES (7, 6, 'subsystem_6-1', '2016-01-01 00:00:00+02', '2016-01-01 00:00:00+02', '2016-01-01 00:00:00+02', NULL);
+INSERT INTO subsystem (id, member_id, subsystem_code, created, changed, fetched,  removed)
+VALUES (8, 7, 'subsystem_7-1', '2016-01-01 00:00:00+02', '2016-01-01 00:00:00+02', '2016-01-01 00:00:00+02', NULL);
+INSERT INTO subsystem (id, member_id, subsystem_code, created, changed, fetched,  removed)
+VALUES (9, 7, 'subsystem_7-2-changed', '2016-01-01 00:00:00+02', '2017-01-02 00:00:00+02', '2017-01-02 00:00:00+02', NULL);
+INSERT INTO subsystem (id, member_id, subsystem_code, created, changed, fetched,  removed)
+VALUES (10, 7, 'subsystem_7-3', '2016-01-01 00:00:00+02', '2016-01-01 00:00:00+02', '2016-01-01 00:00:00+02', NULL);
 
-INSERT INTO service (id, subsystem_id, service_code, service_version, created, updated, removed)
-VALUES (1, 2, 'testService', 'v1', '2016-01-01 00:00:00+02', '2016-01-01 00:00:00+02', NULL);
-INSERT INTO service (id, subsystem_id, service_code, service_version, created, updated, removed)
-VALUES (2, 1, 'getRandom', 'v1', '2016-01-01 00:00:00+02', '2016-01-01 00:00:00+02', NULL);
-INSERT INTO service (id, subsystem_id, service_code, service_version, created, updated, removed)
-VALUES (3, 6, 'dummy-service_5-1-1-updated', 'v1', '2016-01-01 00:00:00+02', '2017-01-02 00:00:00+02', NULL);
-INSERT INTO service (id, subsystem_id, service_code, service_version, created, updated, removed)
-VALUES (4, 7, 'dummy-service_6-1-1', 'v1', '2016-01-01 00:00:00+02', '2016-01-01 00:00:00+02', NULL);
-INSERT INTO service (id, subsystem_id, service_code, service_version, created, updated, removed)
-VALUES (5, 8, 'dummy-service_7-1-1-updated', 'v1', '2016-01-01 00:00:00+02', '2017-01-02 00:00:00+02', NULL);
-INSERT INTO service (id, subsystem_id, service_code, service_version, created, updated, removed)
-VALUES (6, 8, 'dummy-service_7-1-2', 'v1', '2016-01-01 00:00:00+02', '2016-01-01 00:00:00+02', NULL);
-INSERT INTO service (id, subsystem_id, service_code, service_version, created, updated, removed)
-VALUES (7, 9, 'dummy-service_7-2-1', 'v1', '2016-01-01 00:00:00+02', '2016-01-01 00:00:00+02', NULL);
+INSERT INTO service (id, subsystem_id, service_code, service_version, created, changed, fetched,  removed)
+VALUES (1, 2, 'testService', 'v1', '2016-01-01 00:00:00+02', '2016-01-01 00:00:00+02', '2016-01-01 00:00:00+02', NULL);
+INSERT INTO service (id, subsystem_id, service_code, service_version, created, changed, fetched,  removed)
+VALUES (2, 1, 'getRandom', 'v1', '2016-01-01 00:00:00+02', '2016-01-01 00:00:00+02', '2016-01-01 00:00:00+02', NULL);
+INSERT INTO service (id, subsystem_id, service_code, service_version, created, changed, fetched,  removed)
+VALUES (3, 6, 'dummy-service_5-1-1-changed', 'v1', '2016-01-01 00:00:00+02', '2017-01-02 00:00:00+02', '2017-01-02 00:00:00+02', NULL);
+INSERT INTO service (id, subsystem_id, service_code, service_version, created, changed, fetched,  removed)
+VALUES (4, 7, 'dummy-service_6-1-1', 'v1', '2016-01-01 00:00:00+02', '2016-01-01 00:00:00+02', '2016-01-01 00:00:00+02', NULL);
+INSERT INTO service (id, subsystem_id, service_code, service_version, created, changed, fetched,  removed)
+VALUES (5, 8, 'dummy-service_7-1-1-changed', 'v1', '2016-01-01 00:00:00+02', '2017-01-02 00:00:00+02', '2017-01-02 00:00:00+02', NULL);
+INSERT INTO service (id, subsystem_id, service_code, service_version, created, changed, fetched,  removed)
+VALUES (6, 8, 'dummy-service_7-1-2', 'v1', '2016-01-01 00:00:00+02', '2016-01-01 00:00:00+02', '2016-01-01 00:00:00+02', NULL);
+INSERT INTO service (id, subsystem_id, service_code, service_version, created, changed, fetched,  removed)
+VALUES (7, 9, 'dummy-service_7-2-1', 'v1', '2016-01-01 00:00:00+02', '2016-01-01 00:00:00+02', '2016-01-01 00:00:00+02', NULL);
 
-INSERT INTO wsdl (id, service_id, data, data_hash, external_id, created, updated, removed)
-VALUES (3, 4, '<?xml version="1.0" standalone="no"?><wsdl-6-1-1-1-updated/>', '456efg', '1000', '2016-01-01 00:00:00+02', '2017-01-02 00:00:00+02', NULL);
-INSERT INTO wsdl (id, service_id, data, data_hash, external_id, created, updated, removed)
-VALUES (4, 6, '<?xml version="1.0" standalone="no"?><wsdl-7-1-2-1-updated/>', '456efg', '1001', '2016-01-01 00:00:00+02', '2017-01-02 00:00:00+02', NULL);
-INSERT INTO wsdl (id, service_id, data, data_hash, external_id, created, updated, removed)
-VALUES (5, 7, '<?xml version="1.0" standalone="no"?><wsdl-7-2-1-1/>', '456efg', '1002', '2016-01-01 00:00:00+02', '2016-01-01 00:00:00+02', NULL);
+INSERT INTO wsdl (id, service_id, data, data_hash, external_id, created, changed, fetched,  removed)
+VALUES (3, 4, '<?xml version="1.0" standalone="no"?><wsdl-6-1-1-1-changed/>', '456efg', '1000', '2016-01-01 00:00:00+02', '2017-01-02 00:00:00+02', '2017-01-02 00:00:00+02', NULL);
+INSERT INTO wsdl (id, service_id, data, data_hash, external_id, created, changed, fetched,  removed)
+VALUES (4, 6, '<?xml version="1.0" standalone="no"?><wsdl-7-1-2-1-changed/>', '456efg', '1001', '2016-01-01 00:00:00+02', '2017-01-02 00:00:00+02', '2017-01-02 00:00:00+02', NULL);
+INSERT INTO wsdl (id, service_id, data, data_hash, external_id, created, changed, fetched,  removed)
+VALUES (5, 7, '<?xml version="1.0" standalone="no"?><wsdl-7-2-1-1/>', '456efg', '1002', '2016-01-01 00:00:00+02', '2016-01-01 00:00:00+02', '2016-01-01 00:00:00+02', NULL);
 
-INSERT INTO wsdl (id, service_id, data, data_hash, external_id, created, updated, removed) VALUES (1, 1, '<?xml version="1.0" standalone="no"?>
+INSERT INTO wsdl (id, service_id, data, data_hash, external_id, created, changed, fetched,  removed) VALUES (1, 1, '<?xml version="1.0" standalone="no"?>
 <wsdl:definitions xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
                   xmlns:tns="http://test.x-road.fi/producer"
                   xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
@@ -276,9 +276,9 @@ INSERT INTO wsdl (id, service_id, data, data_hash, external_id, created, updated
             <soap:address location="http://localhost:8080/test-service-0.0.2-SNAPSHOT/Endpoint"/>
         </wsdl:port>
     </wsdl:service>
-</wsdl:definitions>', '123asd', '1000', '2016-01-01 00:00:00+02', '2016-01-01 00:00:00+02', NULL);
+</wsdl:definitions>', '123asd', '1000', '2016-01-01 00:00:00+02', '2016-01-01 00:00:00+02', '2016-01-01 00:00:00+02', NULL);
 
-INSERT INTO wsdl (id, service_id, data, data_hash, external_id, created, updated, removed) VALUES (2, 2, '<?xml version="1.0" standalone="no"?>
+INSERT INTO wsdl (id, service_id, data, data_hash, external_id, created, changed, fetched, removed) VALUES (2, 2, '<?xml version="1.0" standalone="no"?>
 <wsdl:definitions xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
                   xmlns:tns="http://test.x-road.fi/producer"
                   xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
@@ -538,6 +538,6 @@ INSERT INTO wsdl (id, service_id, data, data_hash, external_id, created, updated
         </wsdl:port>
     </wsdl:service>
 </wsdl:definitions>
-', '456efg', '2050', '2016-01-01 00:00:00+02', '2016-01-01 00:00:00+02', NULL);
+', '456efg', '2050', '2016-01-01 00:00:00+02', '2016-01-01 00:00:00+02', '2016-01-01 00:00:00+02', NULL);
 
 
