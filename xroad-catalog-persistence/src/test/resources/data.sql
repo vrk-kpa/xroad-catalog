@@ -7,6 +7,7 @@ ALTER SEQUENCE service_id_seq RESTART WITH 1000;
 ALTER SEQUENCE wsdl_id_seq RESTART WITH 1000;
 
 -- members with ids 3-7 contain graphs of member-subsystem-service-wsdl with different parts changed after 1.1.2017
+-- members 1-7 are active (not removed). member 8 is removed.
 -- (for testing find(date updatedSince))
 INSERT INTO member (id, x_road_instance, member_class, member_code, name, created, changed, fetched,  removed)
 VALUES (1, 'dev-cs', 'PUB', '14151328', 'Nahka-Albert', '2016-01-01 00:00:00+02', '2016-01-01 00:00:00+02', '2016-01-01 00:00:00+02', NULL);
@@ -22,6 +23,8 @@ INSERT INTO member (id, x_road_instance, member_class, member_code, name, create
 VALUES (6, 'dev-cs', 'PUB', '14', 'Updated Wsdl', '2016-01-01 00:00:00+02', '2016-01-01 00:00:00+02', '2016-01-01 00:00:00+02', NULL);
 INSERT INTO member (id, x_road_instance, member_class, member_code, name, created, changed, fetched,  removed)
 VALUES (7, 'dev-cs', 'PUB', '15', 'Updated Everything', '2016-01-01 00:00:00+02', '2017-01-02 00:00:00+02', '2017-01-02 00:00:00+02', NULL);
+INSERT INTO member (id, x_road_instance, member_class, member_code, name, created, changed, fetched,  removed)
+VALUES (8, 'dev-cs', 'PUB', '14151329', 'Removed item', '2016-01-01 00:00:00+02', '2017-01-02 00:00:00+02', '2017-01-02 00:00:00+02', '2017-01-02 00:00:00+02');
 
 INSERT INTO subsystem (id, member_id, subsystem_code, created, changed, fetched,  removed)
 VALUES (1, 1, 'subsystem_a1', '2016-01-01 00:00:00+02', '2016-01-01 00:00:00+02', '2016-01-01 00:00:00+02', NULL);
@@ -43,6 +46,8 @@ INSERT INTO subsystem (id, member_id, subsystem_code, created, changed, fetched,
 VALUES (9, 7, 'subsystem_7-2-changed', '2016-01-01 00:00:00+02', '2017-01-02 00:00:00+02', '2017-01-02 00:00:00+02', NULL);
 INSERT INTO subsystem (id, member_id, subsystem_code, created, changed, fetched,  removed)
 VALUES (10, 7, 'subsystem_7-3', '2016-01-01 00:00:00+02', '2016-01-01 00:00:00+02', '2016-01-01 00:00:00+02', NULL);
+INSERT INTO subsystem (id, member_id, subsystem_code, created, changed, fetched,  removed)
+VALUES (11, 8, 'removed_subsystem', '2016-01-01 00:00:00+02', '2017-01-02 00:00:00+02', '2017-01-02 00:00:00+02', '2017-01-02 00:00:00+02');
 
 INSERT INTO service (id, subsystem_id, service_code, service_version, created, changed, fetched,  removed)
 VALUES (1, 2, 'testService', 'v1', '2016-01-01 00:00:00+02', '2016-01-01 00:00:00+02', '2016-01-01 00:00:00+02', NULL);

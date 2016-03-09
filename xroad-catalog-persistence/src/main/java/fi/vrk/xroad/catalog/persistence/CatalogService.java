@@ -7,36 +7,48 @@ import fi.vrk.xroad.catalog.persistence.entity.Wsdl;
 
 import java.util.Collection;
 import java.util.Date;
+import java.util.Optional;
 
 /**
  * CRUD methods for catalog objects. no business logic (e.g. hash calculation),
  * just persistence-related logic.
  * Catalog entities (member, subsystem, service, wsdl) have time stamps created, updated and deleted.
  * They are used so that "updated" is changed always when entity is updated in any way, including
- * creation and deletion. This is important since getMembers(Date updatedSince) only checks
+ * creation and deletion. This is important since getActiveMembers(Date updatedSince) only checks
  * updated-field and ignores created & deleted.
  */
 public interface CatalogService {
 
     // TODO: make it NOT fetch wsdl yet
+    /**
+     * Gets all non-removed members, regardless of when they were changed.
+     * Fetches all data from graph member->subsystem->service->wsdl
+     */
+    Iterable<Member> getActiveMembers();
 
     /**
-     * Gets all members, regardless of when they were changed.
-     * Fetches all data from graph member->subsystem->service->wsdl
-     * @return
+     * Same as {@link #getActiveMembers()} except that returns also
+     * removed items
      */
-    Iterable<Member> getMembers();
+    Iterable<Member> getAllMembers();
 
     // TODO: make it NOT fetch wsdl yet
 
     /**
-     * Gets all members that have been changed (created) after given time.
+     * Gets all non-removed members that have been changed (created) after given time.
      * Change is determined by field "changed".
      * Fetches all data from graph member->subsystem->service->wsdl.
      * @param changedAfter
      * @return
      */
-    Iterable<Member> getMembers(Date changedAfter);
+    Iterable<Member> getActiveMembers(Date changedAfter);
+
+    /**
+     * Same as {@link #getActiveMembers(Date)} except that returns also removed items
+     * @param changedAfter
+     * @return
+     */
+    Iterable<Member> getAllMembers(Date changedAfter);
 
     /**
      * Mainly for testing use

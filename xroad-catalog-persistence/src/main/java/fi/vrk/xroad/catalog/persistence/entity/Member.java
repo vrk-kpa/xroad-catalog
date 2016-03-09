@@ -1,16 +1,22 @@
 package fi.vrk.xroad.catalog.persistence.entity;
 
 import com.google.common.collect.ComparisonChain;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Maps;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
 import javax.persistence.*;
+import java.text.MessageFormat;
 import java.util.Date;
+import java.util.Map;
 import java.util.Set;
 
 @Entity
-@Getter @Setter @ToString(exclude = "subsystems")
+@Getter
+@Setter
+@ToString(exclude = "subsystems")
 // Entity graph defining tree member-subsystem-service.
 @NamedEntityGraph(
         name = "member.full-tree.graph",
@@ -19,40 +25,58 @@ import java.util.Set;
         },
         subgraphs = {
                 @NamedSubgraph(
-                        name="subsystem.services.graph",
+                        name = "subsystem.services.graph",
                         attributeNodes = @NamedAttributeNode(value = "services", subgraph = "service.wsdl.graph")),
                 @NamedSubgraph(
-                        name="service.wsdl.graph",
+                        name = "service.wsdl.graph",
                         attributeNodes = @NamedAttributeNode(value = "wsdl")),
         }
 )
 @NamedQueries({
         // query fetches all members that have been changed, or have child entities
         // (subsystems, services, wsdls) that have been changed since given date
-        @NamedQuery(name = "Member.findChangedSince",
-                query = "SELECT DISTINCT mem " +
-                        "FROM Member mem " +
-                        "LEFT JOIN FETCH mem.subsystems fetchedSubs " +
-                        "LEFT JOIN FETCH fetchedSubs.services fetchedSers " +
-                        "LEFT JOIN FETCH fetchedSers.wsdl fetchedWsdl " +
-                        "WHERE mem.statusInfo.changed > :since " +
-                        "OR EXISTS ( " +
-                        "SELECT sub " +
-                        "FROM Subsystem sub " +
-                        "WHERE sub.member = mem " +
-                        "AND sub.statusInfo.changed > :since)" +
-                        "OR EXISTS ( " +
-                        "SELECT service " +
-                        "FROM Service service " +
-                        "WHERE service.subsystem.member = mem " +
-                        "AND service.statusInfo.changed > :since)" +
-                        "OR EXISTS ( " +
-                        "SELECT wsdl " +
-                        "FROM Wsdl wsdl " +
-                        "WHERE wsdl.service.subsystem.member = mem " +
-                        "AND wsdl.statusInfo.changed > :since)"),
+        @NamedQuery(name = "Member.findAllChangedSince",
+                query = Member.FIND_ALL_CHANGED_QUERY),
+        @NamedQuery(name = "Member.findActiveChangedSince",
+                query = Member.FIND_ACTIVE_CHANGED_QUERY),
 })
 public class Member {
+
+    // TODO: would be nice to make less ugly
+    private static final String FIND_CHANGED_QUERY_PART_1 =
+            "SELECT DISTINCT mem " +
+                    "FROM Member mem " +
+                    "LEFT JOIN FETCH mem.subsystems fetchedSubs " +
+                    "LEFT JOIN FETCH fetchedSubs.services fetchedSers " +
+                    "LEFT JOIN FETCH fetchedSers.wsdl fetchedWsdl " +
+                    "WHERE ";
+    private static final String FIND_CHANGED_QUERY_PART_2 =
+            "mem.statusInfo.changed > :since " +
+                    "OR EXISTS ( " +
+                    "SELECT sub " +
+                    "FROM Subsystem sub " +
+                    "WHERE sub.member = mem " +
+                    "AND sub.statusInfo.changed > :since)" +
+                    "OR EXISTS ( " +
+                    "SELECT service " +
+                    "FROM Service service " +
+                    "WHERE service.subsystem.member = mem " +
+                    "AND service.statusInfo.changed > :since)" +
+                    "OR EXISTS ( " +
+                    "SELECT wsdl " +
+                    "FROM Wsdl wsdl " +
+                    "WHERE wsdl.service.subsystem.member = mem " +
+                    "AND wsdl.statusInfo.changed > :since) ";
+    static final String FIND_ALL_CHANGED_QUERY =
+            FIND_CHANGED_QUERY_PART_1 + FIND_CHANGED_QUERY_PART_2;
+    static final String FIND_ACTIVE_CHANGED_QUERY =
+            FIND_CHANGED_QUERY_PART_1 +
+            "mem.statusInfo.removed IS NULL AND (" +
+            FIND_CHANGED_QUERY_PART_2 +
+            ")";
+    static {
+        System.out.println(FIND_ACTIVE_CHANGED_QUERY);
+    }
 
     @Id
     @Column(nullable = false)
@@ -71,6 +95,7 @@ public class Member {
     /**
      * Updates data with values from a transient non-deleted Member object,
      * and sets all data fields accordingly
+     *
      * @param transientMember
      * @param timestamp
      */
@@ -94,6 +119,7 @@ public class Member {
 
     /**
      * Compares objects with just the "direct payload" - not ids, references entities or timestamps
+     *
      * @param another
      * @return
      */

@@ -18,13 +18,22 @@ public class CatalogServiceImpl implements CatalogService {
     MemberRepository memberRepository;
 
     @Override
-    public Iterable<Member> getMembers() {
-        return memberRepository.findAll();
+    public Iterable<Member> getActiveMembers() {
+        return memberRepository.findAllActive();
     }
 
     @Override
-    public Iterable<Member> getMembers(Date changedAfter) {
-        return memberRepository.findChangedSince(changedAfter);
+    public Iterable<Member> getAllMembers() {
+        return memberRepository.findAll();
+    }
+
+    public Iterable<Member> getActiveMembers(Date changedAfter) {
+        return memberRepository.findActiveChangedSince(changedAfter);
+    }
+
+    @Override
+    public Iterable<Member> getAllMembers(Date changedAfter) {
+        return memberRepository.findAllChangedSince(changedAfter);
     }
 
     @Override

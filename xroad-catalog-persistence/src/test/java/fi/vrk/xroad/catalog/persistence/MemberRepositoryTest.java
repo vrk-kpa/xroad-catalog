@@ -51,7 +51,11 @@ public class MemberRepositoryTest {
     @Test
     public void testFindAll() {
         Iterable<Member> members = memberRepository.findAll();
+        assertEquals(8, Iterables.size(members));
+
+        members = memberRepository.findAllActive();
         assertEquals(7, Iterables.size(members));
+
     }
 
     // TODO: why does this fail when we run all xroad.catalog.persistence.* tests? also, check from >gradle test
@@ -60,7 +64,7 @@ public class MemberRepositoryTest {
         String name = "memberx";
         Member member = createTestMember(name);
         memberRepository.save(member);
-        Iterable<Member> members = memberRepository.findAll();
+        Iterable<Member> members = memberRepository.findAllActive();
         assertEquals(8, Iterables.size(members));
         log.info("created member with id=" + member.getId());
 
@@ -105,7 +109,7 @@ public class MemberRepositoryTest {
     @Test
     public void testModified() {
         Date changedSince = testUtil.createDate(1, 1, 2017);
-        Iterable<Member> members = memberRepository.findChangedSince(changedSince);
+        Iterable<Member> members = memberRepository.findActiveChangedSince(changedSince);
         // members 3-7 have been changed since 1/1/2017,
         // 3-6 have different parts changed, #7 has all parts changed
         log.info("found changed members with ids: " + testUtil.getIds(members));
