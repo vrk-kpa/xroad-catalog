@@ -284,7 +284,7 @@ INSERT INTO wsdl (id, service_id, data, data_hash, external_id, created, changed
             <soap:address location="http://localhost:8080/test-service-0.0.2-SNAPSHOT/Endpoint"/>
         </wsdl:port>
     </wsdl:service>
-</wsdl:definitions>', '123asd', '1000', '2016-01-01 00:00:00+02', '2016-01-01 00:00:00+02', '2016-01-01 00:00:00+02', NULL);
+</wsdl:definitions>', '123asd', '1003', '2016-01-01 00:00:00+02', '2016-01-01 00:00:00+02', '2016-01-01 00:00:00+02', NULL);
 
 INSERT INTO wsdl (id, service_id, data, data_hash, external_id, created, changed, fetched, removed) VALUES (2, 2, '<?xml version="1.0" standalone="no"?>
 <wsdl:definitions xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"

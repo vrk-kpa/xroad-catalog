@@ -57,8 +57,9 @@ public interface CatalogService {
     Iterable<Member> getSubsystems();
 
     /**
-     * Returns the full Wsdl object.
-     * @return
+     * Returns the full Wsdl object. Only returns active ones, removed are not found.
+     * @return Wsdl, if any, null if not found
+     * @throws RuntimeException if multiple matches found.
      */
     Wsdl getWsdl(String externalId);
 

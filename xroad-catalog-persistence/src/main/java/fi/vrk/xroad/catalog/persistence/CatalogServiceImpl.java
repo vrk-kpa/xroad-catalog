@@ -17,6 +17,9 @@ public class CatalogServiceImpl implements CatalogService {
     @Autowired
     MemberRepository memberRepository;
 
+    @Autowired
+    WsdlRepository wsdlRepository;
+
     @Override
     public Iterable<Member> getActiveMembers() {
         return memberRepository.findAllActive();
@@ -43,7 +46,14 @@ public class CatalogServiceImpl implements CatalogService {
 
     @Override
     public Wsdl getWsdl(String externalId) {
-        return null;
+        List<Wsdl> matches = wsdlRepository.findByExternalId(externalId);
+        if (matches.size() > 1) {
+            throw new IllegalStateException("multiple matches found to " + externalId + ": " + matches);
+        } else if (matches.size() == 1) {
+            return matches.iterator().next();
+        } else {
+            return null;
+        }
     }
 
     @Override

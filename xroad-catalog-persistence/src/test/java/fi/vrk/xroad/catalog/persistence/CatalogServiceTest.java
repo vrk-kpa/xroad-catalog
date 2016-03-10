@@ -3,9 +3,7 @@ package fi.vrk.xroad.catalog.persistence;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-import fi.vrk.xroad.catalog.persistence.entity.Member;
-import fi.vrk.xroad.catalog.persistence.entity.Service;
-import fi.vrk.xroad.catalog.persistence.entity.Subsystem;
+import fi.vrk.xroad.catalog.persistence.entity.*;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -53,7 +51,15 @@ public class CatalogServiceTest {
     @Autowired
     TestUtil testUtil;
 
-    // TODO: test after saveAllMembersAndSubsystems with detach / refresh
+    @Test
+    public void testGetWsdl() {
+        // TODO: UNIQUE external_id
+        Wsdl wsdl = catalogService.getWsdl("1000");
+        assertNotNull(wsdl);
+        assertEquals("<?xml version=\"1.0\" standalone=\"no\"?><wsdl-6-1-1-1-changed/>", wsdl.getData());
+        assertEquals("456efg", wsdl.getDataHash());
+        assertEquals(7, wsdl.getService().getSubsystem().getId());
+    }
 
     @Test
     public void testInsertNewMemberAndSubsystems() {
@@ -134,6 +140,7 @@ public class CatalogServiceTest {
         Subsystem ss1original = subsystemRepository.findOne(1L);
         Subsystem ss2original = subsystemRepository.findOne(2L);
         Subsystem ss12original = subsystemRepository.findOne(12L);
+        ss1original.getServices().size();
         // detach, so we dont modify those objects in the next steps
         testUtil.entityManagerClear();
 
@@ -151,7 +158,7 @@ public class CatalogServiceTest {
 
         Member checkedMember = memberRepository.findOne(1L);
         assertNotNull(checkedMember);
-        assertFetchedIsOnlyDifferent(original, checkedMember);
+        assertFetchedIsOnlyDifferent(original.getStatusInfo(), checkedMember.getStatusInfo());
         assertEquals(Arrays.asList(2L),
                 new ArrayList<Long>(testUtil.getIds(checkedMember.getActiveSubsystems())));
         assertEquals(Arrays.asList(1L, 2L, 12L),
@@ -175,7 +182,7 @@ public class CatalogServiceTest {
 
         checkedMember = memberRepository.findOne(1L);
         assertNotNull(checkedMember);
-        assertFetchedIsOnlyDifferent(original, checkedMember);
+        assertFetchedIsOnlyDifferent(original.getStatusInfo(), checkedMember.getStatusInfo());
         assertEquals(Arrays.asList(1L, 2L, 12L),
                 new ArrayList<Long>(testUtil.getIds(checkedMember.getAllSubsystems())));
         assertEquals(Arrays.asList(2L, 12L),
@@ -183,15 +190,62 @@ public class CatalogServiceTest {
 
         // save m1-(ss1,ss2,ss3) -> ss 1,2,12 are all active
         // the service & wsdl entities should NOT have been modified by the deletes
+        savedMember = new Member();
+        shallowCopyFields(original, savedMember);
+        ss2saved = new Subsystem();
+        shallowCopyFields(ss2original, ss2saved);
+        ss12saved = new Subsystem();
+        shallowCopyFields(ss12original, ss12saved);
+        Subsystem ss1saved = new Subsystem();
+        shallowCopyFields(ss1original, ss1saved);
+        ss1saved.setMember(savedMember);
+        ss2saved.setMember(savedMember);
+        ss12saved.setMember(savedMember);
+        savedMember.getAllSubsystems().add(ss1saved);
+        savedMember.getAllSubsystems().add(ss2saved);
+        savedMember.getAllSubsystems().add(ss12saved);
 
+        catalogService.saveAllMembersAndSubsystems(Lists.newArrayList(savedMember));
+        testUtil.entityManagerFlush();
+        testUtil.entityManagerClear();
+
+        checkedMember = memberRepository.findOne(1L);
+        assertNotNull(checkedMember);
+        assertFetchedIsOnlyDifferent(original.getStatusInfo(), checkedMember.getStatusInfo());
+        assertEquals(Arrays.asList(1L, 2L, 12L),
+                new ArrayList<Long>(testUtil.getIds(checkedMember.getAllSubsystems())));
+        assertEquals(Arrays.asList(1L, 2L, 12L),
+                new ArrayList<Long>(testUtil.getIds(checkedMember.getActiveSubsystems())));
+
+        assertEquals(1, ss1original.getServices().size());
+        Subsystem ss1now = subsystemRepository.findOne(1L);
+        assertEquals(1, ss1now.getServices().size());
+        Service originalService = ss1original.getServices().iterator().next();
+        Service currentService = ss1now.getServices().iterator().next();
+        assertAllSame(originalService.getStatusInfo(), currentService.getStatusInfo());
+        Wsdl originalWsdl = originalService.getWsdl();
+        Wsdl currentWsdl = currentService.getWsdl();
+        assertAllSame(originalWsdl.getStatusInfo(), currentWsdl.getStatusInfo());
     }
 
-    private void assertFetchedIsOnlyDifferent(Member original, Member checkedMember) {
-        assertEquals(original.getStatusInfo().getCreated(), checkedMember.getStatusInfo().getCreated());
-        assertEquals(original.getStatusInfo().getChanged(), checkedMember.getStatusInfo().getChanged());
-        assertEquals(original.getStatusInfo().getRemoved(), checkedMember.getStatusInfo().getRemoved());
-        assertNotEquals(original.getStatusInfo().getFetched(), checkedMember.getStatusInfo().getFetched());
+    private void assertFetchedIsOnlyDifferent(StatusInfo original, StatusInfo checked) {
+        assertEqualities(original, checked, true, true, true, false);
     }
+
+    private void assertAllSame(StatusInfo original, StatusInfo checked) {
+        assertEqualities(original, checked, true, true, true, true);
+    }
+
+    private void assertEqualities(StatusInfo original, StatusInfo checked,
+                                  boolean sameCreated, boolean sameChanged,
+                                  boolean sameRemoved, boolean sameFetched) {
+
+        assertEquals(sameCreated, Objects.equals(original.getCreated(), checked.getCreated()));
+        assertEquals(sameChanged, Objects.equals(original.getChanged(), checked.getChanged()));
+        assertEquals(sameRemoved, Objects.equals(original.getRemoved(), checked.getRemoved()));
+        assertEquals(sameFetched, Objects.equals(original.getFetched(), checked.getFetched()));
+    }
+
 
     @Test
     public void testMemberIsChangedOnlyWhenNameIsChanged() {
