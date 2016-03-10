@@ -9,6 +9,7 @@ import fi.vrk.xroad.catalog.persistence.entity.Subsystem;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -19,6 +20,7 @@ import java.util.stream.StreamSupport;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotNull;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(Application.class)
@@ -115,15 +117,81 @@ public class CatalogServiceTest {
                 .count());
     }
 
-//    @Test
-//    public void testMissingMemberIsRemoved() {
-//        throw new RuntimeException("not done yet");
-//    }
-//
-//    @Test
-//    public void testMissingSubsystemIsRemoved() {
-//        throw new RuntimeException("not done yet");
-//    }
+    private void shallowCopyFields(Member from, Member to) {
+        // only copy simple non-jpa-magical primitive properties
+        BeanUtils.copyProperties(from, to, "id", "statusInfo", "subsystems");
+    }
+
+    private void shallowCopyFields(Subsystem from, Subsystem to) {
+        // only copy simple non-jpa-magical primitive properties
+        BeanUtils.copyProperties(from, to, "id", "statusInfo", "member", "services");
+    }
+
+    @Test
+    public void testMissingSubsystemIsRemoved() {
+        // member 1: subsystems 1,2 (active) and 12 (removed)
+        Member original = memberRepository.findOne(1L);
+        Subsystem ss1original = subsystemRepository.findOne(1L);
+        Subsystem ss2original = subsystemRepository.findOne(2L);
+        Subsystem ss12original = subsystemRepository.findOne(12L);
+        // detach, so we dont modify those objects in the next steps
+        testUtil.entityManagerClear();
+
+        // save m1-(ss2) -> ss 1 and 12 are removed
+        Member savedMember = new Member();
+        shallowCopyFields(original, savedMember);
+        Subsystem ss2saved = new Subsystem();
+        shallowCopyFields(ss2original, ss2saved);
+        ss2saved.setMember(savedMember);
+        savedMember.getAllSubsystems().add(ss2saved);
+
+        catalogService.saveAllMembersAndSubsystems(Lists.newArrayList(savedMember));
+        testUtil.entityManagerFlush();
+        testUtil.entityManagerClear();
+
+        Member checkedMember = memberRepository.findOne(1L);
+        assertNotNull(checkedMember);
+        assertFetchedIsOnlyDifferent(original, checkedMember);
+        assertEquals(Arrays.asList(2L),
+                new ArrayList<Long>(testUtil.getIds(checkedMember.getActiveSubsystems())));
+        assertEquals(Arrays.asList(1L, 2L, 12L),
+                new ArrayList<Long>(testUtil.getIds(checkedMember.getAllSubsystems())));
+
+        // save m1-(ss2,ss12) -> ss 1 is removed
+        savedMember = new Member();
+        shallowCopyFields(original, savedMember);
+        ss2saved = new Subsystem();
+        shallowCopyFields(ss2original, ss2saved);
+        Subsystem ss12saved = new Subsystem();
+        shallowCopyFields(ss12original, ss12saved);
+        ss2saved.setMember(savedMember);
+        ss12saved.setMember(savedMember);
+        savedMember.getAllSubsystems().add(ss2saved);
+        savedMember.getAllSubsystems().add(ss12saved);
+
+        catalogService.saveAllMembersAndSubsystems(Lists.newArrayList(savedMember));
+        testUtil.entityManagerFlush();
+        testUtil.entityManagerClear();
+
+        checkedMember = memberRepository.findOne(1L);
+        assertNotNull(checkedMember);
+        assertFetchedIsOnlyDifferent(original, checkedMember);
+        assertEquals(Arrays.asList(1L, 2L, 12L),
+                new ArrayList<Long>(testUtil.getIds(checkedMember.getAllSubsystems())));
+        assertEquals(Arrays.asList(2L, 12L),
+                new ArrayList<Long>(testUtil.getIds(checkedMember.getActiveSubsystems())));
+
+        // save m1-(ss1,ss2,ss3) -> ss 1,2,12 are all active
+        // the service & wsdl entities should NOT have been modified by the deletes
+
+    }
+
+    private void assertFetchedIsOnlyDifferent(Member original, Member checkedMember) {
+        assertEquals(original.getStatusInfo().getCreated(), checkedMember.getStatusInfo().getCreated());
+        assertEquals(original.getStatusInfo().getChanged(), checkedMember.getStatusInfo().getChanged());
+        assertEquals(original.getStatusInfo().getRemoved(), checkedMember.getStatusInfo().getRemoved());
+        assertNotEquals(original.getStatusInfo().getFetched(), checkedMember.getStatusInfo().getFetched());
+    }
 
     @Test
     public void testMemberIsChangedOnlyWhenNameIsChanged() {

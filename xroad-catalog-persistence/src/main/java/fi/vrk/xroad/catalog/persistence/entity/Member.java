@@ -91,7 +91,7 @@ public class Member {
     private StatusInfo statusInfo = new StatusInfo();
     @Getter(AccessLevel.NONE) // do not create default getter, we provide the substitute
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
-    private Set<Subsystem> subsystems;
+    private Set<Subsystem> subsystems = new HashSet<>();
 
     /**
      * Updates data with values from a transient non-deleted Member object,

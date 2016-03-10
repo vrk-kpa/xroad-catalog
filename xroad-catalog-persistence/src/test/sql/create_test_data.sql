@@ -1,3 +1,4 @@
+-- some test data to be used freely...actual unit test data is in resources/data.sql
 --
 -- PostgreSQL database dump
 --

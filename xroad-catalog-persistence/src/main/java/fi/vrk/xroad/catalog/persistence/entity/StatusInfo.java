@@ -1,5 +1,8 @@
 package fi.vrk.xroad.catalog.persistence.entity;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import javax.persistence.Basic;
 import javax.persistence.Embeddable;
 import javax.persistence.FetchType;
@@ -9,6 +12,8 @@ import java.util.Date;
  * Embeddable to model the status / timestamp fields that are repeated in all the tables
  */
 @Embeddable
+@Getter
+@Setter
 public class StatusInfo {
 
     private Date created;
@@ -72,37 +77,5 @@ public class StatusInfo {
         this.removed = removed;
     }
     public StatusInfo() {
-    }
-
-    public Date getCreated() {
-        return created;
-    }
-
-    public void setCreated(Date created) {
-        this.created = created;
-    }
-
-    public Date getChanged() {
-        return changed;
-    }
-
-    public void setChanged(Date changed) {
-        this.changed = changed;
-    }
-
-    public Date getFetched() {
-        return fetched;
-    }
-
-    public void setFetched(Date fetched) {
-        this.fetched = fetched;
-    }
-
-    public Date getRemoved() {
-        return removed;
-    }
-
-    public void setRemoved(Date removed) {
-        this.removed = removed;
     }
 }
