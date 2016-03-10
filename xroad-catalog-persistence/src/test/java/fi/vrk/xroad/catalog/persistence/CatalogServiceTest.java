@@ -31,7 +31,7 @@ public class CatalogServiceTest {
      */
     public static final int TEST_DATA_MEMBERS = 8;
     public static final int TEST_DATA_ACTIVE_MEMBERS = 7;
-    public static final int TEST_DATA_SUBSYSTEMS = 11;
+    public static final int TEST_DATA_SUBSYSTEMS = 12;
     public static final int TEST_DATA_ACTIVE_SUBSYSTEMS = 10;
     @Autowired
     CatalogService catalogService;
@@ -100,7 +100,7 @@ public class CatalogServiceTest {
         fooMember.setSubsystems(new HashSet<>());
         for (int i = 0; i < subsystems; i++) {
             Subsystem subsystem1 = new Subsystem(null, "subsystem" + i);
-            fooMember.getSubsystems().add(subsystem1);
+            fooMember.getAllSubsystems().add(subsystem1);
             subsystem1.setMember(fooMember);
         }
         return fooMember;
@@ -191,7 +191,7 @@ public class CatalogServiceTest {
         log.info("************************** member with id: " + member.getId());
         log.info(member.toString());
         log.info("subsystems");
-        for (Subsystem subs : member.getSubsystems()) {
+        for (Subsystem subs : member.getActiveSubsystems()) {
             log.info(subs.toString());
             log.info("services");
             for (Service service : subs.getServices()) {

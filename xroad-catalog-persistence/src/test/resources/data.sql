@@ -26,6 +26,7 @@ VALUES (7, 'dev-cs', 'PUB', '15', 'Updated Everything', '2016-01-01 00:00:00+02'
 INSERT INTO member (id, x_road_instance, member_class, member_code, name, created, changed, fetched,  removed)
 VALUES (8, 'dev-cs', 'PUB', '14151329', 'Removed item', '2016-01-01 00:00:00+02', '2017-01-02 00:00:00+02', '2017-01-02 00:00:00+02', '2017-01-02 00:00:00+02');
 
+-- member 1 has 3 subsystems, 2 active and 1 removed one
 INSERT INTO subsystem (id, member_id, subsystem_code, created, changed, fetched,  removed)
 VALUES (1, 1, 'subsystem_a1', '2016-01-01 00:00:00+02', '2016-01-01 00:00:00+02', '2016-01-01 00:00:00+02', NULL);
 INSERT INTO subsystem (id, member_id, subsystem_code, created, changed, fetched,  removed)
@@ -48,6 +49,8 @@ INSERT INTO subsystem (id, member_id, subsystem_code, created, changed, fetched,
 VALUES (10, 7, 'subsystem_7-3', '2016-01-01 00:00:00+02', '2016-01-01 00:00:00+02', '2016-01-01 00:00:00+02', NULL);
 INSERT INTO subsystem (id, member_id, subsystem_code, created, changed, fetched,  removed)
 VALUES (11, 8, 'removed_subsystem', '2016-01-01 00:00:00+02', '2017-01-02 00:00:00+02', '2017-01-02 00:00:00+02', '2017-01-02 00:00:00+02');
+INSERT INTO subsystem (id, member_id, subsystem_code, created, changed, fetched,  removed)
+VALUES (12, 1, 'subsystem_a3_removed', '2016-01-01 00:00:00+02', '2016-01-01 00:00:00+02', '2016-01-01 00:00:00+02', '2016-01-01 00:00:00+02');
 
 INSERT INTO service (id, subsystem_id, service_code, service_version, created, changed, fetched,  removed)
 VALUES (1, 2, 'testService', 'v1', '2016-01-01 00:00:00+02', '2016-01-01 00:00:00+02', '2016-01-01 00:00:00+02', NULL);

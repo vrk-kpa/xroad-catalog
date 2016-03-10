@@ -3,15 +3,15 @@ package fi.vrk.xroad.catalog.persistence.entity;
 import com.google.common.collect.ComparisonChain;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
 import javax.persistence.*;
 import java.text.MessageFormat;
-import java.util.Date;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Entity
 @Getter
@@ -89,6 +89,7 @@ public class Member {
     private String name;
     @Embedded
     private StatusInfo statusInfo = new StatusInfo();
+    @Getter(AccessLevel.NONE) // do not create default getter, we provide the substitute
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
     private Set<Subsystem> subsystems;
 
@@ -145,6 +146,25 @@ public class Member {
         this.name = name;
         statusInfo.setTimestampsForNew(new Date());
     }
+
+    /**
+     * Note: Read-only collection, do not use this to modify collection
+     * @return
+     */
+    public Set<Subsystem> getActiveSubsystems() {
+        return Collections.unmodifiableSet(subsystems.stream()
+                .filter(subsystem -> !subsystem.getStatusInfo().isRemoved())
+                .collect(Collectors.toSet()));
+    }
+
+    /**
+     * This collection can be used to add new items
+     * @return
+     */
+    public Set<Subsystem> getAllSubsystems() {
+        return subsystems;
+    }
+
 }
 
 

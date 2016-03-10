@@ -1,6 +1,8 @@
 package fi.vrk.xroad.catalog.persistence.entity;
 
+import javax.persistence.Basic;
 import javax.persistence.Embeddable;
+import javax.persistence.FetchType;
 import java.util.Date;
 
 /**

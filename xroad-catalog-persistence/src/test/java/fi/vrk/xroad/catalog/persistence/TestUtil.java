@@ -71,8 +71,8 @@ public class TestUtil {
         ss1.setMember(member);
         ss2.setMember(member);
         member.setSubsystems(new HashSet<>());
-        member.getSubsystems().add(ss1);
-        member.getSubsystems().add(ss2);
+        member.getActiveSubsystems().add(ss1);
+        member.getActiveSubsystems().add(ss2);
 
         Service s1 = createService(name, now, "service1");
         Service s2 = createService(name, now, "service2");
@@ -108,7 +108,16 @@ public class TestUtil {
         return ss1;
     }
 
-    public void detach(Object entity) {
+    public void entityManagerDetach(Object entity) {
         entityManager.detach(entity);
     }
+
+    public void entityManagerFlush() {
+        entityManager.flush();
+    }
+
+    public void entityManagerClear() {
+        entityManager.clear();
+    }
+
 }

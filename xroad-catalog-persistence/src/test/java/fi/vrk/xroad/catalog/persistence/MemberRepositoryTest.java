@@ -33,6 +33,7 @@ public class MemberRepositoryTest {
     public void testFindByNaturalKey() {
         Member member = memberRepository.findByNaturalKey("dev-cs", "PUB", "14151328");
         assertNotNull(member);
+        assertNotNull(member.getStatusInfo());
         member = memberRepository.findByNaturalKey("dev-cs-NOT-EXISTING", "PUB", "14151328");
         assertNull(member);
     }
@@ -64,22 +65,24 @@ public class MemberRepositoryTest {
 
         Member peek = memberRepository.findByNaturalKey
                 (member.getXRoadInstance(),
-                        member.getMemberClass(),    
+                        member.getMemberClass(),
                         member.getMemberCode());
         assertNotNull(peek);
+        assertNotNull(peek.getStatusInfo());
 
         Iterable<Member> members = memberRepository.findAllActive();
         assertEquals(8, Iterables.size(members));
         log.info("created member with id=" + member.getId());
 
-        testUtil.detach(member);
+        testUtil.entityManagerFlush();
+        testUtil.entityManagerClear();
+
         Member savedRead = memberRepository.findByNaturalKey
                 (member.getXRoadInstance(),
                 member.getMemberClass(),
                 member.getMemberCode());
         assertNotNull(savedRead);
-        assertEquals(2, savedRead.getSubsystems().size());
-
+        assertEquals(2, savedRead.getActiveSubsystems().size());
     }
 
     private Member createTestMember(String name) {
@@ -93,9 +96,11 @@ public class MemberRepositoryTest {
         Subsystem ss2 = new Subsystem();
         ss1.setMember(member);
         ss2.setMember(member);
+        ss1.getStatusInfo().setTimestampsForNew(new Date());
+        ss2.getStatusInfo().setTimestampsForNew(new Date());
         member.setSubsystems(new HashSet<>());
-        member.getSubsystems().add(ss1);
-        member.getSubsystems().add(ss2);
+        member.getAllSubsystems().add(ss1);
+        member.getAllSubsystems().add(ss2);
         ss1.setSubsystemCode(name + "ss1");
         ss1.setSubsystemCode(name + "ss2");
 
@@ -135,9 +140,9 @@ public class MemberRepositoryTest {
         Optional optionalMember = testUtil.getEntity(members, 7L);
         assertTrue(optionalMember.isPresent());
         Member member7 = (Member) optionalMember.get();
-        assertEquals(3, member7.getSubsystems().size());
+        assertEquals(3, member7.getActiveSubsystems().size());
         ArrayList<Service> allServices7 = new ArrayList<>();
-        for (Subsystem s: member7.getSubsystems()) {
+        for (Subsystem s: member7.getActiveSubsystems()) {
             allServices7.addAll(s.getServices());
         }
         assertEquals(3, allServices7.size());
@@ -154,7 +159,7 @@ public class MemberRepositoryTest {
         log.info("************************** member with id: " + member.getId());
         log.info(member.toString());
         log.info("subsystems");
-        for (Subsystem subs : member.getSubsystems()) {
+        for (Subsystem subs : member.getActiveSubsystems()) {
             log.info(subs.toString());
             log.info("services");
             for (Service service : subs.getServices()) {

@@ -59,7 +59,7 @@ public class CatalogServiceImpl implements CatalogService {
             if (oldMember == null) {
                 // brand new item
                 member.getStatusInfo().setTimestampsForNew(now);
-                for (Subsystem subsystem: member.getSubsystems()) {
+                for (Subsystem subsystem: member.getAllSubsystems()) {
                     subsystem.getStatusInfo().setTimestampsForNew(now);
                     subsystem.setMember(member);
                 }
@@ -68,16 +68,16 @@ public class CatalogServiceImpl implements CatalogService {
                 oldMember.updateWithDataFrom(member, now);
                 // process subsystems for the old member
                 Map<SubsystemId, Subsystem> unprocessedOldSubsystems = new HashMap<>();
-                for (Subsystem subsystem: oldMember.getSubsystems()) {
+                for (Subsystem subsystem: oldMember.getAllSubsystems()) {
                     unprocessedOldSubsystems.put(subsystem.createKey(), subsystem);
                 }
-                for (Subsystem subsystem: member.getSubsystems()) {
+                for (Subsystem subsystem: member.getAllSubsystems()) {
                     Member oldSubsystem = unprocessedOldMembers.get(subsystem.createKey());
                     if (oldSubsystem == null) {
                         // brand new item, add it
                         subsystem.getStatusInfo().setTimestampsForNew(now);
                         subsystem.setMember(oldMember);
-                        oldMember.getSubsystems().add(subsystem);
+                        oldMember.getAllSubsystems().add(subsystem);
                     }
                     // existing items (oldSystem != null) have no updatable fields, so there's
                     // nothing to do
@@ -100,7 +100,7 @@ public class CatalogServiceImpl implements CatalogService {
             if (!status.isRemoved()) {
                 status.setTimestampsForRemoved(now);
             }
-            for (Subsystem subsystem: oldToRemove.getSubsystems()) {
+            for (Subsystem subsystem: oldToRemove.getAllSubsystems()) {
                 if (!subsystem.getStatusInfo().isRemoved()) {
                     subsystem.getStatusInfo().setTimestampsForRemoved(now);
                 }
