@@ -47,7 +47,6 @@ public class MemberRepositoryTest {
         }
     }
 
-
     @Test
     public void testFindAll() {
         Iterable<Member> members = memberRepository.findAll();
@@ -55,21 +54,30 @@ public class MemberRepositoryTest {
 
         members = memberRepository.findAllActive();
         assertEquals(7, Iterables.size(members));
-
     }
 
-    // TODO: why does this fail when we run all xroad.catalog.persistence.* tests? also, check from >gradle test
     @Test
     public void testAddMember() {
         String name = "memberx";
         Member member = createTestMember(name);
         memberRepository.save(member);
+
+        Member peek = memberRepository.findByNaturalKey
+                (member.getXRoadInstance(),
+                        member.getMemberClass(),    
+                        member.getMemberCode());
+        assertNotNull(peek);
+
         Iterable<Member> members = memberRepository.findAllActive();
         assertEquals(8, Iterables.size(members));
         log.info("created member with id=" + member.getId());
 
         testUtil.detach(member);
-        Member savedRead = memberRepository.findOne(1000L);
+        Member savedRead = memberRepository.findByNaturalKey
+                (member.getXRoadInstance(),
+                member.getMemberClass(),
+                member.getMemberCode());
+        assertNotNull(savedRead);
         assertEquals(2, savedRead.getSubsystems().size());
 
     }
@@ -77,6 +85,9 @@ public class MemberRepositoryTest {
     private Member createTestMember(String name) {
         Member member = new Member();
         member.setName(name);
+        member.setXRoadInstance("xroadinstance-" + name);
+        member.setMemberClass("mclass-" + name);
+        member.setMemberCode("mcode-" + name);
 
         Subsystem ss1 = new Subsystem();
         Subsystem ss2 = new Subsystem();
