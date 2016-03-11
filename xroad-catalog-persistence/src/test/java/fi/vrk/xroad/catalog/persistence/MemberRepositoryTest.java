@@ -117,6 +117,7 @@ public class MemberRepositoryTest {
         Wsdl wsdl = new Wsdl();
         s1.setWsdl(wsdl);
         wsdl.setService(s1);
+        wsdl.initializeExternalId();
         wsdl.setData("<?xml version=\"1.0\" standalone=\"no\"?><wsdl/>");
 
         return member;

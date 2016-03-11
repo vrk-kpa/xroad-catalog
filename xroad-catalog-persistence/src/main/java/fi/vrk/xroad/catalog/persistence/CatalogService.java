@@ -1,9 +1,6 @@
 package fi.vrk.xroad.catalog.persistence;
 
-import fi.vrk.xroad.catalog.persistence.entity.Member;
-import fi.vrk.xroad.catalog.persistence.entity.Service;
-import fi.vrk.xroad.catalog.persistence.entity.Subsystem;
-import fi.vrk.xroad.catalog.persistence.entity.Wsdl;
+import fi.vrk.xroad.catalog.persistence.entity.*;
 
 import java.util.Collection;
 import java.util.Date;
@@ -51,12 +48,6 @@ public interface CatalogService {
     Iterable<Member> getAllMembers(Date changedAfter);
 
     /**
-     * Mainly for testing use
-     * @return
-     */
-    Iterable<Member> getSubsystems();
-
-    /**
      * Returns the full Wsdl object. Only returns active ones, removed are not found.
      * @return Wsdl, if any, null if not found
      * @throws RuntimeException if multiple matches found.
@@ -87,8 +78,17 @@ public interface CatalogService {
      *                  populated properly.
      * @param service services
      */
+    // TODO: refactor subsystem -> subsystemId
     void saveServices(Subsystem subsystem, Collection<Service> service);
 
-    Wsdl saveWsdl(long serviceId, Wsdl wsdl);
+    /**
+     * Saves given wsdl. The wsdl can either be a new one, or an update to an existing one.
+     * Updates "changed" field based on whether data is different compared to last time.
+     * @param subsystemId identifier of the subsystem
+     * @param serviceId identifier of the service
+     * @param wsdl the actual wsdl
+     * @return
+     */
+    void saveWsdl(SubsystemId subsystemId, ServiceId serviceId, Wsdl wsdl);
 
 }

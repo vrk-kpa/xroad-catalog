@@ -248,6 +248,24 @@ ALTER TABLE public.wsdl_id_seq OWNER TO postgres;
 
 ALTER SEQUENCE wsdl_id_seq OWNED BY wsdl.id;
 
+CREATE SEQUENCE wsdl_external_id_seq
+START WITH 1
+INCREMENT BY 1
+NO MINVALUE
+NO MAXVALUE
+CACHE 1;
+
+
+ALTER TABLE public.wsdl_external_id_seq OWNER TO postgres;
+
+--
+-- TOC entry 2015 (class 0 OID 0)
+-- Dependencies: 174
+-- Name: wsdl_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE wsdl_external_id_seq OWNED BY wsdl.external_id;
+
 --
 --
 -- TOC entry 1886 (class 2606 OID 16456)

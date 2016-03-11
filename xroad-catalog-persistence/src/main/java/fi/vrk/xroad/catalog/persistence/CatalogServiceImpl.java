@@ -21,6 +21,9 @@ public class CatalogServiceImpl implements CatalogService {
     SubsystemRepository subsystemRepository;
 
     @Autowired
+    ServiceRepository serviceRepository;
+
+    @Autowired
     WsdlRepository wsdlRepository;
 
     @Override
@@ -40,11 +43,6 @@ public class CatalogServiceImpl implements CatalogService {
     @Override
     public Iterable<Member> getAllMembers(Date changedAfter) {
         return memberRepository.findAllChangedSince(changedAfter);
-    }
-
-    @Override
-    public Iterable<Member> getSubsystems() {
-        return null;
     }
 
     @Override
@@ -176,8 +174,40 @@ public class CatalogServiceImpl implements CatalogService {
     }
 
     @Override
-    public Wsdl saveWsdl(long serviceId, Wsdl wsdl) {
-        return null;
+    public void saveWsdl(SubsystemId subsystemId, ServiceId serviceId, Wsdl wsdl) {
+        assert subsystemId != null;
+        assert serviceId != null;
+        Service oldService = serviceRepository.findByNaturalKey(subsystemId.getXRoadInstance(),
+                subsystemId.getMemberClass(), subsystemId.getMemberCode(),
+                subsystemId.getSubsystemCode(), serviceId.getServiceCode(),
+                serviceId.getServiceVersion());
+        if (oldService == null) {
+            throw new IllegalStateException("service " + serviceId + " not found!");
+        }
+        Date now = new Date();
+        Wsdl oldWsdl = oldService.getWsdl();
+        if (oldWsdl == null) {
+            wsdl.initializeExternalId();
+            wsdl.getStatusInfo().setTimestampsForNew(now);
+            oldService.setWsdl(wsdl);
+            wsdl.setService(oldService);
+            wsdlRepository.save(wsdl);
+        } else {
+            if (oldWsdl.getStatusInfo().isRemoved()) {
+                // resurrect
+                oldWsdl.setData(wsdl.getData());
+                oldWsdl.getStatusInfo().setChanged(now);
+                oldWsdl.getStatusInfo().setRemoved(null);
+                oldWsdl.getStatusInfo().setFetched(now);
+            } else {
+                // update existing
+                boolean wsdlChanged = !oldWsdl.getData().equals(wsdl.getData());
+                if (wsdlChanged) {
+                    oldWsdl.getStatusInfo().setChanged(now);
+                }
+                oldWsdl.getStatusInfo().setFetched(now);
+            }
+        }
     }
 
 }

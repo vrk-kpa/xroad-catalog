@@ -1,8 +1,11 @@
 package fi.vrk.xroad.catalog.persistence.entity;
 
+import lombok.Getter;
+
 /**
  * Utility class to works as a key for Members in Maps etc
  */
+@Getter
 public class MemberId {
     private String xRoadInstance;
     private String memberClass;

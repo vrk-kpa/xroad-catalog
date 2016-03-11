@@ -1,8 +1,11 @@
 package fi.vrk.xroad.catalog.persistence.entity;
 
+import lombok.Getter;
+
 /**
  * Utility class to works as a key for Subsystems in Maps etc
  */
+@Getter
 public class SubsystemId extends MemberId {
     private String subsystemCode;
 

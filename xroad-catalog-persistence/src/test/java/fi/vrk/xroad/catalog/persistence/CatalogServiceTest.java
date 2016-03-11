@@ -463,6 +463,142 @@ public class CatalogServiceTest {
         assertAllSame(originalRemovedService9.getStatusInfo(), checkedService9.getStatusInfo());
     }
 
+    @Test
+    public void testOverwriteIdenticalWsdl() {
+        // "changed" is not updated
+        // fetched is updated
+        // member (7) -> subsystem (8) -> service (6) -> wsdl (4)
+        Wsdl originalWsdl = wsdlRepository.findOne(4L);
+        Service originalService = originalWsdl.getService();
+        ServiceId originalServiceId = originalWsdl.getService().createKey();
+        SubsystemId originalSubsystemId = originalWsdl.getService().getSubsystem().createKey();
+        // detach, so we dont modify those objects in the next steps
+        testUtil.entityManagerClear();
+
+        Wsdl identicalWsdl = new Wsdl();
+        identicalWsdl.setData(originalWsdl.getData());
+        identicalWsdl.setExternalId(originalWsdl.getExternalId());
+        catalogService.saveWsdl(originalSubsystemId, originalServiceId, identicalWsdl);
+        testUtil.entityManagerFlush();
+        testUtil.entityManagerClear();
+
+        Wsdl checkedWsdl = wsdlRepository.findOne(4L);
+        assertEquals(originalWsdl.getExternalId(), checkedWsdl.getExternalId());
+        assertEquals(originalWsdl.getData(), checkedWsdl.getData());
+        assertEquals(originalWsdl.getExternalId(), checkedWsdl.getExternalId());
+        assertEquals(originalWsdl.getService().createKey(), originalServiceId);
+        assertFetchedIsOnlyDifferent(originalWsdl.getStatusInfo(), checkedWsdl.getStatusInfo());
+        assertAllSame(originalService.getStatusInfo(), checkedWsdl.getService().getStatusInfo());
+    }
+
+    @Test
+    public void testOverwriteModifiedWsdl() {
+        // "changed" is updated
+        // fetched is also updated
+        // member (7) -> subsystem (8) -> service (6) -> wsdl (4)
+        Wsdl originalWsdl = wsdlRepository.findOne(4L);
+        Service originalService = originalWsdl.getService();
+        ServiceId originalServiceId = originalWsdl.getService().createKey();
+        SubsystemId originalSubsystemId = originalWsdl.getService().getSubsystem().createKey();
+        // detach, so we dont modify those objects in the next steps
+        testUtil.entityManagerClear();
+
+        Wsdl identicalWsdl = new Wsdl();
+        identicalWsdl.setData(originalWsdl.getData() + "-modification");
+        identicalWsdl.setExternalId(originalWsdl.getExternalId());
+        catalogService.saveWsdl(originalSubsystemId, originalServiceId, identicalWsdl);
+        testUtil.entityManagerFlush();
+        testUtil.entityManagerClear();
+
+        Wsdl checkedWsdl = wsdlRepository.findOne(4L);
+        assertEquals(originalWsdl.getExternalId(), checkedWsdl.getExternalId());
+        assertEquals(originalWsdl.getData(), checkedWsdl.getData());
+        assertEquals(originalWsdl.getExternalId(), checkedWsdl.getExternalId());
+        assertEquals(originalWsdl.getService().createKey(), originalServiceId);
+        assertEqualities(originalWsdl.getStatusInfo(), checkedWsdl.getStatusInfo(),
+                true, false, true, false);
+        assertAllSame(originalService.getStatusInfo(), checkedWsdl.getService().getStatusInfo());
+    }
+
+    @Test
+    public void testSaveNewWsdl() {
+        // member (5) -> subsystem (6) -> service (3) -> wsdl (*new*)
+        Service oldService = serviceRepository.findOne(3L);
+        ServiceId originalServiceId = oldService.createKey();
+        SubsystemId originalSubsystemId = oldService.getSubsystem().createKey();
+        // detach, so we dont modify those objects in the next steps
+        testUtil.entityManagerClear();
+
+        Wsdl newWsdl = new Wsdl();
+        final String DATA = "<testwsdl/>";
+        newWsdl.setData(DATA);
+        catalogService.saveWsdl(originalSubsystemId, originalServiceId, newWsdl);
+        testUtil.entityManagerFlush();
+        testUtil.entityManagerClear();
+
+        Service checkedService = serviceRepository.findOne(3L);
+        Wsdl checkedWsdl = checkedService.getWsdl();
+        log.info("externalId [{}]", checkedWsdl.getExternalId());
+        assertNotNull(checkedWsdl.getExternalId());
+        assertEquals(DATA, checkedWsdl.getData());
+        assertEquals(checkedWsdl.getService().createKey(), originalServiceId);
+        assertNotNull(checkedWsdl.getStatusInfo().getCreated());
+        assertNotNull(checkedWsdl.getStatusInfo().getChanged());
+        assertNotNull(checkedWsdl.getStatusInfo().getFetched());
+        assertNull(checkedWsdl.getStatusInfo().getRemoved());
+        assertAllSame(oldService.getStatusInfo(), checkedWsdl.getService().getStatusInfo());
+    }
+
+    @Test
+    public void testResurrectWsdl() {
+        // member (7) -> subsystem (8) -> service (9, removed) -> wsdl (7, removed)
+        Service oldService = serviceRepository.findOne(9L);
+        // fix test data so that service is not removed
+        oldService.getStatusInfo().setRemoved(null);
+        ServiceId originalServiceId = oldService.createKey();
+        SubsystemId originalSubsystemId = oldService.getSubsystem().createKey();
+        Wsdl originalWsdl = oldService.getWsdl();
+        // detach, so we dont modify those objects in the next steps
+        testUtil.entityManagerFlush();
+        testUtil.entityManagerClear();
+
+        Wsdl newWsdl = new Wsdl();
+        newWsdl.setData(originalWsdl.getData());
+        newWsdl.setExternalId(originalWsdl.getExternalId());
+        catalogService.saveWsdl(originalSubsystemId, originalServiceId, newWsdl);
+        testUtil.entityManagerFlush();
+        testUtil.entityManagerClear();
+
+        Service checkedService = serviceRepository.findOne(9L);
+        Wsdl checkedWsdl = checkedService.getWsdl();
+        assertEquals(originalWsdl.getExternalId(), checkedWsdl.getExternalId());
+        assertEquals(7L, checkedWsdl.getId());
+        assertEquals(originalWsdl.getData(), checkedWsdl.getData());
+        assertEquals(checkedWsdl.getService().createKey(), originalServiceId);
+        assertEqualities(originalWsdl.getStatusInfo(), checkedWsdl.getStatusInfo(),
+                true, false, false, false);
+        assertNull(checkedWsdl.getStatusInfo().getRemoved());
+    }
+
+    @Test
+    public void testSaveWsdlFailsForRemovedService() {
+        // member (7) -> subsystem (8) -> service (9, removed) -> wsdl (7, removed)
+        Service oldService = serviceRepository.findOne(9L);
+        ServiceId originalServiceId = oldService.createKey();
+        SubsystemId originalSubsystemId = oldService.getSubsystem().createKey();
+        Wsdl originalWsdl = oldService.getWsdl();
+        // detach, so we dont modify those objects in the next steps
+        testUtil.entityManagerClear();
+
+        Wsdl newWsdl = new Wsdl();
+        newWsdl.setData(originalWsdl.getData());
+        newWsdl.setExternalId(originalWsdl.getExternalId());
+        try {
+            catalogService.saveWsdl(originalSubsystemId, originalServiceId, newWsdl);
+            fail("should have throw exception since service is removed");
+        } catch (Exception expected) {}
+    }
+
     private void log(Member member) {
         log.info("************************** member with id: " + member.getId());
         log.info(member.toString());
