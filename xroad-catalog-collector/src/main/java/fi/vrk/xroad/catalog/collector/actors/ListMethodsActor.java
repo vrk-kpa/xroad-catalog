@@ -11,6 +11,8 @@ import fi.vrk.xroad.catalog.collector.util.XRoadClient;
 import fi.vrk.xroad.catalog.collector.wsimport.XRoadServiceIdentifierType;
 import fi.vrk.xroad.catalog.persistence.CatalogService;
 import fi.vrk.xroad.catalog.persistence.entity.Member;
+import fi.vrk.xroad.catalog.persistence.entity.Service;
+import fi.vrk.xroad.catalog.persistence.entity.Subsystem;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -20,6 +22,7 @@ import org.springframework.web.client.RestOperations;
 import scala.concurrent.Await;
 import scala.concurrent.duration.Duration;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -85,13 +88,14 @@ public class ListMethodsActor extends UntypedActor {
             log.info("{} onReceive {}", COUNTER.addAndGet(1), this.hashCode());
             ClientType clientType = (ClientType) message;
 
-            // save member to DB
-            Member member = new Member(clientType.getId().getXRoadInstance(), clientType.getId().getMemberClass(),
-                    clientType.getId().getMemberCode(), clientType.getName());
+            Subsystem subsystem = new Subsystem(new Member(clientType.getId().getXRoadInstance(), clientType.getId()
+                    .getMemberClass(),
+                    clientType.getId().getMemberCode(), clientType.getName()), clientType.getId()
+                    .getSubsystemCode());
 
-            // no such method anymore...this class needs to be rewritten...
-//            member = catalogService.saveMember(member);
-            log.info("{} Member {} saved", COUNTER, member);
+
+
+            log.info("{} Handling subsystem {} ", COUNTER, subsystem);
             log.info("Fetching methods for the client with listMethods -service...");
 
             // fetch the methods
@@ -101,6 +105,14 @@ public class ListMethodsActor extends UntypedActor {
             log.info("{} ListMethodsResponse {} ", COUNTER, result.toString());
 
             maybeFail();
+
+            // Save services for subsystems
+            List<Service> services = new ArrayList<>();
+            for (XRoadServiceIdentifierType service : result) {
+                services.add(new Service(subsystem, service.getServiceCode(), service.getServiceVersion()));
+            }
+            catalogService.save(subsystem, services);
+
 
             // get wsdls
             for (XRoadServiceIdentifierType service : result) {

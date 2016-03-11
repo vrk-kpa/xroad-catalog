@@ -1,6 +1,7 @@
 package fi.vrk.xroad.catalog.persistence.entity;
 
 import com.google.common.collect.ComparisonChain;
+import lombok.EqualsAndHashCode;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import lombok.AccessLevel;
@@ -91,6 +92,7 @@ public class Member {
     private StatusInfo statusInfo = new StatusInfo();
     @Getter(AccessLevel.NONE) // do not create default getter, we provide the substitute
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
+    @EqualsAndHashCode(exclude = {"id", "subsystems", "statusInfo"})
     private Set<Subsystem> subsystems = new HashSet<>();
 
     /**

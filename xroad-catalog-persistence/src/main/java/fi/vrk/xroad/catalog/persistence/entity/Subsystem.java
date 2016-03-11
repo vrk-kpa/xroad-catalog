@@ -1,5 +1,6 @@
 package fi.vrk.xroad.catalog.persistence.entity;
 
+import lombok.EqualsAndHashCode;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
@@ -15,6 +16,7 @@ import java.util.stream.Collectors;
 @Getter
 @Setter
 @ToString(exclude = {"member","services"})
+@EqualsAndHashCode(exclude = {"id", "services", "statusInfo"} )
 public class Subsystem {
 
     @Id

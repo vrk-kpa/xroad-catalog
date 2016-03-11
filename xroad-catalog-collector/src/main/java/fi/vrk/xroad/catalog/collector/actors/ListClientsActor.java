@@ -1,29 +1,27 @@
 package fi.vrk.xroad.catalog.collector.actors;
 
-import akka.actor.*;
-import akka.event.Logging;
-import akka.event.LoggingAdapter;
-import akka.routing.SmallestMailboxPool;
-import akka.util.Timeout;
+import akka.actor.ActorRef;
+import akka.actor.Terminated;
+import akka.actor.UntypedActor;
+import eu.x_road.xsd.identifiers.XRoadObjectType;
 import eu.x_road.xsd.xroad.ClientListType;
 import eu.x_road.xsd.xroad.ClientType;
 import fi.vrk.xroad.catalog.collector.extension.SpringExtension;
 import fi.vrk.xroad.catalog.collector.util.ClientTypeUtil;
-import fi.vrk.xroad.catalog.collector.util.XRoadClient;
-import fi.vrk.xroad.catalog.collector.wsimport.XRoadServiceIdentifierType;
 import fi.vrk.xroad.catalog.persistence.CatalogService;
 import fi.vrk.xroad.catalog.persistence.entity.Member;
+import fi.vrk.xroad.catalog.persistence.entity.MemberId;
+import fi.vrk.xroad.catalog.persistence.entity.Subsystem;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestOperations;
-import scala.concurrent.Await;
-import scala.concurrent.CanAwait;
-import scala.concurrent.duration.Duration;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -53,7 +51,7 @@ public class ListClientsActor extends UntypedActor {
     protected CatalogService catalogService;
 
     // supervisor-created pool of list methods actors
-    private ActorRef listMethodsPoolRef;
+    protected ActorRef listMethodsPoolRef;
 
     @Override
     public void preStart() throws Exception {
@@ -87,8 +85,29 @@ public class ListClientsActor extends UntypedActor {
                     .class);
 
             int counter = 1;
+            HashMap<MemberId, Member> m = new HashMap();
+
+            List<Subsystem> subsystems = new ArrayList<>();
             for (ClientType clientType : clientList.getMember()) {
                 log.info("{} - ClientType {}  ", counter++, ClientTypeUtil.toString(clientType));
+                Member newMember = new Member(clientType.getId().getXRoadInstance(), clientType.getId()
+                        .getMemberClass(),
+                        clientType.getId().getMemberCode(), clientType.getName());
+                newMember.setSubsystems(new HashSet<>());
+                if (m.get(newMember.createKey()) == null) {
+                    m.put(newMember.createKey(), newMember);
+                }
+
+                if (XRoadObjectType.SUBSYSTEM.equals(clientType.getId().getObjectType())) {
+                    Subsystem newSubsystem = new Subsystem(newMember, clientType.getId().getSubsystemCode());
+                    m.get(newMember.createKey()).getSubsystems().add(newSubsystem);
+
+                }
+            }
+
+            // Save members
+            catalogService.saveAllMembersAndSubsystems(m.values());
+            for (ClientType clientType : clientList.getMember()) {
                 listMethodsPoolRef.tell(clientType, getSelf());
             }
             log.info("all clients (" + (counter-1) + ") sent to actor");

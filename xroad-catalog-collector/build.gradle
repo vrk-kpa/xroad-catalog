@@ -117,8 +117,8 @@ dependencies {
     compile("org.springframework:spring-web")
     compile("org.springframework.boot:spring-boot-starter-ws")
     compile group: 'org.springframework', name: 'spring-jdbc', version:'4.2.4.RELEASE'
-    compile group: 'com.typesafe.akka', name: 'akka-actor_2.11', version:'2.3.14'
-    compile group: 'com.typesafe.akka', name: 'akka-slf4j_2.11', version:'2.3.14'
+    compile group: 'com.typesafe.akka', name: 'akka-actor_2.11', version:'2.4.2'
+    compile group: 'com.typesafe.akka', name: 'akka-slf4j_2.11', version:'2.4.2'
     compile group: 'c3p0', name: 'c3p0', version:'0.9.1.2'
     compile group: 'com.h2database', name: 'h2', version:'1.4.177'
     compile group: 'ch.qos.logback', name: 'logback-classic', version:'1.1.2'
@@ -128,6 +128,11 @@ dependencies {
     compile 'org.apache.cxf:cxf-rt-transports-http:3.1.4'
     compile 'org.apache.cxf:cxf-core:3.1.4'
     testCompile("org.springframework.boot:spring-boot-starter-test")
+    testCompile 'org.mockito:mockito-all:2.0.2-beta'
+    testCompile 'com.typesafe.akka:akka-testkit_2.11:2.4.2'
+    testCompile 'org.powermock:powermock-core:1.6.4'
+    testCompile 'org.powermock:powermock-module-junit4:1.6.4'
+    testCompile 'org.powermock:powermock-api-mockito:1.6.4'
     jaxb("com.sun.xml.bind:jaxb-xjc:2.2.4-1")
     wsimport "com.sun.xml.ws:jaxws-tools:2.1.7"
     compile(files(genJaxb.classesDir).builtBy(genJaxb))
