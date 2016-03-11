@@ -92,7 +92,7 @@ public class Member {
     private StatusInfo statusInfo = new StatusInfo();
     @Getter(AccessLevel.NONE) // do not create default getter, we provide the substitute
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
-    @EqualsAndHashCode(exclude = {"id", "subsystems", "statusInfo"})
+//    @EqualsAndHashCode(exclude = {"id", "subsystems", "statusInfo"})
     private Set<Subsystem> subsystems = new HashSet<>();
 
     /**
