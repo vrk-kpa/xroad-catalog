@@ -36,4 +36,12 @@ public class Service {
         this.serviceVersion = serviceVersion;
         statusInfo.setTimestampsForNew(new Date());
     }
+
+    /**
+     * @return comparable & equals-able natural key _within one subsystem_
+     */
+    public ServiceId createKey() {
+        return new ServiceId(serviceCode, serviceVersion);
+    }
+
 }

@@ -81,11 +81,13 @@ public interface CatalogService {
     void saveAllMembersAndSubsystems(Collection<Member> members);
 
     /**
-     * Stores services for given subsystem.
-     * @param subsystem identifier info for subsystem
+     * Stores services for given subsystem. Does not modify the associated Subsystem or
+     * the wsdl.
+     * @param subsystem identifier info for subsystem. Also needs to have subsystem.member
+     *                  populated properly.
      * @param service services
      */
-    void save(Subsystem subsystem, Collection<Service> service);
+    void saveServices(Subsystem subsystem, Collection<Service> service);
 
     Wsdl saveWsdl(long serviceId, Wsdl wsdl);
 

@@ -79,8 +79,8 @@ public class TestUtil {
         s1.setSubsystem(ss1);
         s2.setSubsystem(ss1);
         ss1.setServices(new HashSet<>());
-        ss1.getServices().add(s1);
-        ss1.getServices().add(s2);
+        ss1.getAllServices().add(s1);
+        ss1.getAllServices().add(s2);
 
         Wsdl wsdl = new Wsdl();
         s1.setWsdl(wsdl);

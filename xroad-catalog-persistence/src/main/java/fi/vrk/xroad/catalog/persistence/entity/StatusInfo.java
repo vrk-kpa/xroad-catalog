@@ -23,7 +23,8 @@ public class StatusInfo {
     private Date changed;
     /**
      * When data was last time fetched from the source (regardless of whether there
-     * were any changes
+     * were any changes). For removed entities, fetched it updated the first time
+     * we receive "missing item" from data, but not after that
      */
     private Date fetched;
     private Date removed;

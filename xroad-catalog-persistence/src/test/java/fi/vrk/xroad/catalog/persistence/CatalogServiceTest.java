@@ -16,9 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.*;
 import java.util.stream.StreamSupport;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(Application.class)
@@ -133,6 +131,11 @@ public class CatalogServiceTest {
         BeanUtils.copyProperties(from, to, "id", "statusInfo", "member", "services");
     }
 
+    private void shallowCopyFields(Service from, Service to) {
+        // only copy simple non-jpa-magical primitive properties
+        BeanUtils.copyProperties(from, to, "id", "statusInfo", "subsystem", "wsdl");
+    }
+
     @Test
     public void testMissingSubsystemIsRemoved() {
         // member 1: subsystems 1,2 (active) and 12 (removed)
@@ -140,7 +143,7 @@ public class CatalogServiceTest {
         Subsystem ss1original = subsystemRepository.findOne(1L);
         Subsystem ss2original = subsystemRepository.findOne(2L);
         Subsystem ss12original = subsystemRepository.findOne(12L);
-        ss1original.getServices().size();
+        ss1original.getAllServices().size();
         // detach, so we dont modify those objects in the next steps
         testUtil.entityManagerClear();
 
@@ -217,11 +220,11 @@ public class CatalogServiceTest {
         assertEquals(Arrays.asList(1L, 2L, 12L),
                 new ArrayList<Long>(testUtil.getIds(checkedMember.getActiveSubsystems())));
 
-        assertEquals(1, ss1original.getServices().size());
+        assertEquals(1, ss1original.getAllServices().size());
         Subsystem ss1now = subsystemRepository.findOne(1L);
-        assertEquals(1, ss1now.getServices().size());
-        Service originalService = ss1original.getServices().iterator().next();
-        Service currentService = ss1now.getServices().iterator().next();
+        assertEquals(1, ss1now.getAllServices().size());
+        Service originalService = ss1original.getAllServices().iterator().next();
+        Service currentService = ss1now.getAllServices().iterator().next();
         assertAllSame(originalService.getStatusInfo(), currentService.getStatusInfo());
         Wsdl originalWsdl = originalService.getWsdl();
         Wsdl currentWsdl = currentService.getWsdl();
@@ -283,7 +286,7 @@ public class CatalogServiceTest {
         Iterable<Member> members = catalogService.getActiveMembers(testUtil.createDate(1, 1, 2017));
         log.info("found members: " + testUtil.getIds(members));
         assertEquals(Arrays.asList(3L,4L,5L,6L,7L),
-                new ArrayList<Long>(testUtil.getIds(members)));
+                new ArrayList<>(testUtil.getIds(members)));
     }
 
     @Test
@@ -309,6 +312,157 @@ public class CatalogServiceTest {
                 new ArrayList<Long>(testUtil.getIds(members)));
     }
 
+    @Test
+    public void testSaveUnmodifiedServices() {
+        // test data:
+        // member (7) -> subsystem (8) -> service (6) -> wsdl (4)
+        // member (7) -> subsystem (8) -> service (8, removed) -> wsdl (6)
+        // member (7) -> subsystem (8) -> service (9, removed) -> wsdl (7, removed)
+        Subsystem originalSub = subsystemRepository.findOne(8L);
+        Member originalMember = originalSub.getMember();
+        Service originalService5 = serviceRepository.findOne(5L);
+        Service originalService6 = serviceRepository.findOne(6L);
+        Service originalRemovedService8 = serviceRepository.findOne(8L);
+        Service originalRemovedService9 = serviceRepository.findOne(9L);
+        // detach, so we dont modify those objects in the next steps
+        testUtil.entityManagerClear();
+
+        Subsystem savedSub = new Subsystem();
+        shallowCopyFields(originalSub, savedSub);
+        savedSub.setMember(originalMember);
+        Service savedService5 = new Service();
+        Service savedService6 = new Service();
+        shallowCopyFields(originalService5, savedService5);
+        shallowCopyFields(originalService6, savedService6);
+
+        catalogService.saveServices(savedSub, Lists.newArrayList(savedService5, savedService6));
+        testUtil.entityManagerFlush();
+        testUtil.entityManagerClear();
+
+        // read back and verify
+        Subsystem checkedSub = subsystemRepository.findOne(8L);
+        assertAllSame(originalSub.getStatusInfo(), checkedSub.getStatusInfo());
+        Service checkedService5 = (Service) testUtil.getEntity(checkedSub.getAllServices(), 5L).get();
+        Service checkedService6 = (Service) testUtil.getEntity(checkedSub.getAllServices(), 6L).get();
+        Service checkedService8 = (Service) testUtil.getEntity(checkedSub.getAllServices(), 8L).get();
+        Service checkedService9 = (Service) testUtil.getEntity(checkedSub.getAllServices(), 9L).get();
+
+        assertFalse(checkedService5.getStatusInfo().isRemoved());
+        assertFalse(checkedService6.getStatusInfo().isRemoved());
+        assertTrue(checkedService8.getStatusInfo().isRemoved());
+        assertTrue(checkedService9.getStatusInfo().isRemoved());
+        assertFetchedIsOnlyDifferent(originalService5.getStatusInfo(), checkedService5.getStatusInfo());
+        assertFetchedIsOnlyDifferent(originalService6.getStatusInfo(), checkedService6.getStatusInfo());
+        assertAllSame(originalRemovedService8.getStatusInfo(), checkedService8.getStatusInfo());
+        assertAllSame(originalRemovedService9.getStatusInfo(), checkedService9.getStatusInfo());
+    }
+
+    @Test
+    public void testSaveAddedServices() {
+        // test data:
+        // member (7) -> subsystem (8) -> service (6) -> wsdl (4)
+        // member (7) -> subsystem (8) -> service (8, removed) -> wsdl (6)
+        // member (7) -> subsystem (8) -> service (9, removed) -> wsdl (7, removed)
+        Subsystem originalSub = subsystemRepository.findOne(8L);
+        Member originalMember = originalSub.getMember();
+        Service originalService5 = serviceRepository.findOne(5L);
+        Service originalService6 = serviceRepository.findOne(6L);
+        Service originalRemovedService8 = serviceRepository.findOne(8L);
+        Service originalRemovedService9 = serviceRepository.findOne(9L);
+        // detach, so we dont modify those objects in the next steps
+        testUtil.entityManagerClear();
+
+        Subsystem savedSub = new Subsystem();
+        shallowCopyFields(originalSub, savedSub);
+        savedSub.setMember(originalMember);
+        Service savedService5 = new Service();
+        Service savedService6 = new Service();
+        shallowCopyFields(originalService5, savedService5);
+        shallowCopyFields(originalService6, savedService6);
+        Service newService = new Service();
+        newService.setServiceCode("foocode-asddsa-ads");
+        newService.setServiceVersion("v6");
+
+        catalogService.saveServices(savedSub,
+                Lists.newArrayList(savedService5, savedService6,newService));
+        testUtil.entityManagerFlush();
+        long newId = newService.getId();
+        testUtil.entityManagerClear();
+
+        // read back and verify
+        Subsystem checkedSub = subsystemRepository.findOne(8L);
+        assertAllSame(originalSub.getStatusInfo(), checkedSub.getStatusInfo());
+        Service checkedService5 = (Service) testUtil.getEntity(checkedSub.getAllServices(), 5L).get();
+        Service checkedService6 = (Service) testUtil.getEntity(checkedSub.getAllServices(), 6L).get();
+        Service checkedService8 = (Service) testUtil.getEntity(checkedSub.getAllServices(), 8L).get();
+        Service checkedService9 = (Service) testUtil.getEntity(checkedSub.getAllServices(), 9L).get();
+        Service checkedNewService = (Service) testUtil.getEntity(checkedSub.getAllServices(), newId).get();
+
+        assertFalse(checkedNewService.getStatusInfo().isRemoved());
+        assertNotNull(checkedNewService.getStatusInfo().getFetched());
+        assertNotNull(checkedNewService.getStatusInfo().getCreated());
+        assertNotNull(checkedNewService.getStatusInfo().getChanged());
+        assertNull(checkedNewService.getStatusInfo().getRemoved());
+
+        assertFalse(checkedService5.getStatusInfo().isRemoved());
+        assertFalse(checkedService6.getStatusInfo().isRemoved());
+        assertTrue(checkedService8.getStatusInfo().isRemoved());
+        assertTrue(checkedService9.getStatusInfo().isRemoved());
+        assertFetchedIsOnlyDifferent(originalService5.getStatusInfo(), checkedService5.getStatusInfo());
+        assertFetchedIsOnlyDifferent(originalService6.getStatusInfo(), checkedService6.getStatusInfo());
+        assertAllSame(originalRemovedService8.getStatusInfo(), checkedService8.getStatusInfo());
+        assertAllSame(originalRemovedService9.getStatusInfo(), checkedService9.getStatusInfo());
+    }
+
+    @Test
+    public void testSaveRemovedServices() {
+        // test data:
+        // member (7) -> subsystem (8) -> service (6) -> wsdl (4)
+        // member (7) -> subsystem (8) -> service (8, removed) -> wsdl (6)
+        // member (7) -> subsystem (8) -> service (9, removed) -> wsdl (7, removed)
+        Subsystem originalSub = subsystemRepository.findOne(8L);
+        Member originalMember = originalSub.getMember();
+        Service originalService5 = serviceRepository.findOne(5L);
+        Service originalService6 = serviceRepository.findOne(6L);
+        Service originalRemovedService8 = serviceRepository.findOne(8L);
+        Service originalRemovedService9 = serviceRepository.findOne(9L);
+        // detach, so we dont modify those objects in the next steps
+        testUtil.entityManagerClear();
+
+        // remove all services = save subsystem with empty services-collection
+        Subsystem savedSub = new Subsystem();
+        shallowCopyFields(originalSub, savedSub);
+        savedSub.setMember(originalMember);
+
+        catalogService.saveServices(savedSub,
+                Lists.newArrayList());
+        testUtil.entityManagerFlush();
+        testUtil.entityManagerClear();
+
+        // read back and verify
+        Subsystem checkedSub = subsystemRepository.findOne(8L);
+        assertAllSame(originalSub.getStatusInfo(), checkedSub.getStatusInfo());
+
+        assertEquals(Arrays.asList(5L,6L,8L,9L),
+                new ArrayList<>(testUtil.getIds(checkedSub.getAllServices())));
+        assertTrue(checkedSub.getActiveServices().isEmpty());
+        Service checkedService5 = (Service) testUtil.getEntity(checkedSub.getAllServices(), 5L).get();
+        Service checkedService6 = (Service) testUtil.getEntity(checkedSub.getAllServices(), 6L).get();
+        Service checkedService8 = (Service) testUtil.getEntity(checkedSub.getAllServices(), 8L).get();
+        Service checkedService9 = (Service) testUtil.getEntity(checkedSub.getAllServices(), 9L).get();
+
+        assertTrue(checkedService5.getStatusInfo().isRemoved());
+        assertTrue(checkedService6.getStatusInfo().isRemoved());
+        assertTrue(checkedService8.getStatusInfo().isRemoved());
+        assertTrue(checkedService9.getStatusInfo().isRemoved());
+        assertEqualities(originalService5.getStatusInfo(), checkedService5.getStatusInfo(),
+                true, false, false, false);
+        assertEqualities(originalService6.getStatusInfo(), checkedService6.getStatusInfo(),
+                true, false, false, false);
+        assertAllSame(originalRemovedService8.getStatusInfo(), checkedService8.getStatusInfo());
+        assertAllSame(originalRemovedService9.getStatusInfo(), checkedService9.getStatusInfo());
+    }
+
     private void log(Member member) {
         log.info("************************** member with id: " + member.getId());
         log.info(member.toString());
@@ -316,7 +470,7 @@ public class CatalogServiceTest {
         for (Subsystem subs : member.getActiveSubsystems()) {
             log.info(subs.toString());
             log.info("services");
-            for (Service service : subs.getServices()) {
+            for (Service service : subs.getAllServices()) {
                 log.info(service.toString());
                 log.info("wsdl");
                 log.info(service.getWsdl().toString());

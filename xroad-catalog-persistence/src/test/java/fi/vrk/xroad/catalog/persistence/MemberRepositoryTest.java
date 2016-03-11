@@ -109,8 +109,8 @@ public class MemberRepositoryTest {
         s1.setSubsystem(ss1);
         s2.setSubsystem(ss1);
         ss2.setServices(new HashSet<>());
-        ss2.getServices().add(s1);
-        ss2.getServices().add(s2);
+        ss2.getAllServices().add(s1);
+        ss2.getAllServices().add(s2);
         s1.setServiceCode(name + "service1");
         s2.setServiceCode(name + "service2");
 
@@ -143,16 +143,23 @@ public class MemberRepositoryTest {
         assertEquals(3, member7.getActiveSubsystems().size());
         ArrayList<Service> allServices7 = new ArrayList<>();
         for (Subsystem s: member7.getActiveSubsystems()) {
-            allServices7.addAll(s.getServices());
+            allServices7.addAll(s.getAllServices());
         }
-        assertEquals(3, allServices7.size());
+        // TODO: create and test getAllServices() / getActiveServices()
+        assertEquals(5, allServices7.size());
         ArrayList<Wsdl> allWsdls7 = new ArrayList<>();
         for (Service s: allServices7) {
             if (s.getWsdl() != null) {
                 allWsdls7.add(s.getWsdl());
             }
         }
-        assertEquals(2, allWsdls7.size());
+        // TODO: test also for active / removed wsdls
+        // test data:
+        // member (7) -> subsystem (8) -> service (6) -> wsdl (4)
+        // member (7) -> subsystem (8) -> service (8, removed) -> wsdl (6)
+        // member (7) -> subsystem (8) -> service (9, removed) -> wsdl (7, removed)
+        // member (7) -> subsystem (9) -> service (7) -> wsdl (5)
+        assertEquals(4, allWsdls7.size());
     }
 
     private void log(Member member) {
@@ -162,7 +169,7 @@ public class MemberRepositoryTest {
         for (Subsystem subs : member.getActiveSubsystems()) {
             log.info(subs.toString());
             log.info("services");
-            for (Service service : subs.getServices()) {
+            for (Service service : subs.getAllServices()) {
                 log.info(service.toString());
                 log.info("wsdl");
                 log.info(service.getWsdl() == null ? "null" : service.getWsdl().toString());

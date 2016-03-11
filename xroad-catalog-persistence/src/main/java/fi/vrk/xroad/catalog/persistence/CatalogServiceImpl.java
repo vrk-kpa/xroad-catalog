@@ -18,6 +18,9 @@ public class CatalogServiceImpl implements CatalogService {
     MemberRepository memberRepository;
 
     @Autowired
+    SubsystemRepository subsystemRepository;
+
+    @Autowired
     WsdlRepository wsdlRepository;
 
     @Override
@@ -89,6 +92,7 @@ public class CatalogServiceImpl implements CatalogService {
                         subsystem.setMember(oldMember);
                         oldMember.getAllSubsystems().add(subsystem);
                     } else if (oldSubsystem.getStatusInfo().isRemoved()) {
+                        // TODO: maybe refactor shared code...if reasonable
                         // resurrect this subsystem
                         oldSubsystem.getStatusInfo().setRemoved(null);
                         oldSubsystem.getStatusInfo().setChanged(now);
@@ -127,7 +131,47 @@ public class CatalogServiceImpl implements CatalogService {
     }
 
     @Override
-    public void save(Subsystem subsystem, Collection<Service> service) {
+    public void saveServices(Subsystem subsystem, Collection<Service> services) {
+        assert subsystem != null;
+        assert subsystem.getMember() != null;
+        Subsystem oldSubsystem = subsystemRepository.findByNaturalKey(subsystem.getMember().getXRoadInstance(),
+                subsystem.getMember().getMemberClass(), subsystem.getMember().getMemberCode(),
+                subsystem.getSubsystemCode());
+        if (oldSubsystem == null) {
+            throw new IllegalStateException("subsystem " + subsystem + " not found!");
+        }
+
+        Date now = new Date();
+
+        Map<ServiceId, Service> unprocessedOldServices = new HashMap<>();
+        oldSubsystem.getAllServices().stream().forEach(s -> unprocessedOldServices.put(s.createKey(), s));
+
+        for (Service service: services) {
+            Service oldService = unprocessedOldServices.get(service.createKey());
+            if (oldService == null) {
+                // brand new item, add it
+                service.getStatusInfo().setTimestampsForNew(now);
+                service.setSubsystem(oldSubsystem);
+                oldSubsystem.getAllServices().add(service);
+            } else if (oldService.getStatusInfo().isRemoved()) {
+                // resurrect this service
+                oldService.getStatusInfo().setRemoved(null);
+                oldService.getStatusInfo().setChanged(now);
+                oldService.getStatusInfo().setFetched(now);
+            } else {
+                // already existing subsystem, no fields to update except timestamp
+                oldService.getStatusInfo().setFetched(now);
+            }
+            unprocessedOldServices.remove(service.createKey());
+        }
+
+        // now unprocessedOldServices should all be removed (either already removed, or will be now)
+        for (Service oldToRemove: unprocessedOldServices.values()) {
+            StatusInfo status = oldToRemove.getStatusInfo();
+            if (!status.isRemoved()) {
+                status.setTimestampsForRemoved(now);
+            }
+        }
 
     }
 

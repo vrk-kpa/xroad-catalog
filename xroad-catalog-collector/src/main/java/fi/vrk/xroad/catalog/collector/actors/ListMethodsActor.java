@@ -89,7 +89,8 @@ public class ListMethodsActor extends UntypedActor {
             Member member = new Member(clientType.getId().getXRoadInstance(), clientType.getId().getMemberClass(),
                     clientType.getId().getMemberCode(), clientType.getName());
 
-            member = catalogService.saveMember(member);
+            // no such method anymore...this class needs to be rewritten...
+//            member = catalogService.saveMember(member);
             log.info("{} Member {} saved", COUNTER, member);
             log.info("Fetching methods for the client with listMethods -service...");
 

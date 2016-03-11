@@ -1,12 +1,15 @@
 package fi.vrk.xroad.catalog.persistence.entity;
 
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
 import javax.persistence.*;
+import java.util.Collections;
 import java.util.Date;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Entity
 @Getter
@@ -23,6 +26,7 @@ public class Subsystem {
     @ManyToOne
     @JoinColumn(name = "MEMBER_ID")
     private Member member;
+    @Getter(AccessLevel.NONE) // do not create default getter, we provide the substitute
     @OneToMany(mappedBy = "subsystem", cascade = CascadeType.ALL)
     private Set<Service> services;
     @Embedded
@@ -43,4 +47,23 @@ public class Subsystem {
         this.subsystemCode = subsystemCode;
         statusInfo.setTimestampsForNew(new Date());
     }
+
+    /**
+     * Note: Read-only collection, do not use this to modify collection
+     * @return
+     */
+    public Set<Service> getActiveServices() {
+        return Collections.unmodifiableSet(services.stream()
+                .filter(service -> !service.getStatusInfo().isRemoved())
+                .collect(Collectors.toSet()));
+    }
+
+    /**
+     * This collection can be used to add new items
+     * @return
+     */
+    public Set<Service> getAllServices() {
+        return services;
+    }
+
 }
