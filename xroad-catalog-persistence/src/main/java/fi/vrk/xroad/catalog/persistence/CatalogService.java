@@ -16,7 +16,6 @@ import java.util.Optional;
  */
 public interface CatalogService {
 
-    // TODO: make it NOT fetch wsdl yet
     /**
      * Gets all non-removed members, regardless of when they were changed.
      * Fetches all data from graph member->subsystem->service->wsdl
@@ -28,8 +27,6 @@ public interface CatalogService {
      * removed items
      */
     Iterable<Member> getAllMembers();
-
-    // TODO: make it NOT fetch wsdl yet
 
     /**
      * Gets all non-removed members that have been changed (created) after given time.

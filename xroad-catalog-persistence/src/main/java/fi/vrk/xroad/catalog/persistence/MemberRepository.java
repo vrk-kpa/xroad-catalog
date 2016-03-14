@@ -12,11 +12,12 @@ import java.util.Set;
 
 public interface MemberRepository extends CrudRepository<Member, Long> {
 
-    @EntityGraph(value = "member.full-tree.graph", type = EntityGraph.EntityGraphType.LOAD)
+    @EntityGraph(value = "member.all-but-wsdl-tree.graph",
+            type = EntityGraph.EntityGraphType.FETCH)
     Set<Member> findAll();
 
     // TODO: test that query plan is as expected
-    @EntityGraph(value = "member.full-tree.graph", type = EntityGraph.EntityGraphType.LOAD)
+    @EntityGraph(value = "member.all-but-wsdl-tree.graph", type = EntityGraph.EntityGraphType.FETCH)
     @Query("SELECT m FROM Member m WHERE m.statusInfo.removed IS NULL")
     Set<Member> findAllActive();
 

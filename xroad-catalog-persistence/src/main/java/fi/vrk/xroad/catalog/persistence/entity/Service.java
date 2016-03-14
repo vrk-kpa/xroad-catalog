@@ -1,11 +1,16 @@
 package fi.vrk.xroad.catalog.persistence.entity;
 
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import org.hibernate.annotations.LazyToOne;
+import org.hibernate.annotations.LazyToOneOption;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Getter
@@ -24,8 +29,9 @@ public class Service {
     private String serviceVersion;
     @Embedded
     private StatusInfo statusInfo = new StatusInfo();
-    @OneToOne(optional=true, mappedBy="service", cascade = CascadeType.ALL)
-    private Wsdl wsdl;
+    @Getter(AccessLevel.NONE) // do not create default getter/setter, we provide a wrapper that hides the collection
+    @OneToMany(mappedBy = "service", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Set<Wsdl> wsdls;
 
     public Service() {
     }
@@ -36,6 +42,15 @@ public class Service {
         this.serviceVersion = serviceVersion;
         statusInfo.setTimestampsForNew(new Date());
     }
+
+    public void setWsdl(Wsdl wsdl) {
+        if (wsdls == null) {
+            wsdls = new HashSet<>();
+        }
+        wsdls.clear();
+        wsdls.add(wsdl);
+    }
+    public Wsdl getWsdl() { return wsdls.isEmpty() ? null : wsdls.iterator().next(); }
 
     /**
      * @return comparable & equals-able natural key _within one subsystem_

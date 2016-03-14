@@ -58,6 +58,31 @@ public class CatalogServiceTest {
     }
 
     @Test
+    public void testGetAllLoadsCorrectItems() throws InterruptedException {
+        Iterable<Member> members = catalogService.getAllMembers();
+        log.info("members loaded");
+        Thread.sleep(1000);
+        for (Member m: members) {
+            testUtil.entityManagerDetach(m);
+        }
+        log.info("all members detached");
+        Thread.sleep(1000);
+        testUtil.entityManagerClear();
+        // member - subsystem - service should be fetched
+        // service - wdsl should NOT be fetched
+        Member m = (Member) testUtil.getEntity(members, 1L).get();
+        assertNotNull(m);
+        Subsystem ss = (Subsystem) testUtil.getEntity(m.getAllSubsystems(), 1L).get();
+        assertNotNull(ss);
+        Service s = (Service) testUtil.getEntity(ss.getAllServices(), 2L).get();
+        assertNotNull(s);
+        try {
+            log.info("data {}", s.getWsdl().getData());
+            fail("should have thrown exception since wsdl is not fetched");
+        } catch (Exception expected) {expected.printStackTrace();}
+    }
+
+    @Test
     public void testInsertNewMemberAndSubsystems() {
 
         assertMemberAndSubsystemCounts(TEST_DATA_MEMBERS,
@@ -141,6 +166,8 @@ public class CatalogServiceTest {
         Subsystem ss1original = subsystemRepository.findOne(1L);
         Subsystem ss2original = subsystemRepository.findOne(2L);
         Subsystem ss12original = subsystemRepository.findOne(12L);
+        Service originalService = ss1original.getAllServices().iterator().next();
+        Wsdl originalWsdl = originalService.getWsdl();
         ss1original.getAllServices().size();
         // detach, so we dont modify those objects in the next steps
         testUtil.entityManagerClear();
@@ -221,10 +248,8 @@ public class CatalogServiceTest {
         assertEquals(1, ss1original.getAllServices().size());
         Subsystem ss1now = subsystemRepository.findOne(1L);
         assertEquals(1, ss1now.getAllServices().size());
-        Service originalService = ss1original.getAllServices().iterator().next();
         Service currentService = ss1now.getAllServices().iterator().next();
         assertAllSame(originalService.getStatusInfo(), currentService.getStatusInfo());
-        Wsdl originalWsdl = originalService.getWsdl();
         Wsdl currentWsdl = currentService.getWsdl();
         assertAllSame(originalWsdl.getStatusInfo(), currentWsdl.getStatusInfo());
     }

@@ -39,16 +39,6 @@ public class MemberRepositoryTest {
     }
 
     @Test
-    public void testRemoveAll() {
-        Date now = new Date();
-        memberRepository.deleteAll();
-        Iterable<Member> members = memberRepository.findAll();
-        for (Member member: members) {
-            assertEquals(now, member.getStatusInfo().getRemoved());
-        }
-    }
-
-    @Test
     public void testFindAll() {
         Iterable<Member> members = memberRepository.findAll();
         assertEquals(8, Iterables.size(members));
