@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.StreamSupport;
 
@@ -36,12 +37,12 @@ public class CatalogServiceImpl implements CatalogService {
         return memberRepository.findAll();
     }
 
-    public Iterable<Member> getActiveMembers(Date changedAfter) {
+    public Iterable<Member> getActiveMembers(LocalDateTime changedAfter) {
         return memberRepository.findActiveChangedSince(changedAfter);
     }
 
     @Override
-    public Iterable<Member> getAllMembers(Date changedAfter) {
+    public Iterable<Member> getAllMembers(LocalDateTime changedAfter) {
         return memberRepository.findAllChangedSince(changedAfter);
     }
 
@@ -59,7 +60,7 @@ public class CatalogServiceImpl implements CatalogService {
 
     @Override
     public void saveAllMembersAndSubsystems(Collection<Member> members) {
-        Date now = new Date();
+        LocalDateTime now = LocalDateTime.now();
         // process members
         Map<MemberId, Member> unprocessedOldMembers = new HashMap<>();
         StreamSupport.stream(memberRepository.findAll().spliterator(), false)
@@ -131,7 +132,7 @@ public class CatalogServiceImpl implements CatalogService {
             throw new IllegalStateException("subsystem " + subsystemId + " not found!");
         }
 
-        Date now = new Date();
+        LocalDateTime now = LocalDateTime.now();
 
         Map<ServiceId, Service> unprocessedOldServices = new HashMap<>();
         oldSubsystem.getAllServices().stream().forEach(s -> unprocessedOldServices.put(s.createKey(), s));
@@ -170,7 +171,7 @@ public class CatalogServiceImpl implements CatalogService {
         if (oldService == null) {
             throw new IllegalStateException("service " + serviceId + " not found!");
         }
-        Date now = new Date();
+        LocalDateTime now = LocalDateTime.now();
         Wsdl oldWsdl = oldService.getWsdl();
         if (oldWsdl == null) {
             wsdl.initializeExternalId();

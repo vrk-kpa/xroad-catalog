@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.Set;
 
@@ -22,10 +23,10 @@ public interface MemberRepository extends CrudRepository<Member, Long> {
     Set<Member> findAllActive();
 
     // uses named query Member.findAllChangedSince
-    Set<Member> findAllChangedSince(@Param("since") Date since);
+    Set<Member> findAllChangedSince(@Param("since") LocalDateTime since);
 
     // uses named query Member.findActiveChangedSince
-    Set<Member> findActiveChangedSince(@Param("since") Date since);
+    Set<Member> findActiveChangedSince(@Param("since") LocalDateTime since);
 
     /**
      * Returns only active items (non-deleted)

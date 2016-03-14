@@ -5,6 +5,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.UUID;
 
@@ -36,7 +37,7 @@ public class Wsdl {
         this.service = service;
         this.data = data;
         this.externalId = externalId;
-        statusInfo.setTimestampsForNew(new Date());
+        statusInfo.setTimestampsForNew(LocalDateTime.now());
     }
 
     public void initializeExternalId() {

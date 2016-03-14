@@ -7,6 +7,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Set;
@@ -47,7 +48,7 @@ public class Subsystem {
     public Subsystem(Member member, String subsystemCode) {
         this.member = member;
         this.subsystemCode = subsystemCode;
-        statusInfo.setTimestampsForNew(new Date());
+        statusInfo.setTimestampsForNew(LocalDateTime.now());
     }
 
     /**

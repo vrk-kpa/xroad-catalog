@@ -6,6 +6,7 @@ import lombok.Setter;
 import javax.persistence.Basic;
 import javax.persistence.Embeddable;
 import javax.persistence.FetchType;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 /**
@@ -16,18 +17,18 @@ import java.util.Date;
 @Setter
 public class StatusInfo {
 
-    private Date created;
+    private LocalDateTime created;
     /**
      * When data was changed somehow, whether it was updated, created or removed
      */
-    private Date changed;
+    private LocalDateTime changed;
     /**
      * When data was last time fetched from the source (regardless of whether there
      * were any changes). For removed entities, fetched it updated the first time
      * we receive "missing item" from data, but not after that
      */
-    private Date fetched;
-    private Date removed;
+    private LocalDateTime fetched;
+    private LocalDateTime removed;
 
     /**
      * Set timestamps for item that is saved and is not removed.
@@ -37,7 +38,7 @@ public class StatusInfo {
      * @param timestamp
      * @param isModified
      */
-    public void setTimestampsForSaved(Date timestamp, boolean isModified) {
+    public void setTimestampsForSaved(LocalDateTime timestamp, boolean isModified) {
         if (removed != null) {
             changed = timestamp;
         }
@@ -55,7 +56,7 @@ public class StatusInfo {
     /**
      * Sets timestamps to correct values when an item is fetched, but not changed
      */
-    public void setTimestampsForFetched(Date timestamp) {
+    public void setTimestampsForFetched(LocalDateTime timestamp) {
         if (isRemoved()) {
             // resurrect this item
             removed = null;
@@ -70,7 +71,7 @@ public class StatusInfo {
     /**
      * Sets timestamps to correct values for new instance
      */
-    public void setTimestampsForNew(Date timestamp) {
+    public void setTimestampsForNew(LocalDateTime timestamp) {
         created = timestamp;
         changed = timestamp;
         fetched = timestamp;
@@ -80,13 +81,13 @@ public class StatusInfo {
     /**
      * Sets timestamps to correct values for removed instance (which was not already removed)
      */
-    public void setTimestampsForRemoved(Date timestamp) {
+    public void setTimestampsForRemoved(LocalDateTime timestamp) {
         changed = timestamp;
         removed = timestamp;
         fetched = timestamp;
     }
 
-    public StatusInfo(Date created, Date changed, Date fetched, Date removed) {
+    public StatusInfo(LocalDateTime created, LocalDateTime changed, LocalDateTime fetched, LocalDateTime removed) {
         this.created = created;
         this.changed = changed;
         this.fetched = fetched;

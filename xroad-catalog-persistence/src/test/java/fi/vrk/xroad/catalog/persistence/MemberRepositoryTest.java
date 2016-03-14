@@ -13,6 +13,7 @@ import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.*;
 
 import static org.junit.Assert.*;
@@ -88,8 +89,8 @@ public class MemberRepositoryTest {
         ss1.setSubsystemCode(name + "ss2");
         ss1.setMember(member);
         ss2.setMember(member);
-        ss1.getStatusInfo().setTimestampsForNew(new Date());
-        ss2.getStatusInfo().setTimestampsForNew(new Date());
+        ss1.getStatusInfo().setTimestampsForNew(LocalDateTime.now());
+        ss2.getStatusInfo().setTimestampsForNew(LocalDateTime.now());
         member.setSubsystems(new HashSet<>());
         member.getAllSubsystems().add(ss1);
         member.getAllSubsystems().add(ss2);
@@ -115,7 +116,7 @@ public class MemberRepositoryTest {
 
     @Test
     public void testGetChangedSince() {
-        Date changedSince = testUtil.createDate(1, 1, 2017);
+        LocalDateTime changedSince = testUtil.createDate(1, 1, 2017);
         Iterable<Member> members = memberRepository.findActiveChangedSince(changedSince);
         // members 3-7 have been changed since 1/1/2017,
         // 3-6 have different parts changed, #7 has all parts changed

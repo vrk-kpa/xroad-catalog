@@ -12,6 +12,7 @@ import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.StreamSupport;
 
@@ -137,7 +138,7 @@ public class CatalogServiceTest {
     @Test
     public void testMemberIsChangedOnlyWhenNameIsChanged() {
         Member member1 = memberRepository.findOne(1L);
-        Date changed = member1.getStatusInfo().getChanged();
+        LocalDateTime changed = member1.getStatusInfo().getChanged();
 
         String oldName = "Nahka-Albert";
         String modifiedName = "Viskoosi-Jooseppi";

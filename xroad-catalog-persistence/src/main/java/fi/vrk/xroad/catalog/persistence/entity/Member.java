@@ -4,6 +4,7 @@ import com.google.common.collect.ComparisonChain;
 import lombok.*;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
@@ -94,7 +95,7 @@ public class Member {
      * @param transientMember
      * @param timestamp
      */
-    public void updateWithDataFrom(Member transientMember, Date timestamp) {
+    public void updateWithDataFrom(Member transientMember, LocalDateTime timestamp) {
         assert transientMember.getStatusInfo().getRemoved() == null;
         boolean isModifiedData = !isDataIdentical(transientMember);
         name = transientMember.getName();
@@ -134,7 +135,7 @@ public class Member {
         this.memberClass = memberClass;
         this.memberCode = memberCode;
         this.name = name;
-        statusInfo.setTimestampsForNew(new Date());
+        statusInfo.setTimestampsForNew(LocalDateTime.now());
     }
 
     /**

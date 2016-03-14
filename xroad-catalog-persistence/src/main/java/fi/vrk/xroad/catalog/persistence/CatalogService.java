@@ -2,6 +2,7 @@ package fi.vrk.xroad.catalog.persistence;
 
 import fi.vrk.xroad.catalog.persistence.entity.*;
 
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Optional;
@@ -36,14 +37,14 @@ public interface CatalogService {
      * @param changedAfter
      * @return
      */
-    Iterable<Member> getActiveMembers(Date changedAfter);
+    Iterable<Member> getActiveMembers(LocalDateTime changedAfter);
 
     /**
-     * Same as {@link #getActiveMembers(Date)} except that returns also removed items
+     * Same as {@link #getActiveMembers(LocalDateTime)} except that returns also removed items
      * @param changedAfter
      * @return
      */
-    Iterable<Member> getAllMembers(Date changedAfter);
+    Iterable<Member> getAllMembers(LocalDateTime changedAfter);
 
     /**
      * Returns the full Wsdl object. Only returns active ones, removed are not found.

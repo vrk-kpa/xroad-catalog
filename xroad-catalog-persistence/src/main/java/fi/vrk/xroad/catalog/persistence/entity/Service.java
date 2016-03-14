@@ -8,6 +8,7 @@ import org.hibernate.annotations.LazyToOne;
 import org.hibernate.annotations.LazyToOneOption;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
@@ -44,7 +45,7 @@ public class Service {
         this.subsystem = subsystem;
         this.serviceCode = serviceCode;
         this.serviceVersion = serviceVersion;
-        statusInfo.setTimestampsForNew(new Date());
+        statusInfo.setTimestampsForNew(LocalDateTime.now());
     }
 
     public void setWsdl(Wsdl wsdl) {

@@ -48,13 +48,12 @@ public class TestUtil {
      * @param year
      * @return
      */
-    public Date createDate(int day, int month, int year) {
-        Date date = Date.from(LocalDateTime.of(year, month, day, 0, 0, 0).atZone(ZoneId.systemDefault()).toInstant());
-        return date;
+    public LocalDateTime createDate(int day, int month, int year) {
+        return LocalDateTime.of(year, month, day, 0, 0, 0);
     }
 
     public Member createTestMember(String name) {
-        Date now = new Date();
+        LocalDateTime now = LocalDateTime.now();
         Member member = new Member();
         member.setName(name);
         member.setXRoadInstance("FI");
@@ -89,7 +88,7 @@ public class TestUtil {
         return member;
     }
 
-    private Service createService(String memberName, Date d, String serviceName) {
+    private Service createService(String memberName, LocalDateTime d, String serviceName) {
         Service s1 = new Service();
         s1.setServiceCode(memberName + "-" + serviceName);
         s1.setServiceVersion("v1");
@@ -97,7 +96,7 @@ public class TestUtil {
         return s1;
     }
 
-    private Subsystem createSubsystem(String memberName, Date date, String ssName) {
+    private Subsystem createSubsystem(String memberName, LocalDateTime date, String ssName) {
         Subsystem ss1 = new Subsystem();
         ss1.setSubsystemCode(memberName + "-" + ssName);
         ss1.getStatusInfo().setTimestampsForNew(date);
