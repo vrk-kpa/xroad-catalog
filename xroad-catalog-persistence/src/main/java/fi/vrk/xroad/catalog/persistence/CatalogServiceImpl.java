@@ -129,14 +129,13 @@ public class CatalogServiceImpl implements CatalogService {
     }
 
     @Override
-    public void saveServices(Subsystem subsystem, Collection<Service> services) {
-        assert subsystem != null;
-        assert subsystem.getMember() != null;
-        Subsystem oldSubsystem = subsystemRepository.findByNaturalKey(subsystem.getMember().getXRoadInstance(),
-                subsystem.getMember().getMemberClass(), subsystem.getMember().getMemberCode(),
-                subsystem.getSubsystemCode());
+    public void saveServices(SubsystemId subsystemId, Collection<Service> services) {
+        assert subsystemId != null;
+        Subsystem oldSubsystem = subsystemRepository.findByNaturalKey(subsystemId.getXRoadInstance(),
+                subsystemId.getMemberClass(), subsystemId.getMemberCode(),
+                subsystemId.getSubsystemCode());
         if (oldSubsystem == null) {
-            throw new IllegalStateException("subsystem " + subsystem + " not found!");
+            throw new IllegalStateException("subsystem " + subsystemId + " not found!");
         }
 
         Date now = new Date();

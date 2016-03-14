@@ -18,7 +18,8 @@ public interface CatalogService {
 
     /**
      * Gets all non-removed members, regardless of when they were changed.
-     * Fetches all data from graph member->subsystem->service->wsdl
+     * Fetches all data from graph member->subsystem->service.
+     * Does NOT fetch wsdl.
      */
     Iterable<Member> getActiveMembers();
 
@@ -75,8 +76,7 @@ public interface CatalogService {
      *                  populated properly.
      * @param service services
      */
-    // TODO: refactor subsystem -> subsystemId
-    void saveServices(Subsystem subsystem, Collection<Service> service);
+    void saveServices(SubsystemId subsystem, Collection<Service> service);
 
     /**
      * Saves given wsdl. The wsdl can either be a new one, or an update to an existing one.

@@ -15,7 +15,7 @@ import java.util.Set;
 @Entity
 @Getter
 @Setter
-@ToString(exclude = {"subsystem","wsdl"})
+@ToString(exclude = {"subsystem","wsdls"})
 public class Service {
     @Id
     @Column(nullable = false)

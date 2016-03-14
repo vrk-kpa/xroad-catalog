@@ -358,7 +358,7 @@ public class CatalogServiceTest {
         shallowCopyFields(originalService5, savedService5);
         shallowCopyFields(originalService6, savedService6);
 
-        catalogService.saveServices(savedSub, Lists.newArrayList(savedService5, savedService6));
+        catalogService.saveServices(savedSub.createKey(), Lists.newArrayList(savedService5, savedService6));
         testUtil.entityManagerFlush();
         testUtil.entityManagerClear();
 
@@ -406,7 +406,7 @@ public class CatalogServiceTest {
         newService.setServiceCode("foocode-asddsa-ads");
         newService.setServiceVersion("v6");
 
-        catalogService.saveServices(savedSub,
+        catalogService.saveServices(savedSub.createKey(),
                 Lists.newArrayList(savedService5, savedService6,newService));
         testUtil.entityManagerFlush();
         long newId = newService.getId();
@@ -457,7 +457,7 @@ public class CatalogServiceTest {
         shallowCopyFields(originalSub, savedSub);
         savedSub.setMember(originalMember);
 
-        catalogService.saveServices(savedSub,
+        catalogService.saveServices(savedSub.createKey(),
                 Lists.newArrayList());
         testUtil.entityManagerFlush();
         testUtil.entityManagerClear();

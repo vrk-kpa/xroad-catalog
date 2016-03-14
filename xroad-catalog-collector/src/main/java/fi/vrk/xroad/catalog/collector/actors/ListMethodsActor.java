@@ -111,7 +111,7 @@ public class ListMethodsActor extends UntypedActor {
             for (XRoadServiceIdentifierType service : result) {
                 services.add(new Service(subsystem, service.getServiceCode(), service.getServiceVersion()));
             }
-            catalogService.saveServices(subsystem, services);
+            catalogService.saveServices(subsystem.createKey(), services);
 
 
             // get wsdls
