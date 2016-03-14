@@ -1,0 +1,4 @@
+#!/bin/sh
+set -x
+exec ${JAVA_HOME}/bin/java -Dserver.port=8075 -jar /usr/lib/xroad-catalog/xroad-catalog-collector.jar
+
