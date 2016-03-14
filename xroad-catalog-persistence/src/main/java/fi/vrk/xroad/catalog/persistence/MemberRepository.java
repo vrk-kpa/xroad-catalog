@@ -31,9 +31,6 @@ public interface MemberRepository extends CrudRepository<Member, Long> {
      * @param memberCode
      * @return
      */
-    // TODO: index for keys for Member, and other tables too
-    // TODO: need to make Member.naturalkeys UNIQUE so that there is
-    // no duplicates with both removed & non-removed status
     @Query("SELECT m FROM Member m WHERE m.xRoadInstance = :xRoadInstance "
             + "AND m.memberClass = :memberClass "
             + "AND m.memberCode = :memberCode "

@@ -1,17 +1,13 @@
 package fi.vrk.xroad.catalog.persistence.entity;
 
 import com.google.common.collect.ComparisonChain;
-import lombok.EqualsAndHashCode;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Maps;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
 import javax.persistence.*;
-import java.text.MessageFormat;
-import java.util.*;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Entity
@@ -41,9 +37,9 @@ import java.util.stream.Collectors;
         @NamedQuery(name = "Member.findActiveChangedSince",
                 query = Member.FIND_ACTIVE_CHANGED_QUERY),
 })
+@EqualsAndHashCode(exclude = {"id", "subsystems", "statusInfo"})
 public class Member {
 
-    // TODO: would be nice to make less ugly
     private static final String FIND_CHANGED_QUERY_PART_1 =
             "SELECT DISTINCT mem " +
                     "FROM Member mem " +
@@ -92,7 +88,6 @@ public class Member {
     private StatusInfo statusInfo = new StatusInfo();
     @Getter(AccessLevel.NONE) // do not create default getter, we provide the substitute
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
-//    @EqualsAndHashCode(exclude = {"id", "subsystems", "statusInfo"})
     private Set<Subsystem> subsystems = new HashSet<>();
 
     /**

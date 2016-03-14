@@ -94,6 +94,8 @@ public class MemberRepositoryTest {
 
         Subsystem ss1 = new Subsystem();
         Subsystem ss2 = new Subsystem();
+        ss1.setSubsystemCode(name + "ss1");
+        ss1.setSubsystemCode(name + "ss2");
         ss1.setMember(member);
         ss2.setMember(member);
         ss1.getStatusInfo().setTimestampsForNew(new Date());
@@ -101,8 +103,6 @@ public class MemberRepositoryTest {
         member.setSubsystems(new HashSet<>());
         member.getAllSubsystems().add(ss1);
         member.getAllSubsystems().add(ss2);
-        ss1.setSubsystemCode(name + "ss1");
-        ss1.setSubsystemCode(name + "ss2");
 
         Service s1 = new Service();
         Service s2 = new Service();

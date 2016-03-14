@@ -51,11 +51,9 @@ public class CatalogServiceTest {
 
     @Test
     public void testGetWsdl() {
-        // TODO: UNIQUE external_id
         Wsdl wsdl = catalogService.getWsdl("1000");
         assertNotNull(wsdl);
         assertEquals("<?xml version=\"1.0\" standalone=\"no\"?><wsdl-6-1-1-1-changed/>", wsdl.getData());
-        assertEquals("456efg", wsdl.getDataHash());
         assertEquals(7, wsdl.getService().getSubsystem().getId());
     }
 

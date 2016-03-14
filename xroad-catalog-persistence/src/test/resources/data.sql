@@ -71,18 +71,18 @@ VALUES (8, 8, 'removed-service_7-1-3', 'v1', '2016-01-01 00:00:00+02', '2016-01-
 INSERT INTO service (id, subsystem_id, service_code, service_version, created, changed, fetched,  removed)
 VALUES (9, 8, 'removed-service_7-1-4', 'v1', '2016-01-01 00:00:00+02', '2016-01-01 00:00:00+02', '2016-01-01 00:00:00+02', '2016-01-01 00:00:00+02');
 
-INSERT INTO wsdl (id, service_id, data, data_hash, external_id, created, changed, fetched,  removed)
-VALUES (3, 4, '<?xml version="1.0" standalone="no"?><wsdl-6-1-1-1-changed/>', '456efg', '1000', '2016-01-01 00:00:00+02', '2017-01-02 00:00:00+02', '2017-01-02 00:00:00+02', NULL);
-INSERT INTO wsdl (id, service_id, data, data_hash, external_id, created, changed, fetched,  removed)
-VALUES (4, 6, '<?xml version="1.0" standalone="no"?><wsdl-7-1-2-1-changed/>', '456efg', '1001', '2016-01-01 00:00:00+02', '2017-01-02 00:00:00+02', '2017-01-02 00:00:00+02', NULL);
-INSERT INTO wsdl (id, service_id, data, data_hash, external_id, created, changed, fetched,  removed)
-VALUES (5, 7, '<?xml version="1.0" standalone="no"?><wsdl-7-2-1-1/>', '456efg', '1002', '2016-01-01 00:00:00+02', '2016-01-01 00:00:00+02', '2016-01-01 00:00:00+02', NULL);
-INSERT INTO wsdl (id, service_id, data, data_hash, external_id, created, changed, fetched,  removed)
-VALUES (6, 8, '<?xml version="1.0" standalone="no"?><removed-service_7-1-3-alive-wsdl/>', '456efg', '3000', '2016-01-01 00:00:00+02', '2016-01-01 00:00:00+02', '2016-01-01 00:00:00+02', NULL);
-INSERT INTO wsdl (id, service_id, data, data_hash, external_id, created, changed, fetched,  removed)
-VALUES (7, 9, '<?xml version="1.0" standalone="no"?><removed-service_7-1-4-removed-wsdl/>', '456efg', '3001', '2016-01-01 00:00:00+02', '2016-01-01 00:00:00+02', '2016-01-01 00:00:00+02', '2016-01-01 00:00:00+02');
+INSERT INTO wsdl (id, service_id, data, external_id, created, changed, fetched,  removed)
+VALUES (3, 4, '<?xml version="1.0" standalone="no"?><wsdl-6-1-1-1-changed/>', '1000', '2016-01-01 00:00:00+02', '2017-01-02 00:00:00+02', '2017-01-02 00:00:00+02', NULL);
+INSERT INTO wsdl (id, service_id, data, external_id, created, changed, fetched,  removed)
+VALUES (4, 6, '<?xml version="1.0" standalone="no"?><wsdl-7-1-2-1-changed/>', '1001', '2016-01-01 00:00:00+02', '2017-01-02 00:00:00+02', '2017-01-02 00:00:00+02', NULL);
+INSERT INTO wsdl (id, service_id, data, external_id, created, changed, fetched,  removed)
+VALUES (5, 7, '<?xml version="1.0" standalone="no"?><wsdl-7-2-1-1/>', '1002', '2016-01-01 00:00:00+02', '2016-01-01 00:00:00+02', '2016-01-01 00:00:00+02', NULL);
+INSERT INTO wsdl (id, service_id, data, external_id, created, changed, fetched,  removed)
+VALUES (6, 8, '<?xml version="1.0" standalone="no"?><removed-service_7-1-3-alive-wsdl/>', '3000', '2016-01-01 00:00:00+02', '2016-01-01 00:00:00+02', '2016-01-01 00:00:00+02', NULL);
+INSERT INTO wsdl (id, service_id, data, external_id, created, changed, fetched,  removed)
+VALUES (7, 9, '<?xml version="1.0" standalone="no"?><removed-service_7-1-4-removed-wsdl/>', '3001', '2016-01-01 00:00:00+02', '2016-01-01 00:00:00+02', '2016-01-01 00:00:00+02', '2016-01-01 00:00:00+02');
 
-INSERT INTO wsdl (id, service_id, data, data_hash, external_id, created, changed, fetched,  removed)
+INSERT INTO wsdl (id, service_id, data, external_id, created, changed, fetched,  removed)
 VALUES (1, 1, '<?xml version="1.0" standalone="no"?>
 <wsdl:definitions xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
                   xmlns:tns="http://test.x-road.fi/producer"
@@ -293,9 +293,9 @@ VALUES (1, 1, '<?xml version="1.0" standalone="no"?>
             <soap:address location="http://localhost:8080/test-service-0.0.2-SNAPSHOT/Endpoint"/>
         </wsdl:port>
     </wsdl:service>
-</wsdl:definitions>', '123asd', '1003', '2016-01-01 00:00:00+02', '2016-01-01 00:00:00+02', '2016-01-01 00:00:00+02', NULL);
+</wsdl:definitions>', '1003', '2016-01-01 00:00:00+02', '2016-01-01 00:00:00+02', '2016-01-01 00:00:00+02', NULL);
 
-INSERT INTO wsdl (id, service_id, data, data_hash, external_id, created, changed, fetched, removed)
+INSERT INTO wsdl (id, service_id, data, external_id, created, changed, fetched, removed)
 VALUES (2, 2, '<?xml version="1.0" standalone="no"?>
 <wsdl:definitions xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
                   xmlns:tns="http://test.x-road.fi/producer"
@@ -556,6 +556,6 @@ VALUES (2, 2, '<?xml version="1.0" standalone="no"?>
         </wsdl:port>
     </wsdl:service>
 </wsdl:definitions>
-', '456efg', '2050', '2016-01-01 00:00:00+02', '2016-01-01 00:00:00+02', '2016-01-01 00:00:00+02', NULL);
+', '2050', '2016-01-01 00:00:00+02', '2016-01-01 00:00:00+02', '2016-01-01 00:00:00+02', NULL);
 
 

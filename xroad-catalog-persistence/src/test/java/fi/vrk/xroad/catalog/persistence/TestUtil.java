@@ -71,8 +71,8 @@ public class TestUtil {
         ss1.setMember(member);
         ss2.setMember(member);
         member.setSubsystems(new HashSet<>());
-        member.getActiveSubsystems().add(ss1);
-        member.getActiveSubsystems().add(ss2);
+        member.getAllSubsystems().add(ss1);
+        member.getAllSubsystems().add(ss2);
 
         Service s1 = createService(name, now, "service1");
         Service s2 = createService(name, now, "service2");
@@ -86,7 +86,6 @@ public class TestUtil {
         s1.setWsdl(wsdl);
         wsdl.setService(s1);
         wsdl.setData("<?xml version=\"1.0\" standalone=\"no\"?><wsdl/>");
-        wsdl.setDataHash("foohash");
         wsdl.setExternalId("external-id-" + name);
         wsdl.getStatusInfo().setTimestampsForNew(now);
 

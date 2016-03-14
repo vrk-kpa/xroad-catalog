@@ -82,7 +82,7 @@ SELECT pg_catalog.setval('subsystem_id_seq', 1, false);
 -- Data for Name: wsdl; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-INSERT INTO wsdl (id, service_id, data, data_hash, external_id, created, changed, fetched, removed) VALUES (1, 1, '<?xml version="1.0" standalone="no"?>
+INSERT INTO wsdl (id, service_id, data, external_id, created, changed, fetched, removed) VALUES (1, 1, '<?xml version="1.0" standalone="no"?>
 <wsdl:definitions xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
                   xmlns:tns="http://test.x-road.fi/producer"
                   xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
@@ -292,8 +292,8 @@ INSERT INTO wsdl (id, service_id, data, data_hash, external_id, created, changed
             <soap:address location="http://localhost:8080/test-service-0.0.2-SNAPSHOT/Endpoint"/>
         </wsdl:port>
     </wsdl:service>
-</wsdl:definitions>', '123asd', '1000', '2016-01-01 00:00:00+02', '2016-01-01 00:00:00+02', '2016-01-01 00:00:00+02', NULL);
-INSERT INTO wsdl (id, service_id, data, data_hash, external_id, created, changed, fetched, removed) VALUES (2, 2, '<?xml version="1.0" standalone="no"?>
+</wsdl:definitions>', '1000', '2016-01-01 00:00:00+02', '2016-01-01 00:00:00+02', '2016-01-01 00:00:00+02', NULL);
+INSERT INTO wsdl (id, service_id, data, external_id, created, changed, fetched, removed) VALUES (2, 2, '<?xml version="1.0" standalone="no"?>
 <wsdl:definitions xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
                   xmlns:tns="http://test.x-road.fi/producer"
                   xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
@@ -553,7 +553,7 @@ INSERT INTO wsdl (id, service_id, data, data_hash, external_id, created, changed
         </wsdl:port>
     </wsdl:service>
 </wsdl:definitions>
-', '456efg', '2050', '2016-01-01 00:00:00+02', '2016-01-01 00:00:00+02', '2016-01-01 00:00:00+02', NULL);
+', 2050', '2016-01-01 00:00:00+02', '2016-01-01 00:00:00+02', '2016-01-01 00:00:00+02', NULL);
 
 
 --

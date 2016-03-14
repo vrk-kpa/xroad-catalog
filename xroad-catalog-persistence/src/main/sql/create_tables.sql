@@ -214,7 +214,6 @@ CREATE TABLE wsdl (
     id bigint NOT NULL,
     service_id bigint NOT NULL,
     data text NOT NULL,
-    data_hash text NOT NULL,
     external_id text NOT NULL,
     created timestamp with time zone NOT NULL,
     changed timestamp with time zone NOT NULL,
@@ -309,16 +308,15 @@ ALTER TABLE ONLY wsdl
 --
 
 CREATE UNIQUE INDEX idx_wsdl_external_id ON wsdl USING btree (external_id);
+CREATE UNIQUE INDEX idx_member_natural_keys ON member(member_code, member_class, x_road_instance);
+CREATE UNIQUE INDEX idx_service_unique_fields ON service(subsystem_id, service_code, service_version);
+CREATE UNIQUE INDEX idx_subsystem_unique_fields ON subsystem(member_id, subsystem_code);
 
-
--- additional indexes for performance
 CREATE INDEX idx_wsdl_changed ON wsdl(changed);
 CREATE INDEX idx_service_changed ON service(changed);
 CREATE INDEX idx_subsystem_changed ON subsystem(changed);
 CREATE INDEX idx_member_changed ON member(changed);
 CREATE INDEX idx_wsdl_service_id ON wsdl(service_id);
-CREATE INDEX idx_service_subsystem_id ON service(subsystem_id);
-CREATE INDEX idx_subsystem_member_id ON subsystem(member_id);
 
 
 
