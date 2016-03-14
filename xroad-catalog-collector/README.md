@@ -1,4 +1,4 @@
-# Collector for X-Road clients in system
+# Collector for X-Road Clients in System
 
 ## Build
 
@@ -13,3 +13,9 @@
 Or
 
     $ java -jar target/xroad-catalog-collector-1.0-SNAPSHOT.jar
+
+## Build RPM Packages on Non-RedHat Platform
+
+    $ gradle clean build
+    $ docker build -t collector-rpm packages/xroad-catalog-collector/docker
+    $ docker run -v $PWD/..:/workspace  -v /etc/passwd:/etc/passwd:ro -v /etc/group:/etc/group:ro collector-rpm
