@@ -138,11 +138,11 @@ public class ListClientsActorTest extends TestKit {
         Collection<Member> resultMembers = argumentCaptor.getValue();
         Assert.assertEquals(HashMultiset.create(expectedMembers), HashMultiset.create(resultMembers));
 
-        Assert.assertEquals(HashMultiset.create(member1.getSubsystems()), HashMultiset.create(resultMembers.stream()
-                .filter(m -> member1.equals(m)).findAny().get().getSubsystems()));
+        Assert.assertEquals(HashMultiset.create(member1.getAllSubsystems()), HashMultiset.create(resultMembers.stream()
+                .filter(m -> member1.equals(m)).findAny().get().getAllSubsystems()));
 
-        Assert.assertEquals(HashMultiset.create(member2.getSubsystems()), HashMultiset.create(resultMembers.stream()
-                .filter(m -> member2.equals(m)).findAny().get().getSubsystems()));
+        Assert.assertEquals(HashMultiset.create(member2.getAllSubsystems()), HashMultiset.create(resultMembers.stream()
+                .filter(m -> member2.equals(m)).findAny().get().getAllSubsystems()));
     }
 
     protected ClientType createClientType(XRoadObjectType objectType, String memberCode, String subsystemCode) {

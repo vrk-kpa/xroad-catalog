@@ -4,21 +4,22 @@ import akka.actor.*;
 import akka.event.Logging;
 import akka.event.LoggingAdapter;
 import akka.routing.SmallestMailboxPool;
-import akka.util.Timeout;
 import eu.x_road.xsd.xroad.ClientListType;
 import eu.x_road.xsd.xroad.ClientType;
 import fi.vrk.xroad.catalog.collector.extension.SpringExtension;
-import fi.vrk.xroad.catalog.collector.util.ClientTypeUtil;
 import fi.vrk.xroad.catalog.persistence.CatalogService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestOperations;
+import scala.Option;
 import scala.concurrent.Await;
 import scala.concurrent.duration.Duration;
 
 import java.util.concurrent.TimeUnit;
+
+import static akka.actor.SupervisorStrategy.restart;
 
 /**
  * Supervisor to get list of all clients in system and initiate a ClientActor for each
@@ -51,7 +52,12 @@ public class Supervisor extends UntypedActor {
 
         log.info("Starting up");
 
+        // for this pool, supervisor strategy restarts each clientActor if it fails.
+        // currently this is not needed and could "resume" just as well
         listClientsPoolRouter = getContext().actorOf(new SmallestMailboxPool(1)
+                        .withSupervisorStrategy(new OneForOneStrategy(-1,
+                                Duration.Inf(),
+                                (Throwable t) -> restart()))
                 .props(springExtension.props("listClientsActor")),
                 LIST_CLIENTS_ACTOR_ROUTER);
 
@@ -82,6 +88,12 @@ public class Supervisor extends UntypedActor {
     public void postStop() throws Exception {
         log.info("postStop");
         super.postStop();
+    }
+
+    @Override
+    public void preRestart(Throwable reason, Option<Object> message) throws Exception {
+        log.info("preRestart {} {} {} ", this.hashCode(), reason, message);
+        super.preRestart(reason, message);
     }
 
 }

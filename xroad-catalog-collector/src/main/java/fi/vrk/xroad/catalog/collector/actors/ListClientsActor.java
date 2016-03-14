@@ -100,15 +100,16 @@ public class ListClientsActor extends UntypedActor {
 
                 if (XRoadObjectType.SUBSYSTEM.equals(clientType.getId().getObjectType())) {
                     Subsystem newSubsystem = new Subsystem(newMember, clientType.getId().getSubsystemCode());
-                    m.get(newMember.createKey()).getSubsystems().add(newSubsystem);
-
+                    m.get(newMember.createKey()).getAllSubsystems().add(newSubsystem);
                 }
             }
 
             // Save members
             catalogService.saveAllMembersAndSubsystems(m.values());
             for (ClientType clientType : clientList.getMember()) {
-                listMethodsPoolRef.tell(clientType, getSelf());
+                if (XRoadObjectType.SUBSYSTEM.equals(clientType.getId().getObjectType())) {
+                    listMethodsPoolRef.tell(clientType, getSelf());
+                }
             }
             log.info("all clients (" + (counter-1) + ") sent to actor");
         } else if (message instanceof Terminated) {

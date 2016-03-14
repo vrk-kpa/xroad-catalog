@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 @Entity
 @Getter
 @Setter
-@ToString(exclude = {"member","services"})
+@ToString(exclude = {"services"})
 @EqualsAndHashCode(exclude = {"id", "services", "statusInfo"} ) // why?
 public class Subsystem {
 
