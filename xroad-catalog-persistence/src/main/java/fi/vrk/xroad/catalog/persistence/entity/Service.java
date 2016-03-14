@@ -29,6 +29,10 @@ public class Service {
     private String serviceVersion;
     @Embedded
     private StatusInfo statusInfo = new StatusInfo();
+    // using OneToMany wsdls instead of simpler - first choice - OneToOne wsdl
+    // due to OneToOne not working with lazy loading:
+    // http://stackoverflow.com/questions/1444227/making-a-onetoone-relation-lazy
+    // https://developer.jboss.org/wiki/SomeExplanationsOnLazyLoadingone-to-one
     @Getter(AccessLevel.NONE) // do not create default getter/setter, we provide a wrapper that hides the collection
     @OneToMany(mappedBy = "service", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<Wsdl> wsdls;

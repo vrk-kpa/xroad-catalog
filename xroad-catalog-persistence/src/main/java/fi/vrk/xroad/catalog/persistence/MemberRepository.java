@@ -16,13 +16,15 @@ public interface MemberRepository extends CrudRepository<Member, Long> {
             type = EntityGraph.EntityGraphType.FETCH)
     Set<Member> findAll();
 
-    // TODO: test that query plan is as expected
-    @EntityGraph(value = "member.all-but-wsdl-tree.graph", type = EntityGraph.EntityGraphType.FETCH)
+    @EntityGraph(value = "member.all-but-wsdl-tree.graph",
+            type = EntityGraph.EntityGraphType.FETCH)
     @Query("SELECT m FROM Member m WHERE m.statusInfo.removed IS NULL")
     Set<Member> findAllActive();
 
+    // uses named query Member.findAllChangedSince
     Set<Member> findAllChangedSince(@Param("since") Date since);
 
+    // uses named query Member.findActiveChangedSince
     Set<Member> findActiveChangedSince(@Param("since") Date since);
 
     /**
