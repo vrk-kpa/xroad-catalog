@@ -25,7 +25,7 @@ public class ServiceRepository {
 		member.setMemberClass("ABC");
 		member.setMemberCode("122");
 		member.setName("palvelu");
-		member.setUpdated(toXMLGregorianCalendar(LocalDate.now()));
+		member.setChanged(toXMLGregorianCalendar(LocalDate.now()));
 
 		Subsystem ss = new Subsystem();
 		ss.setSubsystemCode("sub1");
@@ -281,7 +281,7 @@ public class ServiceRepository {
 		member.setMemberClass("WEE");
 		member.setMemberCode("22233");
 		member.setName("toinen palvelu");
-		member.setUpdated(toXMLGregorianCalendar(LocalDate.now()));
+		member.setChanged(toXMLGregorianCalendar(LocalDate.now()));
 
 		ss = new Subsystem();
 		ss.setSubsystemCode("sub1");
@@ -309,7 +309,7 @@ public class ServiceRepository {
 		member.setMemberClass("FOOBAR");
 		member.setMemberCode("333");
 		member.setName("mikä tämä on");
-		member.setUpdated(toXMLGregorianCalendar(LocalDate.now()));
+		member.setChanged(toXMLGregorianCalendar(LocalDate.now()));
 
 		members.add(member);
 

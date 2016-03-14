@@ -63,33 +63,31 @@ public class TestUtil {
         member.setXRoadInstance("FI");
         member.setMemberClass("GOV");
         member.setMemberCode("code-" + name);
-        member.setCreated(now);
-        member.setUpdated(now);
+        member.getStatusInfo().setCreated(now);
+        member.getStatusInfo().setChanged(now);
 
         Subsystem ss1 = createSubsystem(name, now, "ss1");
         Subsystem ss2 = createSubsystem(name, now, "ss2");
         ss1.setMember(member);
         ss2.setMember(member);
         member.setSubsystems(new HashSet<>());
-        member.getSubsystems().add(ss1);
-        member.getSubsystems().add(ss2);
+        member.getAllSubsystems().add(ss1);
+        member.getAllSubsystems().add(ss2);
 
         Service s1 = createService(name, now, "service1");
         Service s2 = createService(name, now, "service2");
         s1.setSubsystem(ss1);
         s2.setSubsystem(ss1);
         ss1.setServices(new HashSet<>());
-        ss1.getServices().add(s1);
-        ss1.getServices().add(s2);
+        ss1.getAllServices().add(s1);
+        ss1.getAllServices().add(s2);
 
         Wsdl wsdl = new Wsdl();
         s1.setWsdl(wsdl);
         wsdl.setService(s1);
         wsdl.setData("<?xml version=\"1.0\" standalone=\"no\"?><wsdl/>");
-        wsdl.setDataHash("foohash");
         wsdl.setExternalId("external-id-" + name);
-        wsdl.setCreated(now);
-        wsdl.setUpdated(now);
+        wsdl.getStatusInfo().setTimestampsForNew(now);
 
         return member;
     }
@@ -98,20 +96,27 @@ public class TestUtil {
         Service s1 = new Service();
         s1.setServiceCode(memberName + "-" + serviceName);
         s1.setServiceVersion("v1");
-        s1.setCreated(d);
-        s1.setUpdated(d);
+        s1.getStatusInfo().setTimestampsForNew(d);
         return s1;
     }
 
     private Subsystem createSubsystem(String memberName, Date date, String ssName) {
         Subsystem ss1 = new Subsystem();
         ss1.setSubsystemCode(memberName + "-" + ssName);
-        ss1.setCreated(date);
-        ss1.setUpdated(date);
+        ss1.getStatusInfo().setTimestampsForNew(date);
         return ss1;
     }
 
-    public void detach(Object entity) {
+    public void entityManagerDetach(Object entity) {
         entityManager.detach(entity);
     }
+
+    public void entityManagerFlush() {
+        entityManager.flush();
+    }
+
+    public void entityManagerClear() {
+        entityManager.clear();
+    }
+
 }

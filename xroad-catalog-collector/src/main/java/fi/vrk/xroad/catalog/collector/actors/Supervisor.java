@@ -1,23 +1,24 @@
 package fi.vrk.xroad.catalog.collector.actors;
 
 import akka.actor.*;
-import akka.actor.SupervisorStrategy.Directive;
 import akka.event.Logging;
 import akka.event.LoggingAdapter;
-import akka.japi.Function;
 import akka.routing.SmallestMailboxPool;
 import eu.x_road.xsd.xroad.ClientListType;
 import eu.x_road.xsd.xroad.ClientType;
 import fi.vrk.xroad.catalog.collector.extension.SpringExtension;
 import fi.vrk.xroad.catalog.persistence.CatalogService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestOperations;
 import scala.Option;
+import scala.concurrent.Await;
 import scala.concurrent.duration.Duration;
 
-import static akka.actor.SupervisorStrategy.escalate;
+import java.util.concurrent.TimeUnit;
+
 import static akka.actor.SupervisorStrategy.restart;
 
 /**
@@ -27,37 +28,46 @@ import static akka.actor.SupervisorStrategy.restart;
  */
 @Component
 @Scope("prototype")
+@Slf4j
 public class Supervisor extends UntypedActor {
 
-    private static final int NO_OF_ACTORS = 3;
+    public static final String START_COLLECTING = "StartCollecting";
 
-    private final LoggingAdapter log = Logging
-        .getLogger(getContext().system(), "Supervisor");
+    public static final String LIST_CLIENTS_ACTOR_ROUTER = "list-clients-actor-router";
+    public static final String LIST_METHODS_ACTOR_ROUTER = "list-methods-actor-router";
+    public static final String FETCH_WSDL_ACTOR_ROUTER = "fetch-wsdl-actor-router";
 
     @Autowired
     private SpringExtension springExtension;
 
-    private ActorRef router;
-
     @Autowired
     protected CatalogService catalogService;
 
-
-    @Autowired
-    private RestOperations restOperations;
+    private ActorRef listClientsPoolRouter;
+    private ActorRef listMethodsPoolRouter;
+    private ActorRef fetchWsdlPoolRouter;
 
     @Override
     public void preStart() throws Exception {
 
         log.info("Starting up");
 
-        // supervisor strategy restarts each clientActor if it fails.
+        // for this pool, supervisor strategy restarts each clientActor if it fails.
         // currently this is not needed and could "resume" just as well
-        router = getContext().actorOf(new SmallestMailboxPool(NO_OF_ACTORS)
-                .withSupervisorStrategy(new OneForOneStrategy(-1,
-                        Duration.Inf(),
-                        (Throwable t) -> restart()))
-            .props(springExtension.props("clientActor")), "client-actor-router");
+        listClientsPoolRouter = getContext().actorOf(new SmallestMailboxPool(1)
+                        .withSupervisorStrategy(new OneForOneStrategy(-1,
+                                Duration.Inf(),
+                                (Throwable t) -> restart()))
+                .props(springExtension.props("listClientsActor")),
+                LIST_CLIENTS_ACTOR_ROUTER);
+
+        listMethodsPoolRouter = getContext().actorOf(new SmallestMailboxPool(5)
+                        .props(springExtension.props("listMethodsActor")),
+                LIST_METHODS_ACTOR_ROUTER);
+
+        fetchWsdlPoolRouter = getContext().actorOf(new SmallestMailboxPool(10)
+                        .props(springExtension.props("fetchWsdlActor")),
+                FETCH_WSDL_ACTOR_ROUTER);
 
         super.preStart();
     }
@@ -65,23 +75,8 @@ public class Supervisor extends UntypedActor {
     @Override
     public void onReceive(Object message) throws Exception {
 
-        if (message instanceof ClientListType) {
-
-            ClientListType clientList = restOperations.getForObject("http://localhost/listClients", ClientListType
-                    .class);
-
-            log.info("clientlist {}", clientList.toString());
-            int counter = 1;
-            for (ClientType clientType : clientList.getMember()) {
-                log.info("clientType {} {} {}", counter++, clientType.getName(), clientType.getId().getMemberCode());
-                router.tell(clientType, getSender());
-                Thread.sleep(100);
-            }
-            log.info("all clients (" + (counter-1) + ") sent to actor");
-
-
-            //stream().forEach(c -> log.info("clientType {}", c));
-
+        if (START_COLLECTING.equals(message)) {
+            listClientsPoolRouter.tell(ListClientsActor.START_COLLECTING, getSelf());
         } else if (message instanceof Terminated) {
             throw new RuntimeException("Terminated: " + message);
         } else {
@@ -91,10 +86,7 @@ public class Supervisor extends UntypedActor {
 
     @Override
     public void postStop() throws Exception {
-
-        log.info("PostStop");
-        log.info("Found members from database: {}", catalogService.getMembers());
-        log.info("Shutting down");
+        log.info("postStop");
         super.postStop();
     }
 

@@ -88,7 +88,8 @@ CREATE TABLE member (
     member_code text NOT NULL,
     name text NOT NULL,
     created timestamp with time zone NOT NULL,
-    updated timestamp with time zone NOT NULL,
+    changed timestamp with time zone NOT NULL,
+    fetched timestamp with time zone NOT NULL,
     removed timestamp with time zone
 );
 
@@ -130,7 +131,8 @@ CREATE TABLE service (
     service_code text NOT NULL,
     service_version text NOT NULL,
     created timestamp with time zone NOT NULL,
-    updated timestamp with time zone NOT NULL,
+    changed timestamp with time zone NOT NULL,
+    fetched timestamp with time zone NOT NULL,
     removed timestamp with time zone
 );
 
@@ -171,7 +173,8 @@ CREATE TABLE subsystem (
     member_id bigint NOT NULL,
     subsystem_code text NOT NULL,
     created timestamp with time zone NOT NULL,
-    updated timestamp with time zone NOT NULL,
+    changed timestamp with time zone NOT NULL,
+    fetched timestamp with time zone NOT NULL,
     removed timestamp with time zone
 );
 
@@ -211,10 +214,10 @@ CREATE TABLE wsdl (
     id bigint NOT NULL,
     service_id bigint NOT NULL,
     data text NOT NULL,
-    data_hash text NOT NULL,
     external_id text NOT NULL,
     created timestamp with time zone NOT NULL,
-    updated timestamp with time zone NOT NULL,
+    changed timestamp with time zone NOT NULL,
+    fetched timestamp with time zone NOT NULL,
     removed timestamp with time zone
 );
 
@@ -243,6 +246,24 @@ ALTER TABLE public.wsdl_id_seq OWNER TO postgres;
 --
 
 ALTER SEQUENCE wsdl_id_seq OWNED BY wsdl.id;
+
+CREATE SEQUENCE wsdl_external_id_seq
+START WITH 1
+INCREMENT BY 1
+NO MINVALUE
+NO MAXVALUE
+CACHE 1;
+
+
+ALTER TABLE public.wsdl_external_id_seq OWNER TO postgres;
+
+--
+-- TOC entry 2015 (class 0 OID 0)
+-- Dependencies: 174
+-- Name: wsdl_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE wsdl_external_id_seq OWNED BY wsdl.external_id;
 
 --
 --
@@ -287,16 +308,15 @@ ALTER TABLE ONLY wsdl
 --
 
 CREATE UNIQUE INDEX idx_wsdl_external_id ON wsdl USING btree (external_id);
+CREATE UNIQUE INDEX idx_member_natural_keys ON member(member_code, member_class, x_road_instance);
+CREATE UNIQUE INDEX idx_service_unique_fields ON service(subsystem_id, service_code, service_version);
+CREATE UNIQUE INDEX idx_subsystem_unique_fields ON subsystem(member_id, subsystem_code);
 
-
--- additional indexes for performance
-CREATE INDEX idx_wsdl_updated ON wsdl(updated);
-CREATE INDEX idx_service_updated ON service(updated);
-CREATE INDEX idx_subsystem_updated ON subsystem(updated);
-CREATE INDEX idx_member_updated ON member(updated);
+CREATE INDEX idx_wsdl_changed ON wsdl(changed);
+CREATE INDEX idx_service_changed ON service(changed);
+CREATE INDEX idx_subsystem_changed ON subsystem(changed);
+CREATE INDEX idx_member_changed ON member(changed);
 CREATE INDEX idx_wsdl_service_id ON wsdl(service_id);
-CREATE INDEX idx_service_subsystem_id ON service(subsystem_id);
-CREATE INDEX idx_subsystem_member_id ON subsystem(member_id);
 
 
 

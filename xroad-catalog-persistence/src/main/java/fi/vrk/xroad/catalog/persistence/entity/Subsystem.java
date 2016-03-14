@@ -1,17 +1,22 @@
 package fi.vrk.xroad.catalog.persistence.entity;
 
+import lombok.EqualsAndHashCode;
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
 import javax.persistence.*;
+import java.util.Collections;
 import java.util.Date;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Entity
 @Getter
 @Setter
-@ToString(exclude = {"member","services"})
+@ToString(exclude = {"services"})
+@EqualsAndHashCode(exclude = {"id", "services", "statusInfo"} ) // why?
 public class Subsystem {
 
     @Id
@@ -20,30 +25,47 @@ public class Subsystem {
     @SequenceGenerator(name = "SUBSYSTEM_GEN", sequenceName = "SUBSYSTEM_ID_SEQ", allocationSize = 1)
     private long id;
     private String subsystemCode;
-    private Date created;
-    private Date updated;
-    private Date removed;
     @ManyToOne
     @JoinColumn(name = "MEMBER_ID")
     private Member member;
+    @Getter(AccessLevel.NONE) // do not create default getter, we provide the substitute
     @OneToMany(mappedBy = "subsystem", cascade = CascadeType.ALL)
     private Set<Service> services;
+    @Embedded
+    private StatusInfo statusInfo = new StatusInfo();
 
     public Subsystem() {}
+
+    public SubsystemId createKey() {
+        return new SubsystemId(
+                getMember().getXRoadInstance(),
+                getMember().getMemberClass(),
+                getMember().getMemberCode(),
+                subsystemCode);
+    }
 
     public Subsystem(Member member, String subsystemCode) {
         this.member = member;
         this.subsystemCode = subsystemCode;
-        this.created = new Date();
-        this.updated = this.created;
+        statusInfo.setTimestampsForNew(new Date());
     }
 
-    public Subsystem(Member member, String subsystemCode, Date created, Date updated, Date removed) {
-        this.member = member;
-        this.subsystemCode = subsystemCode;
-        this.created = created;
-        this.updated = updated;
-        this.removed = removed;
+    /**
+     * Note: Read-only collection, do not use this to modify collection
+     * @return
+     */
+    public Set<Service> getActiveServices() {
+        return Collections.unmodifiableSet(services.stream()
+                .filter(service -> !service.getStatusInfo().isRemoved())
+                .collect(Collectors.toSet()));
+    }
+
+    /**
+     * This collection can be used to add new items
+     * @return
+     */
+    public Set<Service> getAllServices() {
+        return services;
     }
 
 }
