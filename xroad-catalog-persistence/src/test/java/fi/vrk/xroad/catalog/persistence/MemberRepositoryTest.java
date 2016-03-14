@@ -114,7 +114,7 @@ public class MemberRepositoryTest {
     }
 
     @Test
-    public void testModified() {
+    public void testGetChangedSince() {
         Date changedSince = testUtil.createDate(1, 1, 2017);
         Iterable<Member> members = memberRepository.findActiveChangedSince(changedSince);
         // members 3-7 have been changed since 1/1/2017,

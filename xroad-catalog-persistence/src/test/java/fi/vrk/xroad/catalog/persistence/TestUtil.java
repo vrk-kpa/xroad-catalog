@@ -1,9 +1,7 @@
 package fi.vrk.xroad.catalog.persistence;
 
-import fi.vrk.xroad.catalog.persistence.entity.Member;
-import fi.vrk.xroad.catalog.persistence.entity.Service;
-import fi.vrk.xroad.catalog.persistence.entity.Subsystem;
-import fi.vrk.xroad.catalog.persistence.entity.Wsdl;
+import fi.vrk.xroad.catalog.persistence.entity.*;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -11,11 +9,10 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.StreamSupport;
+
+import static org.junit.Assert.assertEquals;
 
 @Component
 public class TestUtil {
@@ -107,6 +104,32 @@ public class TestUtil {
         return ss1;
     }
 
+    public Member createTestMember(String memberCode, int subsystems) {
+        Member fooMember = new Member("dev-cs", "PUB", memberCode, "UnitTestMember-" + memberCode);
+        fooMember.setSubsystems(new HashSet<>());
+        for (int i = 0; i < subsystems; i++) {
+            Subsystem subsystem1 = new Subsystem(null, "subsystem" + i);
+            fooMember.getAllSubsystems().add(subsystem1);
+            subsystem1.setMember(fooMember);
+        }
+        return fooMember;
+    }
+
+    public void shallowCopyFields(Member from, Member to) {
+        // only copy simple non-jpa-magical primitive properties
+        BeanUtils.copyProperties(from, to, "id", "statusInfo", "subsystems");
+    }
+
+    public void shallowCopyFields(Subsystem from, Subsystem to) {
+        // only copy simple non-jpa-magical primitive properties
+        BeanUtils.copyProperties(from, to, "id", "statusInfo", "member", "services");
+    }
+
+    public void shallowCopyFields(Service from, Service to) {
+        // only copy simple non-jpa-magical primitive properties
+        BeanUtils.copyProperties(from, to, "id", "statusInfo", "subsystem", "wsdl");
+    }
+
     public void entityManagerDetach(Object entity) {
         entityManager.detach(entity);
     }
@@ -119,4 +142,21 @@ public class TestUtil {
         entityManager.clear();
     }
 
+    public void assertEqualities(StatusInfo original, StatusInfo checked,
+                                 boolean sameCreated, boolean sameChanged,
+                                 boolean sameRemoved, boolean sameFetched) {
+
+        assertEquals(sameCreated, Objects.equals(original.getCreated(), checked.getCreated()));
+        assertEquals(sameChanged, Objects.equals(original.getChanged(), checked.getChanged()));
+        assertEquals(sameRemoved, Objects.equals(original.getRemoved(), checked.getRemoved()));
+        assertEquals(sameFetched, Objects.equals(original.getFetched(), checked.getFetched()));
+    }
+
+    public void assertAllSame(StatusInfo original, StatusInfo checked) {
+        assertEqualities(original, checked, true, true, true, true);
+    }
+
+    public void assertFetchedIsOnlyDifferent(StatusInfo original, StatusInfo checked) {
+        assertEqualities(original, checked, true, true, true, false);
+    }
 }
