@@ -6,7 +6,7 @@ import lombok.Getter;
 /**
  * Utility class to work as a key for Subsystems in Maps etc
  */
-@EqualsAndHashCode
+@EqualsAndHashCode(callSuper = true)
 @Getter
 public class SubsystemId extends MemberId {
     private String subsystemCode;
