@@ -101,10 +101,6 @@ public class Member {
         statusInfo.setTimestampsForSaved(timestamp, isModifiedData);
     }
 
-    public StatusInfo getStatusInfo() {
-        return statusInfo;
-    }
-
     /**
      * @return comparable & equals-able natural key
      */

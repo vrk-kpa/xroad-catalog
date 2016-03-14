@@ -53,6 +53,21 @@ public class StatusInfo {
     }
 
     /**
+     * Sets timestamps to correct values when an item is fetched, but not changed
+     */
+    public void setTimestampsForFetched(Date timestamp) {
+        if (isRemoved()) {
+            // resurrect this item
+            removed = null;
+            changed = timestamp;
+            fetched = timestamp;
+        } else {
+            // already existing item, no fields to update except timestamp
+            fetched = timestamp;
+        }
+    }
+
+    /**
      * Sets timestamps to correct values for new instance
      */
     public void setTimestampsForNew(Date timestamp) {

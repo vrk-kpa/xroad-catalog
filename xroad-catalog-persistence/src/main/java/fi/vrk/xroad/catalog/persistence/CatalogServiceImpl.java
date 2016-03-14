@@ -89,15 +89,8 @@ public class CatalogServiceImpl implements CatalogService {
                         subsystem.getStatusInfo().setTimestampsForNew(now);
                         subsystem.setMember(oldMember);
                         oldMember.getAllSubsystems().add(subsystem);
-                    } else if (oldSubsystem.getStatusInfo().isRemoved()) {
-                        // TODO: maybe refactor shared code...if reasonable
-                        // resurrect this subsystem
-                        oldSubsystem.getStatusInfo().setRemoved(null);
-                        oldSubsystem.getStatusInfo().setChanged(now);
-                        oldSubsystem.getStatusInfo().setFetched(now);
                     } else {
-                        // already existing subsystem, no fields to update except timestamp
-                        oldSubsystem.getStatusInfo().setFetched(now);
+                        oldSubsystem.getStatusInfo().setTimestampsForFetched(now);
                     }
                     unprocessedOldSubsystems.remove(subsystem.createKey());
                 }
@@ -150,14 +143,8 @@ public class CatalogServiceImpl implements CatalogService {
                 service.getStatusInfo().setTimestampsForNew(now);
                 service.setSubsystem(oldSubsystem);
                 oldSubsystem.getAllServices().add(service);
-            } else if (oldService.getStatusInfo().isRemoved()) {
-                // resurrect this service
-                oldService.getStatusInfo().setRemoved(null);
-                oldService.getStatusInfo().setChanged(now);
-                oldService.getStatusInfo().setFetched(now);
             } else {
-                // already existing subsystem, no fields to update except timestamp
-                oldService.getStatusInfo().setFetched(now);
+                oldService.getStatusInfo().setTimestampsForFetched(now);
             }
             unprocessedOldServices.remove(service.createKey());
         }

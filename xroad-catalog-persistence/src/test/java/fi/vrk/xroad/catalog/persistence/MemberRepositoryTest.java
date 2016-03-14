@@ -136,7 +136,6 @@ public class MemberRepositoryTest {
         for (Subsystem s: member7.getActiveSubsystems()) {
             allServices7.addAll(s.getAllServices());
         }
-        // TODO: create and test getAllServices() / getActiveServices()
         assertEquals(5, allServices7.size());
         ArrayList<Wsdl> allWsdls7 = new ArrayList<>();
         for (Service s: allServices7) {
@@ -144,7 +143,6 @@ public class MemberRepositoryTest {
                 allWsdls7.add(s.getWsdl());
             }
         }
-        // TODO: test also for active / removed wsdls
         // test data:
         // member (7) -> subsystem (8) -> service (6) -> wsdl (4)
         // member (7) -> subsystem (8) -> service (8, removed) -> wsdl (6)
