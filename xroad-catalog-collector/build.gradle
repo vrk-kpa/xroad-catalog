@@ -38,7 +38,7 @@ jar {
 
 task genJaxb {
     ext.sourcesDir = "${buildDir}/generated-sources/jaxb"
-    ext.classesDir = "${buildDir}/classes/jaxb"
+    ext.classesDir = "${buildDir}/classes/main"
     ext.schemaDir = "${projectDir}/src/main/resources/schema/"
 
     outputs.dir classesDir
@@ -77,7 +77,7 @@ task genJaxb {
 
 task wsImport {
     ext.outputDir = "${buildDir}/generated-sources/wsimport"
-    ext.classesDir = "${buildDir}/classes/wsimport"
+    ext.classesDir = "${buildDir}/classes/main"
     ext.wsdl = "${projectDir}/src/main/resources/schema/list-methods.wsdl"
 
     inputs.files wsdl
