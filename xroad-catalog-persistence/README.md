@@ -1,6 +1,13 @@
 # xroad-catalog-persistence
 Persistence library for xroad-catalog
 
+
+## Create database
+```sh
+sudo -u postgres psql --file=src/main/sql/init_database.sql
+sudo -u postgres psql --file=src/main/sql/create_tables.sql
+```
+
 ## Build
 ```sh
 gradle clean build
