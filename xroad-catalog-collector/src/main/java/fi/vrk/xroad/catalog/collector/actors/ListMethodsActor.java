@@ -46,9 +46,6 @@ public class ListMethodsActor extends UntypedActor {
     private static final int NO_OF_ACTORS = 5;
 
     @Autowired
-    private RestOperations restOperations;
-
-    @Autowired
     private SpringExtension springExtension;
 
     @Autowired

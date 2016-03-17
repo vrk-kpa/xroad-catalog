@@ -21,9 +21,10 @@ public class MockRestTemplate extends TestRestTemplate implements MockHttpServer
     public <T> T getForObject(String url, Class<T> responseType, Object... urlVariables) throws RestClientException {
         String localUrl = null;
         try {
-
+            log.info("starting server for url: " + url);
             localUrl = startServerForUrl(url);
             T result = super.getForObject(localUrl,responseType);
+            log.info("starting server for url: " + url);
             stopServer();
             return result;
         } catch (Exception e) {

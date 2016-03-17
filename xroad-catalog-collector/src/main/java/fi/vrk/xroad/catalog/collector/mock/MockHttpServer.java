@@ -27,16 +27,19 @@ public interface MockHttpServer {
 
     default void startServer(String fileName) throws Exception {
         setServer(HttpServer.create(new InetSocketAddress(PORT), 0));
-        getServer().createContext(fileName, new ResourceToHttpHandler(fileName));
+        getServer().createContext(getContext(fileName), getHandler(fileName));
         getServer().setExecutor(null); // creates a default executor
         log.info("Starting local http server {} in port {}", getServer(), PORT);
         getServer().start();
+        // TODO: what about removing this delay?
         TimeUnit.SECONDS.sleep(1);
     }
 
     default void stopServer() {
         log.info("Stopping local http server {} in port {}", getServer(), PORT);
-        getServer().stop(0);
+        // TODO: activate
+        log.info("(not actually stopping anything now");
+//        getServer().stop(0);
 
     }
 
@@ -50,13 +53,20 @@ public interface MockHttpServer {
         log.info("Reading response from file {} and local url {}", fileName, localUrl);
 
         try {
-
             startServer(fileName);
             return localUrl;
         } catch (Exception e) {
             log.error("Error getting resource from through http{}", localUrl);
             throw new RuntimeException("Error reading resource from httpserver", e);
         }
+    }
+
+    default String getContext(String fileName) {
+        return fileName;
+    }
+
+    default HttpHandler getHandler(String fileName) {
+        return new ResourceToHttpHandler(fileName);
     }
 
     static class ResourceToHttpHandler implements HttpHandler {
