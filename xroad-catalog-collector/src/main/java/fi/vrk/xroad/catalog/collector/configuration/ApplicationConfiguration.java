@@ -68,5 +68,11 @@ public class ApplicationConfiguration extends SpringBootServletInitializer {
     public RestOperations getRestOperations() { throw new RuntimeException("Please override getRestOperations for " +
             "your profile");}
 
+    @Bean
+    public RestOperations getDynamicWsdlRestOperations() { throw new RuntimeException("Please override " +
+            "getDynamicWsdlRestOperations for " +
+            "your profile");}
+
+
 
 }

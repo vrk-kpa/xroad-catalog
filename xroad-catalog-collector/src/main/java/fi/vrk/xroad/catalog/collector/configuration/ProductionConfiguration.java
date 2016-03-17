@@ -28,6 +28,7 @@ public class ProductionConfiguration extends ApplicationConfiguration {
         log.info("getrestop aproduction");
         return new RestTemplate();
     }
+
     @Override
     @Bean
     @Qualifier("wsdlRestOperations")
