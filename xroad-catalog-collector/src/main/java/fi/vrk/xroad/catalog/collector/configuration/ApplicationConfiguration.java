@@ -4,7 +4,6 @@ import akka.actor.ActorSystem;
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigFactory;
 import fi.vrk.xroad.catalog.collector.extension.SpringExtension;
-import fi.vrk.xroad.catalog.collector.mock.WsdlMockRestTemplate;
 import fi.vrk.xroad.catalog.collector.mock.MockMetaServicesImpl;
 import fi.vrk.xroad.catalog.collector.mock.MockRestTemplate;
 import fi.vrk.xroad.catalog.collector.wsimport.MetaServicesPort;
@@ -13,7 +12,6 @@ import org.apache.cxf.Bus;
 import org.apache.cxf.jaxws.EndpointImpl;
 import org.apache.cxf.transport.servlet.CXFServlet;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.embedded.ServletRegistrationBean;
 import org.springframework.boot.context.web.SpringBootServletInitializer;
 import org.springframework.context.ApplicationContext;
@@ -31,6 +29,9 @@ import org.springframework.web.client.RestOperations;
         ".persistence" })
 @ImportResource({ "classpath:META-INF/cxf/cxf.xml" })
 @Slf4j
+/**
+ * Common conf for development and production
+ */
 public class ApplicationConfiguration extends SpringBootServletInitializer {
 
     // The application context is needed to initialize the Akka Spring
@@ -64,34 +65,8 @@ public class ApplicationConfiguration extends SpringBootServletInitializer {
     }
 
     @Bean
-    @Qualifier("listClientsRestOperations")
-    public RestOperations getRestOperations() {
-        return new MockRestTemplate();
-    }
+    public RestOperations getRestOperations() { throw new RuntimeException("Please override getRestOperations for " +
+            "your profile");}
 
-    @Bean
-    @Qualifier("wsdlRestOperations")
-    public RestOperations getDynamicWsdlRestOperations() {
-        return new WsdlMockRestTemplate();
-    }
 
-    // to start CXF (for mock web service)
-    @Bean
-    public ServletRegistrationBean servletRegistrationBean() {
-        return new ServletRegistrationBean(new CXFServlet(), "/*");
-    }
-
-    @Bean
-    @Lazy(value = false)
-    public EndpointImpl metaServicesService(Bus bus) {
-        EndpointImpl endpoint = new EndpointImpl(bus, metaServices());
-        log.info("publishing generator end point {}", endpoint);
-        endpoint.publish("/metaservices");
-        return endpoint;
-    }
-
-    @Bean
-    public MetaServicesPort metaServices() {
-        return new MockMetaServicesImpl();
-    }
 }
