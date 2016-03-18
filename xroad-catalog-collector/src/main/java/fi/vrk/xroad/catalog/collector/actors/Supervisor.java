@@ -10,6 +10,7 @@ import fi.vrk.xroad.catalog.collector.extension.SpringExtension;
 import fi.vrk.xroad.catalog.persistence.CatalogService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestOperations;
@@ -47,6 +48,12 @@ public class Supervisor extends UntypedActor {
     private ActorRef listMethodsPoolRouter;
     private ActorRef fetchWsdlPoolRouter;
 
+    @Value("${xroad-catalog.list-methods-pool-size}")
+    private int listMethodsPoolSize;
+
+    @Value("${xroad-catalog.fetch-wsdl-pool-size}")
+    private int fetchWsdlPoolSize;
+
     @Override
     public void preStart() throws Exception {
 
@@ -61,11 +68,11 @@ public class Supervisor extends UntypedActor {
                 .props(springExtension.props("listClientsActor")),
                 LIST_CLIENTS_ACTOR_ROUTER);
 
-        listMethodsPoolRouter = getContext().actorOf(new SmallestMailboxPool(5)
+        listMethodsPoolRouter = getContext().actorOf(new SmallestMailboxPool(listMethodsPoolSize)
                         .props(springExtension.props("listMethodsActor")),
                 LIST_METHODS_ACTOR_ROUTER);
 
-        fetchWsdlPoolRouter = getContext().actorOf(new SmallestMailboxPool(10)
+        fetchWsdlPoolRouter = getContext().actorOf(new SmallestMailboxPool(fetchWsdlPoolSize)
                         .props(springExtension.props("fetchWsdlActor")),
                 FETCH_WSDL_ACTOR_ROUTER);
 

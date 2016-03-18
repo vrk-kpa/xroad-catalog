@@ -27,8 +27,6 @@ import org.springframework.context.annotation.Configuration;
 @ComponentScan("fi.vrk.xroad.catalog.collector.configuration")
 public class XRoadCatalogCollector  {
 
-
-
     public static void main(String[] args) throws Exception {
 
         ApplicationContext context =

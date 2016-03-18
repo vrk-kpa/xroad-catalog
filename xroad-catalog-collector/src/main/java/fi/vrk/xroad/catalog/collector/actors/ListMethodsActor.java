@@ -42,11 +42,6 @@ public class ListMethodsActor extends UntypedActor {
     // to test fault handling
     private static boolean FORCE_FAILURES = false;
 
-    @Value("${local.server.port}")
-    private int port = 0;
-
-    private static final int NO_OF_ACTORS = 5;
-
     @Value("${xroad-catalog.xroad-instance}")
     private String xroadInstance;
 
@@ -59,8 +54,8 @@ public class ListMethodsActor extends UntypedActor {
     @Value("${xroad-catalog.member-class}")
     private String memberClass;
 
-    @Value("${xroad-catalog.security-server-host}")
-    private String securityServerHost;
+    @Value("${xroad-catalog.webservices-endpoint}")
+    private String webservicesEndpoint;
 
     @Autowired
     private SpringExtension springExtension;
@@ -119,14 +114,12 @@ public class ListMethodsActor extends UntypedActor {
             xroadId.setMemberClass(memberClass);
             // fetch the methods
             try {
-                log.info("calling web service at {}", securityServerHost);
-                List<XRoadServiceIdentifierType> result = XRoadClient.getMethods(securityServerHost, xroadId, clientType);
+                log.info("calling web service at {}", webservicesEndpoint);
+                List<XRoadServiceIdentifierType> result = XRoadClient.getMethods(webservicesEndpoint, xroadId, clientType);
                 log.info("Received all methods for client {} ", clientType);
                 log.info("{} ListMethodsResponse {} ", COUNTER, result.toString());
 
                 maybeFail();
-
-
 
                 // Save services for subsystems
                 List<Service> services = new ArrayList<>();
@@ -134,7 +127,6 @@ public class ListMethodsActor extends UntypedActor {
                     services.add(new Service(subsystem, service.getServiceCode(), service.getServiceVersion()));
                 }
                 catalogService.saveServices(subsystem.createKey(), services);
-
 
                 // get wsdls
                 for (XRoadServiceIdentifierType service : result) {
