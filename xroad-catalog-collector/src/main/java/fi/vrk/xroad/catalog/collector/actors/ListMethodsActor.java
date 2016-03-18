@@ -10,6 +10,7 @@ import fi.vrk.xroad.catalog.collector.util.ClientTypeUtil;
 import fi.vrk.xroad.catalog.collector.util.XRoadClient;
 import fi.vrk.xroad.catalog.collector.wsimport.XRoadClientIdentifierType;
 import fi.vrk.xroad.catalog.collector.wsimport.XRoadIdentifierType;
+import fi.vrk.xroad.catalog.collector.wsimport.XRoadObjectType;
 import fi.vrk.xroad.catalog.collector.wsimport.XRoadServiceIdentifierType;
 import fi.vrk.xroad.catalog.persistence.CatalogService;
 import fi.vrk.xroad.catalog.persistence.entity.Member;
@@ -45,14 +46,14 @@ public class ListMethodsActor extends UntypedActor {
     @Value("${xroad-catalog.xroad-instance}")
     private String xroadInstance;
 
-    @Value("${xroad-catalog.group-code}")
-    private String groupCode;
-
     @Value("${xroad-catalog.member-code}")
     private String memberCode;
 
     @Value("${xroad-catalog.member-class}")
     private String memberClass;
+
+    @Value("${xroad-catalog.subsystem-code}")
+    private String subsystemCode;
 
     @Value("${xroad-catalog.webservices-endpoint}")
     private String webservicesEndpoint;
@@ -109,9 +110,11 @@ public class ListMethodsActor extends UntypedActor {
 
             XRoadClientIdentifierType xroadId = new XRoadClientIdentifierType();
             xroadId.setXRoadInstance(xroadInstance);
-            xroadId.setGroupCode(groupCode);
-            xroadId.setMemberCode(memberCode);
             xroadId.setMemberClass(memberClass);
+            xroadId.setMemberCode(memberCode);
+            xroadId.setSubsystemCode(subsystemCode);
+            xroadId.setObjectType(XRoadObjectType.SUBSYSTEM);
+
             // fetch the methods
             try {
                 log.info("calling web service at {}", webservicesEndpoint);

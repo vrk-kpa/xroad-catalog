@@ -67,7 +67,6 @@ public class XRoadClient {
         return port;
     }
 
-    //TODO two different wsdl generations and two different types. This should be fixed
     protected static void copyIdentifierType
     (XRoadIdentifierType target, eu.x_road.xsd.identifiers.XRoadIdentifierType source) {
 
