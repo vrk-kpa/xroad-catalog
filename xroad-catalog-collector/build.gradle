@@ -155,7 +155,6 @@ idea {
     }
 }
 
-
-bootRun {
-    systemProperties System.properties
+tasks.withType(org.springframework.boot.gradle.run.BootRunTask) {
+    systemProperty 'spring.profiles.active', System.getProperty('spring.profiles.active', 'default')
 }

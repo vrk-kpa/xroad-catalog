@@ -8,6 +8,8 @@ import eu.x_road.xsd.xroad.ClientType;
 import fi.vrk.xroad.catalog.collector.extension.SpringExtension;
 import fi.vrk.xroad.catalog.collector.util.ClientTypeUtil;
 import fi.vrk.xroad.catalog.collector.util.XRoadClient;
+import fi.vrk.xroad.catalog.collector.wsimport.XRoadClientIdentifierType;
+import fi.vrk.xroad.catalog.collector.wsimport.XRoadIdentifierType;
 import fi.vrk.xroad.catalog.collector.wsimport.XRoadServiceIdentifierType;
 import fi.vrk.xroad.catalog.persistence.CatalogService;
 import fi.vrk.xroad.catalog.persistence.entity.Member;
@@ -44,6 +46,21 @@ public class ListMethodsActor extends UntypedActor {
     private int port = 0;
 
     private static final int NO_OF_ACTORS = 5;
+
+    @Value("${xroad-catalog.xroad-instance}")
+    private String xroadInstance;
+
+    @Value("${xroad-catalog.group-code}")
+    private String groupCode;
+
+    @Value("${xroad-catalog.member-code}")
+    private String memberCode;
+
+    @Value("${xroad-catalog.member-class}")
+    private String memberClass;
+
+    @Value("${xroad-catalog.security-server-host}")
+    private String securityServerHost;
 
     @Autowired
     private SpringExtension springExtension;
@@ -95,26 +112,37 @@ public class ListMethodsActor extends UntypedActor {
             log.info("{} Handling subsystem {} ", COUNTER, subsystem);
             log.info("Fetching methods for the client with listMethods -service...");
 
+            XRoadClientIdentifierType xroadId = new XRoadClientIdentifierType();
+            xroadId.setXRoadInstance(xroadInstance);
+            xroadId.setGroupCode(groupCode);
+            xroadId.setMemberCode(memberCode);
+            xroadId.setMemberClass(memberClass);
             // fetch the methods
-            List<XRoadServiceIdentifierType> result = XRoadClient.getMethods(clientType);
+            try {
+                List<XRoadServiceIdentifierType> result = XRoadClient.getMethods(securityServerHost, xroadId, clientType);
+                log.info("Received all methods for client {} ", clientType);
+                log.info("{} ListMethodsResponse {} ", COUNTER, result.toString());
 
-            log.info("Received all methods for client {} ", clientType);
-            log.info("{} ListMethodsResponse {} ", COUNTER, result.toString());
-
-            maybeFail();
-
-            // Save services for subsystems
-            List<Service> services = new ArrayList<>();
-            for (XRoadServiceIdentifierType service : result) {
-                services.add(new Service(subsystem, service.getServiceCode(), service.getServiceVersion()));
-            }
-            catalogService.saveServices(subsystem.createKey(), services);
+                maybeFail();
 
 
-            // get wsdls
-            for (XRoadServiceIdentifierType service : result) {
-                log.info("{} Sending service {} to new MethodActor ", COUNTER, service.getServiceCode());
-                fetchWsdlPoolRef.tell(service, getSender());
+
+                // Save services for subsystems
+                List<Service> services = new ArrayList<>();
+                for (XRoadServiceIdentifierType service : result) {
+                    services.add(new Service(subsystem, service.getServiceCode(), service.getServiceVersion()));
+                }
+                catalogService.saveServices(subsystem.createKey(), services);
+
+
+                // get wsdls
+                for (XRoadServiceIdentifierType service : result) {
+                    log.info("{} Sending service {} to new MethodActor ", COUNTER, service.getServiceCode());
+                    fetchWsdlPoolRef.tell(service, getSender());
+                }
+            } catch (Exception e) {
+                log.error("{} Failed to get methods for subsystem {} \n {}", subsystem, e);
+                throw e;
             }
 
         } else if (message instanceof Terminated) {

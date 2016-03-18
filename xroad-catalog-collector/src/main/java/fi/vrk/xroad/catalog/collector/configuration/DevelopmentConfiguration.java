@@ -20,19 +20,21 @@ import org.springframework.web.client.RestOperations;
  * Created by sjk on 17.3.2016.
  */
 @Configuration
-@Profile("development")
+@Profile({"development", "default"})
 @Slf4j
 public class DevelopmentConfiguration extends ApplicationConfiguration {
 
     @Bean
     @Qualifier("listClientsRestOperations")
     public RestOperations getRestOperations() {
+        log.info("--------------DEVELOPMENT Configuration");
         return new MockRestTemplate();
     }
 
     @Bean
     @Qualifier("wsdlRestOperations")
     public RestOperations getDynamicWsdlRestOperations() {
+        log.info("--------------DEVELOPMENT Configuration");
         return new WsdlMockRestTemplate();
     }
 

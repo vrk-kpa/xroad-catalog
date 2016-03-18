@@ -17,7 +17,7 @@ import java.util.List;
  * Created by sjk on 17.2.2016.
  */
 @Configuration
-@Profile("production")
+@Profile({"production", "sshtest"} )
 @Slf4j
 public class ProductionConfiguration extends ApplicationConfiguration {
 
@@ -25,7 +25,7 @@ public class ProductionConfiguration extends ApplicationConfiguration {
     @Bean
     @Qualifier("listClientsRestOperations")
     public RestOperations getRestOperations() {
-        log.info("getrestop aproduction");
+        log.info("--------------PRODUCTION Configuration");
         return new RestTemplate();
     }
 
@@ -33,7 +33,7 @@ public class ProductionConfiguration extends ApplicationConfiguration {
     @Bean
     @Qualifier("wsdlRestOperations")
     public RestOperations getDynamicWsdlRestOperations() {
-        log.info("getrestop aproduction");
+        log.info("--------------PRODUCTION Configuration");
         return new RestTemplate();
     }
 }

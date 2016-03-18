@@ -10,7 +10,10 @@ import fi.vrk.xroad.catalog.collector.wsimport.XRoadServiceIdentifierType;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 
+import javax.xml.namespace.QName;
 import javax.xml.ws.Holder;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.List;
 import java.util.UUID;
 
@@ -20,29 +23,17 @@ import java.util.UUID;
 @Slf4j
 public class XRoadClient {
 
-
-    @Value("${xroad-catalog.xroad-instance}")
-    static private String xroadInstance;
-
-    @Value("${xroad-catalog.group-code}")
-    static private String groupCode;
-
-    @Value("${xroad-catalog.member-code}")
-    static private String memberCode;
-
-    @Value("${xroad-catalog.member-class}")
-    static private String memberClass;
-
-
     /**
      * Calls the service using JAX-WS endpoints that have been generated from wsdl
      * @param client
      * @return
      */
-    public static List<XRoadServiceIdentifierType> getMethods(ClientType client) {
+    public static List<XRoadServiceIdentifierType> getMethods(String securityServerHost, XRoadClientIdentifierType
+                                                              securityServerIdentity,
+                                                              ClientType client)
+            throws MalformedURLException {
 
-        // use dummy values for now
-        XRoadClientIdentifierType clientIdentifierType = getDummyClientId();
+        securityServerIdentity.setObjectType(XRoadObjectType.MEMBER);
 
         XRoadServiceIdentifierType serviceIdentifierType = new XRoadServiceIdentifierType();
         copyIdentifierType(serviceIdentifierType, client.getId());
@@ -52,11 +43,15 @@ public class XRoadClient {
 
         serviceIdentifierType.setObjectType(XRoadObjectType.SERVICE);
 
-        ProducerPortService service = new ProducerPortService();
+
+        URL url = new URL(securityServerHost);
+
+        ProducerPortService service = new ProducerPortService(url, new QName("http://metadata.x-road.eu/", "producerPortService"));
+
 
         ListMethodsResponse response = service.getMetaServicesPortSoap11().listMethods(
                 new ListMethods(),
-                new Holder<>(clientIdentifierType),
+                new Holder<>(securityServerIdentity),
                 new Holder<>(serviceIdentifierType),
                 new Holder<>("xroad-catalog-collector-"+ UUID.randomUUID()),
                 new Holder<>("xroad-catalog-collector"),
@@ -81,20 +76,6 @@ public class XRoadClient {
         target.setServerCode(source.getServerCode());
         target.setXRoadInstance(source.getXRoadInstance());
         target.setSubsystemCode(source.getSubsystemCode());
-    }
-
-    /**
-     * Static values for testing my local vagrant ss1
-     * @return
-     */
-    protected static XRoadClientIdentifierType getDummyClientId() {
-        XRoadClientIdentifierType target = new XRoadClientIdentifierType();
-        target.setGroupCode(groupCode);
-        target.setObjectType(XRoadObjectType.MEMBER);
-        target.setMemberCode(memberCode);
-        target.setMemberClass(memberClass);
-        target.setXRoadInstance(xroadInstance);
-        return target;
     }
 
 }
