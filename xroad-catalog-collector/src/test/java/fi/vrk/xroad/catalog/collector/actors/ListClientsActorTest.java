@@ -21,6 +21,7 @@ import org.mockito.*;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.web.client.RestOperations;
 
@@ -33,6 +34,7 @@ import static org.mockito.Mockito.*;
  */
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({ListClientsActor.class, RelativeActorRefUtil.class})
+@ActiveProfiles("development")
 public class ListClientsActorTest extends TestKit {
 
     @Mock
@@ -83,8 +85,8 @@ public class ListClientsActorTest extends TestKit {
 
         listClientsActor = clientsRef.underlyingActor();
 
-        //TODO find a better way to set the url in test
-        ReflectionTestUtils.setField(listClientsActor, "listClientsUrl", "http://localhost/listClients");
+        //TODO find a better way to set the host in test
+        ReflectionTestUtils.setField(listClientsActor, "securityServerHost", "http://localhost");
 
 
         MockitoAnnotations.initMocks(this);

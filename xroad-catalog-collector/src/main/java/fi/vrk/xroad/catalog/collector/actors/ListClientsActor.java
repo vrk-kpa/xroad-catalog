@@ -54,8 +54,8 @@ public class ListClientsActor extends UntypedActor {
     protected CatalogService catalogService;
 
 
-    @Value("${xroad-catalog.list-clients-url}")
-    private String listClientsUrl;
+    @Value("${xroad-catalog.security-server-host}")
+    private String securityServerHost;
 
 
     // supervisor-created pool of list methods actors
@@ -88,6 +88,10 @@ public class ListClientsActor extends UntypedActor {
     public void onReceive(Object message) throws Exception {
 
         if (START_COLLECTING.equals(message)) {
+
+
+
+            String listClientsUrl = securityServerHost+"/listClients";
 
             log.info("Getting client list from {}", listClientsUrl);
             ClientListType clientList = restOperations.getForObject(listClientsUrl, ClientListType

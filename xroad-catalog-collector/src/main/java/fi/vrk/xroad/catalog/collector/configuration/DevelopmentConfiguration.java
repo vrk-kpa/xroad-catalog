@@ -13,12 +13,14 @@ import org.springframework.boot.context.embedded.ServletRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.context.annotation.Profile;
 import org.springframework.web.client.RestOperations;
 
 /**
  * Created by sjk on 17.3.2016.
  */
 @Configuration
+@Profile("development")
 @Slf4j
 public class DevelopmentConfiguration extends ApplicationConfiguration {
 

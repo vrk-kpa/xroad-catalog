@@ -12,6 +12,7 @@ import fi.vrk.xroad.catalog.persistence.entity.Subsystem;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Scope;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
@@ -38,7 +39,8 @@ public class FetchWsdlActor extends UntypedActor {
     private static AtomicInteger COUNTER = new AtomicInteger(0);
     private static final String WSDL_CONTEXT_PATH = "/wsdl";
 
-    private String host = "http://localhost:8933";
+    @Value("${xroad-catalog.security-server-host:http://localhost}")
+    private String host;
 
     // TODO: make configurable
     public String getHost() {
