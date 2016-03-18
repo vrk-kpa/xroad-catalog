@@ -14,6 +14,7 @@ import fi.vrk.xroad.catalog.persistence.entity.MemberId;
 import fi.vrk.xroad.catalog.persistence.entity.Subsystem;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -52,6 +53,11 @@ public class ListClientsActor extends UntypedActor {
     @Autowired
     protected CatalogService catalogService;
 
+
+    @Value("${xroad-catalog.list-clients-url}")
+    private String listClientsUrl;
+
+
     // supervisor-created pool of list methods actors
     protected ActorRef listMethodsPoolRef;
 
@@ -83,7 +89,8 @@ public class ListClientsActor extends UntypedActor {
 
         if (START_COLLECTING.equals(message)) {
 
-            ClientListType clientList = restOperations.getForObject("http://localhost/listClients", ClientListType
+            log.info("Getting client list from {}", listClientsUrl);
+            ClientListType clientList = restOperations.getForObject(listClientsUrl, ClientListType
                     .class);
 
             int counter = 1;

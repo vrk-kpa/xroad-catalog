@@ -8,15 +8,31 @@ import fi.vrk.xroad.catalog.collector.wsimport.XRoadIdentifierType;
 import fi.vrk.xroad.catalog.collector.wsimport.XRoadObjectType;
 import fi.vrk.xroad.catalog.collector.wsimport.XRoadServiceIdentifierType;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 
 import javax.xml.ws.Holder;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * Created by sjk on 25.2.2016.
  */
 @Slf4j
 public class XRoadClient {
+
+
+    @Value("${xroad-catalog.xroad-instance}")
+    static private String xroadInstance;
+
+    @Value("${xroad-catalog.group-code}")
+    static private String groupCode;
+
+    @Value("${xroad-catalog.member-code}")
+    static private String memberCode;
+
+    @Value("${xroad-catalog.member-class}")
+    static private String memberClass;
+
 
     /**
      * Calls the service using JAX-WS endpoints that have been generated from wsdl
@@ -42,8 +58,8 @@ public class XRoadClient {
                 new ListMethods(),
                 new Holder<>(clientIdentifierType),
                 new Holder<>(serviceIdentifierType),
-                new Holder<>("EE1234567890"),
-                new Holder<>("ID11234"),
+                new Holder<>("xroad-catalog-collector-"+ UUID.randomUUID()),
+                new Holder<>("xroad-catalog-collector"),
                 new Holder<>("4.x"));
 
         List<XRoadServiceIdentifierType> methods = response.getService();
@@ -73,11 +89,11 @@ public class XRoadClient {
      */
     protected static XRoadClientIdentifierType getDummyClientId() {
         XRoadClientIdentifierType target = new XRoadClientIdentifierType();
-        target.setGroupCode("PUB");
+        target.setGroupCode(groupCode);
         target.setObjectType(XRoadObjectType.MEMBER);
-        target.setMemberCode("88855888");
-        target.setMemberClass("PUB");
-        target.setXRoadInstance("dev-cs");
+        target.setMemberCode(memberCode);
+        target.setMemberClass(memberClass);
+        target.setXRoadInstance(xroadInstance);
         return target;
     }
 
