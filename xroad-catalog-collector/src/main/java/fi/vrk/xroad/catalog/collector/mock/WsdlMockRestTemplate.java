@@ -45,20 +45,22 @@ public class WsdlMockRestTemplate extends TestRestTemplate {
     }
 
     @Override
-    public synchronized <T> T getForObject(String url, Class<T> responseType, Object... urlVariables) throws RestClientException {
+    public <T> T getForObject(String url, Class<T> responseType, Object... urlVariables) throws RestClientException {
         try {
             log.info("starting server for url: " + url);
             startServer();
             log.info("getting response: " + url);
             T result = super.getForObject(url, responseType);
+            log.info("received response: " + result);
             log.info("calling service stop ");
             stopServer();
             return result;
         } catch (Exception e) {
-            log.error("Error getting resource from through http {}", url);
+            log.error("Error getting resource from through http {}", url, e);
             throw new RuntimeException("Error reading resource from httpserver", e);
         }
     }
+
 
     static class DynamicHttpHandler implements HttpHandler {
 

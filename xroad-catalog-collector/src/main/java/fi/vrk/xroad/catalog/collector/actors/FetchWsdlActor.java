@@ -13,11 +13,18 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Scope;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestOperations;
+import org.springframework.web.util.UriComponents;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -29,7 +36,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class FetchWsdlActor extends UntypedActor {
 
     private static AtomicInteger COUNTER = new AtomicInteger(0);
-    private static final String WSDL_CONTEXT_PATH = "/wsdl?";
+    private static final String WSDL_CONTEXT_PATH = "/wsdl";
 
     private String host = "http://localhost:8933";
 
@@ -49,7 +56,7 @@ public class FetchWsdlActor extends UntypedActor {
             log.info("fetching wsdl [{}] {}", COUNTER.addAndGet(1), message);
             XRoadServiceIdentifierType service = (XRoadServiceIdentifierType) message;
             // get wsdl
-            String url = buildWsdlUrl(service);
+            String url = buildUri(service);
             log.info("reading wsdl from url: "  + url);
             String wsdl = restOperations.getForObject(url, String.class);
             log.info("received wsdl: " + wsdl);
@@ -61,22 +68,23 @@ public class FetchWsdlActor extends UntypedActor {
         }
     }
 
-    private String buildWsdlUrl(XRoadServiceIdentifierType service) {
-        // maybe build urls with some common utility?, or at least use a stringbuilder
-        // restoperations has "urivariables", check that!
+    private String buildUri(XRoadServiceIdentifierType service) {
         assert service.getXRoadInstance() != null;
         assert service.getMemberClass() != null;
         assert service.getMemberCode() != null;
         assert service.getServiceCode() != null;
         assert service.getServiceVersion() != null;
-        return getHost() + WSDL_CONTEXT_PATH
-                + "xRoadInstance=" + service.getXRoadInstance()
-                + "&memberClass=" + service.getMemberClass()
-                + "&memberCode=" + service.getMemberCode()
-                + (!Strings.isNullOrEmpty(service.getSubsystemCode()) ?
-                "&subsystemCode=" + service.getSubsystemCode() : "")
-                + "&serviceCode=" + service.getServiceCode()
-                + "&version=" + service.getServiceVersion();
 
+        UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(getHost())
+                .path(WSDL_CONTEXT_PATH)
+                .queryParam("xRoadInstance", service.getXRoadInstance())
+                .queryParam("memberClass", service.getMemberClass())
+                .queryParam("memberCode", service.getMemberCode())
+                .queryParam("serviceCode", service.getServiceCode())
+                .queryParam("version", service.getServiceVersion());
+        if (!Strings.isNullOrEmpty(service.getSubsystemCode())) {
+            builder = builder.queryParam("subsystemCode", service.getSubsystemCode());
+        }
+        return builder.toUriString();
     }
 }
