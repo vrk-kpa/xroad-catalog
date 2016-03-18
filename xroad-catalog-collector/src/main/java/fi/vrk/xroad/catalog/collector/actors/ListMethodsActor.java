@@ -119,6 +119,7 @@ public class ListMethodsActor extends UntypedActor {
             xroadId.setMemberClass(memberClass);
             // fetch the methods
             try {
+                log.info("calling web service at {}", securityServerHost);
                 List<XRoadServiceIdentifierType> result = XRoadClient.getMethods(securityServerHost, xroadId, clientType);
                 log.info("Received all methods for client {} ", clientType);
                 log.info("{} ListMethodsResponse {} ", COUNTER, result.toString());

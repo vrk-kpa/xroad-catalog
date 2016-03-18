@@ -1,16 +1,11 @@
 package fi.vrk.xroad.catalog.collector.util;
 
-import eu.x_road.xsd.identifiers.*;
 import eu.x_road.xsd.xroad.ClientType;
 import fi.vrk.xroad.catalog.collector.wsimport.*;
-import fi.vrk.xroad.catalog.collector.wsimport.XRoadClientIdentifierType;
-import fi.vrk.xroad.catalog.collector.wsimport.XRoadIdentifierType;
-import fi.vrk.xroad.catalog.collector.wsimport.XRoadObjectType;
-import fi.vrk.xroad.catalog.collector.wsimport.XRoadServiceIdentifierType;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 
 import javax.xml.namespace.QName;
+import javax.xml.ws.BindingProvider;
 import javax.xml.ws.Holder;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -40,16 +35,14 @@ public class XRoadClient {
 
         serviceIdentifierType.setServiceCode("listMethods");
         serviceIdentifierType.setServiceVersion("v1");
-
         serviceIdentifierType.setObjectType(XRoadObjectType.SERVICE);
 
-
         URL url = new URL(securityServerHost);
+        log.info("calling port at url {}", url);
 
-        ProducerPortService service = new ProducerPortService(url, new QName("http://metadata.x-road.eu/", "producerPortService"));
+        MetaServicesPort port = getMetaServicesPort(url);
 
-
-        ListMethodsResponse response = service.getMetaServicesPortSoap11().listMethods(
+        ListMethodsResponse response = port.listMethods(
                 new ListMethods(),
                 new Holder<>(securityServerIdentity),
                 new Holder<>(serviceIdentifierType),
@@ -60,6 +53,18 @@ public class XRoadClient {
         List<XRoadServiceIdentifierType> methods = response.getService();
 
         return methods;
+    }
+
+    public static MetaServicesPort getMetaServicesPort(URL url) {
+        URL wsdl = XRoadClient.class.getClassLoader()
+                .getResource("schema/list-methods.wsdl");
+        ProducerPortService service = new ProducerPortService(wsdl,
+                new QName("http://metadata.x-road.eu/", "producerPortService"));
+        MetaServicesPort port = service.getMetaServicesPortSoap11();
+        BindingProvider bindingProvider = (BindingProvider) port;
+        bindingProvider.getRequestContext()
+                .put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, url.toString());
+        return port;
     }
 
     //TODO two different wsdl generations and two different types. This should be fixed

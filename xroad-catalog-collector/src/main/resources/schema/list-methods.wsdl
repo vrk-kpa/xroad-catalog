@@ -162,12 +162,7 @@
     <wsdl:service name="producerPortService">
         <wsdl:port name="metaServicesPortSoap11"
                    binding="meta:metaServicesPortSoap11">
-            <!-- TODO: make spring-configurable -->
-<!--
-            vagrant devbox
-            <soap:address location="http://172.28.128.3" />
--->
-            <soap:address location="http://localhost:8080/metaservices" />
+            <soap:address location="http://dummy-address-replaced-elsewhere" />
         </wsdl:port>
     </wsdl:service>
 </wsdl:definitions>
