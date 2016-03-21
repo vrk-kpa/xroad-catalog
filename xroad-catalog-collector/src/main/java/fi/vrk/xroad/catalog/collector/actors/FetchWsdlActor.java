@@ -6,9 +6,8 @@ import com.google.common.base.Strings;
 import eu.x_road.xsd.xroad.ClientType;
 import fi.vrk.xroad.catalog.collector.util.XRoadClient;
 import fi.vrk.xroad.catalog.collector.wsimport.XRoadServiceIdentifierType;
-import fi.vrk.xroad.catalog.persistence.entity.Member;
-import fi.vrk.xroad.catalog.persistence.entity.Service;
-import fi.vrk.xroad.catalog.persistence.entity.Subsystem;
+import fi.vrk.xroad.catalog.persistence.CatalogService;
+import fi.vrk.xroad.catalog.persistence.entity.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -50,6 +49,9 @@ public class FetchWsdlActor extends UntypedActor {
     @Qualifier("wsdlRestOperations")
     private RestOperations restOperations;
 
+    @Autowired
+    protected CatalogService catalogService;
+
     @Override
     public void onReceive(Object message) throws Exception {
         if (message instanceof XRoadServiceIdentifierType) {
@@ -60,12 +62,30 @@ public class FetchWsdlActor extends UntypedActor {
             log.info("reading wsdl from url: "  + url);
             String wsdl = restOperations.getForObject(url, String.class);
             log.info("received wsdl: " + wsdl);
+            catalogService.saveWsdl(createSubsystemId(service),
+                    createServiceId(service),
+                    wsdl);
+            log.info("saved wsdl successfully");
 
         } else if (message instanceof Terminated) {
             throw new RuntimeException("Terminated: " + message);
         } else {
             log.error("Unable to handle message {}", message);
         }
+    }
+
+    private ServiceId createServiceId(XRoadServiceIdentifierType service) {
+        ServiceId serviceId = new ServiceId(service.getServiceCode(),
+                service.getServiceVersion());
+        return serviceId;
+    }
+
+    private SubsystemId createSubsystemId(XRoadServiceIdentifierType service) {
+        SubsystemId subsystemId = new SubsystemId(service.getXRoadInstance(),
+                service.getMemberClass(),
+                service.getMemberCode(),
+                service.getSubsystemCode());
+        return subsystemId;
     }
 
     private String buildUri(XRoadServiceIdentifierType service) {

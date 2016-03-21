@@ -51,8 +51,8 @@ public class XRoadCatalogCollector  {
             supervisor.tell(Supervisor.START_COLLECTING, null);
         }
 
-        // (kludge, for now) to let all actors process their mailboxes
-        Thread.sleep(5000);
+        // (TODO: kludge, for now) to let all actors process their mailboxes
+        Thread.sleep(30000);
 
         // Poison pill will be queued with a priority of 100 as the last
         // message
