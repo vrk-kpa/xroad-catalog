@@ -161,7 +161,7 @@ public class CatalogServiceImpl implements CatalogService {
     }
 
     @Override
-    public void saveWsdl(SubsystemId subsystemId, ServiceId serviceId, Wsdl wsdl) {
+    public void saveWsdl(SubsystemId subsystemId, ServiceId serviceId, String wsdlString) {
         assert subsystemId != null;
         assert serviceId != null;
         Service oldService = serviceRepository.findByNaturalKey(subsystemId.getXRoadInstance(),
@@ -172,6 +172,8 @@ public class CatalogServiceImpl implements CatalogService {
             throw new IllegalStateException("service " + serviceId + " not found!");
         }
         LocalDateTime now = LocalDateTime.now();
+        Wsdl wsdl = new Wsdl();
+        wsdl.setData(wsdlString);
         Wsdl oldWsdl = oldService.getWsdl();
         if (oldWsdl == null) {
             wsdl.initializeExternalId();

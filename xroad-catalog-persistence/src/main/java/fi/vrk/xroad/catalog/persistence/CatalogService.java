@@ -80,13 +80,13 @@ public interface CatalogService {
     void saveServices(SubsystemId subsystem, Collection<Service> service);
 
     /**
-     * Saves given wsdl. The wsdl can either be a new one, or an update to an existing one.
+     * Saves given wsdl data. The wsdl can either be a new one, or an update to an existing one.
      * Updates "changed" field based on whether data is different compared to last time.
      * @param subsystemId identifier of the subsystem
      * @param serviceId identifier of the service
      * @param wsdl the actual wsdl
      * @return
      */
-    void saveWsdl(SubsystemId subsystemId, ServiceId serviceId, Wsdl wsdl);
+    void saveWsdl(SubsystemId subsystemId, ServiceId serviceId, String wsdl);
 
 }

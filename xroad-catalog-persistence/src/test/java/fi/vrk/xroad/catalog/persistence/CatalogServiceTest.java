@@ -360,10 +360,7 @@ public class CatalogServiceTest {
         // detach, so we dont modify those objects in the next steps
         testUtil.entityManagerClear();
 
-        Wsdl identicalWsdl = new Wsdl();
-        identicalWsdl.setData(originalWsdl.getData());
-        identicalWsdl.setExternalId(originalWsdl.getExternalId());
-        catalogService.saveWsdl(originalSubsystemId, originalServiceId, identicalWsdl);
+        catalogService.saveWsdl(originalSubsystemId, originalServiceId, originalWsdl.getData());
         testUtil.entityManagerFlush();
         testUtil.entityManagerClear();
 
@@ -388,10 +385,7 @@ public class CatalogServiceTest {
         // detach, so we dont modify those objects in the next steps
         testUtil.entityManagerClear();
 
-        Wsdl identicalWsdl = new Wsdl();
-        identicalWsdl.setData(originalWsdl.getData() + "-modification");
-        identicalWsdl.setExternalId(originalWsdl.getExternalId());
-        catalogService.saveWsdl(originalSubsystemId, originalServiceId, identicalWsdl);
+        catalogService.saveWsdl(originalSubsystemId, originalServiceId, originalWsdl.getData() + "-modification");
         testUtil.entityManagerFlush();
         testUtil.entityManagerClear();
 
@@ -416,8 +410,7 @@ public class CatalogServiceTest {
 
         Wsdl newWsdl = new Wsdl();
         final String DATA = "<testwsdl/>";
-        newWsdl.setData(DATA);
-        catalogService.saveWsdl(originalSubsystemId, originalServiceId, newWsdl);
+        catalogService.saveWsdl(originalSubsystemId, originalServiceId, DATA);
         testUtil.entityManagerFlush();
         testUtil.entityManagerClear();
 
@@ -447,10 +440,7 @@ public class CatalogServiceTest {
         testUtil.entityManagerFlush();
         testUtil.entityManagerClear();
 
-        Wsdl newWsdl = new Wsdl();
-        newWsdl.setData(originalWsdl.getData());
-        newWsdl.setExternalId(originalWsdl.getExternalId());
-        catalogService.saveWsdl(originalSubsystemId, originalServiceId, newWsdl);
+        catalogService.saveWsdl(originalSubsystemId, originalServiceId, originalWsdl.getData());
         testUtil.entityManagerFlush();
         testUtil.entityManagerClear();
 
@@ -475,11 +465,8 @@ public class CatalogServiceTest {
         // detach, so we dont modify those objects in the next steps
         testUtil.entityManagerClear();
 
-        Wsdl newWsdl = new Wsdl();
-        newWsdl.setData(originalWsdl.getData());
-        newWsdl.setExternalId(originalWsdl.getExternalId());
         try {
-            catalogService.saveWsdl(originalSubsystemId, originalServiceId, newWsdl);
+            catalogService.saveWsdl(originalSubsystemId, originalServiceId, originalWsdl.getData());
             fail("should have throw exception since service is removed");
         } catch (Exception expected) {}
     }
