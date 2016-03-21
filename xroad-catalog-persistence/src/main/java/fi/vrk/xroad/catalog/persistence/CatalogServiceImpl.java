@@ -193,6 +193,7 @@ public class CatalogServiceImpl implements CatalogService {
                 boolean wsdlChanged = !oldWsdl.getData().equals(wsdl.getData());
                 if (wsdlChanged) {
                     oldWsdl.getStatusInfo().setChanged(now);
+                    oldWsdl.setData(wsdl.getData());
                 }
                 oldWsdl.getStatusInfo().setFetched(now);
             }
