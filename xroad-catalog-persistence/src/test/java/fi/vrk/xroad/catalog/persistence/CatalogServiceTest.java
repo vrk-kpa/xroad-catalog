@@ -391,8 +391,7 @@ public class CatalogServiceTest {
 
         Wsdl checkedWsdl = wsdlRepository.findOne(4L);
         assertEquals(originalWsdl.getExternalId(), checkedWsdl.getExternalId());
-        assertEquals(originalWsdl.getData(), checkedWsdl.getData());
-        assertEquals(originalWsdl.getExternalId(), checkedWsdl.getExternalId());
+        assertNotEquals(originalWsdl.getData(), checkedWsdl.getData());
         assertEquals(originalWsdl.getService().createKey(), originalServiceId);
         testUtil.assertEqualities(originalWsdl.getStatusInfo(), checkedWsdl.getStatusInfo(),
                 true, false, true, false);
