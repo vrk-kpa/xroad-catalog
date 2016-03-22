@@ -1,8 +1,6 @@
 package fi.vrk.xroad.catalog.lister;
 
-import fi.vrk.xroad.xroad_catalog_lister.ListMembers;
-import fi.vrk.xroad.xroad_catalog_lister.ListMembersResponse;
-import fi.vrk.xroad.xroad_catalog_lister.MemberList;
+import fi.vrk.xroad.xroad_catalog_lister.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ws.server.endpoint.annotation.Endpoint;
 import org.springframework.ws.server.endpoint.annotation.PayloadRoot;
@@ -29,6 +27,15 @@ public class ServiceEndpoint {
 
 
 		return response;
+	}
+
+	@PayloadRoot(namespace = NAMESPACE_URI, localPart = "GetWsdl")
+	@ResponsePayload
+	public GetWsdlResponse listMembers(@RequestPayload GetWsdl request) throws
+			Exception {
+        GetWsdlResponse response = new GetWsdlResponse();
+        response.setWsdl(serviceRepository.listServices(LocalTime.now()).iterator().next().getSubsystems().getSubsystem().iterator().next().getServices().getService().iterator().next().getWsdl().getData());
+        return response;
 	}
 
 }
