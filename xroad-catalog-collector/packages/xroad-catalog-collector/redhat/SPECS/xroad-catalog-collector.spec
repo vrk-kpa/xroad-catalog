@@ -4,7 +4,7 @@
 %define dist %(/usr/lib/rpm/redhat/dist.sh)
 
 Name:               xroad-catalog-collector
-Version:            0.1.0
+Version:            0.1.1
 Release:            1
 Summary:            X-Road Service Listing
 Group:              Applications/Internet
