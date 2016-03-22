@@ -4,7 +4,7 @@
 %define dist %(/usr/lib/rpm/redhat/dist.sh)
 
 Name:               xroad-catalog-collector
-Version:            0.1.1
+Version:            0.1.2
 Release:            1
 Summary:            X-Road Service Listing
 Group:              Applications/Internet
@@ -40,7 +40,8 @@ cp -p %{src}/SOURCES/%{name} %{buildroot}/usr/share/xroad/bin
 rm -rf %{buildroot}
 
 %files
-%attr(644,root,root) /usr/share/xroad/sql/*sql
+%attr(644,root,root) /usr/share/xroad/sql/init_database.sql
+%attr(644,root,root) /usr/share/xroad/sql/create_database.sql
 %attr(755,root,root) /etc/cron.daily/%{name}
 %attr(755,xroad-catalog,xroad-catalog) %{jlib}/xroad-catalog-collector.jar
 %attr(744,xroad-catalog,xroad-catalog) /usr/share/xroad/bin/%{name}
