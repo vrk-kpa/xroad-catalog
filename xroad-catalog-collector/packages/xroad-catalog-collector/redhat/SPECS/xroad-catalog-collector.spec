@@ -41,7 +41,7 @@ rm -rf %{buildroot}
 
 %files
 %attr(644,root,root) /usr/share/xroad/sql/init_database.sql
-%attr(644,root,root) /usr/share/xroad/sql/create_database.sql
+%attr(644,root,root) /usr/share/xroad/sql/create_tables.sql
 %attr(755,root,root) /etc/cron.daily/%{name}
 %attr(755,xroad-catalog,xroad-catalog) %{jlib}/xroad-catalog-collector.jar
 %attr(744,xroad-catalog,xroad-catalog) /usr/share/xroad/bin/%{name}
