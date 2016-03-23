@@ -15,7 +15,6 @@ import java.util.Arrays;
 import java.util.GregorianCalendar;
 import java.util.List;
 
-@Component
 public class ServiceRepository {
 	private static final List<Member> members = new ArrayList<Member>();
 

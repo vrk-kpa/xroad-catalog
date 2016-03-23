@@ -18,7 +18,6 @@ package fi.vrk.xroad.catalog.lister;
 
 import fi.vrk.xroad.xroad_catalog_lister.ListMembers;
 import fi.vrk.xroad.xroad_catalog_lister.ListMembersResponse;
-import fi.vrk.xroad.xroad_catalog_lister.MemberList;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -34,7 +33,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(classes = Application.class)
+@SpringApplicationConfiguration(classes = ListerApplication.class)
 @WebIntegrationTest(randomPort = true)
 public class ApplicationTests {
 

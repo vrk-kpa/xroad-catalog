@@ -1,5 +1,6 @@
 package fi.vrk.xroad.catalog.lister;
 
+import fi.vrk.xroad.catalog.persistence.CatalogService;
 import fi.vrk.xroad.xroad_catalog_lister.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ws.server.endpoint.annotation.Endpoint;
@@ -7,14 +8,12 @@ import org.springframework.ws.server.endpoint.annotation.PayloadRoot;
 import org.springframework.ws.server.endpoint.annotation.RequestPayload;
 import org.springframework.ws.server.endpoint.annotation.ResponsePayload;
 
-import java.time.LocalTime;
-
 @Endpoint
 public class ServiceEndpoint {
 	private static final String NAMESPACE_URI = "http://xroad.vrk.fi/xroad-catalog-lister";
 
 	@Autowired
-	private ServiceRepository serviceRepository;
+	private CatalogService catalogService;
 
 	@PayloadRoot(namespace = NAMESPACE_URI, localPart = "ListMembers")
 	@ResponsePayload
@@ -22,10 +21,7 @@ public class ServiceEndpoint {
 			Exception {
 		ListMembersResponse response = new ListMembersResponse();
 		response.setMemberList(new MemberList());
-		response.getMemberList().getMembers().addAll(serviceRepository.listServices(LocalTime.now
-				()));
-
-
+//        response.getMemberList().getMembers().addAll(catalogService.getActiveMembers(LocalDateTime.now()));
 		return response;
 	}
 
@@ -34,7 +30,8 @@ public class ServiceEndpoint {
 	public GetWsdlResponse listMembers(@RequestPayload GetWsdl request) throws
 			Exception {
         GetWsdlResponse response = new GetWsdlResponse();
-        response.setWsdl(serviceRepository.listServices(LocalTime.now()).iterator().next().getSubsystems().getSubsystem().iterator().next().getServices().getService().iterator().next().getWsdl().getData());
+        String wsdl = catalogService.getWsdl(request.getExternalId()).getData();
+        response.setWsdl(wsdl);
         return response;
 	}
 

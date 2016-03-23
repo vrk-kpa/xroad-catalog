@@ -8,12 +8,14 @@ buildscript {
 }
 
 apply plugin: 'java'
+apply plugin: 'maven'
 apply plugin: 'eclipse'
 apply plugin: 'idea'
 apply plugin: 'spring-boot'
 
 repositories {
     mavenCentral()
+    mavenLocal()
 }
 
 // tag::xsd[]
@@ -73,6 +75,7 @@ sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
 dependencies {
+    compile 'fi.vrk.xroad:xroad-catalog-persistence:1.0-SNAPSHOT'
     compile("org.springframework.boot:spring-boot-starter-ws")
     testCompile("org.springframework.boot:spring-boot-starter-test")
     compile("wsdl4j:wsdl4j:1.6.1")
@@ -82,6 +85,23 @@ dependencies {
 // end::dependencies[]
 // end::jaxb[]
 
+idea {
+    project {
+        //if you want to set specific jdk and language level
+        jdkName = '1.8'
+        languageLevel = '1.8'
+    }
+    module {
+        downloadSources = true
+    }
+}
+
 task wrapper(type: Wrapper) {
     gradleVersion = '2.3'
+}
+
+test {
+    testLogging {
+        events "passed", "skipped", "failed", "standardOut", "standardError"
+    }
 }
