@@ -1,6 +1,7 @@
 package fi.vrk.xroad.catalog.lister;
 
 import fi.vrk.xroad.catalog.persistence.CatalogService;
+import fi.vrk.xroad.catalog.persistence.entity.Wsdl;
 import fi.vrk.xroad.xroad_catalog_lister.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ws.server.endpoint.annotation.Endpoint;
@@ -27,11 +28,15 @@ public class ServiceEndpoint {
 
 	@PayloadRoot(namespace = NAMESPACE_URI, localPart = "GetWsdl")
 	@ResponsePayload
-	public GetWsdlResponse listMembers(@RequestPayload GetWsdl request) throws
+	public GetWsdlResponse getWsdl(@RequestPayload GetWsdl request) throws
 			Exception {
         GetWsdlResponse response = new GetWsdlResponse();
-        String wsdl = catalogService.getWsdl(request.getExternalId()).getData();
-        response.setWsdl(wsdl);
+        Wsdl wsdl = catalogService.getWsdl(request.getExternalId());
+        if (wsdl == null) {
+            throw new WsdlNotFoundException("wsdl with external id " + request.getExternalId()
+            + " not found");
+        }
+        response.setWsdl(wsdl.getData());
         return response;
 	}
 
