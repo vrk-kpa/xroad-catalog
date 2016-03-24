@@ -4,8 +4,8 @@
 %define dist %(/usr/lib/rpm/redhat/dist.sh)
 
 Name:               xroad-catalog-collector
-Version:            0.1.2
-Release:            1
+Version:            %{xroad_catalog_version}
+Release:            %{rel}%{?snapshot}%{?dist}
 Summary:            X-Road Service Listing
 Group:              Applications/Internet
 License:            MIT
