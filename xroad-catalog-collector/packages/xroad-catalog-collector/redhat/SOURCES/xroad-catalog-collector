@@ -1,4 +1,4 @@
 #!/bin/sh
 set -x
-exec ${JAVA_HOME}/bin/java -Dspring.profiles.active=production -jar /usr/lib/xroad-catalog/xroad-catalog-collector.jar
-
+exec ${JAVA_HOME}/bin/java -Dspring.profiles.active=production -jar /usr/lib/xroad-catalog/xroad-catalog-collector
+.jar --spring.config.location=/etc/xroad/xroad-catalog/application.properties
