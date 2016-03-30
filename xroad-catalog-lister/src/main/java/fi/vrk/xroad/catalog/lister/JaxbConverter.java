@@ -25,7 +25,8 @@ import java.util.List;
 @Component
 public class JaxbConverter {
 
-    public Collection<Member> convertMembers(Iterable<fi.vrk.xroad.catalog.persistence.entity.Member> members) throws DatatypeConfigurationException {
+    public Collection<Member> convertMembers(Iterable<fi.vrk.xroad.catalog.persistence.entity.Member> members,
+                                             boolean onlyActiveChildren) throws DatatypeConfigurationException {
         List<Member> converted = new ArrayList<>();
         for (fi.vrk.xroad.catalog.persistence.entity.Member member: members) {
             Member cm = new Member();
@@ -38,13 +39,20 @@ public class JaxbConverter {
             cm.setName(member.getName());
             cm.setXRoadInstance(member.getXRoadInstance());
             cm.setSubsystems(new SubsystemList());
-            cm.getSubsystems().getSubsystem().addAll(convertSubsystems(member.getActiveSubsystems()));
+            Iterable<Subsystem> subsystems = null;
+            if (onlyActiveChildren) {
+                subsystems = member.getActiveSubsystems();
+            } else {
+                subsystems = member.getAllSubsystems();
+            }
+            cm.getSubsystems().getSubsystem().addAll(convertSubsystems(subsystems, onlyActiveChildren));
             converted.add(cm);
         }
         return converted;
     }
 
-    public Collection<fi.vrk.xroad.xroad_catalog_lister.Subsystem> convertSubsystems(Iterable<Subsystem> subsystems) throws DatatypeConfigurationException {
+    public Collection<fi.vrk.xroad.xroad_catalog_lister.Subsystem> convertSubsystems(Iterable<Subsystem> subsystems,
+                                                                                     boolean onlyActiveChildren) throws DatatypeConfigurationException {
         List<fi.vrk.xroad.xroad_catalog_lister.Subsystem> converted = new ArrayList<>();
         for (Subsystem subsystem: subsystems) {
             fi.vrk.xroad.xroad_catalog_lister.Subsystem cs = new fi.vrk.xroad.xroad_catalog_lister.Subsystem();
@@ -54,13 +62,20 @@ public class JaxbConverter {
             cs.setRemoved(toXmlGregorianCalendar(subsystem.getStatusInfo().getRemoved()));
             cs.setSubsystemCode(subsystem.getSubsystemCode());
             cs.setServices(new ServiceList());
-            cs.getServices().getService().addAll(convertServices(subsystem.getActiveServices()));
+            Iterable<Service> services = null;
+            if (onlyActiveChildren) {
+                services = subsystem.getActiveServices();
+            } else {
+                services = subsystem.getAllServices();
+            }
+            cs.getServices().getService().addAll(convertServices(services, onlyActiveChildren));
             converted.add(cs);
         }
         return converted;
     }
 
-    public Collection<fi.vrk.xroad.xroad_catalog_lister.Service> convertServices(Iterable<Service> services) throws DatatypeConfigurationException {
+    public Collection<fi.vrk.xroad.xroad_catalog_lister.Service> convertServices(Iterable<Service> services,
+                                                                                 boolean onlyActiveChildren) throws DatatypeConfigurationException {
         List<fi.vrk.xroad.xroad_catalog_lister.Service> converted = new ArrayList<>();
         for (Service service: services) {
             fi.vrk.xroad.xroad_catalog_lister.Service cs = new fi.vrk.xroad.xroad_catalog_lister.Service();
@@ -70,7 +85,17 @@ public class JaxbConverter {
             cs.setRemoved(toXmlGregorianCalendar(service.getStatusInfo().getRemoved()));
             cs.setServiceCode(service.getServiceCode());
             cs.setServiceVersion(service.getServiceVersion());
-            cs.setWsdl(convertWsdl(service.getWsdl()));
+            Wsdl wsdl = null;
+            if (onlyActiveChildren) {
+                if (service.getWsdl() != null && !service.getWsdl().getStatusInfo().isRemoved()) {
+                    wsdl = service.getWsdl();
+                }
+            } else {
+                wsdl = service.getWsdl();
+            }
+            if (wsdl != null) {
+                cs.setWsdl(convertWsdl(service.getWsdl()));
+            }
             converted.add(cs);
         }
         return converted;

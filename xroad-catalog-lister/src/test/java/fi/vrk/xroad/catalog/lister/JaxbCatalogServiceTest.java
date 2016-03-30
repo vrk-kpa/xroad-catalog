@@ -33,8 +33,8 @@ public class JaxbCatalogServiceTest {
 
     private CatalogService catalogService;
 
-    private static LocalDateTime DATETIME_2016 = LocalDateTime.of(2016, 1, 1, 0, 0);
-    private static LocalDateTime DATETIME_2015 = LocalDateTime.of(2015, 1, 1, 0, 0);
+    private static final LocalDateTime DATETIME_2016 = LocalDateTime.of(2016, 1, 1, 0, 0);
+    private static final LocalDateTime DATETIME_2015 = LocalDateTime.of(2015, 1, 1, 0, 0);
 
     @Test
     public void testGetAll() throws Exception {
@@ -42,7 +42,7 @@ public class JaxbCatalogServiceTest {
                 LocalDateTime.of(2015,5,5,0,0)
         );
         XMLGregorianCalendar calendar2014_5_5 = jaxbConverter.toXmlGregorianCalendar(
-                LocalDateTime.of(2015,5,5,0,0)
+                LocalDateTime.of(2014,5,5,0,0)
         );
         Iterable<fi.vrk.xroad.xroad_catalog_lister.Member> members = service.getAllMembers(calendar2015_5_5);
         assertEquals(2, Iterables.size(members));
@@ -78,12 +78,12 @@ public class JaxbCatalogServiceTest {
         assertNull(ss21.getRemoved());
         assertNull(ss22.getRemoved());
         assertNotNull(ss23.getRemoved());
-        fi.vrk.xroad.xroad_catalog_lister.Subsystem s221 = (fi.vrk.xroad.xroad_catalog_lister.Subsystem)
-                getItem(ss22.getServices().getService(),PROPERTY_SERVICE_CODE, "221");
-        fi.vrk.xroad.xroad_catalog_lister.Subsystem s222 = (fi.vrk.xroad.xroad_catalog_lister.Subsystem)
-                getItem(ss22.getServices().getService(),PROPERTY_SERVICE_CODE, "222");
-        fi.vrk.xroad.xroad_catalog_lister.Subsystem s223 = (fi.vrk.xroad.xroad_catalog_lister.Subsystem)
-                getItem(ss22.getServices().getService(),PROPERTY_SERVICE_CODE, "223");
+        fi.vrk.xroad.xroad_catalog_lister.Service s221 = (fi.vrk.xroad.xroad_catalog_lister.Service)
+                getItem(ss22.getServices().getService(), PROPERTY_SERVICE_CODE, "221");
+        fi.vrk.xroad.xroad_catalog_lister.Service s222 = (fi.vrk.xroad.xroad_catalog_lister.Service)
+                getItem(ss22.getServices().getService(), PROPERTY_SERVICE_CODE, "222");
+        fi.vrk.xroad.xroad_catalog_lister.Service s223 = (fi.vrk.xroad.xroad_catalog_lister.Service)
+                getItem(ss22.getServices().getService(), PROPERTY_SERVICE_CODE, "223");
         assertNotNull(s221);
         assertNotNull(s222);
         assertNotNull(s223);
@@ -170,7 +170,7 @@ public class JaxbCatalogServiceTest {
         m.getStatusInfo().setChanged(updated);
         m.getStatusInfo().setCreated(updated);
         m.getStatusInfo().setFetched(updated);
-        m.getStatusInfo().setRemoved(removed? updated : null);
+        m.getStatusInfo().setRemoved(removed ? updated : null);
 
         Subsystem s1 = createSubsystem(DATETIME_2015, 1, false, m);
         Subsystem s2 = createSubsystem(DATETIME_2016, 2, false, m);
@@ -189,7 +189,7 @@ public class JaxbCatalogServiceTest {
         subsystem.getStatusInfo().setChanged(updated);
         subsystem.getStatusInfo().setCreated(updated);
         subsystem.getStatusInfo().setFetched(updated);
-        subsystem.getStatusInfo().setRemoved(removed? updated : null);
+        subsystem.getStatusInfo().setRemoved(removed ? updated : null);
         subsystem.setSubsystemCode("" + subsystem.getId());
 
         Service s1 = createService(updated, false, subsystem, 1);
@@ -197,6 +197,8 @@ public class JaxbCatalogServiceTest {
         Service s3 = createService(updated, true, subsystem, 3);
 
         subsystem.getAllServices().add(s1);
+        subsystem.getAllServices().add(s2);
+        subsystem.getAllServices().add(s3);
 
         return subsystem;
     }
@@ -209,7 +211,7 @@ public class JaxbCatalogServiceTest {
         s1.getStatusInfo().setChanged(updated);
         s1.getStatusInfo().setCreated(updated);
         s1.getStatusInfo().setFetched(updated);
-        s1.getStatusInfo().setRemoved(removed? updated : null);
+        s1.getStatusInfo().setRemoved(removed ? updated : null);
         s1.setSubsystem(subsystem);
 
         s1.setWsdl(createWsdl(s1));

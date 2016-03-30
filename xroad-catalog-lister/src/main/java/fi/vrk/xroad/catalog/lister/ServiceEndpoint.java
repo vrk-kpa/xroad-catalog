@@ -42,7 +42,7 @@ public class ServiceEndpoint {
                     .toZonedDateTime().toLocalDateTime();
             members = catalogService.getActiveMembers(changedAfter);
         }
-        Collection<fi.vrk.xroad.xroad_catalog_lister.Member> jaxbMembers = jaxbConverter.convertMembers(members);
+        Collection<fi.vrk.xroad.xroad_catalog_lister.Member> jaxbMembers = jaxbConverter.convertMembers(members, false);
         response.getMemberList().getMembers().addAll(jaxbMembers);
 		return response;
 	}
