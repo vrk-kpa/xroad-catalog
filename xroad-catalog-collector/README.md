@@ -14,6 +14,19 @@ Or
 
     $ java -jar target/xroad-catalog-collector-1.0-SNAPSHOT.jar
 
+## Run against remote security server
+
+First create an ssh tunnel to local port 9000, for example
+
+    $ ssh -nNT -L 9000:gdev-rh1.i.palveluvayla.com:80 dev-is.palveluvayla.com
+
+Then run the collector with profile sshtest
+
+    $ java -Dspring.profiles.active=sshtest -jar build/libs/xroad-catalog-collector.jar
+
+
+
+
 ## Build RPM Packages on Non-RedHat Platform
 
 First make sure that xroad-catalog-persistence is located next to xroad-catalog-collector. The RPM build
