@@ -54,7 +54,7 @@ public class ListClientsActor extends UntypedActor {
     protected CatalogService catalogService;
 
 
-    @Value("${xroad-catalog.fetch-wsdl-host}")
+    @Value("${xroad-catalog.list-clients-host}")
     private String host;
 
 

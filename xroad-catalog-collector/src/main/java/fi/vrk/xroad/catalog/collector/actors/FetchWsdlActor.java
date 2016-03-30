@@ -38,8 +38,7 @@ public class FetchWsdlActor extends UntypedActor {
     private static AtomicInteger COUNTER = new AtomicInteger(0);
     private static final String WSDL_CONTEXT_PATH = "/wsdl";
 
-    @Value("${xroad-catalog.fetch-wsdl-hosts:http://localhost}")
-
+    @Value("${xroad-catalog.fetch-wsdl-host}")
     private String host;
 
     public String getHost() {
