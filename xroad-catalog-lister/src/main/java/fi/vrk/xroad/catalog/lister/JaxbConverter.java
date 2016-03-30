@@ -2,9 +2,11 @@ package fi.vrk.xroad.catalog.lister;
 
 import fi.vrk.xroad.catalog.persistence.entity.Service;
 import fi.vrk.xroad.catalog.persistence.entity.Subsystem;
+import fi.vrk.xroad.catalog.persistence.entity.Wsdl;
 import fi.vrk.xroad.xroad_catalog_lister.Member;
 import fi.vrk.xroad.xroad_catalog_lister.ServiceList;
 import fi.vrk.xroad.xroad_catalog_lister.SubsystemList;
+import fi.vrk.xroad.xroad_catalog_lister.WSDL;
 import org.springframework.stereotype.Component;
 
 import javax.xml.datatype.DatatypeConfigurationException;
@@ -68,9 +70,25 @@ public class JaxbConverter {
             cs.setRemoved(toXmlGregorianCalendar(service.getStatusInfo().getRemoved()));
             cs.setServiceCode(service.getServiceCode());
             cs.setServiceVersion(service.getServiceVersion());
+            cs.setWsdl(convertWsdl(service.getWsdl()));
             converted.add(cs);
         }
         return converted;
+    }
+
+    private WSDL convertWsdl(Wsdl wsdl) throws DatatypeConfigurationException {
+        WSDL cw = new WSDL();
+        cw.setChanged(toXmlGregorianCalendar(wsdl.getStatusInfo().getChanged()));
+        cw.setCreated(toXmlGregorianCalendar(wsdl.getStatusInfo().getCreated()));
+        cw.setFetched(toXmlGregorianCalendar(wsdl.getStatusInfo().getFetched()));
+        cw.setRemoved(toXmlGregorianCalendar(wsdl.getStatusInfo().getRemoved()));
+        cw.setExternalId(wsdl.getExternalId());
+        cw.setData(wsdl.getData());
+        return cw;
+    }
+
+    public LocalDateTime toLocalDateTime(XMLGregorianCalendar calendar) {
+        return calendar.toGregorianCalendar().toZonedDateTime().toLocalDateTime();
     }
 
     public XMLGregorianCalendar toXmlGregorianCalendar(LocalDateTime localDateTime) throws DatatypeConfigurationException {

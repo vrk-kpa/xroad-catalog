@@ -36,7 +36,7 @@ public class Service {
     // https://developer.jboss.org/wiki/SomeExplanationsOnLazyLoadingone-to-one
     @Getter(AccessLevel.NONE) // do not create default getter/setter, we provide a wrapper that hides the collection
     @OneToMany(mappedBy = "service", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Set<Wsdl> wsdls;
+    private Set<Wsdl> wsdls = new HashSet<>();
 
     public Service() {
     }

@@ -10,6 +10,7 @@ import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -31,7 +32,7 @@ public class Subsystem {
     private Member member;
     @Getter(AccessLevel.NONE) // do not create default getter, we provide the substitute
     @OneToMany(mappedBy = "subsystem", cascade = CascadeType.ALL)
-    private Set<Service> services;
+    private Set<Service> services = new HashSet<>();
     @Embedded
     private StatusInfo statusInfo = new StatusInfo();
 

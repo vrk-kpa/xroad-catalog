@@ -20,7 +20,7 @@ import org.springframework.web.client.RestOperations;
  * Created by sjk on 17.3.2016.
  */
 @Configuration
-@Profile({"development", "default"})
+@Profile({"development", "default", "devhsql"})
 @Slf4j
 public class DevelopmentConfiguration extends ApplicationConfiguration {
 
