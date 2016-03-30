@@ -6,10 +6,12 @@ import com.typesafe.config.ConfigFactory;
 import fi.vrk.xroad.catalog.collector.extension.SpringExtension;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.web.SpringBootServletInitializer;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.*;
 import org.springframework.web.client.RestOperations;
+import org.springframework.web.client.RestTemplate;
 
 @Configuration
 @Lazy
@@ -58,13 +60,18 @@ public class ApplicationConfiguration extends SpringBootServletInitializer {
     }
 
     @Bean
-    public RestOperations getRestOperations() { throw new RuntimeException("Please override getRestOperations for " +
-            "your profile");}
+    @Qualifier("listClientsRestOperations")
+    public RestOperations getRestOperations() {
+        log.info("-------------- Configuration");
+        return new RestTemplate();
+    }
 
     @Bean
-    public RestOperations getDynamicWsdlRestOperations() { throw new RuntimeException("Please override " +
-            "getDynamicWsdlRestOperations for " +
-            "your profile");}
+    @Qualifier("wsdlRestOperations")
+    public RestOperations getDynamicWsdlRestOperations() {
+        log.info("-------------- Configuration");
+        return new RestTemplate();
+    }
 
 
 
