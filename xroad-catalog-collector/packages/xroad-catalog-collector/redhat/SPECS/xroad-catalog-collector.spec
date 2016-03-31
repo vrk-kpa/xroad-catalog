@@ -39,6 +39,7 @@ cp -p %{src}/../../../build/resources/main/application.conf %{buildroot}%{conf}
 cp -p  ../../../../../xroad-catalog-persistence/src/main/sql/*.sql %{buildroot}/usr/share/xroad/sql
 cp -p %{src}/SOURCES/%{name}.cron %{buildroot}/etc/cron.daily/%{name}
 cp -p %{src}/SOURCES/%{name} %{buildroot}/usr/share/xroad/bin
+touch %{buildroot}/var/log/xroad/catalog-collector.log
 
 %clean
 rm -rf %{buildroot}
@@ -51,6 +52,7 @@ rm -rf %{buildroot}
 %attr(744,xroad-catalog,xroad-catalog) /usr/share/xroad/bin/%{name}
 %attr(644,xroad-catalog,xroad-catalog) %{conf}/application.conf
 %attr(644,xroad-catalog,xroad-catalog) %{conf}/application-production.properties
+%attr(755,xroad-catalog,xroad-catalog) /var/log/xroad/catalog-collector.log
 
 %pre
 if ! id xroad-catalog > /dev/null 2>&1 ; then
@@ -61,6 +63,9 @@ fi
 #Init database
 sudo -u postgres psql --file=/usr/share/xroad/sql/init_database.sql
 sudo -u postgres psql --file=/usr/share/xroad/sql/create_tables.sql
+
+#Run collector once
+sudo -u xroad-catalog /usr/share/xroad/bin/xroad-catalog-collector >& /var/log/xroad/catalog-collector.log
 
 
 %preun

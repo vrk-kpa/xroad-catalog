@@ -1,3 +1,4 @@
 #!/bin/sh
-/usr/share/xroad/bin/xroad-catalog-collector
+sudo -u xroad-catalog /usr/share/xroad/bin/xroad-catalog-collector >& /var/log/xroad/catalog-collector.log
+
 
