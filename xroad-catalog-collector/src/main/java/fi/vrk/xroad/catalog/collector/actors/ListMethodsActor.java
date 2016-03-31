@@ -29,6 +29,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 /**
  * Actor which fetches all clients, and delegates listing
@@ -120,8 +121,10 @@ public class ListMethodsActor extends UntypedActor {
                 log.info("calling web service at {}", webservicesEndpoint);
                 List<XRoadServiceIdentifierType> result = XRoadClient.getMethods(webservicesEndpoint, xroadId,
                         clientType);
-                log.info("Received all methods for client {} ", clientType);
-                log.info("{} ListMethodsResponse {} ", COUNTER, result.toString());
+                log.info("Received all methods for client {} ", ClientTypeUtil.toString(clientType));
+                log.info("{} ListMethodsResponse {} ", COUNTER, result.stream().map(s -> ClientTypeUtil.toString(s))
+                        .collect
+                        (Collectors.joining(", ")));
 
                 maybeFail();
 
