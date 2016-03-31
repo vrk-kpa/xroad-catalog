@@ -141,7 +141,7 @@ public class ListMethodsActor extends UntypedActor {
                     fetchWsdlPoolRef.tell(service, getSender());
                 }
             } catch (Exception e) {
-                log.error("{} Failed to get methods for subsystem {} \n {}", subsystem, e);
+                log.error("Failed to get methods for subsystem {} \n {}", subsystem, e.toString());
                 throw e;
             }
 
