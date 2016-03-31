@@ -23,4 +23,4 @@ rpmbuild \
     -${CMD} SPECS/xroad-catalog-collector.spec
 
 
-# -ba SPECS/xroad-catalog-collector.spec
+
