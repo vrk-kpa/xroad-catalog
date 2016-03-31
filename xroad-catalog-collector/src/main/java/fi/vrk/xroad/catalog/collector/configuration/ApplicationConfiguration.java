@@ -4,19 +4,14 @@ import akka.actor.ActorSystem;
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigFactory;
 import fi.vrk.xroad.catalog.collector.extension.SpringExtension;
-import fi.vrk.xroad.catalog.collector.mock.MockMetaServicesImpl;
-import fi.vrk.xroad.catalog.collector.mock.MockRestTemplate;
-import fi.vrk.xroad.catalog.collector.wsimport.MetaServicesPort;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.cxf.Bus;
-import org.apache.cxf.jaxws.EndpointImpl;
-import org.apache.cxf.transport.servlet.CXFServlet;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.context.embedded.ServletRegistrationBean;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.web.SpringBootServletInitializer;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.*;
 import org.springframework.web.client.RestOperations;
+import org.springframework.web.client.RestTemplate;
 
 @Configuration
 @Lazy
@@ -65,13 +60,18 @@ public class ApplicationConfiguration extends SpringBootServletInitializer {
     }
 
     @Bean
-    public RestOperations getRestOperations() { throw new RuntimeException("Please override getRestOperations for " +
-            "your profile");}
+    @Qualifier("listClientsRestOperations")
+    public RestOperations getRestOperations() {
+        log.info("-------------- Configuration");
+        return new RestTemplate();
+    }
 
     @Bean
-    public RestOperations getDynamicWsdlRestOperations() { throw new RuntimeException("Please override " +
-            "getDynamicWsdlRestOperations for " +
-            "your profile");}
+    @Qualifier("wsdlRestOperations")
+    public RestOperations getDynamicWsdlRestOperations() {
+        log.info("-------------- Configuration");
+        return new RestTemplate();
+    }
 
 
 

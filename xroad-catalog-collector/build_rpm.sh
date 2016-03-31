@@ -1,4 +1,26 @@
 #!/bin/sh
+#DIR=$(cd "$(dirname $0)" && pwd)
+DIR="workspace/xroad-catalog-collector/packages/xroad-catalog-collector/redhat"
+cd $DIR
+#ROOT=${DIR}/xroad-catalog-collector/redhat
+ROOT=`pwd`
+RELEASE=1
+DATE=$(date --utc --date @$(git show -s --format=%ct || date +%s) +'%Y%m%d%H%M%S')
+HASH=$(git show -s --format=git%h || echo 'local')
+SNAPSHOT=$DATE$HASH
+FILES=${1-'xroad-*.spec'}
+CMD="-ba"
 
-cd workspace/xroad-catalog-collector/packages/xroad-catalog-collector/redhat
-rpmbuild --define "_topdir `pwd`" -ba SPECS/xroad-catalog-collector.spec
+rm -rf ${ROOT}/RPMS/*
+
+
+
+rpmbuild \
+    --define "xroad_catalog_version 0.1.3" \
+    --define "rel $RELEASE" \
+    --define "snapshot .$SNAPSHOT" \
+    --define "_topdir $ROOT" \
+    -${CMD} SPECS/xroad-catalog-collector.spec
+
+
+# -ba SPECS/xroad-catalog-collector.spec
