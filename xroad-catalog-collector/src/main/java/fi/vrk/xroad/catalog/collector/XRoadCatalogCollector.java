@@ -7,7 +7,6 @@ import akka.actor.PoisonPill;
 import akka.actor.TypedActor;
 import akka.event.Logging;
 import akka.event.LoggingAdapter;
-import eu.x_road.xsd.xroad.ClientListType;
 import fi.vrk.xroad.catalog.collector.actors.Supervisor;
 import fi.vrk.xroad.catalog.collector.extension.SpringExtension;
 import lombok.extern.slf4j.Slf4j;

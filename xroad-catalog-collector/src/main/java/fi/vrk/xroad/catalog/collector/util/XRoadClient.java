@@ -1,6 +1,5 @@
 package fi.vrk.xroad.catalog.collector.util;
 
-import eu.x_road.xsd.xroad.ClientType;
 import fi.vrk.xroad.catalog.collector.wsimport.*;
 import lombok.extern.slf4j.Slf4j;
 
@@ -68,7 +67,7 @@ public class XRoadClient {
     }
 
     protected static void copyIdentifierType
-    (XRoadIdentifierType target, eu.x_road.xsd.identifiers.XRoadIdentifierType source) {
+    (XRoadIdentifierType target, XRoadIdentifierType source) {
 
         target.setGroupCode(source.getGroupCode());
         target.setObjectType(XRoadObjectType.fromValue(source.getObjectType().value()));

@@ -12,15 +12,10 @@ apply plugin: 'maven'
 apply plugin: 'idea'
 apply plugin: 'spring-boot'
 
-
-
-
 description = """"""
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
-
-
 
 repositories {
     mavenCentral()
@@ -29,86 +24,41 @@ repositories {
 
 configurations {
     wsimport
-    jaxb
+}
+
+sourceSets {
+    main {
+        java.srcDirs = ['src/main/java', 'build/generated-sources/wsimport']
+    }
 }
 
 jar {
     baseName = 'xroad-catalog-collector'
 }
 
-task genJaxb {
-    ext.sourcesDir = "${buildDir}/generated-sources/jaxb"
-    ext.classesDir = "${buildDir}/classes/main"
-    ext.schemaDir = "${projectDir}/src/main/resources/schema/"
-
-    outputs.dir classesDir
-
-    doLast() {
-        project.ant {
-            taskdef name: "xjc", classname: "com.sun.tools.xjc.XJCTask",
-                    classpath: configurations.jaxb.asPath
-            mkdir(dir: sourcesDir)
-            mkdir(dir: classesDir)
-
-            xjc(destdir: sourcesDir) {
-                schema(dir: schemaDir, includes: "**/*xsd")
-                arg(value: "-wsdl")
-                produces(dir: sourcesDir, includes: "**/*.java")
-            }
-
-            javac(destdir: classesDir, source: 1.8, target: 1.8, debug: true,
-                    debugLevel: "lines,vars,source",
-                    classpath: configurations.jaxb.asPath,
-                    includeantruntime: "false") {
-                src(path: sourcesDir)
-                include(name: "**/*.java")
-                include(name: "*.java")
-            }
-
-            copy(todir: classesDir) {
-                fileset(dir: sourcesDir, erroronmissingdir: false) {
-                    exclude(name: "**/*.java")
-                }
-            }
-        }
-    }
-}
-
 
 task wsImport {
-    ext.outputDir = "${buildDir}/generated-sources/wsimport"
-    ext.classesDir = "${buildDir}/classes/main"
+    ext.sourcedestdir = "${buildDir}/generated-sources/wsimport"
+    ext.destdir = "${buildDir}/generated-classes/wsimport"
     ext.wsdl = "${projectDir}/src/main/resources/schema/list-methods.wsdl"
 
     inputs.files wsdl
-    outputs.dir classesDir
+    outputs.dir sourcedestdir
 
     doLast() {
         project.ant {
             taskdef name: "wsimport", classname: "com.sun.tools.ws.ant.WsImport",
                     classpath: configurations.wsimport.asPath
-            mkdir(dir: outputDir)
-            mkdir(dir: classesDir)
+            mkdir(dir: destdir)
+            mkdir(dir: sourcedestdir)
 
-
-            wsimport(destdir: outputDir, wsdl: wsdl,
-                    package: "fi.vrk.xroad.catalog.collector.wsimport") {
-                produces(dir: outputDir, includes: "**/*.class")
-            }
-
-            javac(destdir: classesDir, source: 1.8, target: 1.8, debug: true,
-                    debugLevel: "lines,vars,source",
-                    classpath: configurations.wsimport.asPath,
-                    includeantruntime: "false") {
-                src(path: outputDir)
-                include(name: "**/*.java")
-                include(name: "*.java")
-            }
-
-            copy(todir: classesDir) {
-                fileset(dir: outputDir, erroronmissingdir: false) {
-                    exclude(name: "**/*.java")
-                }
+            wsimport(sourcedestdir: sourcedestdir,
+                    destdir: destdir,
+                    wsdl: wsdl,
+                    package: "fi.vrk.xroad.catalog.collector.wsimport",
+                    keep: "true"
+            ) {
+                produces(dir: sourcedestdir, includes: "**/*.java")
             }
         }
     }
@@ -136,12 +86,7 @@ dependencies {
     testCompile 'org.powermock:powermock-core:1.6.4'
     testCompile 'org.powermock:powermock-module-junit4:1.6.4'
     testCompile 'org.powermock:powermock-api-mockito:1.6.4'
-    jaxb("com.sun.xml.bind:jaxb-xjc:2.2.4-1")
     wsimport "com.sun.xml.ws:jaxws-tools:2.1.7"
-    compile(files(genJaxb.classesDir).builtBy(genJaxb))
-    compile(files(wsImport.classesDir).builtBy(wsImport))
-
-
 }
 
 idea {
@@ -154,6 +99,13 @@ idea {
         downloadSources = true
     }
 }
+
+idea.module {
+    excludeDirs -= file(buildDir)
+    buildDir.listFiles({ d, f -> f != 'generated-sources/wsimport' } as FilenameFilter).each { excludeDirs += it }
+}
+
+compileJava.dependsOn wsImport
 
 tasks.withType(org.springframework.boot.gradle.run.BootRunTask) {
     systemProperty 'spring.profiles.active', System.getProperty('spring.profiles.active', 'default')

@@ -2,6 +2,8 @@ package fi.vrk.xroad.catalog.collector.mock;
 
 import fi.vrk.xroad.catalog.collector.util.ClientTypeUtil;
 import fi.vrk.xroad.catalog.collector.wsimport.*;
+import fi.vrk.xroad.catalog.collector.wsimport.XRoadServiceIdentifierType;
+
 import lombok.extern.slf4j.Slf4j;
 
 import javax.annotation.Resource;

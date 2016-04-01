@@ -1,15 +1,13 @@
 package fi.vrk.xroad.catalog.collector.actors;
 
-import akka.actor.*;
-import akka.routing.SmallestMailboxPool;
-import akka.util.Timeout;
-import eu.x_road.xsd.xroad.ClientListType;
-import eu.x_road.xsd.xroad.ClientType;
+import akka.actor.ActorRef;
+import akka.actor.Terminated;
+import akka.actor.UntypedActor;
 import fi.vrk.xroad.catalog.collector.extension.SpringExtension;
 import fi.vrk.xroad.catalog.collector.util.ClientTypeUtil;
 import fi.vrk.xroad.catalog.collector.util.XRoadClient;
+import fi.vrk.xroad.catalog.collector.wsimport.ClientType;
 import fi.vrk.xroad.catalog.collector.wsimport.XRoadClientIdentifierType;
-import fi.vrk.xroad.catalog.collector.wsimport.XRoadIdentifierType;
 import fi.vrk.xroad.catalog.collector.wsimport.XRoadObjectType;
 import fi.vrk.xroad.catalog.collector.wsimport.XRoadServiceIdentifierType;
 import fi.vrk.xroad.catalog.persistence.CatalogService;
@@ -21,15 +19,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.RestOperations;
-import scala.concurrent.Await;
-import scala.concurrent.duration.Duration;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collectors;
 
 /**
  * Actor which fetches all clients, and delegates listing
@@ -122,9 +115,9 @@ public class ListMethodsActor extends UntypedActor {
                 List<XRoadServiceIdentifierType> result = XRoadClient.getMethods(webservicesEndpoint, xroadId,
                         clientType);
                 log.info("Received all methods for client {} ", ClientTypeUtil.toString(clientType));
-                log.info("{} ListMethodsResponse {} ", COUNTER, result.stream().map(s -> ClientTypeUtil.toString(s))
-                        .collect
-                        (Collectors.joining(", ")));
+//                log.info("{} ListMethodsResponse {} ", COUNTER, result.stream().map(s -> ClientTypeUtil.toString(s))
+//                        .collect
+//                        (joining(", ")));
 
                 maybeFail();
 

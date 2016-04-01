@@ -1,11 +1,10 @@
 package fi.vrk.xroad.catalog.collector.actors;
 
-import akka.actor.*;
-import akka.event.Logging;
-import akka.event.LoggingAdapter;
+import akka.actor.ActorRef;
+import akka.actor.OneForOneStrategy;
+import akka.actor.Terminated;
+import akka.actor.UntypedActor;
 import akka.routing.SmallestMailboxPool;
-import eu.x_road.xsd.xroad.ClientListType;
-import eu.x_road.xsd.xroad.ClientType;
 import fi.vrk.xroad.catalog.collector.extension.SpringExtension;
 import fi.vrk.xroad.catalog.persistence.CatalogService;
 import lombok.extern.slf4j.Slf4j;
@@ -13,12 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.RestOperations;
 import scala.Option;
-import scala.concurrent.Await;
 import scala.concurrent.duration.Duration;
-
-import java.util.concurrent.TimeUnit;
 
 import static akka.actor.SupervisorStrategy.restart;
 

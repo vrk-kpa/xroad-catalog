@@ -4,7 +4,7 @@ import akka.actor.ActorSystem;
 import akka.dispatch.PriorityGenerator;
 import akka.dispatch.UnboundedPriorityMailbox;
 import com.typesafe.config.Config;
-import eu.x_road.xsd.xroad.ClientType;
+import fi.vrk.xroad.catalog.collector.wsimport.ClientType;
 
 /**
  * Simple priority queue mapping the task priority to the mailbox priority.

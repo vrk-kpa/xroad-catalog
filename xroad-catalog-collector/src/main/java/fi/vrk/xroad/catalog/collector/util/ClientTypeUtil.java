@@ -1,7 +1,7 @@
 package fi.vrk.xroad.catalog.collector.util;
 
-import eu.x_road.xsd.identifiers.XRoadIdentifierType;
-import eu.x_road.xsd.xroad.ClientType;
+
+import fi.vrk.xroad.catalog.collector.wsimport.ClientType;
 
 /**
  * Created by sjk on 26.2.2016.
