@@ -1,4 +1,4 @@
-#!/bin/sh
-sudo -u xroad-catalog /usr/share/xroad/bin/xroad-catalog-collector >& /var/log/xroad/catalog-collector.log
+SHELL=/bin/bash
+0 1 * * * xroad-catalog /usr/share/xroad/bin/xroad-catalog-collector >& /var/log/xroad/catalog-collector.log
 
 

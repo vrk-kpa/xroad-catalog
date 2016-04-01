@@ -52,7 +52,7 @@ public class FetchWsdlActor extends UntypedActor {
             String url = buildUri(service);
             log.info("reading wsdl from url: "  + url);
             String wsdl = restOperations.getForObject(url, String.class);
-            log.debug("received wsdl: " + wsdl);
+            log.info("received wsdl: " + wsdl);
             catalogService.saveWsdl(createSubsystemId(service),
                     createServiceId(service),
                     wsdl);
