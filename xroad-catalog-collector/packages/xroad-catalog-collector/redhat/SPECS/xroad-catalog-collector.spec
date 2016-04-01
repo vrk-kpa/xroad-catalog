@@ -61,9 +61,15 @@ if ! id xroad-catalog > /dev/null 2>&1 ; then
 fi
 
 %post
-#Init database
-sudo -u postgres psql --file=/usr/share/xroad/sql/init_database.sql
-sudo -u postgres psql --file=/usr/share/xroad/sql/create_tables.sql
+#Check if database was already initialized
+if sudo -u postgres  psql  -tAc "SELECT 1 FROM pg_roles WHERE rolname='xroad_catalog'" ; then
+    echo "Database already initialized"
+else
+    #Init database
+    sudo -u postgres psql --file=/usr/share/xroad/sql/init_database.sql
+    sudo -u postgres psql --file=/usr/share/xroad/sql/create_tables.sql
+fi
+
 
 #Run collector once
 sudo -u xroad-catalog /usr/share/xroad/bin/xroad-catalog-collector >& /var/log/xroad/catalog-collector.log
