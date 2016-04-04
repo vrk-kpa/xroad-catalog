@@ -50,9 +50,8 @@ public class FetchWsdlActor extends UntypedActor {
             XRoadServiceIdentifierType service = (XRoadServiceIdentifierType) message;
             // get wsdl
             String url = buildUri(service);
-            log.info("reading wsdl from url: "  + url);
             String wsdl = restOperations.getForObject(url, String.class);
-            log.info("received wsdl: " + wsdl);
+            log.info("url: {} received wsdl: {} for ", url, wsdl);
             catalogService.saveWsdl(createSubsystemId(service),
                     createServiceId(service),
                     wsdl);
