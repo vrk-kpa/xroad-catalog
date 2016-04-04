@@ -1,6 +1,7 @@
 package fi.vrk.xroad.catalog.persistence;
 
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import fi.vrk.xroad.catalog.persistence.entity.*;
@@ -249,6 +250,50 @@ public class CatalogServiceTest {
     }
 
     @Test
+    public void testSaveAddedNewServiceVersions() {
+        // test data:
+        // member (7) -> subsystem (8) -> service (6) -> wsdl (4)
+        Subsystem originalSub = subsystemRepository.findOne(8L);
+        Member originalMember = originalSub.getMember();
+        Service originalService6 = serviceRepository.findOne(6L);
+        // detach, so we dont modify those objects in the next steps
+        testUtil.entityManagerClear();
+
+        Subsystem savedSub = new Subsystem();
+        testUtil.shallowCopyFields(originalSub, savedSub);
+        savedSub.setMember(originalMember);
+        Service savedService6 = new Service();
+        testUtil.shallowCopyFields(originalService6, savedService6);
+        Service savedService6newVersion = new Service();
+        Service savedService6nullVersion = new Service();
+        testUtil.shallowCopyFields(originalService6, savedService6newVersion);
+        testUtil.shallowCopyFields(originalService6, savedService6nullVersion);
+        savedService6newVersion.setServiceVersion(savedService6.getServiceVersion() + "-new");
+        savedService6nullVersion.setServiceVersion(null);
+
+        catalogService.saveServices(savedSub.createKey(), Lists.newArrayList
+                (savedService6, savedService6newVersion, savedService6nullVersion));
+        testUtil.entityManagerFlush();
+        long newVersionId = savedService6newVersion.getId();
+        long nullVersionId = savedService6nullVersion.getId();
+        testUtil.entityManagerClear();
+
+        // read back and verify
+        Subsystem checkedSub = subsystemRepository.findOne(8L);
+        assertEquals(3, checkedSub.getActiveServices().size());
+        testUtil.assertAllSame(originalSub.getStatusInfo(), checkedSub.getStatusInfo());
+        Service checkedService6 = (Service) testUtil.getEntity(checkedSub.getAllServices(), 6L).get();
+        Service checkedService6newVersion = (Service) testUtil.getEntity(checkedSub.getAllServices(), newVersionId).get();
+        Service checkedService6nullVersion = (Service) testUtil.getEntity(checkedSub.getAllServices(), nullVersionId).get();
+
+        assertFalse(checkedService6.getStatusInfo().isRemoved());
+        testUtil.assertFetchedIsOnlyDifferent(originalService6.getStatusInfo(), checkedService6.getStatusInfo());
+        assertNewService(checkedService6newVersion);
+        assertNewService(checkedService6nullVersion);
+    }
+
+
+    @Test
     public void testSaveAddedServices() {
         // test data:
         // member (7) -> subsystem (8) -> service (6) -> wsdl (4)
@@ -273,11 +318,20 @@ public class CatalogServiceTest {
         Service newService = new Service();
         newService.setServiceCode("foocode-asddsa-ads");
         newService.setServiceVersion("v6");
+        Service newServiceNullVersion = new Service();
+        newServiceNullVersion.setServiceCode("foocode-asddsa-ads-null");
+        newServiceNullVersion.setServiceVersion(null);
+        Service newServiceEmptyVersion = new Service();
+        newServiceEmptyVersion.setServiceCode("foocode-asddsa-ads-empty");
+        newServiceEmptyVersion.setServiceVersion("");
 
         catalogService.saveServices(savedSub.createKey(),
-                Lists.newArrayList(savedService5, savedService6,newService));
+                Lists.newArrayList(savedService5, savedService6,newService,
+                        newServiceNullVersion, newServiceEmptyVersion));
         testUtil.entityManagerFlush();
         long newId = newService.getId();
+        long newIdNull = newServiceNullVersion.getId();
+        long newIdEmpty = newServiceEmptyVersion.getId();
         testUtil.entityManagerClear();
 
         // read back and verify
@@ -288,12 +342,12 @@ public class CatalogServiceTest {
         Service checkedService8 = (Service) testUtil.getEntity(checkedSub.getAllServices(), 8L).get();
         Service checkedService9 = (Service) testUtil.getEntity(checkedSub.getAllServices(), 9L).get();
         Service checkedNewService = (Service) testUtil.getEntity(checkedSub.getAllServices(), newId).get();
+        Service checkedNewServiceNull = (Service) testUtil.getEntity(checkedSub.getAllServices(), newIdNull).get();
+        Service checkedNewServiceEmpty = (Service) testUtil.getEntity(checkedSub.getAllServices(), newIdEmpty).get();
 
-        assertFalse(checkedNewService.getStatusInfo().isRemoved());
-        assertNotNull(checkedNewService.getStatusInfo().getFetched());
-        assertNotNull(checkedNewService.getStatusInfo().getCreated());
-        assertNotNull(checkedNewService.getStatusInfo().getChanged());
-        assertNull(checkedNewService.getStatusInfo().getRemoved());
+        assertNewService(checkedNewService);
+        assertNewService(checkedNewServiceNull);
+        assertNewService(checkedNewServiceEmpty);
 
         assertFalse(checkedService5.getStatusInfo().isRemoved());
         assertFalse(checkedService6.getStatusInfo().isRemoved());
@@ -305,12 +359,21 @@ public class CatalogServiceTest {
         testUtil.assertAllSame(originalRemovedService9.getStatusInfo(), checkedService9.getStatusInfo());
     }
 
+    private void assertNewService(Service checkedNewService) {
+        assertFalse(checkedNewService.getStatusInfo().isRemoved());
+        assertNotNull(checkedNewService.getStatusInfo().getFetched());
+        assertNotNull(checkedNewService.getStatusInfo().getCreated());
+        assertNotNull(checkedNewService.getStatusInfo().getChanged());
+        assertNull(checkedNewService.getStatusInfo().getRemoved());
+    }
+
     @Test
     public void testSaveRemovedServices() {
         // test data:
         // member (7) -> subsystem (8) -> service (6) -> wsdl (4)
         // member (7) -> subsystem (8) -> service (8, removed) -> wsdl (6)
         // member (7) -> subsystem (8) -> service (9, removed) -> wsdl (7, removed)
+        // member (7) -> subsystem (8) -> service (10) -> (-)
         Subsystem originalSub = subsystemRepository.findOne(8L);
         Member originalMember = originalSub.getMember();
         Service originalService5 = serviceRepository.findOne(5L);
@@ -334,7 +397,7 @@ public class CatalogServiceTest {
         Subsystem checkedSub = subsystemRepository.findOne(8L);
         testUtil.assertAllSame(originalSub.getStatusInfo(), checkedSub.getStatusInfo());
 
-        assertEquals(Arrays.asList(5L,6L,8L,9L),
+        assertEquals(Arrays.asList(5L,6L,8L,9L,10L),
                 new ArrayList<>(testUtil.getIds(checkedSub.getAllServices())));
         assertTrue(checkedSub.getActiveServices().isEmpty());
         Service checkedService5 = (Service) testUtil.getEntity(checkedSub.getAllServices(), 5L).get();

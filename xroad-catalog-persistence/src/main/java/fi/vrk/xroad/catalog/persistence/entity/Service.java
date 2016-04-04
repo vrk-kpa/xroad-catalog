@@ -4,12 +4,9 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-import org.hibernate.annotations.LazyToOne;
-import org.hibernate.annotations.LazyToOneOption;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -26,6 +23,7 @@ public class Service {
     @ManyToOne
     @JoinColumn(name = "SUBSYSTEM_ID")
     private Subsystem subsystem;
+    @Column(nullable = false)
     private String serviceCode;
     private String serviceVersion;
     @Embedded

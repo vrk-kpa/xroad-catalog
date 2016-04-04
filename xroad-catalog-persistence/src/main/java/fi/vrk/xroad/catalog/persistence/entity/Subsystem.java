@@ -26,6 +26,7 @@ public class Subsystem {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SUBSYSTEM_GEN")
     @SequenceGenerator(name = "SUBSYSTEM_GEN", sequenceName = "SUBSYSTEM_ID_SEQ", allocationSize = 1)
     private long id;
+    @Column(nullable = false)
     private String subsystemCode;
     @ManyToOne
     @JoinColumn(name = "MEMBER_ID")

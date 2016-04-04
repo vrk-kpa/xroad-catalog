@@ -12,9 +12,9 @@ public interface SubsystemRepository extends CrudRepository<Subsystem, Long> {
             + "AND s.member.memberClass = :memberClass "
             + "AND s.member.memberCode = :memberCode "
             + "AND s.statusInfo.removed IS NULL")
-    Subsystem findByNaturalKey(@Param("xRoadInstance") String xRoadInstance,
-                            @Param("memberClass") String memberClass,
-                            @Param("memberCode") String memberCode,
-                            @Param("subsystemCode") String subsystemCode);
+    Subsystem findActiveByNaturalKey(@Param("xRoadInstance") String xRoadInstance,
+                                     @Param("memberClass") String memberClass,
+                                     @Param("memberCode") String memberCode,
+                                     @Param("subsystemCode") String subsystemCode);
 }
 

@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.Basic;
+import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.FetchType;
 import java.time.LocalDateTime;
@@ -17,17 +18,22 @@ import java.util.Date;
 @Setter
 public class StatusInfo {
 
+    @Column(nullable = false)
     private LocalDateTime created;
     /**
      * When data was changed somehow, whether it was updated, created or removed
      */
+    @Column(nullable = false)
     private LocalDateTime changed;
     /**
      * When data was last time fetched from the source (regardless of whether there
      * were any changes). For removed entities, fetched it updated the first time
      * we receive "missing item" from data, but not after that
      */
+    @Column(nullable = false)
     private LocalDateTime fetched;
+
+    @Column(nullable = true)
     private LocalDateTime removed;
 
     /**

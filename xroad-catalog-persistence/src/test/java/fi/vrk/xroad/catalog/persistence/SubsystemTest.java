@@ -27,18 +27,18 @@ public class SubsystemTest {
     TestUtil testUtil;
 
     @Test
-    public void testGetActiveSubsystems() {
-        // 5+6 are active, 8+9 are removed
+    public void testGetActiveServices() {
+        // 5+6+10 are active, 8+9 are removed
         Subsystem sub = subsystemRepository.findOne(8L);
-        assertEquals(Arrays.asList(5L,6L),
+        assertEquals(Arrays.asList(5L,6L,10L),
                 new ArrayList<Long>(testUtil.getIds(sub.getActiveServices())));
     }
 
     @Test
-    public void testGetAllSubsystems() {
-        // 5+6 are active, 8+9 are removed
+    public void testGetAllServices() {
+        // 5+6+10 are active, 8+9 are removed
         Subsystem sub = subsystemRepository.findOne(8L);
-        assertEquals(Arrays.asList(5L,6L,8L,9L),
+        assertEquals(Arrays.asList(5L,6L,8L,9L,10L),
                 new ArrayList<Long>(testUtil.getIds(sub.getAllServices())));
     }
 

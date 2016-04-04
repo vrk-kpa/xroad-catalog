@@ -48,7 +48,7 @@ public class CatalogServiceImpl implements CatalogService {
 
     @Override
     public Wsdl getWsdl(String externalId) {
-        List<Wsdl> matches = wsdlRepository.findByExternalId(externalId);
+        List<Wsdl> matches = wsdlRepository.findAnyByExternalId(externalId);
         if (matches.size() > 1) {
             throw new IllegalStateException("multiple matches found to " + externalId + ": " + matches);
         } else if (matches.size() == 1) {
@@ -125,7 +125,7 @@ public class CatalogServiceImpl implements CatalogService {
     @Override
     public void saveServices(SubsystemId subsystemId, Collection<Service> services) {
         assert subsystemId != null;
-        Subsystem oldSubsystem = subsystemRepository.findByNaturalKey(subsystemId.getXRoadInstance(),
+        Subsystem oldSubsystem = subsystemRepository.findActiveByNaturalKey(subsystemId.getXRoadInstance(),
                 subsystemId.getMemberClass(), subsystemId.getMemberCode(),
                 subsystemId.getSubsystemCode());
         if (oldSubsystem == null) {
@@ -164,10 +164,20 @@ public class CatalogServiceImpl implements CatalogService {
     public void saveWsdl(SubsystemId subsystemId, ServiceId serviceId, String wsdlString) {
         assert subsystemId != null;
         assert serviceId != null;
-        Service oldService = serviceRepository.findByNaturalKey(subsystemId.getXRoadInstance(),
-                subsystemId.getMemberClass(), subsystemId.getMemberCode(),
-                subsystemId.getSubsystemCode(), serviceId.getServiceCode(),
-                serviceId.getServiceVersion());
+        Service oldService = null;
+        // bit ugly this one, would be a little cleaner if
+        // https://jira.spring.io/browse/DATAJPA-209 was resolved
+        if (serviceId.getServiceVersion() == null) {
+            oldService = serviceRepository.findActiveNullVersionByNaturalKey(
+                    subsystemId.getXRoadInstance(),
+                    subsystemId.getMemberClass(), subsystemId.getMemberCode(),
+                    subsystemId.getSubsystemCode(), serviceId.getServiceCode());
+        } else {
+            oldService = serviceRepository.findActiveByNaturalKey(subsystemId.getXRoadInstance(),
+                    subsystemId.getMemberClass(), subsystemId.getMemberCode(),
+                    subsystemId.getSubsystemCode(), serviceId.getServiceCode(),
+                    serviceId.getServiceVersion());
+        }
         if (oldService == null) {
             throw new IllegalStateException("service " + serviceId + " not found!");
         }

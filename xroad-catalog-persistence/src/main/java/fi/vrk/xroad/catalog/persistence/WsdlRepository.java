@@ -10,7 +10,7 @@ import java.util.List;
 
 public interface WsdlRepository extends CrudRepository<Wsdl, Long> {
     /**
-     * Only returns non-removed items
+     * Returns also removed items
      */
-    List<Wsdl> findByExternalId(String externalId);
+    List<Wsdl> findAnyByExternalId(String externalId);
 }

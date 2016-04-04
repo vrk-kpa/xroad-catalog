@@ -32,10 +32,10 @@ public class MemberRepositoryTest {
 
     @Test
     public void testFindByNaturalKey() {
-        Member member = memberRepository.findByNaturalKey("dev-cs", "PUB", "14151328");
+        Member member = memberRepository.findActiveByNaturalKey("dev-cs", "PUB", "14151328");
         assertNotNull(member);
         assertNotNull(member.getStatusInfo());
-        member = memberRepository.findByNaturalKey("dev-cs-NOT-EXISTING", "PUB", "14151328");
+        member = memberRepository.findActiveByNaturalKey("dev-cs-NOT-EXISTING", "PUB", "14151328");
         assertNull(member);
     }
 
@@ -54,7 +54,7 @@ public class MemberRepositoryTest {
         Member member = createTestMember(name);
         memberRepository.save(member);
 
-        Member peek = memberRepository.findByNaturalKey
+        Member peek = memberRepository.findActiveByNaturalKey
                 (member.getXRoadInstance(),
                         member.getMemberClass(),
                         member.getMemberCode());
@@ -68,7 +68,7 @@ public class MemberRepositoryTest {
         testUtil.entityManagerFlush();
         testUtil.entityManagerClear();
 
-        Member savedRead = memberRepository.findByNaturalKey
+        Member savedRead = memberRepository.findActiveByNaturalKey
                 (member.getXRoadInstance(),
                 member.getMemberClass(),
                 member.getMemberCode());
@@ -82,11 +82,12 @@ public class MemberRepositoryTest {
         member.setXRoadInstance("xroadinstance-" + name);
         member.setMemberClass("mclass-" + name);
         member.setMemberCode("mcode-" + name);
+        member.getStatusInfo().setTimestampsForNew(LocalDateTime.now());
 
         Subsystem ss1 = new Subsystem();
         Subsystem ss2 = new Subsystem();
         ss1.setSubsystemCode(name + "ss1");
-        ss1.setSubsystemCode(name + "ss2");
+        ss2.setSubsystemCode(name + "ss2");
         ss1.setMember(member);
         ss2.setMember(member);
         ss1.getStatusInfo().setTimestampsForNew(LocalDateTime.now());
@@ -97,6 +98,8 @@ public class MemberRepositoryTest {
 
         Service s1 = new Service();
         Service s2 = new Service();
+        s1.getStatusInfo().setTimestampsForNew(LocalDateTime.now());
+        s2.getStatusInfo().setTimestampsForNew(LocalDateTime.now());
         s1.setSubsystem(ss1);
         s2.setSubsystem(ss1);
         ss2.setServices(new HashSet<>());
@@ -106,6 +109,7 @@ public class MemberRepositoryTest {
         s2.setServiceCode(name + "service2");
 
         Wsdl wsdl = new Wsdl();
+        wsdl.getStatusInfo().setTimestampsForNew(LocalDateTime.now());
         s1.setWsdl(wsdl);
         wsdl.setService(s1);
         wsdl.initializeExternalId();
@@ -137,7 +141,7 @@ public class MemberRepositoryTest {
         for (Subsystem s: member7.getActiveSubsystems()) {
             allServices7.addAll(s.getAllServices());
         }
-        assertEquals(5, allServices7.size());
+        assertEquals(6, allServices7.size());
         ArrayList<Wsdl> allWsdls7 = new ArrayList<>();
         for (Service s: allServices7) {
             if (s.getWsdl() != null) {
@@ -148,6 +152,7 @@ public class MemberRepositoryTest {
         // member (7) -> subsystem (8) -> service (6) -> wsdl (4)
         // member (7) -> subsystem (8) -> service (8, removed) -> wsdl (6)
         // member (7) -> subsystem (8) -> service (9, removed) -> wsdl (7, removed)
+        // member (7) -> subsystem (8) -> service (10) -> (-)
         // member (7) -> subsystem (9) -> service (7) -> wsdl (5)
         assertEquals(4, allWsdls7.size());
     }

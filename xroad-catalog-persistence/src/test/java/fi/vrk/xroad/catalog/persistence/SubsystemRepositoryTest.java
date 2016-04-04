@@ -27,13 +27,13 @@ public class SubsystemRepositoryTest {
     @Test
     public void testFindByNaturalKey() {
         // 1->12 (subsystem_a3_removed) = removed, 1->1 (subsystem_a1) = ok, foo = not existing
-        Subsystem subsystem = subsystemRepository.findByNaturalKey("dev-cs", "PUB", "14151328",
+        Subsystem subsystem = subsystemRepository.findActiveByNaturalKey("dev-cs", "PUB", "14151328",
                 "subsystem_a1");
         assertNotNull(subsystem);
-        subsystem = subsystemRepository.findByNaturalKey("dev-cs", "PUB", "14151328",
+        subsystem = subsystemRepository.findActiveByNaturalKey("dev-cs", "PUB", "14151328",
                 "subsystem_a3_removed");
         assertNull(subsystem);
-        subsystem = subsystemRepository.findByNaturalKey("dev-cs", "PUB", "14151328",
+        subsystem = subsystemRepository.findActiveByNaturalKey("dev-cs", "PUB", "14151328",
                 "N/A code");
         assertNull(subsystem);
     }

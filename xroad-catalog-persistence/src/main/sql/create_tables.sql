@@ -42,7 +42,7 @@ CREATE TABLE service (
     id bigint NOT NULL,
     subsystem_id bigint NOT NULL,
     service_code text NOT NULL,
-    service_version text NOT NULL,
+    service_version text,
     created timestamp with time zone NOT NULL,
     changed timestamp with time zone NOT NULL,
     fetched timestamp with time zone NOT NULL,

@@ -70,6 +70,8 @@ INSERT INTO service (id, subsystem_id, service_code, service_version, created, c
 VALUES (8, 8, 'removed-service_7-1-3', 'v1', '2016-01-01 00:00:00+02', '2016-01-01 00:00:00+02', '2016-01-01 00:00:00+02', '2016-01-01 00:00:00+02');
 INSERT INTO service (id, subsystem_id, service_code, service_version, created, changed, fetched,  removed)
 VALUES (9, 8, 'removed-service_7-1-4', 'v1', '2016-01-01 00:00:00+02', '2016-01-01 00:00:00+02', '2016-01-01 00:00:00+02', '2016-01-01 00:00:00+02');
+INSERT INTO service (id, subsystem_id, service_code, service_version, created, changed, fetched,  removed)
+VALUES (10, 8, 'service-with-null-version', NULL, '2016-01-01 00:00:00+02', '2016-01-01 00:00:00+02', '2016-01-01 00:00:00+02', NULL);
 
 INSERT INTO wsdl (id, service_id, data, external_id, created, changed, fetched,  removed)
 VALUES (3, 4, '<?xml version="1.0" standalone="no"?><wsdl-6-1-1-1-changed/>', '1000', '2016-01-01 00:00:00+02', '2017-01-02 00:00:00+02', '2017-01-02 00:00:00+02', NULL);

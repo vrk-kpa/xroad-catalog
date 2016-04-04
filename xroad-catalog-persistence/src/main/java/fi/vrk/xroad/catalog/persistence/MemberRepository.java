@@ -39,8 +39,8 @@ public interface MemberRepository extends CrudRepository<Member, Long> {
             + "AND m.memberClass = :memberClass "
             + "AND m.memberCode = :memberCode "
             + "AND m.statusInfo.removed IS NULL")
-    Member findByNaturalKey(@Param("xRoadInstance") String xRoadInstance,
-                            @Param("memberClass") String memberClass,
-                            @Param("memberCode") String memberCode);
+    Member findActiveByNaturalKey(@Param("xRoadInstance") String xRoadInstance,
+                                  @Param("memberClass") String memberClass,
+                                  @Param("memberCode") String memberCode);
 
 }

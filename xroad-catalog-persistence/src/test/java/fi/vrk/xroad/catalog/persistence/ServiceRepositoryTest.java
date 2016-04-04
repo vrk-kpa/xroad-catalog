@@ -28,15 +28,19 @@ public class ServiceRepositoryTest {
     public void testFindByNaturalKey() {
         // member(7) -> ss (8) -> service(6) = ok [dummy-service_7-1-2/v1]
         // member(7) -> ss (8) -> service(8) = removed [removed-service_7-1-3/v1]
+        // member(7) -> ss (8) -> service(10) = ok, null service code [service-with-null-version/null]
         // member(7) -> ss (8) -> service(???) = non-existent
-        Service service = serviceRepository.findByNaturalKey("dev-cs", "PUB", "15",
+        Service service = serviceRepository.findActiveByNaturalKey("dev-cs", "PUB", "15",
                 "subsystem_7-1", "dummy-service_7-1-2", "v1");
         assertNotNull(service);
-        service = serviceRepository.findByNaturalKey("dev-cs", "PUB", "15",
+        service = serviceRepository.findActiveByNaturalKey("dev-cs", "PUB", "15",
                 "subsystem_7-1", "removed-service_7-1-3", "v1");
         assertNull(service);
-        service = serviceRepository.findByNaturalKey("dev-cs", "PUB", "15",
+        service = serviceRepository.findActiveByNaturalKey("dev-cs", "PUB", "15",
                 "subsystem_7-1", "N/A-service", "v1");
         assertNull(service);
+        service = serviceRepository.findActiveNullVersionByNaturalKey("dev-cs", "PUB", "15",
+                "subsystem_7-1", "service-with-null-version");
+        assertNotNull(service);
     }
 }

@@ -81,9 +81,13 @@ public class Member {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "MEMBER_GEN")
     @SequenceGenerator(name = "MEMBER_GEN", sequenceName = "MEMBER_ID_SEQ", allocationSize = 1)
     private long id;
+    @Column(nullable = false)
     private String xRoadInstance;
+    @Column(nullable = false)
     private String memberClass;
+    @Column(nullable = false)
     private String memberCode;
+    @Column(nullable = false)
     private String name;
     @Embedded
     private StatusInfo statusInfo = new StatusInfo();
