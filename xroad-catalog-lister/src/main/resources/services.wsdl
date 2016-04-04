@@ -200,10 +200,6 @@ http://x-road.eu/xsd/identifiers ">
 
             <xs:complexType name="WSDL">
                 <xs:sequence>
-                    <!-- TODO: remove data -->
-                    <xs:element name="data" type="xs:string"/>
-                    <!-- TODO: remove dataHash -->
-                    <xs:element name="dataHash" type="xs:string"/>
                     <xs:element name="externalId" type="xs:string"/>
                     <xs:element name="created" type="xs:dateTime"/>
                     <xs:element name="changed" type="xs:dateTime"/>

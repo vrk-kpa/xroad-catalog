@@ -108,7 +108,6 @@ public class JaxbConverter {
         cw.setFetched(toXmlGregorianCalendar(wsdl.getStatusInfo().getFetched()));
         cw.setRemoved(toXmlGregorianCalendar(wsdl.getStatusInfo().getRemoved()));
         cw.setExternalId(wsdl.getExternalId());
-        cw.setData(wsdl.getData());
         return cw;
     }
 

@@ -29,8 +29,8 @@ public class Application {
     @Bean
     public CommandLineRunner demo(MemberRepository repository) {
         return (args) -> {
-            Iterable members = catalogService.getActiveMembers();
-            log.info("found " + Iterables.size(catalogService.getActiveMembers()) + " members.");
+//            Iterable members = catalogService.getActiveMembers();
+//            log.info("found " + Iterables.size(catalogService.getActiveMembers()) + " members.");
         };
     }
 

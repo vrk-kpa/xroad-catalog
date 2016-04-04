@@ -58,28 +58,34 @@ public class CatalogServiceTest {
     }
 
     @Test
-    public void testGetAllLoadsCorrectItems() throws InterruptedException {
-        Iterable<Member> members = catalogService.getAllMembers();
-        log.info("members loaded");
-        Thread.sleep(1000);
+    public void testEntityTreesFetchedCorrectly() throws InterruptedException {
+        assertEntityTreeFetchedCorrectly(catalogService.getAllMembers());
+        assertEntityTreeFetchedCorrectly(catalogService.getActiveMembers());
+        LocalDateTime modifiedSince1800 = LocalDateTime.of(1800,1,1,0,0);
+        assertEntityTreeFetchedCorrectly(catalogService.getAllMembers(modifiedSince1800));
+        assertEntityTreeFetchedCorrectly(catalogService.getActiveMembers(modifiedSince1800));
+    }
+
+    private void assertEntityTreeFetchedCorrectly(Iterable<Member> members) {
+        log.info("members loaded, detaching");
         for (Member m: members) {
             testUtil.entityManagerDetach(m);
         }
         log.info("all members detached");
-        Thread.sleep(1000);
         testUtil.entityManagerClear();
         // member - subsystem - service should be fetched
-        // service - wdsl should NOT be fetched
+        // service - wdsl should also be fetched
+        // wsdl.data should not be fetched but this would require hibernate
+        // bytecode enhancement, and is too much of a pain
         Member m = (Member) testUtil.getEntity(members, 1L).get();
         assertNotNull(m);
         Subsystem ss = (Subsystem) testUtil.getEntity(m.getAllSubsystems(), 1L).get();
         assertNotNull(ss);
         Service s = (Service) testUtil.getEntity(ss.getAllServices(), 2L).get();
         assertNotNull(s);
-        try {
-            log.info("data {}", s.getWsdl().getData());
-            fail("should have thrown exception since wsdl is not fetched");
-        } catch (Exception expected) {expected.printStackTrace();}
+        Wsdl wsdl = s.getWsdl();
+        assertNotNull(wsdl);
+        assertNotNull(wsdl.getData());
     }
 
     @Test

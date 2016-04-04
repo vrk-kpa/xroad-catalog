@@ -1,7 +1,7 @@
 package fi.vrk.xroad.catalog.lister;
 
+import com.google.common.collect.Lists;
 import fi.vrk.xroad.catalog.persistence.CatalogService;
-import fi.vrk.xroad.catalog.persistence.entity.Member;
 import fi.vrk.xroad.catalog.persistence.entity.Wsdl;
 import fi.vrk.xroad.xroad_catalog_lister.*;
 import lombok.extern.slf4j.Slf4j;
@@ -11,9 +11,6 @@ import org.springframework.ws.server.endpoint.annotation.PayloadRoot;
 import org.springframework.ws.server.endpoint.annotation.RequestPayload;
 import org.springframework.ws.server.endpoint.annotation.ResponsePayload;
 
-import java.time.LocalDateTime;
-import java.util.Collection;
-
 @Endpoint
 @Slf4j
 public class ServiceEndpoint {
@@ -21,6 +18,9 @@ public class ServiceEndpoint {
 
 	@Autowired
 	private CatalogService catalogService;
+
+    @Autowired
+    private JaxbCatalogService jaxbCatalogService;
 
     @Autowired
     private JaxbConverter jaxbConverter;
@@ -32,18 +32,8 @@ public class ServiceEndpoint {
 		ListMembersResponse response = new ListMembersResponse();
 		response.setMemberList(new MemberList());
 
-        Iterable<Member> members;
-        if (request.getChangedAfter() == null) {
-            log.info("fetching all active members");
-            members = catalogService.getActiveMembers();
-        } else {
-            log.info("fetching active members since xmlGregorianDate: " + request.getChangedAfter());
-            LocalDateTime changedAfter = request.getChangedAfter().toGregorianCalendar()
-                    .toZonedDateTime().toLocalDateTime();
-            members = catalogService.getActiveMembers(changedAfter);
-        }
-        Collection<fi.vrk.xroad.xroad_catalog_lister.Member> jaxbMembers = jaxbConverter.convertMembers(members, false);
-        response.getMemberList().getMembers().addAll(jaxbMembers);
+        Iterable<Member> members = jaxbCatalogService.getAllMembers(request.getChangedAfter());
+        response.getMemberList().getMembers().addAll(Lists.newArrayList(members));
 		return response;
 	}
 
