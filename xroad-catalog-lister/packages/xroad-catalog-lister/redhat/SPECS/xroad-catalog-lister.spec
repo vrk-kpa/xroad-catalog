@@ -28,6 +28,7 @@ X-Road service listing
 mkdir -p %{buildroot}%{jlib}
 mkdir -p %{buildroot}%{_unitdir}
 mkdir -p %{buildroot}/usr/share/xroad/bin
+mkdir -p %{buildroot}/var/log/xroad/
 cp -p %{src}/../../../build/libs/xroad-catalog-lister.jar %{buildroot}%{jlib}
 cp -p %{src}/SOURCES/%{name}.service %{buildroot}%{_unitdir}
 cp -p %{src}/SOURCES/%{name} %{buildroot}/usr/share/xroad/bin
