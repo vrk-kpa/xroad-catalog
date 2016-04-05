@@ -1,0 +1,14 @@
+[Unit]
+Description=X-Road Catalog Collector
+After=network.target
+
+[Service]
+PermissionsStartOnly=true
+User=xroad-catalog
+Group=xroad-catalog
+ExecStart=/usr/share/xroad/bin/xroad-catalog-collector
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
+

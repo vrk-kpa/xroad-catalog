@@ -30,7 +30,7 @@ X-Road service listing
 mkdir -p %{buildroot}%{jlib}
 mkdir -p %{buildroot}%{conf}
 mkdir -p %{buildroot}%{_unitdir}
-mkdir -p %{buildroot}/etc/cron.d
+#mkdir -p %{buildroot}/etc/cron.d
 mkdir -p %{buildroot}/usr/share/xroad/bin
 mkdir -p %{buildroot}/usr/share/xroad/sql
 mkdir -p %{buildroot}/var/log/xroad/
@@ -38,9 +38,10 @@ cp -p %{src}/../../../build/libs/xroad-catalog-collector.jar %{buildroot}%{jlib}
 cp -p %{src}/../../../build/resources/main/application-production.properties %{buildroot}%{conf}
 cp -p %{src}/../../../build/resources/main/application.conf %{buildroot}%{conf}
 cp -p  ../../../../../xroad-catalog-persistence/src/main/sql/*.sql %{buildroot}/usr/share/xroad/sql
-cp -p %{src}/SOURCES/%{name}.cron %{buildroot}/etc/cron.d/%{name}
+#cp -p %{src}/SOURCES/%{name}.cron %{buildroot}/etc/cron.d/%{name}
 cp -p %{src}/SOURCES/%{name} %{buildroot}/usr/share/xroad/bin
-touch %{buildroot}/var/log/xroad/catalog-collector.log
+cp -p %{src}/SOURCES/%{name}.service %{buildroot}%{_unitdir}
+touch %{buildroot}/var/log/xroad/%{name}.log
 
 %clean
 rm -rf %{buildroot}
@@ -48,12 +49,13 @@ rm -rf %{buildroot}
 %files
 %attr(644,root,root) /usr/share/xroad/sql/init_database.sql
 %attr(644,root,root) /usr/share/xroad/sql/create_tables.sql
-%attr(755,root,root) /etc/cron.daily/%{name}
-%attr(755,xroad-catalog,xroad-catalog) %{jlib}/xroad-catalog-collector.jar
+#%attr(755,root,root) /etc/cron.d/%{name}
+%attr(644,root,root) %{_unitdir}/%{name}.service
+%attr(755,xroad-catalog,xroad-catalog) %{jlib}/%{name}.jar
 %attr(744,xroad-catalog,xroad-catalog) /usr/share/xroad/bin/%{name}
 %attr(644,xroad-catalog,xroad-catalog) %{conf}/application.conf
 %attr(644,xroad-catalog,xroad-catalog) %{conf}/application-production.properties
-%attr(755,xroad-catalog,xroad-catalog) /var/log/xroad/catalog-collector.log
+%attr(755,xroad-catalog,xroad-catalog) /var/log/xroad/%{name}.log
 
 %pre
 if ! id xroad-catalog > /dev/null 2>&1 ; then
@@ -71,14 +73,13 @@ else
 fi
 
 
-#Run collector once
-sudo -u xroad-catalog /usr/share/xroad/bin/xroad-catalog-collector >& /var/log/xroad/catalog-collector.log
-
+%systemd_post %{name}.service
 
 %preun
-
+%systemd_preun %{name}.service
 
 %postun
+%systemd_postun_with_restart %{name}.service
 
 
 %changelog

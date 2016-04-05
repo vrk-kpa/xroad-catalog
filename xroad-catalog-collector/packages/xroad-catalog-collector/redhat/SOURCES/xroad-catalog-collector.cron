@@ -1,4 +1,4 @@
 SHELL=/bin/bash
-0 1 * * * xroad-catalog /usr/share/xroad/bin/xroad-catalog-collector >& /var/log/xroad/catalog-collector.log
+0 1 * * * root xroad-catalog service xroad-catalog-collector restart
 
 

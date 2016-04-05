@@ -51,7 +51,7 @@ public class FetchWsdlActor extends UntypedActor {
             // get wsdl
             String url = buildUri(service);
             String wsdl = restOperations.getForObject(url, String.class);
-            log.info("url: {} received wsdl: {} for ", url, wsdl);
+            log.debug("url: {} received wsdl: {} for ", url, wsdl);
             catalogService.saveWsdl(createSubsystemId(service),
                     createServiceId(service),
                     wsdl);

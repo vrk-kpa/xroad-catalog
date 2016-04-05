@@ -31,14 +31,16 @@ mkdir -p %{buildroot}/usr/share/xroad/bin
 cp -p %{src}/../../../build/libs/xroad-catalog-lister.jar %{buildroot}%{jlib}
 cp -p %{src}/SOURCES/%{name}.service %{buildroot}%{_unitdir}
 cp -p %{src}/SOURCES/%{name} %{buildroot}/usr/share/xroad/bin
+touch %{buildroot}/var/log/xroad/%{name}.log
 
 %clean
 rm -rf %{buildroot}
 
 %files
-%attr(644,root,root) %{_unitdir}/xroad-catalog-lister.service
-%attr(755,xroad-catalog,xroad-catalog) %{jlib}/xroad-catalog-lister.jar
+%attr(644,root,root) %{_unitdir}/%{name}.service
+%attr(755,xroad-catalog,xroad-catalog) %{jlib}/%{name}.jar
 %attr(744,xroad-catalog,xroad-catalog) /usr/share/xroad/bin/%{name}
+%attr(755,xroad-catalog,xroad-catalog) /var/log/xroad/%{name}.log
 
 %pre
 if ! id xroad-catalog > /dev/null 2>&1 ; then
@@ -46,13 +48,13 @@ if ! id xroad-catalog > /dev/null 2>&1 ; then
 fi
 
 %post
-%systemd_post xroad-catalog-lister.service
+%systemd_post %{name}.service
 
 %preun
-%systemd_preun xroad-catalog-lister.service
+%systemd_preun %{name}.service
 
 %postun
-%systemd_postun_with_restart xroad-catalog-lister.service
+%systemd_postun_with_restart %{name}.service
 
 %changelog
 
