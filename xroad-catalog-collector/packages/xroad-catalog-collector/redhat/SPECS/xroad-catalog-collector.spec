@@ -55,7 +55,7 @@ rm -rf %{buildroot}
 %attr(744,xroad-catalog,xroad-catalog) /usr/share/xroad/bin/%{name}
 %attr(644,xroad-catalog,xroad-catalog) %{conf}/application.conf
 %attr(644,xroad-catalog,xroad-catalog) %{conf}/application-production.properties
-%attr(755,xroad-catalog,xroad-catalog) /var/log/xroad/%{name}.log
+%attr(664,xroad-catalog,xroad-catalog) /var/log/xroad/%{name}.log
 
 %pre
 if ! id xroad-catalog > /dev/null 2>&1 ; then
