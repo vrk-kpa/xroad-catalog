@@ -1,4 +1,4 @@
 #!/bin/sh
 set -x
-exec ${JAVA_HOME}/bin/java -Dserver.port=8070 -Dspring.profiles.active=production -jar /usr/lib/xroad-catalog/xroad-catalog-lister.jar >& /var/log/xroad/xroad-catalog-lister.log
+exec ${JAVA_HOME}/bin/java -Dserver.port=8070 -Dspring.profiles.active=production -jar /usr/lib/xroad-catalog/xroad-catalog-lister.jar
 

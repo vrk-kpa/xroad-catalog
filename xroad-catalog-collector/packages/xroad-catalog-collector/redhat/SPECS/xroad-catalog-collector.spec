@@ -41,7 +41,6 @@ cp -p  ../../../../../xroad-catalog-persistence/src/main/sql/*.sql %{buildroot}/
 #cp -p %{src}/SOURCES/%{name}.cron %{buildroot}/etc/cron.d/%{name}
 cp -p %{src}/SOURCES/%{name} %{buildroot}/usr/share/xroad/bin
 cp -p %{src}/SOURCES/%{name}.service %{buildroot}%{_unitdir}
-touch %{buildroot}/var/log/xroad/%{name}.log
 
 %clean
 rm -rf %{buildroot}
@@ -55,7 +54,6 @@ rm -rf %{buildroot}
 %attr(744,xroad-catalog,xroad-catalog) /usr/share/xroad/bin/%{name}
 %attr(644,xroad-catalog,xroad-catalog) %{conf}/application.conf
 %attr(644,xroad-catalog,xroad-catalog) %{conf}/application-production.properties
-%attr(664,xroad-catalog,xroad-catalog) /var/log/xroad/%{name}.log
 
 %pre
 if ! id xroad-catalog > /dev/null 2>&1 ; then
