@@ -37,9 +37,7 @@ public interface MockHttpServer {
 
     default void stopServer() {
         log.info("Stopping local http server {} in port {}", getServer(), PORT);
-        // TODO: activate
-        log.info("(not actually stopping anything now");
-//        getServer().stop(0);
+        getServer().stop(0);
 
     }
 

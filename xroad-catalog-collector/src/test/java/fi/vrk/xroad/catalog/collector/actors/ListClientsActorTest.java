@@ -85,9 +85,7 @@ public class ListClientsActorTest extends TestKit {
 
         listClientsActor = clientsRef.underlyingActor();
 
-        //TODO find a better way to set the host in test
         ReflectionTestUtils.setField(listClientsActor, "host", "http://localhost");
-
 
         MockitoAnnotations.initMocks(this);
     }
