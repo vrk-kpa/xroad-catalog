@@ -25,7 +25,7 @@ import static akka.actor.SupervisorStrategy.restart;
 @Component
 @Scope("prototype")
 @Slf4j
-public class Supervisor extends UntypedActor {
+public class Supervisor extends XRoadCatalogActor {
 
     public static final String START_COLLECTING = "StartCollecting";
 
@@ -75,27 +75,14 @@ public class Supervisor extends UntypedActor {
     }
 
     @Override
-    public void onReceive(Object message) throws Exception {
+    protected boolean handleMessage(Object message) throws Exception {
 
         if (START_COLLECTING.equals(message)) {
             listClientsPoolRouter.tell(ListClientsActor.START_COLLECTING, getSelf());
-        } else if (message instanceof Terminated) {
-            throw new RuntimeException("Terminated: " + message);
+            return true;
         } else {
-            log.error("Unable to handle message {}", message);
+            return false;
         }
-    }
-
-    @Override
-    public void postStop() throws Exception {
-        log.info("postStop");
-        super.postStop();
-    }
-
-    @Override
-    public void preRestart(Throwable reason, Option<Object> message) throws Exception {
-        log.info("preRestart {} {} {} ", this.hashCode(), reason, message);
-        super.preRestart(reason, message);
     }
 
 }

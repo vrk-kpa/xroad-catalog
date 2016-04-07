@@ -24,7 +24,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 @Component
 @Scope("prototype")
 @Slf4j
-public class FetchWsdlActor extends UntypedActor {
+public class FetchWsdlActor extends XRoadCatalogActor {
 
     private static AtomicInteger COUNTER = new AtomicInteger(0);
     private static final String WSDL_CONTEXT_PATH = "/wsdl";
@@ -43,8 +43,9 @@ public class FetchWsdlActor extends UntypedActor {
     @Autowired
     protected CatalogService catalogService;
 
+
     @Override
-    public void onReceive(Object message) throws Exception {
+    protected boolean handleMessage(Object message) throws Exception {
         if (message instanceof XRoadServiceIdentifierType) {
             log.info("fetching wsdl [{}] {}", COUNTER.addAndGet(1), message);
             XRoadServiceIdentifierType service = (XRoadServiceIdentifierType) message;
@@ -56,11 +57,9 @@ public class FetchWsdlActor extends UntypedActor {
                     createServiceId(service),
                     wsdl);
             log.info("saved wsdl successfully");
-
-        } else if (message instanceof Terminated) {
-            throw new RuntimeException("Terminated: " + message);
+            return true;
         } else {
-            log.error("Unable to handle message {}", message);
+            return false;
         }
     }
 

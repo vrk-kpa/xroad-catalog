@@ -33,7 +33,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 @Component
 @Scope("prototype")
 @Slf4j
-public class ListClientsActor extends UntypedActor {
+public class ListClientsActor extends XRoadCatalogActor {
 
     public static final String START_COLLECTING = "StartCollecting";
 
@@ -69,12 +69,6 @@ public class ListClientsActor extends UntypedActor {
         super.preStart();
     }
 
-    @Override
-    public void postStop() throws Exception {
-        log.info("postStop {}", this.hashCode());
-        super.postStop();
-    }
-
     private void maybeFail() {
         if (FORCE_FAILURES) {
             if (COUNTER.get() % 3 == 0) {
@@ -84,8 +78,10 @@ public class ListClientsActor extends UntypedActor {
         }
     }
 
+
+
     @Override
-    public void onReceive(Object message) throws Exception {
+    protected boolean handleMessage(Object message) throws Exception {
 
         if (START_COLLECTING.equals(message)) {
 
@@ -123,10 +119,9 @@ public class ListClientsActor extends UntypedActor {
                 }
             }
             log.info("all clients (" + (counter-1) + ") sent to actor");
-        } else if (message instanceof Terminated) {
-            throw new RuntimeException("Terminated: " + message);
+            return true;
         } else {
-            log.error("Unable to handle message {}", message);
+            return false;
         }
     }
 }
