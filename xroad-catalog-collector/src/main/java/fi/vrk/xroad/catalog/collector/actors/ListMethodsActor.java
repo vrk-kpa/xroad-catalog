@@ -69,15 +69,6 @@ public class ListMethodsActor extends XRoadCatalogActor {
         super.preStart();
     }
 
-    private void maybeFail() {
-        if (FORCE_FAILURES) {
-            if (COUNTER.get() % 3 == 0) {
-                log.info("sending test failure {}", hashCode());
-                throw new RuntimeException("test failure at " + hashCode());
-            }
-        }
-    }
-
     @Override
     protected boolean handleMessage(Object message) throws Exception {
 
@@ -107,8 +98,6 @@ public class ListMethodsActor extends XRoadCatalogActor {
                 List<XRoadServiceIdentifierType> result = XRoadClient.getMethods(webservicesEndpoint, xroadId,
                         clientType);
                 log.info("Received all methods for client {} ", ClientTypeUtil.toString(clientType));
-
-                maybeFail();
 
                 // Save services for subsystems
                 List<Service> services = new ArrayList<>();

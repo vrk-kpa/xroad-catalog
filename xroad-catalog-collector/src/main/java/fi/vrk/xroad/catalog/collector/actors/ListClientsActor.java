@@ -38,8 +38,6 @@ public class ListClientsActor extends XRoadCatalogActor {
     public static final String START_COLLECTING = "StartCollecting";
 
     private static AtomicInteger COUNTER = new AtomicInteger(0);
-    // to test fault handling
-    private static boolean FORCE_FAILURES = false;
 
     private static final int NO_OF_ACTORS = 5;
 
@@ -68,17 +66,6 @@ public class ListClientsActor extends XRoadCatalogActor {
                 .resolvePoolRef(Supervisor.LIST_METHODS_ACTOR_ROUTER);
         super.preStart();
     }
-
-    private void maybeFail() {
-        if (FORCE_FAILURES) {
-            if (COUNTER.get() % 3 == 0) {
-                log.info("sending test failure {}", hashCode());
-                throw new RuntimeException("test failure at " + hashCode());
-            }
-        }
-    }
-
-
 
     @Override
     protected boolean handleMessage(Object message) throws Exception {

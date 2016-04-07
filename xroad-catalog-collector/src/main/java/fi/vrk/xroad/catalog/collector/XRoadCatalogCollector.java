@@ -56,7 +56,7 @@ public class XRoadCatalogCollector  {
 
         // Use the Spring Extension to create props for a named actor bean
         ActorRef supervisor = system.actorOf(
-                ext.props("supervisor").withMailbox("akka.priority-mailbox"));
+                ext.props("supervisor"));
 
         system.scheduler().schedule(Duration.Zero(), Duration.create(collectorInterval, TimeUnit.MINUTES), supervisor, Supervisor
                 .START_COLLECTING,
