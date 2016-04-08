@@ -31,7 +31,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 @Component
 @Scope("prototype")
 @Slf4j
-public class ListMethodsActor extends UntypedActor {
+public class ListMethodsActor extends XRoadCatalogActor {
 
     private static AtomicInteger COUNTER = new AtomicInteger(0);
     // to test fault handling
@@ -70,22 +70,7 @@ public class ListMethodsActor extends UntypedActor {
     }
 
     @Override
-    public void postStop() throws Exception {
-        log.info("postStop {}", this.hashCode());
-        super.postStop();
-    }
-
-    private void maybeFail() {
-        if (FORCE_FAILURES) {
-            if (COUNTER.get() % 3 == 0) {
-                log.info("sending test failure {}", hashCode());
-                throw new RuntimeException("test failure at " + hashCode());
-            }
-        }
-    }
-
-    @Override
-    public void onReceive(Object message) throws Exception {
+    protected boolean handleMessage(Object message) throws Exception {
 
         if (message instanceof ClientType) {
 
@@ -96,8 +81,6 @@ public class ListMethodsActor extends UntypedActor {
                     .getMemberClass(),
                     clientType.getId().getMemberCode(), clientType.getName()), clientType.getId()
                     .getSubsystemCode());
-
-
 
             log.info("{} Handling subsystem {} ", COUNTER, subsystem);
             log.info("Fetching methods for the client with listMethods -service...");
@@ -115,11 +98,6 @@ public class ListMethodsActor extends UntypedActor {
                 List<XRoadServiceIdentifierType> result = XRoadClient.getMethods(webservicesEndpoint, xroadId,
                         clientType);
                 log.info("Received all methods for client {} ", ClientTypeUtil.toString(clientType));
-//                log.info("{} ListMethodsResponse {} ", COUNTER, result.stream().map(s -> ClientTypeUtil.toString(s))
-//                        .collect
-//                        (joining(", ")));
-
-                maybeFail();
 
                 // Save services for subsystems
                 List<Service> services = new ArrayList<>();
@@ -137,13 +115,10 @@ public class ListMethodsActor extends UntypedActor {
                 log.error("Failed to get methods for subsystem {} \n {}", subsystem, e.toString());
                 throw e;
             }
+            return true;
 
-        } else if (message instanceof Terminated) {
-            throw new RuntimeException("Terminated: " + message);
         } else {
-            log.error("Unable to handle message {}", message);
+            return false;
         }
-
-
     }
 }
