@@ -13,7 +13,7 @@ Requires:           systemd
 Requires(post):     systemd
 Requires(preun):    systemd
 Requires(postun):   systemd
-Requires:           cronie, cronie-anacron, postgresql
+Requires:           cronie, cronie-anacron, postgresql, postgresql-server
 
 %define src %{_topdir}
 %define jlib /usr/lib/xroad-catalog
