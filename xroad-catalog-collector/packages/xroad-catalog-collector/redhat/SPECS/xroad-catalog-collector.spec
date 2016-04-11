@@ -56,6 +56,7 @@ rm -rf %{buildroot}
 %attr(644,xroad-catalog,xroad-catalog) %{conf}/application-production.properties
 
 %pre
+service postgresql initdb
 if ! id xroad-catalog > /dev/null 2>&1 ; then
     adduser --system --no-create-home --shell /bin/false xroad-catalog
 fi
