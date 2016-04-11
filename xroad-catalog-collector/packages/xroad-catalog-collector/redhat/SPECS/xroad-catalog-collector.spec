@@ -56,12 +56,15 @@ rm -rf %{buildroot}
 %attr(644,xroad-catalog,xroad-catalog) %{conf}/application-production.properties
 
 %pre
-service postgresql initdb
+
 if ! id xroad-catalog > /dev/null 2>&1 ; then
     adduser --system --no-create-home --shell /bin/false xroad-catalog
 fi
 
 %post?
+PGSETUP_INITDB_OPTIONS="--auth-host=md5 -E UTF8" postgresql-setup initdb || return 1
+systemctl enable postgresql
+
 #Check if database was already initialized
 if sudo -u postgres  psql  -tAc "SELECT 1 FROM pg_roles WHERE rolname='xroad_catalog'" ; then
     echo "Database already initialized"
