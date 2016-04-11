@@ -45,7 +45,7 @@ cp -p %{src}/SOURCES/%{name}.service %{buildroot}%{_unitdir}
 rm -rf %{buildroot}
 
 %files
-%defattr(644,xroad,xroad,-)
+%defattr(600,xroad-catalog,xroad-catalog,-)
 %config %{conf}/application.conf
 %config %{conf}/application-production.properties
 
@@ -53,7 +53,7 @@ rm -rf %{buildroot}
 %attr(644,root,root) /usr/share/xroad/sql/create_tables.sql
 #%attr(755,root,root) /etc/cron.d/%{name}
 %attr(644,root,root) %{_unitdir}/%{name}.service
-%attr(755,xroad-catalog,xroad-catalog) %{jlib}/%{name}.jar
+%attr(744,xroad-catalog,xroad-catalog) %{jlib}/%{name}.jar
 %attr(744,xroad-catalog,xroad-catalog) /usr/share/xroad/bin/%{name}
 
 %pre
