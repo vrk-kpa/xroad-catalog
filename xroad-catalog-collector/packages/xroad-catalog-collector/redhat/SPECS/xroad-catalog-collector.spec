@@ -9,11 +9,10 @@ Release:            %{rel}%{?snapshot}%{?dist}
 Summary:            X-Road Service Listing
 Group:              Applications/Internet
 License:            MIT
-Requires:           systemd
+Requires:           systemd, cronie, cronie-anacron, postgresql, postgresql-server, java-1.8.0-openjdk
 Requires(post):     systemd
 Requires(preun):    systemd
 Requires(postun):   systemd
-Requires:           cronie, cronie-anacron, postgresql, postgresql-server
 
 %define src %{_topdir}
 %define jlib /usr/lib/xroad-catalog
