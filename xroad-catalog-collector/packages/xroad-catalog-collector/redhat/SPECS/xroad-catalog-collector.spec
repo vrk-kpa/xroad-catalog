@@ -65,7 +65,7 @@ PGSETUP_INITDB_OPTIONS="--auth-host=md5 -E UTF8" postgresql-setup initdb || retu
 systemctl enable postgresql
 
 #Check if database was already initialized
-if sudo -u postgres  psql  -tAc "SELECT 1 FROM pg_roles WHERE rolname='xroad_catalog'" ; then
+if sudo -u postgres psql -lqt |cut -d \| -f 1 | grep -qw xroad_catalog ; then
     echo "Database already initialized"
 else
     #Init database
