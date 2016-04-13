@@ -3,8 +3,6 @@ package fi.vrk.xroad.catalog.collector;
 
 import akka.actor.ActorRef;
 import akka.actor.ActorSystem;
-import akka.actor.PoisonPill;
-import akka.actor.TypedActor;
 import akka.event.Logging;
 import akka.event.LoggingAdapter;
 import fi.vrk.xroad.catalog.collector.actors.Supervisor;
@@ -17,7 +15,6 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import scala.concurrent.duration.Duration;
-import scala.concurrent.duration.FiniteDuration;
 
 import java.util.concurrent.TimeUnit;
 

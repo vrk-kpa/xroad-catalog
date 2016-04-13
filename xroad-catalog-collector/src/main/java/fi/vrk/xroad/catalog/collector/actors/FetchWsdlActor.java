@@ -1,7 +1,5 @@
 package fi.vrk.xroad.catalog.collector.actors;
 
-import akka.actor.Terminated;
-import akka.actor.UntypedActor;
 import com.google.common.base.Strings;
 import fi.vrk.xroad.catalog.collector.wsimport.XRoadServiceIdentifierType;
 import fi.vrk.xroad.catalog.persistence.CatalogService;

@@ -1,8 +1,6 @@
 package fi.vrk.xroad.catalog.collector.actors;
 
 import akka.actor.ActorRef;
-import akka.actor.Terminated;
-import akka.actor.UntypedActor;
 import fi.vrk.xroad.catalog.collector.extension.SpringExtension;
 import fi.vrk.xroad.catalog.collector.util.ClientTypeUtil;
 import fi.vrk.xroad.catalog.collector.util.XRoadClient;

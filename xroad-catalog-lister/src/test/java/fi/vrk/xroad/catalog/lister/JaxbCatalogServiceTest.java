@@ -11,16 +11,12 @@ import org.apache.commons.beanutils.PropertyUtils;
 import org.junit.Before;
 import org.junit.Test;
 
-import javax.xml.datatype.DatatypeConfigurationException;
-import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 import java.lang.reflect.InvocationTargetException;
 import java.time.LocalDateTime;
 import java.util.*;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static org.junit.Assert.*;
 
 /**
  * Text JAXB mapping with mock CatalogServiceImpl
@@ -62,10 +58,10 @@ public class JaxbCatalogServiceTest {
     @Test
     public void testGetAll() throws Exception {
         XMLGregorianCalendar calendar2015_5_5 = jaxbConverter.toXmlGregorianCalendar(
-                LocalDateTime.of(2015,5,5,0,0)
+                LocalDateTime.of(2015, 5, 5, 0, 0)
         );
         XMLGregorianCalendar calendar2014_5_5 = jaxbConverter.toXmlGregorianCalendar(
-                LocalDateTime.of(2014,5,5,0,0)
+                LocalDateTime.of(2014, 5, 5, 0, 0)
         );
         Iterable<fi.vrk.xroad.xroad_catalog_lister.Member> members = service.getAllMembers(calendar2015_5_5);
         assertEquals(2, Iterables.size(members));
@@ -89,7 +85,8 @@ public class JaxbCatalogServiceTest {
     /**
      * Assert that member 2 has subsystem-service-wsdl contents that we expect
      */
-    private void assertMember2Contents(Iterable<fi.vrk.xroad.xroad_catalog_lister.Member> members) throws IllegalAccessException, NoSuchMethodException, InvocationTargetException {
+    private void assertMember2Contents(Iterable<fi.vrk.xroad.xroad_catalog_lister.Member> members) throws
+            IllegalAccessException, NoSuchMethodException, InvocationTargetException {
         fi.vrk.xroad.xroad_catalog_lister.Member m2 = (fi.vrk.xroad.xroad_catalog_lister.Member)
                 getItem(members, PROPERTY_MEMBER_CODE, "2");
         assertNotNull(m2);
@@ -128,7 +125,8 @@ public class JaxbCatalogServiceTest {
     }
 
 
-    private Collection<String> getPropertyValues(Iterable items, String propertyName) throws IllegalAccessException, NoSuchMethodException, InvocationTargetException {
+    private Collection<String> getPropertyValues(Iterable items, String propertyName) throws IllegalAccessException,
+            NoSuchMethodException, InvocationTargetException {
         List<String> values = new ArrayList<>();
         for (Object item: items) {
             values.add(getStringProperty(propertyName, item));
@@ -136,11 +134,13 @@ public class JaxbCatalogServiceTest {
         return values;
     }
 
-    private String getStringProperty(String propertyName, Object item) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+    private String getStringProperty(String propertyName, Object item) throws IllegalAccessException,
+            InvocationTargetException, NoSuchMethodException {
         return (String) PropertyUtils.getProperty(item, propertyName);
     }
 
-    private Object getItem(Iterable items, String propertyName, String value) throws IllegalAccessException, NoSuchMethodException, InvocationTargetException {
+    private Object getItem(Iterable items, String propertyName, String value) throws IllegalAccessException,
+            NoSuchMethodException, InvocationTargetException {
         for (Object item: items) {
             if (value.equals(getStringProperty(propertyName, item))) {
                 return item;
@@ -149,15 +149,18 @@ public class JaxbCatalogServiceTest {
         return null;
     }
 
-    private Collection<String> getMemberCodes(Iterable<fi.vrk.xroad.xroad_catalog_lister.Member> members) throws IllegalAccessException, NoSuchMethodException, InvocationTargetException {
+    private Collection<String> getMemberCodes(Iterable<fi.vrk.xroad.xroad_catalog_lister.Member> members) throws
+            IllegalAccessException, NoSuchMethodException, InvocationTargetException {
         return getPropertyValues(members, PROPERTY_MEMBER_CODE);
     }
 
-    private Collection<String> getSubsystemCodes(Iterable<fi.vrk.xroad.xroad_catalog_lister.Subsystem> subsystems) throws IllegalAccessException, NoSuchMethodException, InvocationTargetException {
+    private Collection<String> getSubsystemCodes(Iterable<fi.vrk.xroad.xroad_catalog_lister.Subsystem> subsystems)
+            throws IllegalAccessException, NoSuchMethodException, InvocationTargetException {
         return getPropertyValues(subsystems, PROPERTY_SUBSYSTEM_CODE);
     }
 
-    private Collection<String> getServiceCodes(Iterable<fi.vrk.xroad.xroad_catalog_lister.Service> services) throws IllegalAccessException, NoSuchMethodException, InvocationTargetException {
+    private Collection<String> getServiceCodes(Iterable<fi.vrk.xroad.xroad_catalog_lister.Service> services) throws
+            IllegalAccessException, NoSuchMethodException, InvocationTargetException {
         return getPropertyValues(services, PROPERTY_SERVICE_CODE);
     }
 

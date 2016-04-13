@@ -4,8 +4,6 @@ import fi.vrk.xroad.catalog.persistence.entity.*;
 
 import java.time.LocalDateTime;
 import java.util.Collection;
-import java.util.Date;
-import java.util.Optional;
 
 /**
  * CRUD methods for catalog objects. no business logic (e.g. hash calculation),

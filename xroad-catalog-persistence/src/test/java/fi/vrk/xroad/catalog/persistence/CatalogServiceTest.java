@@ -62,7 +62,7 @@ public class CatalogServiceTest {
     public void testEntityTreesFetchedCorrectly() throws InterruptedException {
         assertEntityTreeFetchedCorrectly(catalogService.getAllMembers());
         assertEntityTreeFetchedCorrectly(catalogService.getActiveMembers());
-        LocalDateTime modifiedSince1800 = LocalDateTime.of(1800,1,1,0,0);
+        LocalDateTime modifiedSince1800 = LocalDateTime.of(1800, 1, 1, 0, 0);
         assertEntityTreeFetchedCorrectly(catalogService.getAllMembers(modifiedSince1800));
         assertEntityTreeFetchedCorrectly(catalogService.getActiveMembers(modifiedSince1800));
     }
@@ -271,8 +271,8 @@ public class CatalogServiceTest {
         savedService6newVersion.setServiceVersion(savedService6.getServiceVersion() + "-new");
         savedService6nullVersion.setServiceVersion(null);
 
-        catalogService.saveServices(savedSub.createKey(), Lists.newArrayList
-                (savedService6, savedService6newVersion, savedService6nullVersion));
+        catalogService.saveServices(savedSub.createKey(), Lists.newArrayList(savedService6, savedService6newVersion,
+                savedService6nullVersion));
         testUtil.entityManagerFlush();
         long newVersionId = savedService6newVersion.getId();
         long nullVersionId = savedService6nullVersion.getId();
@@ -283,8 +283,10 @@ public class CatalogServiceTest {
         assertEquals(3, checkedSub.getActiveServices().size());
         testUtil.assertAllSame(originalSub.getStatusInfo(), checkedSub.getStatusInfo());
         Service checkedService6 = (Service) testUtil.getEntity(checkedSub.getAllServices(), 6L).get();
-        Service checkedService6newVersion = (Service) testUtil.getEntity(checkedSub.getAllServices(), newVersionId).get();
-        Service checkedService6nullVersion = (Service) testUtil.getEntity(checkedSub.getAllServices(), nullVersionId).get();
+        Service checkedService6newVersion = (Service) testUtil.getEntity(checkedSub.getAllServices(), newVersionId)
+                .get();
+        Service checkedService6nullVersion = (Service) testUtil.getEntity(checkedSub.getAllServices(), nullVersionId)
+                .get(); 
 
         assertFalse(checkedService6.getStatusInfo().isRemoved());
         testUtil.assertFetchedIsOnlyDifferent(originalService6.getStatusInfo(), checkedService6.getStatusInfo());
