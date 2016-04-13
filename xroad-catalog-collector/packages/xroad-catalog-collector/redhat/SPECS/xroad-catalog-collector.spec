@@ -64,7 +64,7 @@ fi
 
 %post?
 PGSETUP_INITDB_OPTIONS="--auth-host=md5 -E UTF8" postgresql-setup initdb || return 1
-systemctl enable postgresql
+systemctl start postgresql
 
 #Check if database was already initialized
 if sudo -u postgres psql -lqt |cut -d \| -f 1 | grep -qw xroad_catalog ; then
