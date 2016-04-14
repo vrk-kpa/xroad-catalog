@@ -34,7 +34,7 @@ mkdir -p %{buildroot}/usr/share/xroad/bin
 mkdir -p %{buildroot}/usr/share/xroad/sql
 mkdir -p %{buildroot}/var/log/xroad/
 cp -p %{src}/../../../build/libs/xroad-catalog-collector.jar %{buildroot}%{jlib}
-cp -p %{src}/../../../build/resources/main/application-production.properties %{buildroot}%{conf}
+cp -p %{src}/../../../build/resources/main/collector-production.properties %{buildroot}%{conf}
 cp -p %{src}/../../../build/resources/main/application.conf %{buildroot}%{conf}
 cp -p  ../../../../../xroad-catalog-persistence/src/main/sql/*.sql %{buildroot}/usr/share/xroad/sql
 #cp -p %{src}/SOURCES/%{name}.cron %{buildroot}/etc/cron.d/%{name}
@@ -47,7 +47,7 @@ rm -rf %{buildroot}
 %files
 %defattr(600,xroad-catalog,xroad-catalog,-)
 %config(noreplace) %{conf}/application.conf
-%config(noreplace) %{conf}/application-production.properties
+%config(noreplace) %{conf}/collector-production.properties
 
 %attr(644,root,root) /usr/share/xroad/sql/init_database.sql
 %attr(644,root,root) /usr/share/xroad/sql/create_tables.sql
