@@ -107,6 +107,11 @@ idea.module {
 
 compileJava.dependsOn wsImport
 
-tasks.withType(org.springframework.boot.gradle.run.BootRunTask) {
-    systemProperty 'spring.profiles.active', System.getProperty('spring.profiles.active', 'default')
+
+test {
+    systemProperty 'spring.config.name', 'collector'
+}
+
+bootRun {
+    systemProperty 'spring.config.name', 'collector'
 }
