@@ -46,8 +46,8 @@ rm -rf %{buildroot}
 
 %files
 %defattr(600,xroad-catalog,xroad-catalog,-)
-%config %{conf}/application.conf
-%config %{conf}/application-production.properties
+%config(noreplace) %{conf}/application.conf
+%config(noreplace) %{conf}/application-production.properties
 
 %attr(644,root,root) /usr/share/xroad/sql/init_database.sql
 %attr(644,root,root) /usr/share/xroad/sql/create_tables.sql

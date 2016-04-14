@@ -113,7 +113,7 @@ public class JaxbCatalogServiceTest {
         fi.vrk.xroad.xroad_catalog_lister.Service s221 = (fi.vrk.xroad.xroad_catalog_lister.Service)
                 getItem(ss22.getServices().getService(), PROPERTY_SERVICE_CODE, "221");
         fi.vrk.xroad.xroad_catalog_lister.Service s222 = (fi.vrk.xroad.xroad_catalog_lister.Service)
-                getItem(ss22.getServices().getService(), PROPERTY_SERVICE_CODE, "222");
+                getItem(ss22.geRtServices().getService(), PROPERTY_SERVICE_CODE, "222");
         fi.vrk.xroad.xroad_catalog_lister.Service s223 = (fi.vrk.xroad.xroad_catalog_lister.Service)
                 getItem(ss22.getServices().getService(), PROPERTY_SERVICE_CODE, "223");
         assertNotNull(s221);
