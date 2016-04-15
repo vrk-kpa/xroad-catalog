@@ -12,6 +12,11 @@ gradle clean build
 gradle bootRun
 ```
 
+Or
+
+    $ java -jar build/libs/xroad-catalog-lister.jar --spring.config.name=lister,catalogdb
+
+
 ## Test
 
 | Command                                                                                |           Result            |

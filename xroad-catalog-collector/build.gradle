@@ -109,9 +109,9 @@ compileJava.dependsOn wsImport
 
 
 test {
-    systemProperty 'spring.config.name', 'collector'
+    systemProperty 'spring.config.name', 'collector,catalogdb'
 }
 
 bootRun {
-    systemProperty 'spring.config.name', 'collector'
+    systemProperty 'spring.config.name', 'collector,catalogdb'
 }

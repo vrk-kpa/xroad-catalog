@@ -105,4 +105,9 @@ test {
     testLogging {
         events "passed", "skipped", "failed", "standardOut", "standardError"
     }
+    systemProperty 'spring.config.name', 'lister,catalogdb'
+}
+
+bootRun {
+    systemProperty 'spring.config.name', 'lister,catalogdb'
 }
