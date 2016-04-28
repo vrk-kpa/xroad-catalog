@@ -2,18 +2,15 @@ package fi.vrk.xroad.catalog.lister;
 
 import org.springframework.ws.WebServiceMessage;
 import org.springframework.ws.context.MessageContext;
-import org.springframework.ws.soap.SoapElement;
 import org.springframework.ws.soap.SoapHeader;
 import org.springframework.ws.soap.SoapHeaderElement;
 import org.springframework.ws.soap.SoapMessage;
-import org.springframework.ws.soap.saaj.SaajSoapMessage;
 import org.springframework.ws.soap.server.SoapEndpointInterceptor;
-import org.springframework.xml.transform.TransformerHelper;
 
-import javax.xml.namespace.QName;
-import javax.xml.soap.*;
-import javax.xml.transform.*;
-import java.io.StringWriter;
+import javax.xml.soap.SOAPException;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
 import java.util.Iterator;
 
 /**

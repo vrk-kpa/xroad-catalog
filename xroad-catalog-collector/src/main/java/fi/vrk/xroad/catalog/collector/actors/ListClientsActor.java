@@ -1,8 +1,6 @@
 package fi.vrk.xroad.catalog.collector.actors;
 
 import akka.actor.ActorRef;
-import akka.actor.Terminated;
-import akka.actor.UntypedActor;
 import fi.vrk.xroad.catalog.collector.extension.SpringExtension;
 import fi.vrk.xroad.catalog.collector.util.ClientTypeUtil;
 import fi.vrk.xroad.catalog.collector.wsimport.ClientListType;
@@ -14,8 +12,8 @@ import fi.vrk.xroad.catalog.persistence.entity.MemberId;
 import fi.vrk.xroad.catalog.persistence.entity.Subsystem;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestOperations;

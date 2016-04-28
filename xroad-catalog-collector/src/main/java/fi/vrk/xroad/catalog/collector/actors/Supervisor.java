@@ -2,8 +2,6 @@ package fi.vrk.xroad.catalog.collector.actors;
 
 import akka.actor.ActorRef;
 import akka.actor.OneForOneStrategy;
-import akka.actor.Terminated;
-import akka.actor.UntypedActor;
 import akka.routing.SmallestMailboxPool;
 import fi.vrk.xroad.catalog.collector.extension.SpringExtension;
 import fi.vrk.xroad.catalog.persistence.CatalogService;
@@ -12,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
-import scala.Option;
 import scala.concurrent.duration.Duration;
 
 import static akka.actor.SupervisorStrategy.restart;
