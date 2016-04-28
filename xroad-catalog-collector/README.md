@@ -3,7 +3,7 @@
 ## Build
 
 
-    $ gradle clean package
+    $ gradle clean build
 
 
 ## Run
@@ -22,7 +22,7 @@ First create an ssh tunnel to local port 9000, for example
 
 Then run the collector with profile sshtest
 
-    $ java -Dspring.profiles.active=sshtest -jar build/libs/xroad-catalog-collector.jar --spring.config.name=colletor,catalogdb
+    $ java -Dspring.profiles.active=sshtest -jar build/libs/xroad-catalog-collector.jar --spring.config.name=collector,catalogdb
 
 
 

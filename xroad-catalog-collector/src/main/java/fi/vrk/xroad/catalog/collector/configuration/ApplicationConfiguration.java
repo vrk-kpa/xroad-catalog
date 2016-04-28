@@ -4,9 +4,11 @@ import akka.actor.ActorSystem;
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigFactory;
 import fi.vrk.xroad.catalog.collector.extension.SpringExtension;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.web.SpringBootServletInitializer;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.*;
@@ -73,6 +75,12 @@ public class ApplicationConfiguration extends SpringBootServletInitializer {
         return new RestTemplate();
     }
 
+    @Value("${xroad-catalog.collector-interval-min}")
+    private Long collectorInterval;
 
+    @Bean
+    public Long getCollectorInterval() {
+        return collectorInterval;
+    };
 
 }

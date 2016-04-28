@@ -8,6 +8,7 @@ import akka.event.LoggingAdapter;
 import fi.vrk.xroad.catalog.collector.actors.Supervisor;
 import fi.vrk.xroad.catalog.collector.extension.SpringExtension;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
@@ -28,15 +29,6 @@ import java.util.concurrent.TimeUnit;
 @ComponentScan("fi.vrk.xroad.catalog.collector.configuration")
 public class XRoadCatalogCollector  {
 
-
-    static private long collectorInterval;
-
-    @Value("${xroad-catalog.collector-interval-min}")
-    public void setCollectorInterval(long collectorIntervalMin) {
-        XRoadCatalogCollector.collectorInterval = collectorIntervalMin;
-    }
-
-
     public static void main(String[] args) throws Exception {
 
         ApplicationContext context =
@@ -45,8 +37,9 @@ public class XRoadCatalogCollector  {
         ActorSystem system = context.getBean(ActorSystem.class);
 
         final LoggingAdapter log = Logging.getLogger(system, "Application");
+        Long collectorInterval = (Long)context.getBean("getCollectorInterval");
 
-        log.info("Starting up");
+        log.info("Starting up catalog collector with collector interval of {}", collectorInterval);
 
 
         SpringExtension ext = context.getBean(SpringExtension.class);
@@ -55,10 +48,11 @@ public class XRoadCatalogCollector  {
         ActorRef supervisor = system.actorOf(
                 ext.props("supervisor"));
 
-        system.scheduler().schedule(Duration.Zero(), Duration.create(collectorInterval, TimeUnit.MINUTES), supervisor, Supervisor
+        system.scheduler().schedule(Duration.Zero(), Duration.create(collectorInterval,
+                TimeUnit.MINUTES), supervisor,
+                Supervisor
                 .START_COLLECTING,
                 system.dispatcher(), null);
 
     }
-
 }
