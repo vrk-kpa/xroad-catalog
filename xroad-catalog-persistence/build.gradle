@@ -7,6 +7,16 @@ buildscript {
     }
 }
 
+plugins {
+    id "com.github.hierynomus.license" version "0.12.1"
+}
+
+license {
+    header project.file('LICENSE.txt')
+    include '**/*.java'
+}
+
+
 apply plugin: 'java'
 apply plugin: 'maven'
 apply plugin: 'eclipse'
