@@ -15,6 +15,7 @@ plugins {
 license {
     header project.file('LICENSE.txt')
     include '**/*.java'
+    exclude '**/wsimport/**/*'
 }
 
 apply plugin: 'java'
