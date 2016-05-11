@@ -33,7 +33,7 @@ import scala.Option;
 @Slf4j
 public abstract class XRoadCatalogActor extends UntypedActor {
 
-    abstract protected boolean handleMessage(Object message) throws Exception;
+    abstract protected boolean handleMessage(Object message);
 
     @Override
     public void onReceive(Object message) throws Exception {

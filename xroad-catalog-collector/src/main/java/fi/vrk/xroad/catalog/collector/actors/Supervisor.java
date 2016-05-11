@@ -94,7 +94,7 @@ public class Supervisor extends XRoadCatalogActor {
     }
 
     @Override
-    protected boolean handleMessage(Object message) throws Exception {
+    protected boolean handleMessage(Object message) {
 
         if (START_COLLECTING.equals(message)) {
             listClientsPoolRouter.tell(ListClientsActor.START_COLLECTING, getSelf());

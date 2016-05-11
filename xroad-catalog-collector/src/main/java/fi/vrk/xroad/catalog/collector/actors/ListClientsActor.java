@@ -88,7 +88,7 @@ public class ListClientsActor extends XRoadCatalogActor {
     }
 
     @Override
-    protected boolean handleMessage(Object message) throws Exception {
+    protected boolean handleMessage(Object message) {
 
         if (START_COLLECTING.equals(message)) {
 

@@ -65,7 +65,7 @@ public class FetchWsdlActor extends XRoadCatalogActor {
 
 
     @Override
-    protected boolean handleMessage(Object message) throws Exception {
+    protected boolean handleMessage(Object message)  {
         if (message instanceof XRoadServiceIdentifierType) {
             log.info("fetching wsdl [{}] {}", COUNTER.addAndGet(1), message);
             XRoadServiceIdentifierType service = (XRoadServiceIdentifierType) message;

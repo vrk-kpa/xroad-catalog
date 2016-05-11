@@ -40,6 +40,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -90,7 +91,7 @@ public class ListMethodsActor extends XRoadCatalogActor {
     }
 
     @Override
-    protected boolean handleMessage(Object message) throws Exception {
+    protected boolean handleMessage(Object message) {
 
         if (message instanceof ClientType) {
 
@@ -112,8 +113,8 @@ public class ListMethodsActor extends XRoadCatalogActor {
             xroadId.setSubsystemCode(subsystemCode);
             xroadId.setObjectType(XRoadObjectType.SUBSYSTEM);
 
-            // fetch the methods
             try {
+                // fetch the methods
                 log.info("calling web service at {}", webservicesEndpoint);
                 List<XRoadServiceIdentifierType> result = XRoadClient.getMethods(webservicesEndpoint, xroadId,
                         clientType);
@@ -131,11 +132,10 @@ public class ListMethodsActor extends XRoadCatalogActor {
                     log.info("{} Sending service {} to new MethodActor ", COUNTER, service.getServiceCode());
                     fetchWsdlPoolRef.tell(service, getSender());
                 }
-            } catch (Exception e) {
-                log.error("Failed to get methods for subsystem {} \n {}", subsystem, e.toString());
-                throw e;
+                return true;
+            } catch (MalformedURLException e) {
+                throw new RuntimeException("Malformed URL", e);
             }
-            return true;
 
         } else {
             return false;
