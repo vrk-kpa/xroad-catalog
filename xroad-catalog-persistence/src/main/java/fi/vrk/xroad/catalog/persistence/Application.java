@@ -37,19 +37,8 @@ import org.springframework.data.jpa.convert.threeten.Jsr310JpaConverters;
 )
 @SpringBootApplication
 public class Application {
-
-    private static final Logger log = LoggerFactory.getLogger(Application.class);
-
     public static void main(String[] args) {
         SpringApplication.run(Application.class);
-    }
-
-    @Bean
-    public CommandLineRunner demo(MemberRepository repository) {
-        return (args) -> {
-//            Iterable members = catalogService.getActiveMembers();
-//            log.info("found " + Iterables.size(catalogService.getActiveMembers()) + " members.");
-        };
     }
 
 }
