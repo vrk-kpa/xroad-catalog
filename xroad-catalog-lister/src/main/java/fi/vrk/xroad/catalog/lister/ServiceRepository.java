@@ -36,7 +36,7 @@ import java.util.GregorianCalendar;
 import java.util.List;
 
 public class ServiceRepository {
-	private static final List<Member> members = new ArrayList<Member>();
+	private static final List<Member> members = new ArrayList<>();
 
 	@PostConstruct
 	public void initData() {
