@@ -55,8 +55,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class ListMethodsActor extends XRoadCatalogActor {
 
     private static AtomicInteger COUNTER = new AtomicInteger(0);
-    // to test fault handling
-    private static boolean FORCE_FAILURES = false;
 
     @Value("${xroad-catalog.xroad-instance}")
     private String xroadInstance;

@@ -57,9 +57,6 @@ public class ListClientsActor extends XRoadCatalogActor {
 
     public static final String START_COLLECTING = "StartCollecting";
 
-    private static AtomicInteger COUNTER = new AtomicInteger(0);
-
-    private static final int NO_OF_ACTORS = 5;
 
     @Autowired
     @Qualifier("listClientsRestOperations")
@@ -101,7 +98,6 @@ public class ListClientsActor extends XRoadCatalogActor {
             int counter = 1;
             HashMap<MemberId, Member> m = new HashMap();
 
-            List<Subsystem> subsystems = new ArrayList<>();
             for (ClientType clientType : clientList.getMember()) {
                 log.info("{} - ClientType {}  ", counter++, ClientTypeUtil.toString(clientType));
                 Member newMember = new Member(clientType.getId().getXRoadInstance(), clientType.getId()
