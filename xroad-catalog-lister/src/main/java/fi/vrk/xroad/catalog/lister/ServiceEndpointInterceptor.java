@@ -50,7 +50,6 @@ public class ServiceEndpointInterceptor implements SoapEndpointInterceptor {
     public boolean handleResponse(MessageContext messageContext, Object endpoint) throws TransformerException, SOAPException {
 		/* Create headers and add to msg */
         WebServiceMessage requestMsg = messageContext.getRequest();
-        WebServiceMessage responseMsg = messageContext.getResponse();
 
         transformHeaders(requestMsg, messageContext.getResponse());
 

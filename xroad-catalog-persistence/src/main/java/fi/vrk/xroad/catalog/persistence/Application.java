@@ -38,9 +38,6 @@ import org.springframework.data.jpa.convert.threeten.Jsr310JpaConverters;
 @SpringBootApplication
 public class Application {
 
-    @Autowired
-    private CatalogService catalogService;
-
     private static final Logger log = LoggerFactory.getLogger(Application.class);
 
     public static void main(String[] args) {
