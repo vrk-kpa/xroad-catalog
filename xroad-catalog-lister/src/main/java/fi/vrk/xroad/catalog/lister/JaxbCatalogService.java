@@ -43,5 +43,5 @@ public interface JaxbCatalogService {
      *
      * @return
      */
-    Iterable<Member> getAllMembers(XMLGregorianCalendar changedAfter) throws DatatypeConfigurationException;
+    Iterable<Member> getAllMembers(XMLGregorianCalendar changedAfter);
 }

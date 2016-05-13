@@ -48,7 +48,7 @@ import java.util.List;
 public class JaxbConverter {
 
     public Collection<Member> convertMembers(Iterable<fi.vrk.xroad.catalog.persistence.entity.Member> members,
-                                             boolean onlyActiveChildren) throws DatatypeConfigurationException {
+                                             boolean onlyActiveChildren)  {
         List<Member> converted = new ArrayList<>();
         for (fi.vrk.xroad.catalog.persistence.entity.Member member: members) {
             Member cm = new Member();
@@ -74,7 +74,7 @@ public class JaxbConverter {
     }
 
     public Collection<fi.vrk.xroad.xroad_catalog_lister.Subsystem> convertSubsystems(Iterable<Subsystem> subsystems,
-                                                                                     boolean onlyActiveChildren) throws DatatypeConfigurationException {
+                                                                                     boolean onlyActiveChildren) {
         List<fi.vrk.xroad.xroad_catalog_lister.Subsystem> converted = new ArrayList<>();
         for (Subsystem subsystem: subsystems) {
             fi.vrk.xroad.xroad_catalog_lister.Subsystem cs = new fi.vrk.xroad.xroad_catalog_lister.Subsystem();
@@ -97,7 +97,7 @@ public class JaxbConverter {
     }
 
     public Collection<fi.vrk.xroad.xroad_catalog_lister.Service> convertServices(Iterable<Service> services,
-                                                                                 boolean onlyActiveChildren) throws DatatypeConfigurationException {
+                                                                                 boolean onlyActiveChildren) {
         List<fi.vrk.xroad.xroad_catalog_lister.Service> converted = new ArrayList<>();
         for (Service service: services) {
             fi.vrk.xroad.xroad_catalog_lister.Service cs = new fi.vrk.xroad.xroad_catalog_lister.Service();
@@ -123,7 +123,7 @@ public class JaxbConverter {
         return converted;
     }
 
-    private WSDL convertWsdl(Wsdl wsdl) throws DatatypeConfigurationException {
+    private WSDL convertWsdl(Wsdl wsdl) {
         WSDL cw = new WSDL();
         cw.setChanged(toXmlGregorianCalendar(wsdl.getStatusInfo().getChanged()));
         cw.setCreated(toXmlGregorianCalendar(wsdl.getStatusInfo().getCreated()));
@@ -137,12 +137,17 @@ public class JaxbConverter {
         return calendar.toGregorianCalendar().toZonedDateTime().toLocalDateTime();
     }
 
-    public XMLGregorianCalendar toXmlGregorianCalendar(LocalDateTime localDateTime) throws DatatypeConfigurationException {
+    public XMLGregorianCalendar toXmlGregorianCalendar(LocalDateTime localDateTime) {
         if (localDateTime == null) {
             return null;
         } else {
             GregorianCalendar cal = GregorianCalendar.from(localDateTime.atZone(ZoneId.systemDefault()));
-            XMLGregorianCalendar xc = DatatypeFactory.newInstance().newXMLGregorianCalendar(cal);
+            XMLGregorianCalendar xc = null;
+            try {
+                xc = DatatypeFactory.newInstance().newXMLGregorianCalendar(cal);
+            } catch (DatatypeConfigurationException e) {
+                throw new CatalogListerRuntimeException("Cannot instantiate DatatypeFactory", e);
+            }
             return xc;
         }
     }

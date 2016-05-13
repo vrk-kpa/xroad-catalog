@@ -49,8 +49,7 @@ public class ServiceEndpoint {
 
 	@PayloadRoot(namespace = NAMESPACE_URI, localPart = "ListMembers")
 	@ResponsePayload
-	public ListMembersResponse listMembers(@RequestPayload ListMembers request) throws
-			Exception {
+	public ListMembersResponse listMembers(@RequestPayload ListMembers request) {
 		ListMembersResponse response = new ListMembersResponse();
 		response.setMemberList(new MemberList());
 

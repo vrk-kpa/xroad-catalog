@@ -48,14 +48,19 @@ public interface MockHttpServer {
     final Logger log = LoggerFactory.getLogger("MockHttpServer");
 
 
-    default void startServer(String fileName) throws Exception {
-        setServer(HttpServer.create(new InetSocketAddress(PORT), 0));
-        getServer().createContext(getContext(fileName), getHandler(fileName));
-        getServer().setExecutor(null); // creates a default executor
-        log.info("Starting local http server {} in port {}", getServer(), PORT);
-        getServer().start();
-        // TODO: what about removing this delay?
-        TimeUnit.SECONDS.sleep(1);
+    default void startServer(String fileName) {
+        try {
+            setServer(HttpServer.create(new InetSocketAddress(PORT), 0));
+
+            getServer().createContext(getContext(fileName), getHandler(fileName));
+            getServer().setExecutor(null); // creates a default executor
+            log.info("Starting local http server {} in port {}", getServer(), PORT);
+            getServer().start();
+            // TODO: what about removing this delay?
+            TimeUnit.SECONDS.sleep(1);
+        } catch (Exception e) {
+            throw new CatalogCollectorRuntimeException("Cannot start httpserver", e);
+        }
     }
 
     default void stopServer() {
@@ -65,7 +70,7 @@ public interface MockHttpServer {
     }
 
 
-    default String startServerForUrl(String url) throws Exception {
+    default String startServerForUrl(String url) {
         String[] parts = url.split("/");
 
         String fileName = "/data/" + parts[3]+".xml";

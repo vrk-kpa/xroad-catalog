@@ -46,7 +46,7 @@ public class JaxbCatalogServiceImpl implements JaxbCatalogService {
     private JaxbConverter jaxbConverter;
 
     @Override
-    public Iterable<Member> getAllMembers(XMLGregorianCalendar changedAfter) throws DatatypeConfigurationException {
+    public Iterable<Member> getAllMembers(XMLGregorianCalendar changedAfter)  {
         log.info("getAllMembers changedAfter:{}", changedAfter);
         Iterable<fi.vrk.xroad.catalog.persistence.entity.Member> entities = null;
         if (changedAfter != null) {
