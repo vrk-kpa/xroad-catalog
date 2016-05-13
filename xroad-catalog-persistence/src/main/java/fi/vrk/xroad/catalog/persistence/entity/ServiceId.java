@@ -22,6 +22,7 @@
  */
 package fi.vrk.xroad.catalog.persistence.entity;
 
+import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
@@ -30,14 +31,11 @@ import lombok.ToString;
  * Identifiers for a service (within one subsystem - no identifiers for subsystem/member).
  */
 @EqualsAndHashCode
-@Getter
 @ToString
+@AllArgsConstructor
 public class ServiceId {
+    @Getter
     private String serviceCode;
+    @Getter
     private String serviceVersion;
-
-    public ServiceId(String serviceCode, String serviceVersion) {
-        this.serviceCode = serviceCode;
-        this.serviceVersion = serviceVersion;
-    }
 }

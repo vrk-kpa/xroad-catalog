@@ -93,9 +93,6 @@ public class Member {
             "mem.statusInfo.removed IS NULL AND (" +
             FIND_CHANGED_QUERY_PART_2 +
             ")";
-    static {
-        System.out.println(FIND_ACTIVE_CHANGED_QUERY);
-    }
 
     @Id
     @Column(nullable = false)

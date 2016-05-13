@@ -22,16 +22,11 @@
  */
 package fi.vrk.xroad.catalog.persistence.entity;
 
-import lombok.EqualsAndHashCode;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.Collections;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;

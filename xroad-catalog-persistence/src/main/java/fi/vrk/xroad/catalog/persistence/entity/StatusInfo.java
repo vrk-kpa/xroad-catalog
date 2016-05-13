@@ -25,12 +25,9 @@ package fi.vrk.xroad.catalog.persistence.entity;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
-import javax.persistence.FetchType;
 import java.time.LocalDateTime;
-import java.util.Date;
 
 /**
  * Embeddable to model the status / timestamp fields that are repeated in all the tables
