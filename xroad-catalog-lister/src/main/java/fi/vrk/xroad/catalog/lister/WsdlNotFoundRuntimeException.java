@@ -26,14 +26,14 @@ import org.springframework.ws.soap.server.endpoint.annotation.FaultCode;
 import org.springframework.ws.soap.server.endpoint.annotation.SoapFault;
 
 @SoapFault(faultCode = FaultCode.SERVER)
-public class WsdlNotFoundException extends CatalogListerRuntimeException {
+public class WsdlNotFoundRuntimeException extends CatalogListerRuntimeException {
 
-    public WsdlNotFoundException(String message, Throwable cause) {
+    public WsdlNotFoundRuntimeException(String message, Throwable cause) {
         super(message, cause);
     }
 
 
-    public WsdlNotFoundException(String s) {
+    public WsdlNotFoundRuntimeException(String s) {
         super(s);
     }
 

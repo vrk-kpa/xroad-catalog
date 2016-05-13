@@ -64,7 +64,7 @@ public class ServiceEndpoint {
         GetWsdlResponse response = new GetWsdlResponse();
         Wsdl wsdl = catalogService.getWsdl(request.getExternalId());
         if (wsdl == null) {
-            throw new WsdlNotFoundException("wsdl with external id " + request.getExternalId()
+            throw new WsdlNotFoundRuntimeException("wsdl with external id " + request.getExternalId()
             + " not found");
         }
         response.setWsdl(wsdl.getData());
