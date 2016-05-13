@@ -93,6 +93,10 @@ public class ListClientsActorTest extends TestKit {
         _system = null;
     }
 
+    /**
+     * Setup test
+     * @throws Exception
+     */
     @Before
     public void setup() throws Exception {
         listMethodsPoolRef = PowerMockito.mock(InternalActorRef.class);

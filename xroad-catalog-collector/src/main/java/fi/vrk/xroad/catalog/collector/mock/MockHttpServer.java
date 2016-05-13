@@ -37,17 +37,22 @@ import java.net.InetSocketAddress;
 import java.util.concurrent.TimeUnit;
 
 /**
+ * Used for tests
  * Created by sjk on 22.2.2016.
  */
 public interface MockHttpServer {
 
     HttpServer getServer();
     void setServer(HttpServer server);
-    final int PORT = 8932;
+    int PORT = 8932;
 
-    final Logger log = LoggerFactory.getLogger("MockHttpServer");
+    Logger log = LoggerFactory.getLogger("MockHttpServer");
 
 
+    /**
+     * Start http server that offers the given file through http
+     * @param fileName
+     */
     default void startServer(String fileName) {
         try {
             setServer(HttpServer.create(new InetSocketAddress(PORT), 0));
@@ -63,13 +68,20 @@ public interface MockHttpServer {
         }
     }
 
+    /**
+     * Stop http server
+     */
     default void stopServer() {
         log.info("Stopping local http server {} in port {}", getServer(), PORT);
         getServer().stop(0);
-
     }
 
 
+    /**
+     * Start http server using file based on the url in the parameter
+     * @param url
+     * @return
+     */
     default String startServerForUrl(String url) {
         String[] parts = url.split("/");
 

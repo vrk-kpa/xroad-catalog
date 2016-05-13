@@ -31,6 +31,9 @@ import org.springframework.data.repository.query.Param;
 import java.time.LocalDateTime;
 import java.util.Set;
 
+/**
+ * Basic CRUD for member
+ */
 public interface MemberRepository extends CrudRepository<Member, Long> {
 
     @EntityGraph(value = "member.full-tree.graph",

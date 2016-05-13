@@ -40,11 +40,8 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestOperations;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Actor which fetches all clients, and delegates listing
@@ -121,7 +118,7 @@ public class ListClientsActor extends XRoadCatalogActor {
                     listMethodsPoolRef.tell(clientType, getSelf());
                 }
             }
-            log.info("all clients (" + (counter-1) + ") sent to actor");
+            log.info("all clients (" + (counter - 1) + ") sent to actor");
             return true;
         } else {
             return false;

@@ -36,6 +36,9 @@ import java.util.Arrays;
 
 import static org.junit.Assert.assertEquals;
 
+/**
+ * Integration test form member repository
+ */
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(Application.class)
 @Transactional
@@ -52,14 +55,14 @@ public class MemberTest {
     public void testGetActiveSubsystems() {
         // 1,2 are active, 12 is removed
         Member member = memberRepository.findOne(1L);
-        assertEquals(Arrays.asList(1L,2L),
+        assertEquals(Arrays.asList(1L, 2L),
                 new ArrayList<Long>(testUtil.getIds(member.getActiveSubsystems())));
     }
 
     @Test
     public void testGetAllSubsystems() {
         Member member = memberRepository.findOne(1L);
-        assertEquals(Arrays.asList(1L,2L,12L),
+        assertEquals(Arrays.asList(1L, 2L, 12L),
                 new ArrayList<Long>(testUtil.getIds(member.getAllSubsystems())));
     }
 
