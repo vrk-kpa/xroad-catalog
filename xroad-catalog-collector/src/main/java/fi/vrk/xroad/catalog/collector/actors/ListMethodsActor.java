@@ -24,6 +24,7 @@ package fi.vrk.xroad.catalog.collector.actors;
 
 import akka.actor.ActorRef;
 import fi.vrk.xroad.catalog.collector.extension.SpringExtension;
+import fi.vrk.xroad.catalog.collector.util.CatalogCollectorRuntimeException;
 import fi.vrk.xroad.catalog.collector.util.ClientTypeUtil;
 import fi.vrk.xroad.catalog.collector.util.XRoadClient;
 import fi.vrk.xroad.catalog.collector.wsimport.ClientType;
@@ -132,7 +133,8 @@ public class ListMethodsActor extends XRoadCatalogActor {
                 }
                 return true;
             } catch (MalformedURLException e) {
-                throw new RuntimeException("Malformed URL", e);
+                log.error("Failed to get methods for subsystem {} \n {}", subsystem, e.toString());
+                throw new CatalogCollectorRuntimeException("Malformed URL", e);
             }
 
         } else {

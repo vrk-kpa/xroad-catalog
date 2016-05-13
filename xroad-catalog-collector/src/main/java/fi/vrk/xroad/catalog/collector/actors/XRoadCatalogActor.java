@@ -24,6 +24,7 @@ package fi.vrk.xroad.catalog.collector.actors;
 
 import akka.actor.Terminated;
 import akka.actor.UntypedActor;
+import fi.vrk.xroad.catalog.collector.util.CatalogCollectorRuntimeException;
 import lombok.extern.slf4j.Slf4j;
 import scala.Option;
 
@@ -41,10 +42,10 @@ public abstract class XRoadCatalogActor extends UntypedActor {
         if (handleMessage(message)) {
             return;
         }else if (message instanceof Terminated) {
-            throw new RuntimeException("Terminated: " + message);
+            throw new CatalogCollectorRuntimeException("Terminated: " + message);
         } else {
             log.error("Unable to handle message {}", message);
-            throw new RuntimeException("Unable to handle message");
+            throw new CatalogCollectorRuntimeException("Unable to handle message");
         }
     }
 

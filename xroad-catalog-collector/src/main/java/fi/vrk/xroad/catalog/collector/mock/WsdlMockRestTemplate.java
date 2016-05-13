@@ -26,6 +26,7 @@ import com.google.common.base.Splitter;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
+import fi.vrk.xroad.catalog.collector.util.CatalogCollectorRuntimeException;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -79,7 +80,7 @@ public class WsdlMockRestTemplate extends TestRestTemplate {
             return result;
         } catch (Exception e) {
             log.error("Error getting resource from through http {}", url, e);
-            throw new RuntimeException("Error reading resource from httpserver", e);
+            throw new CatalogCollectorRuntimeException("Error reading resource from httpserver", e);
         }
     }
 

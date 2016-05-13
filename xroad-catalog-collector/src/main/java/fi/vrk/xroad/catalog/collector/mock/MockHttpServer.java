@@ -25,6 +25,7 @@ package fi.vrk.xroad.catalog.collector.mock;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
+import fi.vrk.xroad.catalog.collector.util.CatalogCollectorRuntimeException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.ClassPathResource;
@@ -77,7 +78,7 @@ public interface MockHttpServer {
             return localUrl;
         } catch (Exception e) {
             log.error("Error getting resource from through http{}", localUrl);
-            throw new RuntimeException("Error reading resource from httpserver", e);
+            throw new CatalogCollectorRuntimeException("Error reading resource from httpserver", e);
         }
     }
 
