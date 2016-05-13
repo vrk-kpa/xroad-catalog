@@ -102,32 +102,7 @@ public class CatalogServiceImpl implements CatalogService {
                 }
                 member = memberRepository.save(member);
             } else {
-                oldMember.updateWithDataFrom(member, now);
-                // process subsystems for the old member
-                Map<SubsystemId, Subsystem> unprocessedOldSubsystems = new HashMap<>();
-                for (Subsystem subsystem: oldMember.getAllSubsystems()) {
-                    unprocessedOldSubsystems.put(subsystem.createKey(), subsystem);
-                }
-                for (Subsystem subsystem: member.getAllSubsystems()) {
-                    Subsystem oldSubsystem = unprocessedOldSubsystems.get(subsystem.createKey());
-                    if (oldSubsystem == null) {
-                        // brand new item, add it
-                        subsystem.getStatusInfo().setTimestampsForNew(now);
-                        subsystem.setMember(oldMember);
-                        oldMember.getAllSubsystems().add(subsystem);
-                    } else {
-                        oldSubsystem.getStatusInfo().setTimestampsForFetched(now);
-                    }
-                    unprocessedOldSubsystems.remove(subsystem.createKey());
-                }
-                // remaining old subsystems - that were not included in member.subsystems -
-                // are removed (if not already)
-                for (Subsystem oldToRemove: unprocessedOldSubsystems.values()) {
-                    StatusInfo status = oldToRemove.getStatusInfo();
-                    if (!status.isRemoved()) {
-                        status.setTimestampsForRemoved(now);
-                    }
-                }
+                handleOldMember(now, member, oldMember);
 
                 member = memberRepository.save(oldMember);
             }
@@ -135,6 +110,35 @@ public class CatalogServiceImpl implements CatalogService {
         }
         // now unprocessedOldMembers should all be removed (either already removed, or will be now)
         removeUnprocessedOldMembers(now, unprocessedOldMembers);
+    }
+
+    private void handleOldMember(LocalDateTime now, Member member, Member oldMember) {
+        oldMember.updateWithDataFrom(member, now);
+        // process subsystems for the old member
+        Map<SubsystemId, Subsystem> unprocessedOldSubsystems = new HashMap<>();
+        for (Subsystem subsystem: oldMember.getAllSubsystems()) {
+            unprocessedOldSubsystems.put(subsystem.createKey(), subsystem);
+        }
+        for (Subsystem subsystem: member.getAllSubsystems()) {
+            Subsystem oldSubsystem = unprocessedOldSubsystems.get(subsystem.createKey());
+            if (oldSubsystem == null) {
+                // brand new item, add it
+                subsystem.getStatusInfo().setTimestampsForNew(now);
+                subsystem.setMember(oldMember);
+                oldMember.getAllSubsystems().add(subsystem);
+            } else {
+                oldSubsystem.getStatusInfo().setTimestampsForFetched(now);
+            }
+            unprocessedOldSubsystems.remove(subsystem.createKey());
+        }
+        // remaining old subsystems - that were not included in member.subsystems -
+        // are removed (if not already)
+        for (Subsystem oldToRemove: unprocessedOldSubsystems.values()) {
+            StatusInfo status = oldToRemove.getStatusInfo();
+            if (!status.isRemoved()) {
+                status.setTimestampsForRemoved(now);
+            }
+        }
     }
 
     private void removeUnprocessedOldMembers(LocalDateTime now, Map<MemberId, Member> unprocessedOldMembers) {
