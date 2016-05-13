@@ -39,6 +39,10 @@ import java.util.UUID;
 @Slf4j
 public class XRoadClient {
 
+    private XRoadClient() {
+        // Private empty constructor
+    }
+
     /**
      * Calls the service using JAX-WS endpoints that have been generated from wsdl
      * @param client

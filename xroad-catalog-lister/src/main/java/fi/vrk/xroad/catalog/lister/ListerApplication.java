@@ -29,6 +29,10 @@ import org.springframework.context.annotation.ComponentScan;
 @ComponentScan(basePackageClasses = {ListerApplication.class, CatalogService.class})
 public class ListerApplication {
 
+    private ListerApplication() {
+        // Private empty constructor
+    }
+
     public static void main(String[] args) {
         SpringApplication.run(ListerApplication.class, args);
     }

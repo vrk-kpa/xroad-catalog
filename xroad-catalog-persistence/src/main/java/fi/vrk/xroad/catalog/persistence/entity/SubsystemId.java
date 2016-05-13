@@ -35,6 +35,8 @@ import lombok.ToString;
 public class SubsystemId extends MemberId {
     private String subsystemCode;
 
+
+
     public SubsystemId(String xRoadInstance, String memberClass, String memberCode, String subsystemCode) {
         super(xRoadInstance, memberClass, memberCode);
         this.subsystemCode = subsystemCode;

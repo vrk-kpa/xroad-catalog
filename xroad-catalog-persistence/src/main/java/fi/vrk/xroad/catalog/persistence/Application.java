@@ -37,6 +37,11 @@ import org.springframework.data.jpa.convert.threeten.Jsr310JpaConverters;
 )
 @SpringBootApplication
 public class Application {
+
+    private Application() {
+        // Private empty constructor
+    }
+
     public static void main(String[] args) {
         SpringApplication.run(Application.class);
     }

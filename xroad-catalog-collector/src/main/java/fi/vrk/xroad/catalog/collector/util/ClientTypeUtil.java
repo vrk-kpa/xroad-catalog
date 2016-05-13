@@ -30,6 +30,10 @@ import fi.vrk.xroad.catalog.collector.wsimport.ClientType;
  */
 public class ClientTypeUtil {
 
+    private ClientTypeUtil() {
+        // Private empty constructor
+    }
+
     public static String toString(ClientType c) {
         StringBuilder sb = new StringBuilder("");
         sb.append("ObjectType: ");
