@@ -60,6 +60,9 @@ import java.util.stream.Collectors;
                 query = Member.FIND_ACTIVE_CHANGED_QUERY),
 })
 @EqualsAndHashCode(exclude = {"id", "subsystems", "statusInfo"})
+/**
+ * X-Road member
+ */
 public class Member {
 
     private static final String FIND_CHANGED_QUERY_PART_1 =

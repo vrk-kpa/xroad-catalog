@@ -34,6 +34,9 @@ import java.util.Collection;
 
 @Component
 @Slf4j
+/**
+ * XML interface for lister
+ */
 public class JaxbCatalogServiceImpl implements JaxbCatalogService {
 
     @Autowired
