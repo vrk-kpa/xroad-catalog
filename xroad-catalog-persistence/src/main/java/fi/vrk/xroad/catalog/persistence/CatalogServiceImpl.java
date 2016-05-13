@@ -131,6 +131,10 @@ public class CatalogServiceImpl implements CatalogService {
             unprocessedOldMembers.remove(member.createKey());
         }
         // now unprocessedOldMembers should all be removed (either already removed, or will be now)
+        removeUnprocessedOldMembers(now, unprocessedOldMembers);
+    }
+
+    private void removeUnprocessedOldMembers(LocalDateTime now, Map<MemberId, Member> unprocessedOldMembers) {
         for (Member oldToRemove: unprocessedOldMembers.values()) {
             StatusInfo status = oldToRemove.getStatusInfo();
             if (!status.isRemoved()) {
