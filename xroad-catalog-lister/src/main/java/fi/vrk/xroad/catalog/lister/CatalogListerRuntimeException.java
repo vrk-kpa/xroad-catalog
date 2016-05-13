@@ -27,6 +27,10 @@ package fi.vrk.xroad.catalog.lister;
  */
 public class CatalogListerRuntimeException extends RuntimeException {
 
+    public CatalogListerRuntimeException(String s) {
+        super(s);
+    }
+
     public CatalogListerRuntimeException(String s, Throwable throwable) {
         super(s, throwable);
     }

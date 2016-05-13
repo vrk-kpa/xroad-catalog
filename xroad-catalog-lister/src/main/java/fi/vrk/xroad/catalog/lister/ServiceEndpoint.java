@@ -60,8 +60,7 @@ public class ServiceEndpoint {
 
     @PayloadRoot(namespace = NAMESPACE_URI, localPart = "GetWsdl")
 	@ResponsePayload
-	public GetWsdlResponse getWsdl(@RequestPayload GetWsdl request) throws
-			Exception {
+	public GetWsdlResponse getWsdl(@RequestPayload GetWsdl request) {
         GetWsdlResponse response = new GetWsdlResponse();
         Wsdl wsdl = catalogService.getWsdl(request.getExternalId());
         if (wsdl == null) {
