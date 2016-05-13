@@ -115,12 +115,21 @@ public class StatusInfo {
         fetched = timestamp;
     }
 
+    /**
+     * Constructor based on timestamps
+     * @param created
+     * @param changed
+     * @param fetched
+     * @param removed
+     */
     public StatusInfo(LocalDateTime created, LocalDateTime changed, LocalDateTime fetched, LocalDateTime removed) {
         this.created = created;
         this.changed = changed;
         this.fetched = fetched;
         this.removed = removed;
     }
+
     public StatusInfo() {
+        // Empty contructor
     }
 }

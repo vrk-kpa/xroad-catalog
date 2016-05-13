@@ -56,8 +56,15 @@ public class Wsdl {
     private StatusInfo statusInfo = new StatusInfo();
 
     public Wsdl() {
+        // Empty constructor
     }
 
+    /**
+     *
+     * @param service
+     * @param data
+     * @param externalId
+     */
     public Wsdl(Service service, String data, String externalId) {
         this.service = service;
         this.data = data;

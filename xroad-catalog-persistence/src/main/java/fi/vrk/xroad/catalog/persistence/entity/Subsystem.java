@@ -59,7 +59,14 @@ public class Subsystem {
     @Embedded
     private StatusInfo statusInfo = new StatusInfo();
 
-    public Subsystem() {}
+    public Subsystem() {
+        // Empty constructor
+    }
+
+    /**
+     * create key based on xroad identifiers
+     * @return
+     */
 
     public SubsystemId createKey() {
         return new SubsystemId(
@@ -69,6 +76,11 @@ public class Subsystem {
                 subsystemCode);
     }
 
+    /**
+     * Constructor for tests
+     * @param member
+     * @param subsystemCode
+     */
     public Subsystem(Member member, String subsystemCode) {
         this.member = member;
         this.subsystemCode = subsystemCode;

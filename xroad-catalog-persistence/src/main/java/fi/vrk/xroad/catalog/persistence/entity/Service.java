@@ -59,8 +59,15 @@ public class Service {
     private Set<Wsdl> wsdls = new HashSet<>();
 
     public Service() {
+        // Empty constructor
     }
 
+    /**
+     * Constructor for all args
+     * @param subsystem
+     * @param serviceCode
+     * @param serviceVersion
+     */
     public Service(Subsystem subsystem, String serviceCode, String serviceVersion) {
         this.subsystem = subsystem;
         this.serviceCode = serviceCode;
@@ -68,6 +75,10 @@ public class Service {
         statusInfo.setTimestampsForNew(LocalDateTime.now());
     }
 
+    /**
+     * Add given wsdl to set of wsdls
+     * @param wsdl
+     */
     public void setWsdl(Wsdl wsdl) {
         if (wsdls == null) {
             wsdls = new HashSet<>();

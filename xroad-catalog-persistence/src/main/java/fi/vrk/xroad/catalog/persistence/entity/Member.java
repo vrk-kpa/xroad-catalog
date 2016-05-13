@@ -153,8 +153,16 @@ public class Member {
     }
 
     public Member() {
+        // Empty constructor
     }
 
+    /**
+     * Constructor for tests
+     * @param xRoadInstance
+     * @param memberClass
+     * @param memberCode
+     * @param name
+     */
     public Member(String xRoadInstance,
                   String memberClass,
                   String memberCode,

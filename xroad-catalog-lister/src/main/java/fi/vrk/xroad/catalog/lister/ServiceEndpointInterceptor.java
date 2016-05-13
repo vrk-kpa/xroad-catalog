@@ -93,7 +93,7 @@ public class ServiceEndpointInterceptor implements SoapEndpointInterceptor {
 
     @Override
     public void afterCompletion(MessageContext messageContext, Object endpoint, Exception ex) throws Exception {
-
+        // No need to do anything
     }
 
 

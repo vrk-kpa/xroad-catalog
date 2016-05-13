@@ -27,8 +27,6 @@ import org.springframework.ws.soap.server.endpoint.annotation.SoapFault;
 
 @SoapFault(faultCode = FaultCode.SERVER)
 public class WsdlNotFoundException extends Exception {
-    public WsdlNotFoundException() {
-    }
 
     public WsdlNotFoundException(String message) {
         super(message);
