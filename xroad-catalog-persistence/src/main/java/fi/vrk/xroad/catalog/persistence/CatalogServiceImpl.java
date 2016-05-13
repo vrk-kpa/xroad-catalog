@@ -186,7 +186,7 @@ public class CatalogServiceImpl implements CatalogService {
     public void saveWsdl(SubsystemId subsystemId, ServiceId serviceId, String wsdlString) {
         assert subsystemId != null;
         assert serviceId != null;
-        Service oldService = null;
+        Service oldService;
         // bit ugly this one, would be a little cleaner if
         // https://jira.spring.io/browse/DATAJPA-209 was resolved
         if (serviceId.getServiceVersion() == null) {

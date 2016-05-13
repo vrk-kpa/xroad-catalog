@@ -61,7 +61,7 @@ public class JaxbConverter {
             cm.setName(member.getName());
             cm.setXRoadInstance(member.getXRoadInstance());
             cm.setSubsystems(new SubsystemList());
-            Iterable<Subsystem> subsystems = null;
+            Iterable<Subsystem> subsystems;
             if (onlyActiveChildren) {
                 subsystems = member.getActiveSubsystems();
             } else {
@@ -84,7 +84,7 @@ public class JaxbConverter {
             cs.setRemoved(toXmlGregorianCalendar(subsystem.getStatusInfo().getRemoved()));
             cs.setSubsystemCode(subsystem.getSubsystemCode());
             cs.setServices(new ServiceList());
-            Iterable<Service> services = null;
+            Iterable<Service> services;
             if (onlyActiveChildren) {
                 services = subsystem.getActiveServices();
             } else {

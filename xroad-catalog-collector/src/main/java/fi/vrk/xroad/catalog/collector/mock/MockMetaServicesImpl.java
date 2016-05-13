@@ -32,6 +32,7 @@ import javax.annotation.Resource;
 import javax.jws.WebService;
 import javax.xml.ws.Holder;
 import javax.xml.ws.WebServiceContext;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -47,7 +48,7 @@ public class MockMetaServicesImpl implements MetaServicesPort {
 
     @Override
     public List<XRoadServiceIdentifierType> allowedMethods() {
-        return null;
+        return Collections.emptyList();
     }
 
     @Override

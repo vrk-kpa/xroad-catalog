@@ -49,10 +49,6 @@ import java.util.concurrent.TimeUnit;
 @ComponentScan("fi.vrk.xroad.catalog.collector.configuration")
 public class XRoadCatalogCollector  {
 
-    public XRoadCatalogCollector() {
-        // Empty constructor
-    }
-
     public static void main(String[] args) throws Exception {
 
         ApplicationContext context =
