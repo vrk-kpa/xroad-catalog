@@ -32,6 +32,9 @@ import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.StreamSupport;
 
+/**
+ * Implementation for catalogservice CRUD
+ */
 @Slf4j
 @Component("catalogService")
 @Transactional

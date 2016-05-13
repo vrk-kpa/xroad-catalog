@@ -36,6 +36,9 @@ import org.springframework.context.annotation.*;
 import org.springframework.web.client.RestOperations;
 import org.springframework.web.client.RestTemplate;
 
+/**
+ * Common conf for development and production
+ */
 @Configuration
 @Lazy
 @ComponentScan(basePackages = {
@@ -43,13 +46,10 @@ import org.springframework.web.client.RestTemplate;
         "fi.vrk.xroad.catalog.collector.actors",
         "fi.vrk.xroad.catalog.collector.mock",
         "fi.vrk.xroad.catalog.collector.extension",
-        "fi.vrk.xroad.catalog" +
-        ".persistence" })
+        "fi.vrk.xroad.catalog"
+        + ".persistence" })
 @ImportResource({ "classpath:META-INF/cxf/cxf.xml" })
 @Slf4j
-/**
- * Common conf for development and production
- */
 public class ApplicationConfiguration extends SpringBootServletInitializer {
 
     // The application context is needed to initialize the Akka Spring

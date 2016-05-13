@@ -24,7 +24,6 @@ package fi.vrk.xroad.catalog.lister;
 
 import fi.vrk.xroad.xroad_catalog_lister.Member;
 
-import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.XMLGregorianCalendar;
 
 /**

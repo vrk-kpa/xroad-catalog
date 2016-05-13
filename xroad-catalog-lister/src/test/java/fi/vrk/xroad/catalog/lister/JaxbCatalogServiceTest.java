@@ -79,19 +79,19 @@ public class JaxbCatalogServiceTest {
 
     @Test
     public void testGetAll() throws Exception {
-        XMLGregorianCalendar calendar2015_5_5 = jaxbConverter.toXmlGregorianCalendar(
+        XMLGregorianCalendar calendar20150505 = jaxbConverter.toXmlGregorianCalendar(
                 LocalDateTime.of(2015, 5, 5, 0, 0)
         );
-        XMLGregorianCalendar calendar2014_5_5 = jaxbConverter.toXmlGregorianCalendar(
+        XMLGregorianCalendar calendar20140505 = jaxbConverter.toXmlGregorianCalendar(
                 LocalDateTime.of(2014, 5, 5, 0, 0)
         );
-        Iterable<fi.vrk.xroad.xroad_catalog_lister.Member> members = service.getAllMembers(calendar2015_5_5);
+        Iterable<fi.vrk.xroad.xroad_catalog_lister.Member> members = service.getAllMembers(calendar20150505);
         assertEquals(2, Iterables.size(members));
         assertEquals(new HashSet<String>(Arrays.asList("2", "3")),
                 new HashSet<String>(getMemberCodes(members)));
         assertMember2Contents(members);
 
-        members = service.getAllMembers(calendar2014_5_5);
+        members = service.getAllMembers(calendar20140505);
         assertEquals(3, Iterables.size(members));
         assertEquals(new HashSet<String>(Arrays.asList("1", "2", "3")),
                 new HashSet<String>(getMemberCodes(members)));

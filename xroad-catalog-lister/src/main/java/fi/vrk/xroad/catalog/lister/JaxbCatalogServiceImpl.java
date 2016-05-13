@@ -32,11 +32,11 @@ import org.springframework.stereotype.Component;
 import javax.xml.datatype.XMLGregorianCalendar;
 import java.util.Collection;
 
-@Component
-@Slf4j
 /**
  * XML interface for lister
  */
+@Component
+@Slf4j
 public class JaxbCatalogServiceImpl implements JaxbCatalogService {
 
     @Autowired

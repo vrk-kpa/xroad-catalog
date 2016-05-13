@@ -27,6 +27,9 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.orm.jpa.EntityScan;
 import org.springframework.data.jpa.convert.threeten.Jsr310JpaConverters;
 
+/**
+ * Application used in tests
+ */
 @EntityScan(
         basePackageClasses = { Application.class, Jsr310JpaConverters.class }
 )

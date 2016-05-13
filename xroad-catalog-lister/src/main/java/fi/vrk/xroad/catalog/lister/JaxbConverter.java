@@ -47,6 +47,12 @@ import java.util.List;
 @Component
 public class JaxbConverter {
 
+    /**
+     * Convert entities to XML objects
+     * @param members
+     * @param onlyActiveChildren if true, convert only active subsystems
+     * @return
+     */
     public Collection<Member> convertMembers(Iterable<fi.vrk.xroad.catalog.persistence.entity.Member> members,
                                              boolean onlyActiveChildren)  {
         List<Member> converted = new ArrayList<>();
@@ -73,6 +79,12 @@ public class JaxbConverter {
         return converted;
     }
 
+    /**
+     * Convert entities to XML objects
+     * @param subsystems
+     * @param onlyActiveChildren if true, convert only active subsystems
+     * @return collection of XML objects
+     */
     public Collection<fi.vrk.xroad.xroad_catalog_lister.Subsystem> convertSubsystems(Iterable<Subsystem> subsystems,
                                                                                      boolean onlyActiveChildren) {
         List<fi.vrk.xroad.xroad_catalog_lister.Subsystem> converted = new ArrayList<>();
@@ -96,6 +108,12 @@ public class JaxbConverter {
         return converted;
     }
 
+    /**
+     * Convert entities to XML objects
+     * @param services
+     * @param onlyActiveChildren if true, convert only active subsystems
+     * @return collection of XML objects
+     */
     public Collection<fi.vrk.xroad.xroad_catalog_lister.Service> convertServices(Iterable<Service> services,
                                                                                  boolean onlyActiveChildren) {
         List<fi.vrk.xroad.xroad_catalog_lister.Service> converted = new ArrayList<>();
@@ -137,7 +155,7 @@ public class JaxbConverter {
         return calendar.toGregorianCalendar().toZonedDateTime().toLocalDateTime();
     }
 
-    public XMLGregorianCalendar toXmlGregorianCalendar(LocalDateTime localDateTime) {
+    protected XMLGregorianCalendar toXmlGregorianCalendar(LocalDateTime localDateTime) {
         if (localDateTime == null) {
             return null;
         } else {
