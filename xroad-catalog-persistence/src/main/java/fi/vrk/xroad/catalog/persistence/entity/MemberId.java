@@ -22,6 +22,7 @@
  */
 package fi.vrk.xroad.catalog.persistence.entity;
 
+import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 
@@ -29,15 +30,12 @@ import lombok.Getter;
  * Utility class to work as a key for Members in Maps etc
  */
 @EqualsAndHashCode
-@Getter
+@AllArgsConstructor
 public class MemberId {
+    @Getter
     private String xRoadInstance;
+    @Getter
     private String memberClass;
+    @Getter
     private String memberCode;
-
-    public MemberId(String xRoadInstance, String memberClass, String memberCode) {
-        this.xRoadInstance = xRoadInstance;
-        this.memberClass = memberClass;
-        this.memberCode = memberCode;
-    }
 }
