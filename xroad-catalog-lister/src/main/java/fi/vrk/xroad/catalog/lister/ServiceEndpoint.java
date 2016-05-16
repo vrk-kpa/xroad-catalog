@@ -36,10 +36,10 @@ import org.springframework.ws.server.endpoint.annotation.ResponsePayload;
 @Endpoint
 @Slf4j
 public class ServiceEndpoint {
-	private static final String NAMESPACE_URI = "http://xroad.vrk.fi/xroad-catalog-lister";
+    private static final String NAMESPACE_URI = "http://xroad.vrk.fi/xroad-catalog-lister";
 
-	@Autowired
-	private CatalogService catalogService;
+    @Autowired
+    private CatalogService catalogService;
 
     @Autowired
     private JaxbCatalogService jaxbCatalogService;
@@ -47,28 +47,28 @@ public class ServiceEndpoint {
     @Autowired
     private JaxbConverter jaxbConverter;
 
-	@PayloadRoot(namespace = NAMESPACE_URI, localPart = "ListMembers")
-	@ResponsePayload
-	public ListMembersResponse listMembers(@RequestPayload ListMembers request) {
-		ListMembersResponse response = new ListMembersResponse();
-		response.setMemberList(new MemberList());
+    @PayloadRoot(namespace = NAMESPACE_URI, localPart = "ListMembers")
+    @ResponsePayload
+    public ListMembersResponse listMembers(@RequestPayload ListMembers request) {
+        ListMembersResponse response = new ListMembersResponse();
+        response.setMemberList(new MemberList());
 
         Iterable<Member> members = jaxbCatalogService.getAllMembers(request.getChangedAfter());
         response.getMemberList().getMembers().addAll(Lists.newArrayList(members));
-		return response;
-	}
+        return response;
+    }
 
     @PayloadRoot(namespace = NAMESPACE_URI, localPart = "GetWsdl")
-	@ResponsePayload
-	public GetWsdlResponse getWsdl(@RequestPayload GetWsdl request) {
+    @ResponsePayload
+    public GetWsdlResponse getWsdl(@RequestPayload GetWsdl request) {
         GetWsdlResponse response = new GetWsdlResponse();
         Wsdl wsdl = catalogService.getWsdl(request.getExternalId());
         if (wsdl == null) {
             throw new WsdlNotFoundException("wsdl with external id " + request.getExternalId()
-            + " not found");
+                    + " not found");
         }
         response.setWsdl(wsdl.getData());
         return response;
-	}
+    }
 
 }

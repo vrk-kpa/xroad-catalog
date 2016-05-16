@@ -93,9 +93,9 @@ public class Member {
             FIND_CHANGED_QUERY_PART_1 + FIND_CHANGED_QUERY_PART_2;
     static final String FIND_ACTIVE_CHANGED_QUERY =
             FIND_CHANGED_QUERY_PART_1 +
-            "mem.statusInfo.removed IS NULL AND (" +
-            FIND_CHANGED_QUERY_PART_2 +
-            ")";
+                    "mem.statusInfo.removed IS NULL AND (" +
+                    FIND_CHANGED_QUERY_PART_2 +
+                    ")";
 
     @Id
     @Column(nullable = false)
@@ -116,9 +116,13 @@ public class Member {
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
     private Set<Subsystem> subsystems = new HashSet<>();
 
+    public Member() {
+        // Empty constructor
+    }
 
     /**
      * Constructor for tests
+     *
      * @param xRoadInstance
      * @param memberClass
      * @param memberCode
@@ -133,6 +137,14 @@ public class Member {
         this.memberCode = memberCode;
         this.name = name;
         statusInfo.setTimestampsForNew(LocalDateTime.now());
+    }
+
+
+    /**
+     * @return comparable & equals-able natural key
+     */
+    public MemberId createKey() {
+        return new MemberId(xRoadInstance, memberClass, memberCode);
     }
 
     /**
@@ -150,13 +162,6 @@ public class Member {
     }
 
     /**
-     * @return comparable & equals-able natural key
-     */
-    public MemberId createKey() {
-        return new MemberId(xRoadInstance, memberClass, memberCode);
-    }
-
-    /**
      * Compares objects with just the "direct payload" - not ids, references entities or timestamps
      *
      * @param another
@@ -171,13 +176,9 @@ public class Member {
                 .result() == 0;
     }
 
-    public Member() {
-        // Empty constructor
-    }
-
-
     /**
      * Note: Read-only collection, do not use this to modify collection
+     *
      * @return
      */
     public Set<Subsystem> getActiveSubsystems() {
@@ -188,6 +189,7 @@ public class Member {
 
     /**
      * This collection can be used to add new items
+     *
      * @return
      */
     public Set<Subsystem> getAllSubsystems() {

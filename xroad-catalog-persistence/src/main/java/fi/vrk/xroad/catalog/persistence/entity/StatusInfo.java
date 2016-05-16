@@ -39,11 +39,13 @@ public class StatusInfo {
 
     @Column(nullable = false)
     private LocalDateTime created;
+
     /**
      * When data was changed somehow, whether it was updated, created or removed
      */
     @Column(nullable = false)
     private LocalDateTime changed;
+
     /**
      * When data was last time fetched from the source (regardless of whether there
      * were any changes). For removed entities, fetched it updated the first time
@@ -60,6 +62,7 @@ public class StatusInfo {
      * The data can either be modified from previous values (isModified)
      * or identical. If items was previously marked removed, it no longer is.
      * Changed-timestamp is updated for modified and un-removed items.
+     *
      * @param timestamp
      * @param isModified
      */
@@ -114,6 +117,7 @@ public class StatusInfo {
 
     /**
      * Constructor based on timestamps
+     *
      * @param created
      * @param changed
      * @param fetched

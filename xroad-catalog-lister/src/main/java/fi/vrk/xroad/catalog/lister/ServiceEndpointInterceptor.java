@@ -47,8 +47,9 @@ public class ServiceEndpointInterceptor implements SoapEndpointInterceptor {
     }
 
     @Override
-    public boolean handleResponse(MessageContext messageContext, Object endpoint) throws TransformerException, SOAPException {
-		/* Create headers and add to msg */
+    public boolean handleResponse(MessageContext messageContext, Object endpoint) throws TransformerException,
+            SOAPException {
+        /* Create headers and add to msg */
         WebServiceMessage requestMsg = messageContext.getRequest();
 
         transformHeaders(requestMsg, messageContext.getResponse());
@@ -57,13 +58,11 @@ public class ServiceEndpointInterceptor implements SoapEndpointInterceptor {
     }
 
 
-
     protected SoapHeader getSoapHeader(WebServiceMessage message) {
         if (message instanceof SoapMessage) {
             SoapMessage soapMessage = (SoapMessage) message;
             return soapMessage.getEnvelope().getHeader();
-        }
-        else {
+        } else {
             return null;
         }
     }
@@ -95,7 +94,6 @@ public class ServiceEndpointInterceptor implements SoapEndpointInterceptor {
     public void afterCompletion(MessageContext messageContext, Object endpoint, Exception ex) throws Exception {
         // No need to do anything
     }
-
 
 
     @Override

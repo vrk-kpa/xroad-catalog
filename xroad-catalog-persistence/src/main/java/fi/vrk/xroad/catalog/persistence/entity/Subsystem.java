@@ -35,7 +35,7 @@ import java.util.stream.Collectors;
 @Getter
 @Setter
 @ToString(exclude = {"services"})
-@EqualsAndHashCode(exclude = {"id", "services", "statusInfo"} ) // why?
+@EqualsAndHashCode(exclude = {"id", "services", "statusInfo"}) // why?
 public class Subsystem {
 
     @Id
@@ -60,6 +60,7 @@ public class Subsystem {
 
     /**
      * create key based on xroad identifiers
+     *
      * @return
      */
 
@@ -73,6 +74,7 @@ public class Subsystem {
 
     /**
      * Constructor for tests
+     *
      * @param member
      * @param subsystemCode
      */
@@ -84,6 +86,7 @@ public class Subsystem {
 
     /**
      * Note: Read-only collection, do not use this to modify collection
+     *
      * @return
      */
     public Set<Service> getActiveServices() {
@@ -94,6 +97,7 @@ public class Subsystem {
 
     /**
      * This collection can be used to add new items
+     *
      * @return
      */
     public Set<Service> getAllServices() {

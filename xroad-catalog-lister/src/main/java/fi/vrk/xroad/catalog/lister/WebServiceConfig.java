@@ -61,7 +61,4 @@ public class WebServiceConfig extends WsConfigurerAdapter {
 		interceptors.add(new SoapEnvelopeLoggingInterceptor());
 		interceptors.add(new ServiceEndpointInterceptor());
 	}
-
-
-
 }

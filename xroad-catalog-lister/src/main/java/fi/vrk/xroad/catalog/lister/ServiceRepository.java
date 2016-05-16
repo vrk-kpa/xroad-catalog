@@ -110,7 +110,7 @@ public class ServiceRepository {
 		try {
 			GregorianCalendar gcal = GregorianCalendar.from(date.atStartOfDay(ZoneId.systemDefault()));
 			return DatatypeFactory.newInstance().newXMLGregorianCalendar(gcal);
-		} catch (Exception e){
+		} catch (Exception e) {
 			throw new CatalogListerRuntimeException("Calendar conversion failed", e);
 		}
 	}
@@ -119,5 +119,5 @@ public class ServiceRepository {
 		Assert.notNull(name);
 
 		return members;
-	}		
+	}
 }
