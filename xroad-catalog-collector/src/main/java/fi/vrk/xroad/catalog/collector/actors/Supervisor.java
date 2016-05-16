@@ -101,5 +101,4 @@ public class Supervisor extends XRoadCatalogActor {
             return false;
         }
     }
-
 }

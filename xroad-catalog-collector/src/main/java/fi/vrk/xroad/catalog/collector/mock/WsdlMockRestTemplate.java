@@ -52,7 +52,7 @@ public class WsdlMockRestTemplate extends TestRestTemplate {
     @Setter
     private HttpServer server;
 
-    private final int PORT = 8933;
+    private static final int PORT = 8933;
 
     public void startServer() throws Exception {
         setServer(HttpServer.create(new InetSocketAddress(PORT), 0));

@@ -102,6 +102,6 @@ public class ApplicationConfiguration extends SpringBootServletInitializer {
     @Bean
     public Long getCollectorInterval() {
         return collectorInterval;
-    };
+    }
 
 }
