@@ -116,6 +116,25 @@ public class Member {
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
     private Set<Subsystem> subsystems = new HashSet<>();
 
+
+    /**
+     * Constructor for tests
+     * @param xRoadInstance
+     * @param memberClass
+     * @param memberCode
+     * @param name
+     */
+    public Member(String xRoadInstance,
+                  String memberClass,
+                  String memberCode,
+                  String name) {
+        this.xRoadInstance = xRoadInstance;
+        this.memberClass = memberClass;
+        this.memberCode = memberCode;
+        this.name = name;
+        statusInfo.setTimestampsForNew(LocalDateTime.now());
+    }
+
     /**
      * Updates data with values from a transient non-deleted Member object,
      * and sets all data fields accordingly
@@ -156,23 +175,6 @@ public class Member {
         // Empty constructor
     }
 
-    /**
-     * Constructor for tests
-     * @param xRoadInstance
-     * @param memberClass
-     * @param memberCode
-     * @param name
-     */
-    public Member(String xRoadInstance,
-                  String memberClass,
-                  String memberCode,
-                  String name) {
-        this.xRoadInstance = xRoadInstance;
-        this.memberClass = memberClass;
-        this.memberCode = memberCode;
-        this.name = name;
-        statusInfo.setTimestampsForNew(LocalDateTime.now());
-    }
 
     /**
      * Note: Read-only collection, do not use this to modify collection

@@ -60,6 +60,9 @@ public class ApplicationConfiguration extends SpringBootServletInitializer {
     @Autowired
     private SpringExtension springExtension;
 
+    @Value("${xroad-catalog.collector-interval-min}")
+    private Long collectorInterval;
+
     /**
      * Actor system singleton for this application.
      */
@@ -95,9 +98,6 @@ public class ApplicationConfiguration extends SpringBootServletInitializer {
         log.info("-------------- Configuration");
         return new RestTemplate();
     }
-
-    @Value("${xroad-catalog.collector-interval-min}")
-    private Long collectorInterval;
 
     @Bean
     public Long getCollectorInterval() {

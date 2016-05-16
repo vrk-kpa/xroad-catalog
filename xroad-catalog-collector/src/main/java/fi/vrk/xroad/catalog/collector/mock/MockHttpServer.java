@@ -42,11 +42,12 @@ import java.util.concurrent.TimeUnit;
  */
 public interface MockHttpServer {
 
-    HttpServer getServer();
-    void setServer(HttpServer server);
     int PORT = 8932;
 
     Logger log = LoggerFactory.getLogger("MockHttpServer");
+
+    HttpServer getServer();
+    void setServer(HttpServer server);
 
 
     /**

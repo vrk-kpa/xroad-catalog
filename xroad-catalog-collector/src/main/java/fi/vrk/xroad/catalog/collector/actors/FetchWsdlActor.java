@@ -52,16 +52,16 @@ public class FetchWsdlActor extends XRoadCatalogActor {
     @Value("${xroad-catalog.fetch-wsdl-host}")
     private String host;
 
-    public String getHost() {
-        return host;
-    }
-
     @Autowired
     @Qualifier("wsdlRestOperations")
     private RestOperations restOperations;
 
     @Autowired
     protected CatalogService catalogService;
+
+    public String getHost() {
+        return host;
+    }
 
 
     @Override
