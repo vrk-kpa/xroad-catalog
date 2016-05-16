@@ -58,6 +58,25 @@ public class StatusInfo {
     private LocalDateTime removed;
 
     /**
+     * Constructor based on timestamps
+     *
+     * @param created
+     * @param changed
+     * @param fetched
+     * @param removed
+     */
+    public StatusInfo(LocalDateTime created, LocalDateTime changed, LocalDateTime fetched, LocalDateTime removed) {
+        this.created = created;
+        this.changed = changed;
+        this.fetched = fetched;
+        this.removed = removed;
+    }
+
+    public StatusInfo() {
+        // Empty contructor
+    }
+
+    /**
      * Set timestamps for item that is saved and is not removed.
      * The data can either be modified from previous values (isModified)
      * or identical. If items was previously marked removed, it no longer is.
@@ -115,22 +134,5 @@ public class StatusInfo {
         fetched = timestamp;
     }
 
-    /**
-     * Constructor based on timestamps
-     *
-     * @param created
-     * @param changed
-     * @param fetched
-     * @param removed
-     */
-    public StatusInfo(LocalDateTime created, LocalDateTime changed, LocalDateTime fetched, LocalDateTime removed) {
-        this.created = created;
-        this.changed = changed;
-        this.fetched = fetched;
-        this.removed = removed;
-    }
 
-    public StatusInfo() {
-        // Empty contructor
-    }
 }
