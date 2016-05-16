@@ -84,17 +84,15 @@ public class FetchWsdlActor extends XRoadCatalogActor {
     }
 
     private ServiceId createServiceId(XRoadServiceIdentifierType service) {
-        ServiceId serviceId = new ServiceId(service.getServiceCode(),
+        return new ServiceId(service.getServiceCode(),
                 service.getServiceVersion());
-        return serviceId;
     }
 
     private SubsystemId createSubsystemId(XRoadServiceIdentifierType service) {
-        SubsystemId subsystemId = new SubsystemId(service.getXRoadInstance(),
+        return new SubsystemId(service.getXRoadInstance(),
                 service.getMemberClass(),
                 service.getMemberCode(),
                 service.getSubsystemCode());
-        return subsystemId;
     }
 
     private String buildUri(XRoadServiceIdentifierType service) {

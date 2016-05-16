@@ -41,7 +41,7 @@ public abstract class XRoadCatalogActor extends UntypedActor {
         log.info("{} handleXRoadCatalogMessage {}", this.hashCode());
         if (handleMessage(message)) {
             return;
-        }else if (message instanceof Terminated) {
+        } else if (message instanceof Terminated) {
             throw new CatalogCollectorRuntimeException("Terminated: " + message);
         } else {
             log.error("Unable to handle message {}", message);

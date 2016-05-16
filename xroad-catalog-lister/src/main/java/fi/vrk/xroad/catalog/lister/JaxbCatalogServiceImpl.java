@@ -57,7 +57,6 @@ public class JaxbCatalogServiceImpl implements JaxbCatalogService {
             entities = catalogService.getAllMembers();
         }
 
-        Collection<Member> jaxbMembers = jaxbConverter.convertMembers(entities, false);
-        return jaxbMembers;
+        return jaxbConverter.convertMembers(entities, false);
     }
 }

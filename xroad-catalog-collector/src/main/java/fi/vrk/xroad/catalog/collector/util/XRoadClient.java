@@ -75,9 +75,7 @@ public class XRoadClient {
                 new Holder<>("xroad-catalog-collector"),
                 new Holder<>("4.x"));
 
-        List<XRoadServiceIdentifierType> methods = response.getService();
-
-        return methods;
+        return response.getService();
     }
 
     public static MetaServicesPort getMetaServicesPort(URL url) {

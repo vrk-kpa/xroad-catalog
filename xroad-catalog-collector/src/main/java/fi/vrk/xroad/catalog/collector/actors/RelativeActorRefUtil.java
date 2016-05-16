@@ -52,7 +52,6 @@ public class RelativeActorRefUtil {
         ActorPath parentRelativePath = context.self().path().parent().parent().child(poolname);
         ActorSelection selection = context.actorSelection(parentRelativePath);
         Timeout resolveTimeout = new Timeout(Duration.create(5, TimeUnit.SECONDS));
-        ActorRef ref = Await.result(selection.resolveOne(resolveTimeout), Duration.create(5, TimeUnit.SECONDS));
-        return ref;
+        return Await.result(selection.resolveOne(resolveTimeout), Duration.create(5, TimeUnit.SECONDS));
     }
 }
