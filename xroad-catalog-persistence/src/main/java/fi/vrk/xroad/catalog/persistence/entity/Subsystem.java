@@ -61,9 +61,8 @@ public class Subsystem {
     /**
      * create key based on xroad identifiers
      *
-     * @return
+     * @return SubsystemId
      */
-
     public SubsystemId createKey() {
         return new SubsystemId(
                 getMember().getXRoadInstance(),
@@ -75,8 +74,6 @@ public class Subsystem {
     /**
      * Constructor for tests
      *
-     * @param member
-     * @param subsystemCode
      */
     public Subsystem(Member member, String subsystemCode) {
         this.member = member;
@@ -87,7 +84,7 @@ public class Subsystem {
     /**
      * Note: Read-only collection, do not use this to modify collection
      *
-     * @return
+     * @return Set of active services
      */
     public Set<Service> getActiveServices() {
         return Collections.unmodifiableSet(services.stream()
@@ -98,7 +95,7 @@ public class Subsystem {
     /**
      * This collection can be used to add new items
      *
-     * @return
+     * @return Set of all services
      */
     public Set<Service> getAllServices() {
         return services;

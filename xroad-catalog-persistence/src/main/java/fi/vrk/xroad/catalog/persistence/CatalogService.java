@@ -54,15 +54,15 @@ public interface CatalogService {
      * Gets all non-removed members that have been changed (created) after given time.
      * Change is determined by field "changed".
      * Fetches all data from graph member->subsystem->service->wsdl.
-     * @param changedAfter
-     * @return
+     * @param changedAfter Only interested in member after this
+     * @return Iterable of Member entities
      */
     Iterable<Member> getActiveMembers(LocalDateTime changedAfter);
 
     /**
      * Same as {@link #getActiveMembers(LocalDateTime)} except that returns also removed items
-     * @param changedAfter
-     * @return
+     * @param changedAfter Only interested in member after this
+     * @return Iterable of Member entities
      */
     Iterable<Member> getAllMembers(LocalDateTime changedAfter);
 
@@ -105,7 +105,6 @@ public interface CatalogService {
      * @param subsystemId identifier of the subsystem
      * @param serviceId identifier of the service
      * @param wsdl the actual wsdl
-     * @return
      */
     void saveWsdl(SubsystemId subsystemId, ServiceId serviceId, String wsdl);
 

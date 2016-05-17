@@ -36,8 +36,6 @@ public class ClientTypeUtil {
 
     /**
      * Helper for logging
-     * @param c
-     * @return
      */
     public static String toString(ClientType c) {
         StringBuilder sb = new StringBuilder("");
@@ -58,8 +56,6 @@ public class ClientTypeUtil {
 
     /**
      * Helper for logging
-     * @param c
-     * @return
      */
     public static String toString(fi.vrk.xroad.catalog.collector.wsimport.XRoadIdentifierType c) {
         StringBuilder sb = new StringBuilder("");

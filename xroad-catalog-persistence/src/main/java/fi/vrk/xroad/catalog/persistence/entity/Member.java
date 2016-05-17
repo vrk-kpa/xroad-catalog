@@ -165,7 +165,7 @@ public class Member {
      * Compares objects with just the "direct payload" - not ids, references entities or timestamps
      *
      * @param another
-     * @return
+     * @return true, iff identical
      */
     private boolean isDataIdentical(Member another) {
         return ComparisonChain.start()
@@ -179,7 +179,7 @@ public class Member {
     /**
      * Note: Read-only collection, do not use this to modify collection
      *
-     * @return
+     * @return Set of active subsystems
      */
     public Set<Subsystem> getActiveSubsystems() {
         return Collections.unmodifiableSet(subsystems.stream()
@@ -190,7 +190,7 @@ public class Member {
     /**
      * This collection can be used to add new items
      *
-     * @return
+     * @return Set of all subsystems
      */
     public Set<Subsystem> getAllSubsystems() {
         return subsystems;

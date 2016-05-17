@@ -45,8 +45,6 @@ public class XRoadClient {
 
     /**
      * Calls the service using JAX-WS endpoints that have been generated from wsdl
-     * @param client
-     * @return
      */
     public static List<XRoadServiceIdentifierType> getMethods(String securityServerHost, XRoadClientIdentifierType
                                                               securityServerIdentity,
@@ -78,6 +76,9 @@ public class XRoadClient {
         return response.getService();
     }
 
+    /**
+     * MetaServicesPort for url
+     */
     public static MetaServicesPort getMetaServicesPort(URL url) {
         URL wsdl = XRoadClient.class.getClassLoader()
                 .getResource("schema/list-methods.wsdl");

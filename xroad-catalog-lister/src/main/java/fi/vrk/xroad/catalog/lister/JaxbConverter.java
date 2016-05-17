@@ -51,7 +51,7 @@ public class JaxbConverter {
      * Convert entities to XML objects
      * @param members
      * @param onlyActiveChildren if true, convert only active subsystems
-     * @return
+     * @return Collection of Members (JAXB generated)
      */
     public Collection<Member> convertMembers(Iterable<fi.vrk.xroad.catalog.persistence.entity.Member> members,
                                              boolean onlyActiveChildren)  {

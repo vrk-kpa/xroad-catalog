@@ -40,7 +40,7 @@ public interface JaxbCatalogService {
      * All substem->service->wsdl items are always returned, whether they are removed items
      * or not, and whether they have been updated since changedAfter or not.
      *
-     * @return
+     * @return Iterable of JAXB generated Members
      */
     Iterable<Member> getAllMembers(XMLGregorianCalendar changedAfter);
 }

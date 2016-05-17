@@ -79,8 +79,8 @@ public interface MockHttpServer {
 
     /**
      * Start http server using file based on the url in the parameter
-     * @param url
-     * @return
+     * @param url Actual url for the real request
+     * @return Local url (url for localhost and resource filename)
      */
     default String startServerForUrl(String url) {
         String[] parts = url.split("/");
