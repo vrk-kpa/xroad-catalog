@@ -32,8 +32,6 @@ import org.springframework.web.client.RestClientException;
  * Creates a http server and serves the file requested from classpath.
  * Used only in development or tests.
  *
- * Created by sjk on 17.2.2016.
- *
  */
 @Slf4j
 public class MockRestTemplate extends TestRestTemplate implements MockHttpServer {

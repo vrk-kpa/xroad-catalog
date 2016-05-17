@@ -36,7 +36,7 @@ import javax.xml.transform.TransformerFactory;
 import java.util.Iterator;
 
 /**
- * Created by sjk on 4.2.2016.
+ * Endpoint interceptor that
  */
 
 public class ServiceEndpointInterceptor implements SoapEndpointInterceptor {

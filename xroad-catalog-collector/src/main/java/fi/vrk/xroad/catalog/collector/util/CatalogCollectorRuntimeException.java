@@ -23,7 +23,7 @@
 package fi.vrk.xroad.catalog.collector.util;
 
 /**
- * Created by sjk on 11.5.2016.
+ * Application specific runtime exception class.
  */
 public class CatalogCollectorRuntimeException extends RuntimeException {
 

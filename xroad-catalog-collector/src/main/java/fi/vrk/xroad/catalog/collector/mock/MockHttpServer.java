@@ -37,8 +37,7 @@ import java.net.InetSocketAddress;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Used for tests
- * Created by sjk on 22.2.2016.
+ * HttpServer helper used for tests
  */
 public interface MockHttpServer {
 

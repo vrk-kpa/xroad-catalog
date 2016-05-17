@@ -26,7 +26,7 @@ package fi.vrk.xroad.catalog.collector.util;
 import fi.vrk.xroad.catalog.collector.wsimport.ClientType;
 
 /**
- * Created by sjk on 26.2.2016.
+ * Helper for client type
  */
 public class ClientTypeUtil {
 

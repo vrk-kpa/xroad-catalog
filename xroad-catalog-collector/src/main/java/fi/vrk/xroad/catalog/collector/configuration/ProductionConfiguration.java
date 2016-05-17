@@ -31,7 +31,7 @@ import org.springframework.web.client.RestOperations;
 import org.springframework.web.client.RestTemplate;
 
 /**
- * Created by sjk on 17.2.2016.
+ * Configuration for production environment.
  */
 @Configuration
 @Profile({"production", "sshtest"} )

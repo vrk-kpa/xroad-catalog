@@ -52,7 +52,7 @@ import java.util.*;
 import static org.mockito.Mockito.*;
 
 /**
- * Created by sjk on 9.3.2016.
+ * Test for client actor
  */
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({ListClientsActor.class, RelativeActorRefUtil.class})

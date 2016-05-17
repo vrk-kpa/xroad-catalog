@@ -34,7 +34,7 @@ import java.util.List;
 import java.util.UUID;
 
 /**
- * Created by sjk on 25.2.2016.
+ * WS client
  */
 @Slf4j
 public class XRoadClient {

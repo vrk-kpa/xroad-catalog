@@ -29,7 +29,7 @@ import lombok.extern.slf4j.Slf4j;
 import scala.Option;
 
 /**
- * Created by sjk on 6.4.2016.
+ * Base class for all actors in the system.
  */
 @Slf4j
 public abstract class XRoadCatalogActor extends UntypedActor {

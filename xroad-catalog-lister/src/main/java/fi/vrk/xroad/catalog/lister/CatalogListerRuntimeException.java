@@ -23,7 +23,7 @@
 package fi.vrk.xroad.catalog.lister;
 
 /**
- * Created by sjk on 11.5.2016.
+ * Application specific runtime exception class.
  */
 public class CatalogListerRuntimeException extends RuntimeException {
 
