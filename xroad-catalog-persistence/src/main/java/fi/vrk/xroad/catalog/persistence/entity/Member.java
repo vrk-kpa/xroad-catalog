@@ -123,10 +123,6 @@ public class Member {
     /**
      * Constructor for tests
      *
-     * @param xRoadInstance
-     * @param memberClass
-     * @param memberCode
-     * @param name
      */
     public Member(String xRoadInstance,
                   String memberClass,
@@ -151,8 +147,6 @@ public class Member {
      * Updates data with values from a transient non-deleted Member object,
      * and sets all data fields accordingly
      *
-     * @param transientMember
-     * @param timestamp
      */
     public void updateWithDataFrom(Member transientMember, LocalDateTime timestamp) {
         assert transientMember.getStatusInfo().getRemoved() == null;
@@ -164,7 +158,7 @@ public class Member {
     /**
      * Compares objects with just the "direct payload" - not ids, references entities or timestamps
      *
-     * @param another
+     * @param another Member to compare
      * @return true, iff identical
      */
     private boolean isDataIdentical(Member another) {

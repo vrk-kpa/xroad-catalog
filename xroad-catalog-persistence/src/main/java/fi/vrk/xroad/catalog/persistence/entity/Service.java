@@ -64,9 +64,6 @@ public class Service {
 
     /**
      * Constructor for all args
-     * @param subsystem
-     * @param serviceCode
-     * @param serviceVersion
      */
     public Service(Subsystem subsystem, String serviceCode, String serviceVersion) {
         this.subsystem = subsystem;
@@ -76,8 +73,7 @@ public class Service {
     }
 
     /**
-     * Add given wsdl to set of wsdls
-     * @param wsdl
+     * Add given wsdl to set of wsdls. Create the set if needed.
      */
     public void setWsdl(Wsdl wsdl) {
         if (wsdls == null) {

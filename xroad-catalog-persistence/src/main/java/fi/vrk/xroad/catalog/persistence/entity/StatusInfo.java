@@ -60,10 +60,6 @@ public class StatusInfo {
     /**
      * Constructor based on timestamps
      *
-     * @param created
-     * @param changed
-     * @param fetched
-     * @param removed
      */
     public StatusInfo(LocalDateTime created, LocalDateTime changed, LocalDateTime fetched, LocalDateTime removed) {
         this.created = created;
@@ -82,8 +78,6 @@ public class StatusInfo {
      * or identical. If items was previously marked removed, it no longer is.
      * Changed-timestamp is updated for modified and un-removed items.
      *
-     * @param timestamp
-     * @param isModified
      */
     public void setTimestampsForSaved(LocalDateTime timestamp, boolean isModified) {
         if (removed != null) {

@@ -59,10 +59,7 @@ public class Wsdl {
     }
 
     /**
-     *
-     * @param service
-     * @param data
-     * @param externalId
+     * Constructor
      */
     public Wsdl(Service service, String data, String externalId) {
         this.service = service;

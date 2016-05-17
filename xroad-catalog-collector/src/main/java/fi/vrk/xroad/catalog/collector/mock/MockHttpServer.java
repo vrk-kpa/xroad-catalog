@@ -51,7 +51,7 @@ public interface MockHttpServer {
 
     /**
      * Start http server that offers the given file through http
-     * @param fileName
+     * @param fileName file that can be found in classpath
      */
     default void startServer(String fileName) {
         try {

@@ -49,7 +49,7 @@ public class JaxbConverter {
 
     /**
      * Convert entities to XML objects
-     * @param members
+     * @param members Iterable of Member entities
      * @param onlyActiveChildren if true, convert only active subsystems
      * @return Collection of Members (JAXB generated)
      */
@@ -81,7 +81,7 @@ public class JaxbConverter {
 
     /**
      * Convert entities to XML objects
-     * @param subsystems
+     * @param subsystems Iterable of Subsystem entities
      * @param onlyActiveChildren if true, convert only active subsystems
      * @return collection of XML objects
      */
@@ -110,7 +110,7 @@ public class JaxbConverter {
 
     /**
      * Convert entities to XML objects
-     * @param services
+     * @param services Iterable of Service entities
      * @param onlyActiveChildren if true, convert only active subsystems
      * @return collection of XML objects
      */
