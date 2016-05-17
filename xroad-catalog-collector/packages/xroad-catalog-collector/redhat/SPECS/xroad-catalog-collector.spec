@@ -64,7 +64,8 @@ if ! id xroad-catalog > /dev/null 2>&1 ; then
     adduser --system --no-create-home --shell /bin/false xroad-catalog
 fi
 
-%post?
+%post
+
 PGSETUP_INITDB_OPTIONS="--auth-host=md5 -E UTF8" postgresql-setup initdb || return 1
 systemctl start postgresql
 
@@ -72,7 +73,7 @@ systemctl start postgresql
 if sudo -u postgres psql -lqt |cut -d \| -f 1 | grep -qw xroad_catalog ; then
     echo "Database already initialized"
 else
-    #Init database
+    echo "Initializing database and creating tables"
     sudo -u postgres psql --file=/usr/share/xroad/sql/init_database.sql
     sudo -u postgres psql --file=/usr/share/xroad/sql/create_tables.sql
 fi
