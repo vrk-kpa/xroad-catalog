@@ -35,6 +35,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.util.ClassUtils;
 import org.springframework.ws.client.core.WebServiceTemplate;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 /**
@@ -63,7 +64,7 @@ public class ApplicationTests {
 		ListMembersResponse result = (ListMembersResponse)new WebServiceTemplate(marshaller).marshalSendAndReceive(
 				"http://localhost:" + port + "/ws", request);
 		assertNotNull(result);
-//		assertEquals("MemberList size", 3, result.getMemberList().getMembers().size());
+		assertEquals("MemberList size", 3, result.getMemberList().getMembers().size());
 	}
 
 }
