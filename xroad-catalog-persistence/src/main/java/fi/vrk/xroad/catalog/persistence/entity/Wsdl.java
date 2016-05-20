@@ -28,7 +28,6 @@ import lombok.ToString;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.UUID;
 
 @Entity
@@ -56,8 +55,12 @@ public class Wsdl {
     private StatusInfo statusInfo = new StatusInfo();
 
     public Wsdl() {
+        // Empty constructor
     }
 
+    /**
+     * Constructor
+     */
     public Wsdl(Service service, String data, String externalId) {
         this.service = service;
         this.data = data;

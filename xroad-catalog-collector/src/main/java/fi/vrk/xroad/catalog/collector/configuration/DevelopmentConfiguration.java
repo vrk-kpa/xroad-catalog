@@ -39,7 +39,7 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.web.client.RestOperations;
 
 /**
- * Created by sjk on 17.3.2016.
+ * Configuration for development environment only.
  */
 @Configuration
 @Profile({"development", "default"})

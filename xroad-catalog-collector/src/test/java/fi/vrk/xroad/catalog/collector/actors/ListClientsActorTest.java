@@ -52,7 +52,7 @@ import java.util.*;
 import static org.mockito.Mockito.*;
 
 /**
- * Created by sjk on 9.3.2016.
+ * Test for client actor
  */
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({ListClientsActor.class, RelativeActorRefUtil.class})
@@ -93,6 +93,10 @@ public class ListClientsActorTest extends TestKit {
         _system = null;
     }
 
+    /**
+     * Setup test
+     * @throws Exception
+     */
     @Before
     public void setup() throws Exception {
         listMethodsPoolRef = PowerMockito.mock(InternalActorRef.class);

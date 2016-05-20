@@ -32,6 +32,9 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+/**
+ * X-Road member
+ */
 @Entity
 @Getter
 @Setter
@@ -59,6 +62,7 @@ import java.util.stream.Collectors;
         @NamedQuery(name = "Member.findActiveChangedSince",
                 query = Member.FIND_ACTIVE_CHANGED_QUERY),
 })
+// identity is based on xroad identity (instance, member code...)
 @EqualsAndHashCode(exclude = {"id", "subsystems", "statusInfo"})
 public class Member {
 
@@ -90,12 +94,9 @@ public class Member {
             FIND_CHANGED_QUERY_PART_1 + FIND_CHANGED_QUERY_PART_2;
     static final String FIND_ACTIVE_CHANGED_QUERY =
             FIND_CHANGED_QUERY_PART_1 +
-            "mem.statusInfo.removed IS NULL AND (" +
-            FIND_CHANGED_QUERY_PART_2 +
-            ")";
-    static {
-        System.out.println(FIND_ACTIVE_CHANGED_QUERY);
-    }
+                    "mem.statusInfo.removed IS NULL AND (" +
+                    FIND_CHANGED_QUERY_PART_2 +
+                    ")";
 
     @Id
     @Column(nullable = false)
@@ -116,45 +117,14 @@ public class Member {
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
     private Set<Subsystem> subsystems = new HashSet<>();
 
-    /**
-     * Updates data with values from a transient non-deleted Member object,
-     * and sets all data fields accordingly
-     *
-     * @param transientMember
-     * @param timestamp
-     */
-    public void updateWithDataFrom(Member transientMember, LocalDateTime timestamp) {
-        assert transientMember.getStatusInfo().getRemoved() == null;
-        boolean isModifiedData = !isDataIdentical(transientMember);
-        name = transientMember.getName();
-        statusInfo.setTimestampsForSaved(timestamp, isModifiedData);
-    }
-
-    /**
-     * @return comparable & equals-able natural key
-     */
-    public MemberId createKey() {
-        return new MemberId(xRoadInstance, memberClass, memberCode);
-    }
-
-    /**
-     * Compares objects with just the "direct payload" - not ids, references entities or timestamps
-     *
-     * @param another
-     * @return
-     */
-    private boolean isDataIdentical(Member another) {
-        return ComparisonChain.start()
-                .compare(this.name, another.name)
-                .compare(this.xRoadInstance, another.xRoadInstance)
-                .compare(this.memberClass, another.memberClass)
-                .compare(this.memberCode, another.memberCode)
-                .result() == 0;
-    }
-
     public Member() {
+        // Empty constructor
     }
 
+    /**
+     * Constructor for tests
+     *
+     */
     public Member(String xRoadInstance,
                   String memberClass,
                   String memberCode,
@@ -166,9 +136,45 @@ public class Member {
         statusInfo.setTimestampsForNew(LocalDateTime.now());
     }
 
+
+    /**
+     * @return comparable & equals-able natural key
+     */
+    public MemberId createKey() {
+        return new MemberId(xRoadInstance, memberClass, memberCode);
+    }
+
+    /**
+     * Updates data with values from a transient non-deleted Member object,
+     * and sets all data fields accordingly
+     *
+     */
+    public void updateWithDataFrom(Member transientMember, LocalDateTime timestamp) {
+        assert transientMember.getStatusInfo().getRemoved() == null;
+        boolean isModifiedData = !isDataIdentical(transientMember);
+        name = transientMember.getName();
+        statusInfo.setTimestampsForSaved(timestamp, isModifiedData);
+    }
+
+    /**
+     * Compares objects with just the "direct payload" - not ids, references entities or timestamps
+     *
+     * @param another Member to compare
+     * @return true, iff identical
+     */
+    private boolean isDataIdentical(Member another) {
+        return ComparisonChain.start()
+                .compare(this.name, another.name)
+                .compare(this.xRoadInstance, another.xRoadInstance)
+                .compare(this.memberClass, another.memberClass)
+                .compare(this.memberCode, another.memberCode)
+                .result() == 0;
+    }
+
     /**
      * Note: Read-only collection, do not use this to modify collection
-     * @return
+     *
+     * @return Set of active subsystems
      */
     public Set<Subsystem> getActiveSubsystems() {
         return Collections.unmodifiableSet(subsystems.stream()
@@ -178,7 +184,8 @@ public class Member {
 
     /**
      * This collection can be used to add new items
-     * @return
+     *
+     * @return Set of all subsystems
      */
     public Set<Subsystem> getAllSubsystems() {
         return subsystems;

@@ -23,6 +23,8 @@ apply plugin: 'maven'
 apply plugin: 'eclipse'
 apply plugin: 'idea'
 apply plugin: 'spring-boot'
+apply plugin: 'sonar-runner'
+apply plugin: 'jacoco'
 
 group = 'fi.vrk.xroad'
 version = '1.0-SNAPSHOT'

@@ -27,11 +27,15 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.Assert;
 
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.StreamSupport;
 
+/**
+ * Implementation for catalogservice CRUD
+ */
 @Slf4j
 @Component("catalogService")
 @Transactional
@@ -99,38 +103,46 @@ public class CatalogServiceImpl implements CatalogService {
                 }
                 member = memberRepository.save(member);
             } else {
-                oldMember.updateWithDataFrom(member, now);
-                // process subsystems for the old member
-                Map<SubsystemId, Subsystem> unprocessedOldSubsystems = new HashMap<>();
-                for (Subsystem subsystem: oldMember.getAllSubsystems()) {
-                    unprocessedOldSubsystems.put(subsystem.createKey(), subsystem);
-                }
-                for (Subsystem subsystem: member.getAllSubsystems()) {
-                    Subsystem oldSubsystem = unprocessedOldSubsystems.get(subsystem.createKey());
-                    if (oldSubsystem == null) {
-                        // brand new item, add it
-                        subsystem.getStatusInfo().setTimestampsForNew(now);
-                        subsystem.setMember(oldMember);
-                        oldMember.getAllSubsystems().add(subsystem);
-                    } else {
-                        oldSubsystem.getStatusInfo().setTimestampsForFetched(now);
-                    }
-                    unprocessedOldSubsystems.remove(subsystem.createKey());
-                }
-                // remaining old subsystems - that were not included in member.subsystems -
-                // are removed (if not already)
-                for (Subsystem oldToRemove: unprocessedOldSubsystems.values()) {
-                    StatusInfo status = oldToRemove.getStatusInfo();
-                    if (!status.isRemoved()) {
-                        status.setTimestampsForRemoved(now);
-                    }
-                }
+                handleOldMember(now, member, oldMember);
 
                 member = memberRepository.save(oldMember);
             }
             unprocessedOldMembers.remove(member.createKey());
         }
         // now unprocessedOldMembers should all be removed (either already removed, or will be now)
+        removeUnprocessedOldMembers(now, unprocessedOldMembers);
+    }
+
+    private void handleOldMember(LocalDateTime now, Member member, Member oldMember) {
+        oldMember.updateWithDataFrom(member, now);
+        // process subsystems for the old member
+        Map<SubsystemId, Subsystem> unprocessedOldSubsystems = new HashMap<>();
+        for (Subsystem subsystem: oldMember.getAllSubsystems()) {
+            unprocessedOldSubsystems.put(subsystem.createKey(), subsystem);
+        }
+        for (Subsystem subsystem: member.getAllSubsystems()) {
+            Subsystem oldSubsystem = unprocessedOldSubsystems.get(subsystem.createKey());
+            if (oldSubsystem == null) {
+                // brand new item, add it
+                subsystem.getStatusInfo().setTimestampsForNew(now);
+                subsystem.setMember(oldMember);
+                oldMember.getAllSubsystems().add(subsystem);
+            } else {
+                oldSubsystem.getStatusInfo().setTimestampsForFetched(now);
+            }
+            unprocessedOldSubsystems.remove(subsystem.createKey());
+        }
+        // remaining old subsystems - that were not included in member.subsystems -
+        // are removed (if not already)
+        for (Subsystem oldToRemove: unprocessedOldSubsystems.values()) {
+            StatusInfo status = oldToRemove.getStatusInfo();
+            if (!status.isRemoved()) {
+                status.setTimestampsForRemoved(now);
+            }
+        }
+    }
+
+    private void removeUnprocessedOldMembers(LocalDateTime now, Map<MemberId, Member> unprocessedOldMembers) {
         for (Member oldToRemove: unprocessedOldMembers.values()) {
             StatusInfo status = oldToRemove.getStatusInfo();
             if (!status.isRemoved()) {
@@ -184,9 +196,9 @@ public class CatalogServiceImpl implements CatalogService {
 
     @Override
     public void saveWsdl(SubsystemId subsystemId, ServiceId serviceId, String wsdlString) {
-        assert subsystemId != null;
-        assert serviceId != null;
-        Service oldService = null;
+        Assert.notNull(subsystemId);
+        Assert.notNull(serviceId);
+        Service oldService;
         // bit ugly this one, would be a little cleaner if
         // https://jira.spring.io/browse/DATAJPA-209 was resolved
         if (serviceId.getServiceVersion() == null) {

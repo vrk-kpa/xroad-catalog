@@ -20,21 +20,18 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package fi.vrk.xroad.catalog.lister;
+package fi.vrk.xroad.catalog.collector.util;
 
-import org.springframework.ws.soap.server.endpoint.annotation.FaultCode;
-import org.springframework.ws.soap.server.endpoint.annotation.SoapFault;
+/**
+ * Application specific runtime exception class.
+ */
+public class CatalogCollectorRuntimeException extends RuntimeException {
 
-@SoapFault(faultCode = FaultCode.SERVER)
-public class WsdlNotFoundException extends CatalogListerRuntimeException {
-
-    public WsdlNotFoundException(String message, Throwable cause) {
-        super(message, cause);
-    }
-
-
-    public WsdlNotFoundException(String s) {
+    public CatalogCollectorRuntimeException(String s) {
         super(s);
     }
 
+    public CatalogCollectorRuntimeException(String s, Throwable throwable) {
+        super(s, throwable);
+    }
 }

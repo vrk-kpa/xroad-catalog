@@ -26,10 +26,17 @@ package fi.vrk.xroad.catalog.collector.util;
 import fi.vrk.xroad.catalog.collector.wsimport.ClientType;
 
 /**
- * Created by sjk on 26.2.2016.
+ * Helper for client type
  */
 public class ClientTypeUtil {
 
+    private ClientTypeUtil() {
+        // Private empty constructor
+    }
+
+    /**
+     * Helper for logging
+     */
     public static String toString(ClientType c) {
         StringBuilder sb = new StringBuilder("");
         sb.append("ObjectType: ");
@@ -47,6 +54,9 @@ public class ClientTypeUtil {
         return sb.toString();
     }
 
+    /**
+     * Helper for logging
+     */
     public static String toString(fi.vrk.xroad.catalog.collector.wsimport.XRoadIdentifierType c) {
         StringBuilder sb = new StringBuilder("");
         sb.append("ObjectType: ");

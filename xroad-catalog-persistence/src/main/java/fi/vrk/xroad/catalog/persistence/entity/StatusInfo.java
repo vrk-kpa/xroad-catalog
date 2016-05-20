@@ -25,12 +25,9 @@ package fi.vrk.xroad.catalog.persistence.entity;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
-import javax.persistence.FetchType;
 import java.time.LocalDateTime;
-import java.util.Date;
 
 /**
  * Embeddable to model the status / timestamp fields that are repeated in all the tables
@@ -42,11 +39,13 @@ public class StatusInfo {
 
     @Column(nullable = false)
     private LocalDateTime created;
+
     /**
      * When data was changed somehow, whether it was updated, created or removed
      */
     @Column(nullable = false)
     private LocalDateTime changed;
+
     /**
      * When data was last time fetched from the source (regardless of whether there
      * were any changes). For removed entities, fetched it updated the first time
@@ -59,12 +58,26 @@ public class StatusInfo {
     private LocalDateTime removed;
 
     /**
+     * Constructor based on timestamps
+     *
+     */
+    public StatusInfo(LocalDateTime created, LocalDateTime changed, LocalDateTime fetched, LocalDateTime removed) {
+        this.created = created;
+        this.changed = changed;
+        this.fetched = fetched;
+        this.removed = removed;
+    }
+
+    public StatusInfo() {
+        // Empty contructor
+    }
+
+    /**
      * Set timestamps for item that is saved and is not removed.
      * The data can either be modified from previous values (isModified)
      * or identical. If items was previously marked removed, it no longer is.
      * Changed-timestamp is updated for modified and un-removed items.
-     * @param timestamp
-     * @param isModified
+     *
      */
     public void setTimestampsForSaved(LocalDateTime timestamp, boolean isModified) {
         if (removed != null) {
@@ -115,12 +128,5 @@ public class StatusInfo {
         fetched = timestamp;
     }
 
-    public StatusInfo(LocalDateTime created, LocalDateTime changed, LocalDateTime fetched, LocalDateTime removed) {
-        this.created = created;
-        this.changed = changed;
-        this.fetched = fetched;
-        this.removed = removed;
-    }
-    public StatusInfo() {
-    }
+
 }

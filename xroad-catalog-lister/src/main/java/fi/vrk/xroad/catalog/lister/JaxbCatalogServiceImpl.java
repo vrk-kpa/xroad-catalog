@@ -29,10 +29,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.XMLGregorianCalendar;
-import java.util.Collection;
 
+/**
+ * XML interface for lister
+ */
 @Component
 @Slf4j
 public class JaxbCatalogServiceImpl implements JaxbCatalogService {
@@ -46,16 +47,15 @@ public class JaxbCatalogServiceImpl implements JaxbCatalogService {
     private JaxbConverter jaxbConverter;
 
     @Override
-    public Iterable<Member> getAllMembers(XMLGregorianCalendar changedAfter) throws DatatypeConfigurationException {
+    public Iterable<Member> getAllMembers(XMLGregorianCalendar changedAfter)  {
         log.info("getAllMembers changedAfter:{}", changedAfter);
-        Iterable<fi.vrk.xroad.catalog.persistence.entity.Member> entities = null;
+        Iterable<fi.vrk.xroad.catalog.persistence.entity.Member> entities;
         if (changedAfter != null) {
             entities = catalogService.getAllMembers(jaxbConverter.toLocalDateTime(changedAfter));
         } else {
             entities = catalogService.getAllMembers();
         }
 
-        Collection<Member> jaxbMembers = jaxbConverter.convertMembers(entities, false);
-        return jaxbMembers;
+        return jaxbConverter.convertMembers(entities, false);
     }
 }

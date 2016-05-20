@@ -52,10 +52,6 @@ public class FetchWsdlActor extends XRoadCatalogActor {
     @Value("${xroad-catalog.fetch-wsdl-host}")
     private String host;
 
-    public String getHost() {
-        return host;
-    }
-
     @Autowired
     @Qualifier("wsdlRestOperations")
     private RestOperations restOperations;
@@ -63,9 +59,13 @@ public class FetchWsdlActor extends XRoadCatalogActor {
     @Autowired
     protected CatalogService catalogService;
 
+    public String getHost() {
+        return host;
+    }
+
 
     @Override
-    protected boolean handleMessage(Object message) throws Exception {
+    protected boolean handleMessage(Object message)  {
         if (message instanceof XRoadServiceIdentifierType) {
             log.info("fetching wsdl [{}] {}", COUNTER.addAndGet(1), message);
             XRoadServiceIdentifierType service = (XRoadServiceIdentifierType) message;
@@ -84,17 +84,15 @@ public class FetchWsdlActor extends XRoadCatalogActor {
     }
 
     private ServiceId createServiceId(XRoadServiceIdentifierType service) {
-        ServiceId serviceId = new ServiceId(service.getServiceCode(),
+        return new ServiceId(service.getServiceCode(),
                 service.getServiceVersion());
-        return serviceId;
     }
 
     private SubsystemId createSubsystemId(XRoadServiceIdentifierType service) {
-        SubsystemId subsystemId = new SubsystemId(service.getXRoadInstance(),
+        return new SubsystemId(service.getXRoadInstance(),
                 service.getMemberClass(),
                 service.getMemberCode(),
                 service.getSubsystemCode());
-        return subsystemId;
     }
 
     private String buildUri(XRoadServiceIdentifierType service) {

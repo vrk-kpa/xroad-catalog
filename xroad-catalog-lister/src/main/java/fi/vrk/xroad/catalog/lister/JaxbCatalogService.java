@@ -24,7 +24,6 @@ package fi.vrk.xroad.catalog.lister;
 
 import fi.vrk.xroad.xroad_catalog_lister.Member;
 
-import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.XMLGregorianCalendar;
 
 /**
@@ -41,7 +40,7 @@ public interface JaxbCatalogService {
      * All substem->service->wsdl items are always returned, whether they are removed items
      * or not, and whether they have been updated since changedAfter or not.
      *
-     * @return
+     * @return Iterable of JAXB generated Members
      */
-    Iterable<Member> getAllMembers(XMLGregorianCalendar changedAfter) throws DatatypeConfigurationException;
+    Iterable<Member> getAllMembers(XMLGregorianCalendar changedAfter);
 }

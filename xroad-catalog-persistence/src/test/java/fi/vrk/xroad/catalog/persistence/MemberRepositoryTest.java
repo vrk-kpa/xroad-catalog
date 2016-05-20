@@ -76,10 +76,10 @@ public class MemberRepositoryTest {
         Member member = createTestMember(name);
         memberRepository.save(member);
 
-        Member peek = memberRepository.findActiveByNaturalKey
-                (member.getXRoadInstance(),
-                        member.getMemberClass(),
-                        member.getMemberCode());
+        Member peek = memberRepository.findActiveByNaturalKey(
+                member.getXRoadInstance(),
+                member.getMemberClass(),
+                member.getMemberCode());
         assertNotNull(peek);
         assertNotNull(peek.getStatusInfo());
 
@@ -90,8 +90,8 @@ public class MemberRepositoryTest {
         testUtil.entityManagerFlush();
         testUtil.entityManagerClear();
 
-        Member savedRead = memberRepository.findActiveByNaturalKey
-                (member.getXRoadInstance(),
+        Member savedRead = memberRepository.findActiveByNaturalKey(
+                member.getXRoadInstance(),
                 member.getMemberClass(),
                 member.getMemberCode());
         assertNotNull(savedRead);
@@ -149,7 +149,7 @@ public class MemberRepositoryTest {
         log.info("found changed members with ids: " + testUtil.getIds(members));
         assertEquals(5, Iterables.size(members));
         Set ids = testUtil.getIds(members);
-        assertTrue(ids.containsAll(Arrays.asList(3L,4L,5L,6L,7L)));
+        assertTrue(ids.containsAll(Arrays.asList(3L, 4L, 5L, 6L, 7L)));
         log.info("found members:");
         for (Member member: members) {
             log(member);

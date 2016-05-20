@@ -40,11 +40,8 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestOperations;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Actor which fetches all clients, and delegates listing
@@ -57,9 +54,6 @@ public class ListClientsActor extends XRoadCatalogActor {
 
     public static final String START_COLLECTING = "StartCollecting";
 
-    private static AtomicInteger COUNTER = new AtomicInteger(0);
-
-    private static final int NO_OF_ACTORS = 5;
 
     @Autowired
     @Qualifier("listClientsRestOperations")
@@ -88,7 +82,7 @@ public class ListClientsActor extends XRoadCatalogActor {
     }
 
     @Override
-    protected boolean handleMessage(Object message) throws Exception {
+    protected boolean handleMessage(Object message) {
 
         if (START_COLLECTING.equals(message)) {
 
@@ -101,7 +95,6 @@ public class ListClientsActor extends XRoadCatalogActor {
             int counter = 1;
             HashMap<MemberId, Member> m = new HashMap();
 
-            List<Subsystem> subsystems = new ArrayList<>();
             for (ClientType clientType : clientList.getMember()) {
                 log.info("{} - ClientType {}  ", counter++, ClientTypeUtil.toString(clientType));
                 Member newMember = new Member(clientType.getId().getXRoadInstance(), clientType.getId()
@@ -125,7 +118,7 @@ public class ListClientsActor extends XRoadCatalogActor {
                     listMethodsPoolRef.tell(clientType, getSelf());
                 }
             }
-            log.info("all clients (" + (counter-1) + ") sent to actor");
+            log.info("all clients (" + (counter - 1) + ") sent to actor");
             return true;
         } else {
             return false;

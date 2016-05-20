@@ -22,19 +22,16 @@
  */
 package fi.vrk.xroad.catalog.lister;
 
-import org.springframework.ws.soap.server.endpoint.annotation.FaultCode;
-import org.springframework.ws.soap.server.endpoint.annotation.SoapFault;
+/**
+ * Application specific runtime exception class.
+ */
+public class CatalogListerRuntimeException extends RuntimeException {
 
-@SoapFault(faultCode = FaultCode.SERVER)
-public class WsdlNotFoundException extends CatalogListerRuntimeException {
-
-    public WsdlNotFoundException(String message, Throwable cause) {
-        super(message, cause);
-    }
-
-
-    public WsdlNotFoundException(String s) {
+    public CatalogListerRuntimeException(String s) {
         super(s);
     }
 
+    public CatalogListerRuntimeException(String s, Throwable throwable) {
+        super(s, throwable);
+    }
 }

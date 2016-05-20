@@ -65,10 +65,10 @@ public class TestUtil {
     }
 
     /**
-     * @param day
+     * @param day Day of month
      * @param month 1 = January
-     * @param year
-     * @return
+     * @param year Year
+     * @return LocalDateTime with zero hours
      */
     public LocalDateTime createDate(int day, int month, int year) {
         return LocalDateTime.of(year, month, day, 0, 0, 0);

@@ -22,16 +22,11 @@
  */
 package fi.vrk.xroad.catalog.persistence.entity;
 
-import lombok.EqualsAndHashCode;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.Collections;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -40,7 +35,8 @@ import java.util.stream.Collectors;
 @Getter
 @Setter
 @ToString(exclude = {"services"})
-@EqualsAndHashCode(exclude = {"id", "services", "statusInfo"} ) // why?
+// identity is based on xroad identity (instance, member code...)
+@EqualsAndHashCode(exclude = {"id", "services", "statusInfo"})
 public class Subsystem {
 
     @Id
@@ -59,8 +55,15 @@ public class Subsystem {
     @Embedded
     private StatusInfo statusInfo = new StatusInfo();
 
-    public Subsystem() {}
+    public Subsystem() {
+        // Empty constructor
+    }
 
+    /**
+     * create key based on xroad identifiers
+     *
+     * @return SubsystemId
+     */
     public SubsystemId createKey() {
         return new SubsystemId(
                 getMember().getXRoadInstance(),
@@ -69,6 +72,10 @@ public class Subsystem {
                 subsystemCode);
     }
 
+    /**
+     * Constructor for tests
+     *
+     */
     public Subsystem(Member member, String subsystemCode) {
         this.member = member;
         this.subsystemCode = subsystemCode;
@@ -77,7 +84,8 @@ public class Subsystem {
 
     /**
      * Note: Read-only collection, do not use this to modify collection
-     * @return
+     *
+     * @return Set of active services
      */
     public Set<Service> getActiveServices() {
         return Collections.unmodifiableSet(services.stream()
@@ -87,7 +95,8 @@ public class Subsystem {
 
     /**
      * This collection can be used to add new items
-     * @return
+     *
+     * @return Set of all services
      */
     public Set<Service> getAllServices() {
         return services;

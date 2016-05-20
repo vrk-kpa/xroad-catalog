@@ -31,6 +31,9 @@ import org.springframework.data.repository.query.Param;
 import java.time.LocalDateTime;
 import java.util.Set;
 
+/**
+ * Basic CRUD for member
+ */
 public interface MemberRepository extends CrudRepository<Member, Long> {
 
     @EntityGraph(value = "member.full-tree.graph",
@@ -50,10 +53,10 @@ public interface MemberRepository extends CrudRepository<Member, Long> {
 
     /**
      * Returns only active items (non-deleted)
-     * @param xRoadInstance
-     * @param memberClass
-     * @param memberCode
-     * @return
+     * @param xRoadInstance X-Road instance parameter, for example FI
+     * @param memberClass X-Road member class, for example GOF
+     * @param memberCode X-Road member class, for example Company code
+     * @return Member found
      */
     @Query("SELECT m FROM Member m WHERE m.xRoadInstance = :xRoadInstance "
             + "AND m.memberClass = :memberClass "

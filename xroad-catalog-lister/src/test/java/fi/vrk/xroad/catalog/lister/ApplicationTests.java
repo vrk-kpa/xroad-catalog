@@ -35,8 +35,12 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.util.ClassUtils;
 import org.springframework.ws.client.core.WebServiceTemplate;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
+/**
+ * Http tests for lister interface
+ */
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = ListerApplication.class)
 @WebIntegrationTest(randomPort = true)
@@ -57,10 +61,10 @@ public class ApplicationTests {
 	@Test
 	public void testListServices() {
 		ListMembers request = new ListMembers();
-		ListMembersResponse result = (ListMembersResponse)new WebServiceTemplate(marshaller).marshalSendAndReceive("http://localhost:"
-				+ port + "/ws", request);
+		ListMembersResponse result = (ListMembersResponse)new WebServiceTemplate(marshaller).marshalSendAndReceive(
+				"http://localhost:" + port + "/ws", request);
 		assertNotNull(result);
-//		assertEquals("MemberList size", 3, result.getMemberList().getMembers().size());
+		assertEquals("MemberList size", 3, result.getMemberList().getMembers().size());
 	}
 
 }

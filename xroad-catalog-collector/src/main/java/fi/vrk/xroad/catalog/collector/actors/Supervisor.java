@@ -59,8 +59,6 @@ public class Supervisor extends XRoadCatalogActor {
     protected CatalogService catalogService;
 
     private ActorRef listClientsPoolRouter;
-    private ActorRef listMethodsPoolRouter;
-    private ActorRef fetchWsdlPoolRouter;
 
     @Value("${xroad-catalog.list-methods-pool-size}")
     private int listMethodsPoolSize;
@@ -82,11 +80,11 @@ public class Supervisor extends XRoadCatalogActor {
                 .props(springExtension.props("listClientsActor")),
                 LIST_CLIENTS_ACTOR_ROUTER);
 
-        listMethodsPoolRouter = getContext().actorOf(new SmallestMailboxPool(listMethodsPoolSize)
+        getContext().actorOf(new SmallestMailboxPool(listMethodsPoolSize)
                         .props(springExtension.props("listMethodsActor")),
                 LIST_METHODS_ACTOR_ROUTER);
 
-        fetchWsdlPoolRouter = getContext().actorOf(new SmallestMailboxPool(fetchWsdlPoolSize)
+        getContext().actorOf(new SmallestMailboxPool(fetchWsdlPoolSize)
                         .props(springExtension.props("fetchWsdlActor")),
                 FETCH_WSDL_ACTOR_ROUTER);
 
@@ -94,7 +92,7 @@ public class Supervisor extends XRoadCatalogActor {
     }
 
     @Override
-    protected boolean handleMessage(Object message) throws Exception {
+    protected boolean handleMessage(Object message) {
 
         if (START_COLLECTING.equals(message)) {
             listClientsPoolRouter.tell(ListClientsActor.START_COLLECTING, getSelf());
@@ -103,5 +101,4 @@ public class Supervisor extends XRoadCatalogActor {
             return false;
         }
     }
-
 }

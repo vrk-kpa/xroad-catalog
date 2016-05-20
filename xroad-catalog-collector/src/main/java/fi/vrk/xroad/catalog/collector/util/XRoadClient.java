@@ -34,15 +34,17 @@ import java.util.List;
 import java.util.UUID;
 
 /**
- * Created by sjk on 25.2.2016.
+ * WS client
  */
 @Slf4j
 public class XRoadClient {
 
+    private XRoadClient() {
+        // Private empty constructor
+    }
+
     /**
      * Calls the service using JAX-WS endpoints that have been generated from wsdl
-     * @param client
-     * @return
      */
     public static List<XRoadServiceIdentifierType> getMethods(String securityServerHost, XRoadClientIdentifierType
                                                               securityServerIdentity,
@@ -71,11 +73,12 @@ public class XRoadClient {
                 new Holder<>("xroad-catalog-collector"),
                 new Holder<>("4.x"));
 
-        List<XRoadServiceIdentifierType> methods = response.getService();
-
-        return methods;
+        return response.getService();
     }
 
+    /**
+     * MetaServicesPort for url
+     */
     public static MetaServicesPort getMetaServicesPort(URL url) {
         URL wsdl = XRoadClient.class.getClassLoader()
                 .getResource("schema/list-methods.wsdl");

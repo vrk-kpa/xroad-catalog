@@ -23,7 +23,6 @@
 package fi.vrk.xroad.catalog.persistence;
 
 import com.google.common.collect.Iterables;
-import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import fi.vrk.xroad.catalog.persistence.entity.*;
@@ -36,11 +35,17 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
 import java.util.stream.StreamSupport;
 
 import static org.junit.Assert.*;
 
+/**
+ * Persistence tests
+ */
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(Application.class)
 @Transactional
@@ -199,7 +204,7 @@ public class CatalogServiceTest {
         // all non-deleted members that contain parts that were modified since 1.1.2007 (3-7)
         Iterable<Member> members = catalogService.getActiveMembers(testUtil.createDate(1, 1, 2017));
         log.info("found members: " + testUtil.getIds(members));
-        assertEquals(Arrays.asList(3L,4L,5L,6L,7L),
+        assertEquals(Arrays.asList(3L, 4L, 5L, 6L, 7L),
                 new ArrayList<>(testUtil.getIds(members)));
     }
 
@@ -208,21 +213,21 @@ public class CatalogServiceTest {
         // all members that contain parts that were modified since 1.1.2007 (3-8)
         Iterable<Member> members = catalogService.getAllMembers(testUtil.createDate(1, 1, 2017));
         log.info("found members: " + testUtil.getIds(members));
-        assertEquals(Arrays.asList(3L,4L,5L,6L,7L,8L),
+        assertEquals(Arrays.asList(3L, 4L, 5L, 6L, 7L, 8L),
                 new ArrayList<Long>(testUtil.getIds(members)));
     }
 
     @Test
     public void testGetAllMembers() {
         Iterable<Member> members = catalogService.getAllMembers();
-        assertEquals(Arrays.asList(1L, 2L, 3L,4L,5L,6L,7L,8L),
+        assertEquals(Arrays.asList(1L, 2L, 3L, 4L, 5L, 6L, 7L, 8L),
                 new ArrayList<Long>(testUtil.getIds(members)));
     }
 
     @Test
     public void testGetActiveMembers() {
         Iterable<Member> members = catalogService.getActiveMembers();
-        assertEquals(Arrays.asList(1L, 2L, 3L,4L,5L,6L,7L),
+        assertEquals(Arrays.asList(1L, 2L, 3L, 4L, 5L, 6L, 7L),
                 new ArrayList<Long>(testUtil.getIds(members)));
     }
 
@@ -308,7 +313,7 @@ public class CatalogServiceTest {
         Service checkedService6newVersion = (Service) testUtil.getEntity(checkedSub.getAllServices(), newVersionId)
                 .get();
         Service checkedService6nullVersion = (Service) testUtil.getEntity(checkedSub.getAllServices(), nullVersionId)
-                .get(); 
+                .get();
 
         assertFalse(checkedService6.getStatusInfo().isRemoved());
         testUtil.assertFetchedIsOnlyDifferent(originalService6.getStatusInfo(), checkedService6.getStatusInfo());
@@ -350,7 +355,7 @@ public class CatalogServiceTest {
         newServiceEmptyVersion.setServiceVersion("");
 
         catalogService.saveServices(savedSub.createKey(),
-                Lists.newArrayList(savedService5, savedService6,newService,
+                Lists.newArrayList(savedService5, savedService6, newService,
                         newServiceNullVersion, newServiceEmptyVersion));
         testUtil.entityManagerFlush();
         long newId = newService.getId();
@@ -421,7 +426,7 @@ public class CatalogServiceTest {
         Subsystem checkedSub = subsystemRepository.findOne(8L);
         testUtil.assertAllSame(originalSub.getStatusInfo(), checkedSub.getStatusInfo());
 
-        assertEquals(Arrays.asList(5L,6L,8L,9L,10L),
+        assertEquals(Arrays.asList(5L, 6L, 8L, 9L, 10L),
                 new ArrayList<>(testUtil.getIds(checkedSub.getAllServices())));
         assertTrue(checkedSub.getActiveServices().isEmpty());
         Service checkedService5 = (Service) testUtil.getEntity(checkedSub.getAllServices(), 5L).get();
@@ -501,8 +506,8 @@ public class CatalogServiceTest {
         testUtil.entityManagerClear();
 
         Wsdl newWsdl = new Wsdl();
-        final String DATA = "<testwsdl/>";
-        catalogService.saveWsdl(originalSubsystemId, originalServiceId, DATA);
+        final String data = "<testwsdl/>";
+        catalogService.saveWsdl(originalSubsystemId, originalServiceId, data);
         testUtil.entityManagerFlush();
         testUtil.entityManagerClear();
 
@@ -510,7 +515,7 @@ public class CatalogServiceTest {
         Wsdl checkedWsdl = checkedService.getWsdl();
         log.info("externalId [{}]", checkedWsdl.getExternalId());
         assertNotNull(checkedWsdl.getExternalId());
-        assertEquals(DATA, checkedWsdl.getData());
+        assertEquals(data, checkedWsdl.getData());
         assertEquals(checkedWsdl.getService().createKey(), originalServiceId);
         assertNotNull(checkedWsdl.getStatusInfo().getCreated());
         assertNotNull(checkedWsdl.getStatusInfo().getChanged());
@@ -560,6 +565,8 @@ public class CatalogServiceTest {
         try {
             catalogService.saveWsdl(originalSubsystemId, originalServiceId, originalWsdl.getData());
             fail("should have throw exception since service is removed");
-        } catch (Exception expected) {}
+        } catch (Exception expected) {
+            // Exception is expected }
+        }
     }
 }

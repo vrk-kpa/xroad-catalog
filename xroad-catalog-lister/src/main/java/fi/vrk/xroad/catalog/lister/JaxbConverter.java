@@ -47,8 +47,14 @@ import java.util.List;
 @Component
 public class JaxbConverter {
 
+    /**
+     * Convert entities to XML objects
+     * @param members Iterable of Member entities
+     * @param onlyActiveChildren if true, convert only active subsystems
+     * @return Collection of Members (JAXB generated)
+     */
     public Collection<Member> convertMembers(Iterable<fi.vrk.xroad.catalog.persistence.entity.Member> members,
-                                             boolean onlyActiveChildren) throws DatatypeConfigurationException {
+                                             boolean onlyActiveChildren)  {
         List<Member> converted = new ArrayList<>();
         for (fi.vrk.xroad.catalog.persistence.entity.Member member: members) {
             Member cm = new Member();
@@ -61,7 +67,7 @@ public class JaxbConverter {
             cm.setName(member.getName());
             cm.setXRoadInstance(member.getXRoadInstance());
             cm.setSubsystems(new SubsystemList());
-            Iterable<Subsystem> subsystems = null;
+            Iterable<Subsystem> subsystems;
             if (onlyActiveChildren) {
                 subsystems = member.getActiveSubsystems();
             } else {
@@ -73,8 +79,14 @@ public class JaxbConverter {
         return converted;
     }
 
+    /**
+     * Convert entities to XML objects
+     * @param subsystems Iterable of Subsystem entities
+     * @param onlyActiveChildren if true, convert only active subsystems
+     * @return collection of XML objects
+     */
     public Collection<fi.vrk.xroad.xroad_catalog_lister.Subsystem> convertSubsystems(Iterable<Subsystem> subsystems,
-                                                                                     boolean onlyActiveChildren) throws DatatypeConfigurationException {
+                                                                                     boolean onlyActiveChildren) {
         List<fi.vrk.xroad.xroad_catalog_lister.Subsystem> converted = new ArrayList<>();
         for (Subsystem subsystem: subsystems) {
             fi.vrk.xroad.xroad_catalog_lister.Subsystem cs = new fi.vrk.xroad.xroad_catalog_lister.Subsystem();
@@ -84,7 +96,7 @@ public class JaxbConverter {
             cs.setRemoved(toXmlGregorianCalendar(subsystem.getStatusInfo().getRemoved()));
             cs.setSubsystemCode(subsystem.getSubsystemCode());
             cs.setServices(new ServiceList());
-            Iterable<Service> services = null;
+            Iterable<Service> services;
             if (onlyActiveChildren) {
                 services = subsystem.getActiveServices();
             } else {
@@ -96,8 +108,14 @@ public class JaxbConverter {
         return converted;
     }
 
+    /**
+     * Convert entities to XML objects
+     * @param services Iterable of Service entities
+     * @param onlyActiveChildren if true, convert only active subsystems
+     * @return collection of XML objects
+     */
     public Collection<fi.vrk.xroad.xroad_catalog_lister.Service> convertServices(Iterable<Service> services,
-                                                                                 boolean onlyActiveChildren) throws DatatypeConfigurationException {
+                                                                                 boolean onlyActiveChildren) {
         List<fi.vrk.xroad.xroad_catalog_lister.Service> converted = new ArrayList<>();
         for (Service service: services) {
             fi.vrk.xroad.xroad_catalog_lister.Service cs = new fi.vrk.xroad.xroad_catalog_lister.Service();
@@ -123,7 +141,7 @@ public class JaxbConverter {
         return converted;
     }
 
-    private WSDL convertWsdl(Wsdl wsdl) throws DatatypeConfigurationException {
+    private WSDL convertWsdl(Wsdl wsdl) {
         WSDL cw = new WSDL();
         cw.setChanged(toXmlGregorianCalendar(wsdl.getStatusInfo().getChanged()));
         cw.setCreated(toXmlGregorianCalendar(wsdl.getStatusInfo().getCreated()));
@@ -137,12 +155,17 @@ public class JaxbConverter {
         return calendar.toGregorianCalendar().toZonedDateTime().toLocalDateTime();
     }
 
-    public XMLGregorianCalendar toXmlGregorianCalendar(LocalDateTime localDateTime) throws DatatypeConfigurationException {
+    protected XMLGregorianCalendar toXmlGregorianCalendar(LocalDateTime localDateTime) {
         if (localDateTime == null) {
             return null;
         } else {
             GregorianCalendar cal = GregorianCalendar.from(localDateTime.atZone(ZoneId.systemDefault()));
-            XMLGregorianCalendar xc = DatatypeFactory.newInstance().newXMLGregorianCalendar(cal);
+            XMLGregorianCalendar xc = null;
+            try {
+                xc = DatatypeFactory.newInstance().newXMLGregorianCalendar(cal);
+            } catch (DatatypeConfigurationException e) {
+                throw new CatalogListerRuntimeException("Cannot instantiate DatatypeFactory", e);
+            }
             return xc;
         }
     }

@@ -25,6 +25,7 @@ package fi.vrk.xroad.catalog.collector.mock;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
+import fi.vrk.xroad.catalog.collector.util.CatalogCollectorRuntimeException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.ClassPathResource;
@@ -36,35 +37,52 @@ import java.net.InetSocketAddress;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Created by sjk on 22.2.2016.
+ * HttpServer helper used for tests
  */
 public interface MockHttpServer {
 
+    int PORT = 8932;
+
+    Logger log = LoggerFactory.getLogger("MockHttpServer");
+
     HttpServer getServer();
     void setServer(HttpServer server);
-    final int PORT = 8932;
-
-    final Logger log = LoggerFactory.getLogger("MockHttpServer");
 
 
-    default void startServer(String fileName) throws Exception {
-        setServer(HttpServer.create(new InetSocketAddress(PORT), 0));
-        getServer().createContext(getContext(fileName), getHandler(fileName));
-        getServer().setExecutor(null); // creates a default executor
-        log.info("Starting local http server {} in port {}", getServer(), PORT);
-        getServer().start();
-        // TODO: what about removing this delay?
-        TimeUnit.SECONDS.sleep(1);
+    /**
+     * Start http server that offers the given file through http
+     * @param fileName file that can be found in classpath
+     */
+    default void startServer(String fileName) {
+        try {
+            setServer(HttpServer.create(new InetSocketAddress(PORT), 0));
+
+            getServer().createContext(getContext(fileName), getHandler(fileName));
+            getServer().setExecutor(null); // creates a default executor
+            log.info("Starting local http server {} in port {}", getServer(), PORT);
+            getServer().start();
+            // TODO: what about removing this delay?
+            TimeUnit.SECONDS.sleep(1);
+        } catch (Exception e) {
+            throw new CatalogCollectorRuntimeException("Cannot start httpserver", e);
+        }
     }
 
+    /**
+     * Stop http server
+     */
     default void stopServer() {
         log.info("Stopping local http server {} in port {}", getServer(), PORT);
         getServer().stop(0);
-
     }
 
 
-    default String startServerForUrl(String url) throws Exception {
+    /**
+     * Start http server using file based on the url in the parameter
+     * @param url Actual url for the real request
+     * @return Local url (url for localhost and resource filename)
+     */
+    default String startServerForUrl(String url) {
         String[] parts = url.split("/");
 
         String fileName = "/data/" + parts[3]+".xml";
@@ -77,7 +95,7 @@ public interface MockHttpServer {
             return localUrl;
         } catch (Exception e) {
             log.error("Error getting resource from through http{}", localUrl);
-            throw new RuntimeException("Error reading resource from httpserver", e);
+            throw new CatalogCollectorRuntimeException("Error reading resource from httpserver", e);
         }
     }
 

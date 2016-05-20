@@ -30,9 +30,10 @@ import lombok.ToString;
  * Utility class to work as a key for Subsystems in Maps etc
  */
 @EqualsAndHashCode(callSuper = true)
-@Getter
 @ToString
 public class SubsystemId extends MemberId {
+
+    @Getter
     private String subsystemCode;
 
     public SubsystemId(String xRoadInstance, String memberClass, String memberCode, String subsystemCode) {
