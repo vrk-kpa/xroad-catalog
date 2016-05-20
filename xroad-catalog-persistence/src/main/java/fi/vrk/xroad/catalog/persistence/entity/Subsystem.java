@@ -35,7 +35,8 @@ import java.util.stream.Collectors;
 @Getter
 @Setter
 @ToString(exclude = {"services"})
-@EqualsAndHashCode(exclude = {"id", "services", "statusInfo"}) // why?
+// identity is based on xroad identity (instance, member code...)
+@EqualsAndHashCode(exclude = {"id", "services", "statusInfo"})
 public class Subsystem {
 
     @Id

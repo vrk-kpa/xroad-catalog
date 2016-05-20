@@ -62,6 +62,7 @@ import java.util.stream.Collectors;
         @NamedQuery(name = "Member.findActiveChangedSince",
                 query = Member.FIND_ACTIVE_CHANGED_QUERY),
 })
+// identity is based on xroad identity (instance, member code...)
 @EqualsAndHashCode(exclude = {"id", "subsystems", "statusInfo"})
 public class Member {
 

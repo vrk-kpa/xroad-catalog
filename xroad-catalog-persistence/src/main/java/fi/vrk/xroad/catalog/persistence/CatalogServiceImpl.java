@@ -27,6 +27,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.Assert;
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -195,8 +196,8 @@ public class CatalogServiceImpl implements CatalogService {
 
     @Override
     public void saveWsdl(SubsystemId subsystemId, ServiceId serviceId, String wsdlString) {
-        assert subsystemId != null;
-        assert serviceId != null;
+        Assert.notNull(subsystemId);
+        Assert.notNull(serviceId);
         Service oldService;
         // bit ugly this one, would be a little cleaner if
         // https://jira.spring.io/browse/DATAJPA-209 was resolved
