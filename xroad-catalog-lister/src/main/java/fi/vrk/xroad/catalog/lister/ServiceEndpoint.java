@@ -54,7 +54,7 @@ public class ServiceEndpoint {
         response.setMemberList(new MemberList());
 
         Iterable<Member> members = jaxbCatalogService.getAllMembers(request.getChangedAfter());
-        response.getMemberList().getMembers().addAll(Lists.newArrayList(members));
+        response.getMemberList().getMember().addAll(Lists.newArrayList(members));
         return response;
     }
 

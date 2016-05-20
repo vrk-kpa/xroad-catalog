@@ -144,7 +144,7 @@ http://x-road.eu/xsd/identifiers ">
 
             <xs:complexType name="MemberList">
                 <xs:sequence>
-                    <xs:element maxOccurs="unbounded" minOccurs="0" name="members" type="tns:Member"/>
+                    <xs:element maxOccurs="unbounded" minOccurs="0" name="member" type="tns:Member"/>
                 </xs:sequence>
             </xs:complexType>
 
