@@ -20,7 +20,6 @@ license {
 
 apply plugin: 'java'
 apply plugin: 'maven'
-apply plugin: 'idea'
 apply plugin: 'spring-boot'
 apply plugin: 'sonar-runner'
 apply plugin: 'jacoco'
@@ -91,7 +90,7 @@ dependencies {
     compile group: 'c3p0', name: 'c3p0', version:'0.9.1.2'
     compile group: 'com.h2database', name: 'h2', version:'1.4.177'
     compile group: 'ch.qos.logback', name: 'logback-classic', version:'1.1.2'
-    compile 'fi.vrk.xroad:xroad-catalog-persistence:1.0-SNAPSHOT'
+    compile project(':xroad-catalog-persistence')
     compile 'org.projectlombok:lombok:1.16.6'
     compile 'org.apache.cxf:cxf-rt-frontend-jaxws:3.1.4'
     compile 'org.apache.cxf:cxf-rt-transports-http:3.1.4'
@@ -105,21 +104,8 @@ dependencies {
     wsimport "com.sun.xml.ws:jaxws-tools:2.1.7"
 }
 
-idea {
-    project {
-        //if you want to set specific jdk and language level
-        jdkName = '1.8'
-        languageLevel = '1.8'
-    }
-    module {
-        downloadSources = true
-    }
-}
 
-idea.module {
-    excludeDirs -= file(buildDir)
-    buildDir.listFiles({ d, f -> f != 'generated-sources/wsimport' } as FilenameFilter).each { excludeDirs += it }
-}
+
 
 compileJava.dependsOn wsImport
 

@@ -17,6 +17,8 @@ license {
     include '**/*.java'
 }
 
+println "dasdsa"
+println System.getProperty("java.home")
 
 apply plugin: 'java'
 apply plugin: 'maven'

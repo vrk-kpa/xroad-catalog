@@ -1,0 +1,20 @@
+Closure cl = { task -> println "I'm $task.project.name" }
+allprojects {
+    task hello << { task -> println "I'm $task.project.name" }
+}
+apply plugin: 'idea'
+idea {
+    project {
+        //if you want to set specific jdk and language level
+        jdkName = '1.8'
+        languageLevel = '1.8'
+    }
+    module {
+        downloadSources = true
+    }
+}
+idea.module {
+    excludeDirs -= file(buildDir)
+    buildDir.listFiles({ d, f -> f != 'generated-sources/wsimport' } as FilenameFilter).each { excludeDirs += it }
+}
+
