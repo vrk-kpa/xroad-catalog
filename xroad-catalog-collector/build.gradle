@@ -24,7 +24,6 @@ apply plugin: 'spring-boot'
 apply plugin: 'sonar-runner'
 apply plugin: 'jacoco'
 
-
 description = """"""
 
 sourceCompatibility = 1.8
@@ -103,7 +102,6 @@ dependencies {
     testCompile 'org.powermock:powermock-api-mockito:1.6.4'
     wsimport "com.sun.xml.ws:jaxws-tools:2.1.7"
 }
-
 
 
 

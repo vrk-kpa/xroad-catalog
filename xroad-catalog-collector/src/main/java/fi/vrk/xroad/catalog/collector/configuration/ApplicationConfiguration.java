@@ -33,8 +33,15 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.web.SpringBootServletInitializer;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.*;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.http.converter.HttpMessageConverter;
+import org.springframework.http.converter.xml.MarshallingHttpMessageConverter;
+import org.springframework.oxm.jaxb.Jaxb2Marshaller;
 import org.springframework.web.client.RestOperations;
 import org.springframework.web.client.RestTemplate;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Common conf for development and production
@@ -88,7 +95,6 @@ public class ApplicationConfiguration extends SpringBootServletInitializer {
     @Bean
     @Qualifier("listClientsRestOperations")
     public RestOperations getRestOperations() {
-        log.info("-------------- Configuration");
         return new RestTemplate();
     }
 

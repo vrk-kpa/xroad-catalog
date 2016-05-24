@@ -29,7 +29,7 @@ import akka.testkit.JavaTestKit;
 import akka.testkit.TestActorRef;
 import akka.testkit.TestKit;
 import com.google.common.collect.HashMultiset;
-import fi.vrk.xroad.catalog.collector.wsimport.ClientListType;
+import fi.vrk.xroad.catalog.collector.wsimport.ClientList;
 import fi.vrk.xroad.catalog.collector.wsimport.ClientType;
 import fi.vrk.xroad.catalog.collector.wsimport.XRoadClientIdentifierType;
 import fi.vrk.xroad.catalog.collector.wsimport.XRoadObjectType;
@@ -133,9 +133,8 @@ public class ListClientsActorTest extends TestKit {
         memberlist.add(createClientType(XRoadObjectType.SUBSYSTEM, "member2", "sssub1"));
         memberlist.add(createClientType(XRoadObjectType.SUBSYSTEM, "member2", "sssub2"));
 
-        ClientListType cMock = mock(ClientListType.class);
-        doReturn(cMock).when(restOperations).getForObject("http://localhost/listClients", ClientListType
-                .class);
+        ClientList cMock = mock(ClientList.class);
+        doReturn(cMock).when(restOperations).getForObject("http://localhost/listClients", ClientList.class);
         when(cMock.getMember()).thenReturn(memberlist);
 
 //        doNothing().when(listMethodsPoolRef).tell(Matchers.anyObject(), Matchers.anyObject());

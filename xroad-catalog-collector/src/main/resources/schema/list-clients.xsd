@@ -6,6 +6,7 @@
            xmlns:id="http://x-road.eu/xsd/identifiers">
     <xs:import schemaLocation="http://x-road.eu/xsd/identifiers.xsd"
                namespace="http://x-road.eu/xsd/identifiers"/>
+<!--
     <xs:complexType name="ClientListType">
         <xs:sequence>
             <xs:element maxOccurs="unbounded" minOccurs="0"
@@ -27,4 +28,28 @@
     </xs:complexType>
     <xs:element name="clientList" type="ClientListType"/>
     <xs:element name="centralServiceList" type="CentralServiceListType"/>
+-->
+    <xs:complexType name="ClientType">
+        <xs:sequence>
+            <xs:element name="id" type="id:XRoadClientIdentifierType"/>
+            <xs:element name="name" type="xs:string" minOccurs="0"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="clientList">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element maxOccurs="unbounded" minOccurs="0"
+                            name="member" type="ClientType"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="centralServiceList">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element maxOccurs="unbounded" minOccurs="0"
+                            name="centralService"
+                            type="id:XRoadCentralServiceIdentifierType"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
 </xs:schema>
