@@ -63,7 +63,9 @@ public class XRoadClient {
         serviceIdentifierType.setObjectType(XRoadObjectType.SERVICE);
 
         URL url = new URL(securityServerHost);
-        log.info("calling port at url {}", url);
+        log.info("SOAP call at url {} for member {} and service {}", url, ClientTypeUtil.toString
+                (securityServerIdentity), ClientTypeUtil
+                .toString(securityServerIdentity));
 
         MetaServicesPort port = getMetaServicesPort(url);
 
@@ -92,8 +94,7 @@ public class XRoadClient {
         BindingProvider bindingProvider = (BindingProvider) port;
         bindingProvider.getRequestContext()
                 .put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, url.toString());
-        bindingProvider.getRequestContext().put(
-                "com.sun.xml.internal.ws.transport.https.client.SSLSocketFactory",
+        bindingProvider.getRequestContext().put("com.sun.xml.internal.ws.transport.https.client.SSLSocketFactory",
                 sf);
         return port;
     }
