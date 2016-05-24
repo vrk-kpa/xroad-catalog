@@ -60,8 +60,6 @@ public class ListClientsRestTest  {
     @Qualifier("listClientsRestOperations")
     private RestOperations restOperations;
 
-    private MockRestServiceServer mockServer;
-
     private static final String VALID_LISTCLIENTS_RESPONSE = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n" +
             "<ns2:clientList xmlns:ns1=\"http://x-road.eu/xsd/identifiers\" xmlns:ns2=\"http://x-road.eu/xsd/xroad.xsd\">\n" +
             "    <ns2:member>\n" +
@@ -116,18 +114,21 @@ public class ListClientsRestTest  {
             "\tat java.lang.Thread.run(Thread.java:745)\n" +
             "</xroad:faultDetail></detail></SOAP-ENV:Fault></SOAP-ENV:Body></SOAP-ENV:Envelope>";
 
-    @Before
-    public void setup() throws Exception {
-        RestTemplate t = (RestTemplate) restOperations;
-        mockServer = MockRestServiceServer.createServer(t);
-    }
+//    @Before
+//    public void setup() throws Exception {
+//        RestTemplate t = (RestTemplate) restOperations;
+//
+//        mockServer = MockRestServiceServer.createServer(t);
+//    }
 
     @Test
     public void testBadMessage() throws Exception {
+        RestTemplate t = (RestTemplate) restOperations;
+        MockRestServiceServer mockServer = MockRestServiceServer.createServer(t);
+
         mockServer.expect(requestTo("/bad")).andRespond(
                 withSuccess(OUTDATED_GLOBAL_CONF, MediaType.APPLICATION_XML));
 
-        RestTemplate t = (RestTemplate) restOperations;
         try {
             ClientList clientList = t.getForObject("/bad", ClientList.class);
             fail("should fail since restOperation is not returning valid ClientList");
@@ -138,10 +139,12 @@ public class ListClientsRestTest  {
 
     @Test
     public void testOkMessage() throws Exception {
+        RestTemplate t = (RestTemplate) restOperations;
+        MockRestServiceServer mockServer = MockRestServiceServer.createServer(t);
+
         mockServer.expect(requestTo("/ok")).andRespond(
                 withSuccess(VALID_LISTCLIENTS_RESPONSE, MediaType.APPLICATION_XML));
 
-        RestTemplate t = (RestTemplate) restOperations;
         ClientList clientList = t.getForObject("/ok", ClientList.class);
         assertNotNull(clientList);
         assertEquals(3, clientList.getMember().size());
@@ -149,9 +152,11 @@ public class ListClientsRestTest  {
 
     @Test
     public void testErrorResponseCode() throws Exception {
+        RestTemplate t = (RestTemplate) restOperations;
+        MockRestServiceServer mockServer = MockRestServiceServer.createServer(t);
+
         mockServer.expect(requestTo("/error")).andRespond(
                 withServerError());
-        RestTemplate t = (RestTemplate) restOperations;
         try {
             ClientList clientList = t.getForObject("/error", ClientList.class);
             fail("should fail since not http 200 OK");
