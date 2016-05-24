@@ -114,23 +114,22 @@ public class ListClientsRestTest  {
             "\tat java.lang.Thread.run(Thread.java:745)\n" +
             "</xroad:faultDetail></detail></SOAP-ENV:Fault></SOAP-ENV:Body></SOAP-ENV:Envelope>";
 
-//    @Before
-//    public void setup() throws Exception {
-//        RestTemplate t = (RestTemplate) restOperations;
-//
-//        mockServer = MockRestServiceServer.createServer(t);
-//    }
+    /**
+     * MockHttpServer expects URL to have 3 parts, otherwise we get Caused by: java.lang.ArrayIndexOutOfBoundsException: 3
+     * (even thought the actual server is not even used, and mocked instead)
+     */
+    private static final String TEST_REQUEST_URL = "/a/b/c/d/foobar";
 
     @Test
     public void testBadMessage() throws Exception {
         RestTemplate t = (RestTemplate) restOperations;
         MockRestServiceServer mockServer = MockRestServiceServer.createServer(t);
 
-        mockServer.expect(requestTo("/bad")).andRespond(
+        mockServer.expect(requestTo(TEST_REQUEST_URL)).andRespond(
                 withSuccess(OUTDATED_GLOBAL_CONF, MediaType.APPLICATION_XML));
 
         try {
-            ClientList clientList = t.getForObject("/bad", ClientList.class);
+            ClientList clientList = t.getForObject(TEST_REQUEST_URL, ClientList.class);
             fail("should fail since restOperation is not returning valid ClientList");
         } catch (Exception expected) {
             log.error("expected exception: ", expected);
@@ -142,12 +141,12 @@ public class ListClientsRestTest  {
         RestTemplate t = (RestTemplate) restOperations;
         MockRestServiceServer mockServer = MockRestServiceServer.createServer(t);
 
-        mockServer.expect(requestTo("/ok")).andRespond(
+        mockServer.expect(requestTo(TEST_REQUEST_URL)).andRespond(
                 withSuccess(VALID_LISTCLIENTS_RESPONSE, MediaType.APPLICATION_XML));
 
-        ClientList clientList = t.getForObject("/ok", ClientList.class);
+        ClientList clientList = t.getForObject(TEST_REQUEST_URL, ClientList.class);
         assertNotNull(clientList);
-//        assertEquals(3, clientList.getMember().size());
+        assertEquals(3, clientList.getMember().size());
     }
 
     @Test
@@ -155,10 +154,10 @@ public class ListClientsRestTest  {
         RestTemplate t = (RestTemplate) restOperations;
         MockRestServiceServer mockServer = MockRestServiceServer.createServer(t);
 
-        mockServer.expect(requestTo("/error")).andRespond(
+        mockServer.expect(requestTo(TEST_REQUEST_URL)).andRespond(
                 withServerError());
         try {
-            ClientList clientList = t.getForObject("/error", ClientList.class);
+            ClientList clientList = t.getForObject(TEST_REQUEST_URL, ClientList.class);
             fail("should fail since not http 200 OK");
         } catch (Exception expected) {
             log.error("expected exception: ", expected);
