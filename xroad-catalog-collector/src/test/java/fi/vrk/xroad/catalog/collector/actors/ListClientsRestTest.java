@@ -26,7 +26,6 @@ import fi.vrk.xroad.catalog.collector.XRoadCatalogCollector;
 import fi.vrk.xroad.catalog.collector.extension.SpringExtension;
 import fi.vrk.xroad.catalog.collector.wsimport.ClientList;
 import lombok.extern.slf4j.Slf4j;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,13 +51,6 @@ import static org.springframework.test.web.client.response.MockRestResponseCreat
 @Transactional
 @Slf4j
 public class ListClientsRestTest  {
-
-    @Autowired
-    SpringExtension springExtension;
-
-    @Autowired
-    @Qualifier("listClientsRestOperations")
-    private RestOperations restOperations;
 
     private static final String VALID_LISTCLIENTS_RESPONSE = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n" +
             "<ns2:clientList xmlns:ns1=\"http://x-road.eu/xsd/identifiers\" xmlns:ns2=\"http://x-road.eu/xsd/xroad.xsd\">\n" +
@@ -114,22 +106,18 @@ public class ListClientsRestTest  {
             "\tat java.lang.Thread.run(Thread.java:745)\n" +
             "</xroad:faultDetail></detail></SOAP-ENV:Fault></SOAP-ENV:Body></SOAP-ENV:Envelope>";
 
-    /**
-     * MockHttpServer expects URL to have 3 parts, otherwise we get Caused by: java.lang.ArrayIndexOutOfBoundsException: 3
-     * (even thought the actual server is not even used, and mocked instead)
-     */
-    private static final String TEST_REQUEST_URL = "/a/b/c/d/foobar";
+    private static final String TEST_REQUEST_PATH = "dummy-request-path";
 
     @Test
     public void testBadMessage() throws Exception {
-        RestTemplate t = (RestTemplate) restOperations;
+        RestTemplate t = new RestTemplate();
         MockRestServiceServer mockServer = MockRestServiceServer.createServer(t);
 
-        mockServer.expect(requestTo(TEST_REQUEST_URL)).andRespond(
+        mockServer.expect(requestTo(TEST_REQUEST_PATH)).andRespond(
                 withSuccess(OUTDATED_GLOBAL_CONF, MediaType.APPLICATION_XML));
 
         try {
-            ClientList clientList = t.getForObject(TEST_REQUEST_URL, ClientList.class);
+            ClientList clientList = t.getForObject(TEST_REQUEST_PATH, ClientList.class);
             fail("should fail since restOperation is not returning valid ClientList");
         } catch (Exception expected) {
             log.error("expected exception: ", expected);
@@ -138,26 +126,26 @@ public class ListClientsRestTest  {
 
     @Test
     public void testOkMessage() throws Exception {
-        RestTemplate t = (RestTemplate) restOperations;
+        RestTemplate t = new RestTemplate();
         MockRestServiceServer mockServer = MockRestServiceServer.createServer(t);
 
-        mockServer.expect(requestTo(TEST_REQUEST_URL)).andRespond(
+        mockServer.expect(requestTo(TEST_REQUEST_PATH)).andRespond(
                 withSuccess(VALID_LISTCLIENTS_RESPONSE, MediaType.APPLICATION_XML));
 
-        ClientList clientList = t.getForObject(TEST_REQUEST_URL, ClientList.class);
+        ClientList clientList = t.getForObject(TEST_REQUEST_PATH, ClientList.class);
         assertNotNull(clientList);
         assertEquals(3, clientList.getMember().size());
     }
 
     @Test
     public void testErrorResponseCode() throws Exception {
-        RestTemplate t = (RestTemplate) restOperations;
+        RestTemplate t = new RestTemplate();
         MockRestServiceServer mockServer = MockRestServiceServer.createServer(t);
 
-        mockServer.expect(requestTo(TEST_REQUEST_URL)).andRespond(
+        mockServer.expect(requestTo(TEST_REQUEST_PATH)).andRespond(
                 withServerError());
         try {
-            ClientList clientList = t.getForObject(TEST_REQUEST_URL, ClientList.class);
+            ClientList clientList = t.getForObject(TEST_REQUEST_PATH, ClientList.class);
             fail("should fail since not http 200 OK");
         } catch (Exception expected) {
             log.error("expected exception: ", expected);
