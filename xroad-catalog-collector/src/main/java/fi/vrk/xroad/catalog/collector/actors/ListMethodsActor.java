@@ -72,6 +72,12 @@ public class ListMethodsActor extends XRoadCatalogActor {
     @Value("${xroad-catalog.webservices-endpoint}")
     private String webservicesEndpoint;
 
+    @Value("${xroad-catalog.ssl-keystoreode}")
+    private String keystore;
+
+    @Value("${xroad-catalog.ssl-keystore-password}")
+    private String keystorePassword;
+
     @Autowired
     private SpringExtension springExtension;
 
@@ -84,6 +90,8 @@ public class ListMethodsActor extends XRoadCatalogActor {
     @Override
     public void preStart() throws Exception {
         log.info("preStart {}", this.hashCode());
+        System.setProperty("javax.net.ssl.keyStore", keystore);
+        System.setProperty("javax.net.ssl.keyStorePassword", keystorePassword);
         fetchWsdlPoolRef = new RelativeActorRefUtil(getContext())
                 .resolvePoolRef(Supervisor.FETCH_WSDL_ACTOR_ROUTER);
         super.preStart();
