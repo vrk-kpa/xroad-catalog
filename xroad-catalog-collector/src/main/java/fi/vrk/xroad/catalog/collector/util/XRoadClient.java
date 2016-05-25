@@ -25,8 +25,6 @@ package fi.vrk.xroad.catalog.collector.util;
 import fi.vrk.xroad.catalog.collector.wsimport.*;
 import lombok.extern.slf4j.Slf4j;
 
-import javax.net.SocketFactory;
-import javax.net.ssl.SSLSocketFactory;
 import javax.xml.namespace.QName;
 import javax.xml.ws.BindingProvider;
 import javax.xml.ws.Holder;
@@ -84,8 +82,6 @@ public class XRoadClient {
      * MetaServicesPort for url
      */
     public static MetaServicesPort getMetaServicesPort(URL url) {
-        SocketFactory sf = SSLSocketFactory.getDefault();
-
         URL wsdl = XRoadClient.class.getClassLoader()
                 .getResource("schema/list-methods.wsdl");
         ProducerPortService service = new ProducerPortService(wsdl,
@@ -94,8 +90,6 @@ public class XRoadClient {
         BindingProvider bindingProvider = (BindingProvider) port;
         bindingProvider.getRequestContext()
                 .put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, url.toString());
-        bindingProvider.getRequestContext().put("com.sun.xml.internal.ws.transport.https.client.SSLSocketFactory",
-                sf);
         return port;
     }
 
