@@ -72,7 +72,7 @@ public class ListMethodsActor extends XRoadCatalogActor {
     @Value("${xroad-catalog.webservices-endpoint}")
     private String webservicesEndpoint;
 
-    @Value("${xroad-catalog.ssl-keystoreode}")
+    @Value("${xroad-catalog.ssl-keystore}")
     private String keystore;
 
     @Value("${xroad-catalog.ssl-keystore-password}")
