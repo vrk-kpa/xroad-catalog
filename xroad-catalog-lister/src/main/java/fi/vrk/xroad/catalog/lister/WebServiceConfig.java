@@ -57,8 +57,8 @@ public class WebServiceConfig extends WsConfigurerAdapter {
 
 	@Override
 	public void addInterceptors(List<EndpointInterceptor> interceptors) {
-
 		interceptors.add(new SoapEnvelopeLoggingInterceptor());
 		interceptors.add(new ServiceEndpointInterceptor());
+		interceptors.add(new WsdlCdataInterceptor());
 	}
 }
