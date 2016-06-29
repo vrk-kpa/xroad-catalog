@@ -26,7 +26,6 @@ import akka.actor.ActorRef;
 import akka.actor.OneForOneStrategy;
 import akka.routing.SmallestMailboxPool;
 import fi.vrk.xroad.catalog.collector.extension.SpringExtension;
-import fi.vrk.xroad.catalog.persistence.CatalogService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -54,9 +53,6 @@ public class Supervisor extends XRoadCatalogActor {
 
     @Autowired
     private SpringExtension springExtension;
-
-    @Autowired
-    protected CatalogService catalogService;
 
     private ActorRef listClientsPoolRouter;
 

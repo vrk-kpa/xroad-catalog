@@ -23,7 +23,6 @@
 package fi.vrk.xroad.catalog.collector.actors;
 
 import akka.actor.ActorRef;
-import fi.vrk.xroad.catalog.collector.extension.SpringExtension;
 import fi.vrk.xroad.catalog.collector.util.ClientTypeUtil;
 import fi.vrk.xroad.catalog.collector.wsimport.ClientList;
 import fi.vrk.xroad.catalog.collector.wsimport.ClientType;
@@ -58,9 +57,6 @@ public class ListClientsActor extends XRoadCatalogActor {
     @Autowired
     @Qualifier("listClientsRestOperations")
     private RestOperations restOperations;
-
-    @Autowired
-    private SpringExtension springExtension;
 
     @Autowired
     protected CatalogService catalogService;

@@ -23,7 +23,6 @@
 package fi.vrk.xroad.catalog.collector.actors;
 
 import akka.actor.ActorRef;
-import fi.vrk.xroad.catalog.collector.extension.SpringExtension;
 import fi.vrk.xroad.catalog.collector.util.CatalogCollectorRuntimeException;
 import fi.vrk.xroad.catalog.collector.util.ClientTypeUtil;
 import fi.vrk.xroad.catalog.collector.util.XRoadClient;
@@ -77,9 +76,6 @@ public class ListMethodsActor extends XRoadCatalogActor {
 
     @Value("${xroad-catalog.ssl-keystore-password}")
     private String keystorePassword;
-
-    @Autowired
-    private SpringExtension springExtension;
 
     @Autowired
     protected CatalogService catalogService;
