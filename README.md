@@ -47,9 +47,10 @@ sudo systemctl restart xroad-catalog-collector
 ```
 
 ## SSL
-If secure connection to to the security server is required, add the server's cert for the JVM trust store, for example here the security server is kapvlpt02.csc.fi.
+If secure connection to to the security server is required, add the server's cert for the JVM trust store, for example as follows.
 ```
-sudo keytool -import -v -trustcacerts -alias kapvlpt02.csc.fi -file cert.pem -keystore /usr/lib/jvm/java-1.8.0-openjdk-1.8.0.91-0.b14.el7_2.x86_64/jre/lib/security/cacerts
+sudo cp cert.pem /etc/pki/ca-trust/source/anchors/
+sudo update-ca-trust extract
 ```
 
 If you don't have the certificate, it can be asked as follows:
