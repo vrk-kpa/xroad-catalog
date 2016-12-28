@@ -2,3 +2,4 @@
 build
 xroad-catalog-lister/packages/xroad-catalog-lister/redhat/RPMS/
 xroad-catalog-lister/packages/xroad-catalog-lister/redhat/SRPMS/
+xroad-catalog-persistence/classes/
