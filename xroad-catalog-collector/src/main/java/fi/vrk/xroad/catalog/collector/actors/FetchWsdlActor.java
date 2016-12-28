@@ -100,17 +100,18 @@ public class FetchWsdlActor extends XRoadCatalogActor {
         assert service.getMemberClass() != null;
         assert service.getMemberCode() != null;
         assert service.getServiceCode() != null;
-        assert service.getServiceVersion() != null;
 
         UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(getHost())
                 .path(WSDL_CONTEXT_PATH)
                 .queryParam("xRoadInstance", service.getXRoadInstance())
                 .queryParam("memberClass", service.getMemberClass())
                 .queryParam("memberCode", service.getMemberCode())
-                .queryParam("serviceCode", service.getServiceCode())
-                .queryParam("version", service.getServiceVersion());
+                .queryParam("serviceCode", service.getServiceCode());
         if (!Strings.isNullOrEmpty(service.getSubsystemCode())) {
             builder = builder.queryParam("subsystemCode", service.getSubsystemCode());
+        }
+        if (!Strings.isNullOrEmpty(service.getServiceVersion())) {
+            builder = builder.queryParam("version", service.getServiceVersion());
         }
         return builder.toUriString();
     }
