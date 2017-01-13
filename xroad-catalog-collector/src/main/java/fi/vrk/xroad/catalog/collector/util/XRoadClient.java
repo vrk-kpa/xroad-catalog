@@ -51,8 +51,6 @@ public class XRoadClient {
                                                               ClientType client)
             throws MalformedURLException {
 
-        securityServerIdentity.setObjectType(XRoadObjectType.MEMBER);
-
         XRoadServiceIdentifierType serviceIdentifierType = new XRoadServiceIdentifierType();
         copyIdentifierType(serviceIdentifierType, client.getId());
 
@@ -63,7 +61,7 @@ public class XRoadClient {
         URL url = new URL(securityServerHost);
         log.info("SOAP call at url {} for member {} and service {}", url, ClientTypeUtil.toString
                 (securityServerIdentity), ClientTypeUtil
-                .toString(securityServerIdentity));
+                .toString(serviceIdentifierType));
 
         MetaServicesPort port = getMetaServicesPort(url);
 
