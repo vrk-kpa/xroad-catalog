@@ -67,8 +67,9 @@ public class Supervisor extends XRoadCatalogActor {
 
         log.info("Starting up");
 
-        // for this pool, supervisor strategy restarts each clientActor if it fails.
-        // currently this is not needed and could "resume" just as well
+        // for each pool, supervisor strategy restarts each individual actor if it fails.
+        // default is to restart the whole pool, which is not what we want:
+        // http://doc.akka.io/docs/akka/current/java/routing.html#Supervision
         listClientsPoolRouter = getContext().actorOf(new SmallestMailboxPool(1)
                         .withSupervisorStrategy(new OneForOneStrategy(-1,
                                 Duration.Inf(),
@@ -77,10 +78,16 @@ public class Supervisor extends XRoadCatalogActor {
                 LIST_CLIENTS_ACTOR_ROUTER);
 
         getContext().actorOf(new SmallestMailboxPool(listMethodsPoolSize)
+                        .withSupervisorStrategy(new OneForOneStrategy(-1,
+                                Duration.Inf(),
+                                (Throwable t) -> restart()))
                         .props(springExtension.props("listMethodsActor")),
                 LIST_METHODS_ACTOR_ROUTER);
 
         getContext().actorOf(new SmallestMailboxPool(fetchWsdlPoolSize)
+                        .withSupervisorStrategy(new OneForOneStrategy(-1,
+                                Duration.Inf(),
+                                (Throwable t) -> restart()))
                         .props(springExtension.props("fetchWsdlActor")),
                 FETCH_WSDL_ACTOR_ROUTER);
 
