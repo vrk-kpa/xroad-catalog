@@ -65,15 +65,16 @@ public class ListClientsActor extends XRoadCatalogActor {
     @Value("${xroad-catalog.list-clients-host}")
     private String host;
 
-
     // supervisor-created pool of list methods actors
     protected ActorRef listMethodsPoolRef;
+
+    public ListClientsActor(ActorRef listMethodsPoolRef) {
+        this.listMethodsPoolRef = listMethodsPoolRef;
+    }
 
     @Override
     public void preStart() throws Exception {
         log.info("preStart {}", this.hashCode());
-        listMethodsPoolRef = new RelativeActorRefUtil(getContext())
-                .resolvePoolRef(Supervisor.LIST_METHODS_ACTOR_ROUTER);
         super.preStart();
     }
 

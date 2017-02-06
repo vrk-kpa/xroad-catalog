@@ -29,6 +29,7 @@ import fi.vrk.xroad.catalog.collector.extension.SpringExtension;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import scala.concurrent.duration.Duration;
@@ -55,6 +56,8 @@ public class Supervisor extends XRoadCatalogActor {
     private SpringExtension springExtension;
 
     private ActorRef listClientsPoolRouter;
+    private ActorRef listMethodsPoolRouter;
+    private ActorRef fetchWsdlPoolRouter;
 
     @Value("${xroad-catalog.list-methods-pool-size}")
     private int listMethodsPoolSize;
@@ -67,29 +70,33 @@ public class Supervisor extends XRoadCatalogActor {
 
         log.info("Starting up");
 
+        // prepare each pool. Give ActorRefs to other pools, as needed.
+        // To make this possible, create pools in correct order
+
         // for each pool, supervisor strategy restarts each individual actor if it fails.
         // default is to restart the whole pool, which is not what we want:
         // http://doc.akka.io/docs/akka/current/java/routing.html#Supervision
-        listClientsPoolRouter = getContext().actorOf(new SmallestMailboxPool(1)
-                        .withSupervisorStrategy(new OneForOneStrategy(-1,
-                                Duration.Inf(),
-                                (Throwable t) -> restart()))
-                .props(springExtension.props("listClientsActor")),
-                LIST_CLIENTS_ACTOR_ROUTER);
 
-        getContext().actorOf(new SmallestMailboxPool(listMethodsPoolSize)
-                        .withSupervisorStrategy(new OneForOneStrategy(-1,
-                                Duration.Inf(),
-                                (Throwable t) -> restart()))
-                        .props(springExtension.props("listMethodsActor")),
-                LIST_METHODS_ACTOR_ROUTER);
-
-        getContext().actorOf(new SmallestMailboxPool(fetchWsdlPoolSize)
+        fetchWsdlPoolRouter = getContext().actorOf(new SmallestMailboxPool(fetchWsdlPoolSize)
                         .withSupervisorStrategy(new OneForOneStrategy(-1,
                                 Duration.Inf(),
                                 (Throwable t) -> restart()))
                         .props(springExtension.props("fetchWsdlActor")),
                 FETCH_WSDL_ACTOR_ROUTER);
+
+        listMethodsPoolRouter = getContext().actorOf(new SmallestMailboxPool(listMethodsPoolSize)
+                        .withSupervisorStrategy(new OneForOneStrategy(-1,
+                                Duration.Inf(),
+                                (Throwable t) -> restart()))
+                        .props(springExtension.props("listMethodsActor", fetchWsdlPoolRouter)),
+                LIST_METHODS_ACTOR_ROUTER);
+
+        listClientsPoolRouter = getContext().actorOf(new SmallestMailboxPool(1)
+                        .withSupervisorStrategy(new OneForOneStrategy(-1,
+                                Duration.Inf(),
+                                (Throwable t) -> restart()))
+                .props(springExtension.props("listClientsActor", listMethodsPoolRouter)),
+                LIST_CLIENTS_ACTOR_ROUTER);
 
         super.preStart();
     }

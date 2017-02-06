@@ -34,15 +34,45 @@ public class SpringActorProducer implements IndirectActorProducer {
     private final ApplicationContext applicationContext;
     private final String actorBeanName;
 
+    // arguments to use when creating a bean instance using explicit arguments
+    private final Object[] args;
+
+    /**
+     * Create a new SpringActorProducer which creates new Actor instances without
+     * constructor arguments
+     * @param applicationContext
+     * @param actorBeanName
+     */
     public SpringActorProducer(ApplicationContext applicationContext,
         String actorBeanName) {
         this.applicationContext = applicationContext;
         this.actorBeanName = actorBeanName;
+        args = null;
     }
+
+    /**
+     * Create a new SpringActorProducer which creates new Actor instances,
+     * using given constructor arguments
+     * @param applicationContext
+     * @param actorBeanName
+     * @param args arguments to use when creating a bean instance using explicit arguments
+     */
+    public SpringActorProducer(ApplicationContext applicationContext,
+                               String actorBeanName,
+                               Object... args) {
+        this.applicationContext = applicationContext;
+        this.actorBeanName = actorBeanName;
+        this.args = args;
+    }
+
 
     @Override
     public Actor produce() {
-        return (Actor) applicationContext.getBean(actorBeanName);
+        if (args != null) {
+            return (Actor) applicationContext.getBean(actorBeanName, args);
+        } else {
+            return (Actor) applicationContext.getBean(actorBeanName);
+        }
     }
 
     @Override

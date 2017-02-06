@@ -1,3 +1,4 @@
+-- noinspection SqlNoDataSourceInspectionForFile
 -- Create tables
 
 \connect xroad_catalog;

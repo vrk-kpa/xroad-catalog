@@ -50,4 +50,18 @@ public class SpringExtension implements Extension {
         return Props.create(SpringActorProducer.class,
             applicationContext, actorBeanName);
     }
+
+    /**
+     * Create a Props for the specified actorBeanName using the
+     * SpringActorProducer class. Created actor bean is given constructor arguments
+     * from {@code args} param
+     * @param actorBeanName
+     * @param args
+     * @return
+     */
+    public Props props(String actorBeanName, Object... args) {
+        return Props.create(SpringActorProducer.class,
+                applicationContext, actorBeanName, args);
+    }
+
 }

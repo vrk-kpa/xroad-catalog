@@ -55,7 +55,7 @@ import static org.mockito.Mockito.*;
  * Test for client actor
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({ListClientsActor.class, RelativeActorRefUtil.class})
+@PrepareForTest({ListClientsActor.class})
 @ActiveProfiles("development")
 public class ListClientsActorTest extends TestKit {
 
@@ -67,9 +67,6 @@ public class ListClientsActorTest extends TestKit {
 
 
     private InternalActorRef listMethodsPoolRef;
-
-
-    private RelativeActorRefUtil relativeActorRefUtil;
 
     @InjectMocks
     protected ListClientsActor listClientsActor;
@@ -100,13 +97,8 @@ public class ListClientsActorTest extends TestKit {
     @Before
     public void setup() throws Exception {
         listMethodsPoolRef = PowerMockito.mock(InternalActorRef.class);
-        relativeActorRefUtil = PowerMockito.mock(RelativeActorRefUtil.class);
 
-        PowerMockito.whenNew(RelativeActorRefUtil.class).withArguments(any()).thenReturn(relativeActorRefUtil);
-        when(relativeActorRefUtil.resolvePoolRef(Supervisor.LIST_METHODS_ACTOR_ROUTER)).thenReturn(
-                listMethodsPoolRef);
-
-        final Props clientsProps = Props.create(ListClientsActor.class);
+        final Props clientsProps = Props.create(ListClientsActor.class, listMethodsPoolRef);
         final TestActorRef<ListClientsActor> clientsRef = TestActorRef.apply(clientsProps, _system);
 
         listClientsActor = clientsRef.underlyingActor();
