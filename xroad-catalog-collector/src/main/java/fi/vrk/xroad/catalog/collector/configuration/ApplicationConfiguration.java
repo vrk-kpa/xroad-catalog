@@ -34,6 +34,7 @@ import org.springframework.boot.context.web.SpringBootServletInitializer;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.*;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.xml.MarshallingHttpMessageConverter;
 import org.springframework.oxm.jaxb.Jaxb2Marshaller;
@@ -95,19 +96,38 @@ public class ApplicationConfiguration extends SpringBootServletInitializer {
     @Bean
     @Qualifier("listClientsRestOperations")
     public RestOperations getRestOperations() {
-        return new RestTemplate();
+        return createTimeoutingRestTemplate();
     }
 
     @Bean
     @Qualifier("wsdlRestOperations")
     public RestOperations getDynamicWsdlRestOperations() {
         log.info("-------------- Configuration");
-        return new RestTemplate();
+        return createTimeoutingRestTemplate();
     }
 
     @Bean
     public Long getCollectorInterval() {
         return collectorInterval;
     }
+
+    private static final int TIMEOUT = 60 * 1000;
+    private RestTemplate createTimeoutingRestTemplate() {
+        RestTemplate rt = new RestTemplate();
+        setTimeout(rt, TIMEOUT);
+        return rt;
+    }
+
+    private void setTimeout(RestTemplate restTemplate, int timeout) {
+        //Explicitly setting ClientHttpRequestFactory instance to
+        //SimpleClientHttpRequestFactory instance to leverage
+        //set*Timeout methods
+        restTemplate.setRequestFactory(new SimpleClientHttpRequestFactory());
+        SimpleClientHttpRequestFactory rf = (SimpleClientHttpRequestFactory) restTemplate
+                .getRequestFactory();
+        rf.setReadTimeout(timeout);
+        rf.setConnectTimeout(timeout);
+    }
+
 
 }

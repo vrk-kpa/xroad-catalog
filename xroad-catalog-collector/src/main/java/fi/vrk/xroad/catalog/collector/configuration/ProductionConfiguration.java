@@ -27,6 +27,8 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
+import org.springframework.core.env.Environment;
+import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.web.client.RestOperations;
 import org.springframework.web.client.RestTemplate;
 
@@ -38,19 +40,5 @@ import org.springframework.web.client.RestTemplate;
 @Slf4j
 public class ProductionConfiguration extends ApplicationConfiguration {
 
-    @Override
-    @Bean
-    @Qualifier("listClientsRestOperations")
-    public RestOperations getRestOperations() {
-        log.info("--------------PRODUCTION Configuration");
-        return new RestTemplate();
-    }
-
-    @Override
-    @Bean
-    @Qualifier("wsdlRestOperations")
-    public RestOperations getDynamicWsdlRestOperations() {
-        log.info("--------------PRODUCTION Configuration");
-        return new RestTemplate();
-    }
+    // dont override anything from ApplicationConfiguration
 }
