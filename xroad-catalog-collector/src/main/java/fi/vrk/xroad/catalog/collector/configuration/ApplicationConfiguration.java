@@ -111,7 +111,7 @@ public class ApplicationConfiguration extends SpringBootServletInitializer {
         return collectorInterval;
     }
 
-    private static final int TIMEOUT = 60 * 1000;
+    private static final int TIMEOUT = 10 * 60 * 1000; // 10 minutes
     private RestTemplate createTimeoutingRestTemplate() {
         RestTemplate rt = new RestTemplate();
         setTimeout(rt, TIMEOUT);
