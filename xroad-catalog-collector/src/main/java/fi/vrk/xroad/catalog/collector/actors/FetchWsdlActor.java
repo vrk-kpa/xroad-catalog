@@ -36,6 +36,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestOperations;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import java.net.URI;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -70,7 +71,7 @@ public class FetchWsdlActor extends XRoadCatalogActor {
             log.info("fetching wsdl [{}] {}", COUNTER.addAndGet(1), message);
             XRoadServiceIdentifierType service = (XRoadServiceIdentifierType) message;
             // get wsdl
-            String url = buildUri(service);
+            URI url = buildUri(service);
             String wsdl = restOperations.getForObject(url, String.class);
             log.debug("url: {} received wsdl: {} for ", url, wsdl);
             catalogService.saveWsdl(createSubsystemId(service),
@@ -95,7 +96,7 @@ public class FetchWsdlActor extends XRoadCatalogActor {
                 service.getSubsystemCode());
     }
 
-    private String buildUri(XRoadServiceIdentifierType service) {
+    private URI buildUri(XRoadServiceIdentifierType service) {
         assert service.getXRoadInstance() != null;
         assert service.getMemberClass() != null;
         assert service.getMemberCode() != null;
@@ -113,6 +114,6 @@ public class FetchWsdlActor extends XRoadCatalogActor {
         if (!Strings.isNullOrEmpty(service.getServiceVersion())) {
             builder = builder.queryParam("version", service.getServiceVersion());
         }
-        return builder.toUriString();
+        return builder.build().toUri();
     }
 }
