@@ -199,8 +199,8 @@ public class CatalogServiceImpl implements CatalogService {
 
     @Override
     public void saveWsdl(SubsystemId subsystemId, ServiceId serviceId, String wsdlString) {
-        Assert.notNull(subsystemId);
-        Assert.notNull(serviceId);
+        Assert.notNull(subsystemId, "subsystemId is required");
+        Assert.notNull(serviceId, "serviceId is required");
         Service oldService;
         // bit ugly this one, would be a little cleaner if
         // https://jira.spring.io/browse/DATAJPA-209 was resolved

@@ -23,22 +23,20 @@
 package fi.vrk.xroad.catalog.collector.actors;
 
 import fi.vrk.xroad.catalog.collector.XRoadCatalogCollector;
-import fi.vrk.xroad.catalog.collector.extension.SpringExtension;
 import fi.vrk.xroad.catalog.collector.wsimport.ClientList;
+
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.client.MockRestServiceServer;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.client.RestOperations;
 import org.springframework.web.client.RestTemplate;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withServerError;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
@@ -46,65 +44,75 @@ import static org.springframework.test.web.client.response.MockRestResponseCreat
 /**
  * Test for client actor
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(XRoadCatalogCollector.class)
-@Transactional
+@RunWith(SpringRunner.class)
+@SpringBootTest(classes = XRoadCatalogCollector.class, webEnvironment = SpringBootTest.WebEnvironment.NONE)
 @Slf4j
-public class ListClientsRestTest  {
+public class ListClientsRestTest {
 
-    private static final String VALID_LISTCLIENTS_RESPONSE = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n" +
-            "<ns2:clientList xmlns:ns1=\"http://x-road.eu/xsd/identifiers\" xmlns:ns2=\"http://x-road.eu/xsd/xroad.xsd\">\n" +
-            "    <ns2:member>\n" +
-            "        <ns2:id ns1:objectType=\"MEMBER\">\n" +
-            "            <ns1:xRoadInstance>FI</ns1:xRoadInstance>\n" +
-            "            <ns1:memberClass>GOV</ns1:memberClass>\n" +
-            "            <ns1:memberCode>1710128-9</ns1:memberCode>\n" +
-            "        </ns2:id>\n" +
-            "        <ns2:name>Gofore</ns2:name>\n" +
-            "    </ns2:member>\n" +
-            "    <ns2:member>\n" +
-            "        <ns2:id ns1:objectType=\"SUBSYSTEM\">\n" +
-            "            <ns1:xRoadInstance>FI</ns1:xRoadInstance>\n" +
-            "            <ns1:memberClass>GOV</ns1:memberClass>\n" +
-            "            <ns1:memberCode>1710128-9</ns1:memberCode>\n" +
-            "            <ns1:subsystemCode>Management</ns1:subsystemCode>\n" +
-            "        </ns2:id>\n" +
-            "        <ns2:name>Gofore</ns2:name>\n" +
-            "    </ns2:member>\n" +
-            "    <ns2:member>\n" +
-            "        <ns2:id ns1:objectType=\"SUBSYSTEM\">\n" +
-            "            <ns1:xRoadInstance>FI</ns1:xRoadInstance>\n" +
-            "            <ns1:memberClass>GOV</ns1:memberClass>\n" +
-            "            <ns1:memberCode>1710128-9</ns1:memberCode>\n" +
-            "            <ns1:subsystemCode>SS1</ns1:subsystemCode>\n" +
-            "        </ns2:id>\n" +
-            "        <ns2:name>Gofore</ns2:name>\n" +
-            "    </ns2:member>\n" +
-            "</ns2:clientList>\n";
+    private static final String VALID_LISTCLIENTS_RESPONSE =
+            "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n" +
+                    "<ns2:clientList xmlns:ns1=\"http://x-road.eu/xsd/identifiers\" xmlns:ns2=\"http://x-road.eu/xsd/xroad.xsd\">\n"
+                    +
+                    "    <ns2:member>\n" +
+                    "        <ns2:id ns1:objectType=\"MEMBER\">\n" +
+                    "            <ns1:xRoadInstance>FI</ns1:xRoadInstance>\n" +
+                    "            <ns1:memberClass>GOV</ns1:memberClass>\n" +
+                    "            <ns1:memberCode>1710128-9</ns1:memberCode>\n" +
+                    "        </ns2:id>\n" +
+                    "        <ns2:name>Gofore</ns2:name>\n" +
+                    "    </ns2:member>\n" +
+                    "    <ns2:member>\n" +
+                    "        <ns2:id ns1:objectType=\"SUBSYSTEM\">\n" +
+                    "            <ns1:xRoadInstance>FI</ns1:xRoadInstance>\n" +
+                    "            <ns1:memberClass>GOV</ns1:memberClass>\n" +
+                    "            <ns1:memberCode>1710128-9</ns1:memberCode>\n" +
+                    "            <ns1:subsystemCode>Management</ns1:subsystemCode>\n" +
+                    "        </ns2:id>\n" +
+                    "        <ns2:name>Gofore</ns2:name>\n" +
+                    "    </ns2:member>\n" +
+                    "    <ns2:member>\n" +
+                    "        <ns2:id ns1:objectType=\"SUBSYSTEM\">\n" +
+                    "            <ns1:xRoadInstance>FI</ns1:xRoadInstance>\n" +
+                    "            <ns1:memberClass>GOV</ns1:memberClass>\n" +
+                    "            <ns1:memberCode>1710128-9</ns1:memberCode>\n" +
+                    "            <ns1:subsystemCode>SS1</ns1:subsystemCode>\n" +
+                    "        </ns2:id>\n" +
+                    "        <ns2:name>Gofore</ns2:name>\n" +
+                    "    </ns2:member>\n" +
+                    "</ns2:clientList>\n";
 
-    private static final String OUTDATED_GLOBAL_CONF = "<?xml version=\"1.0\" encoding=\"utf-8\" ?><SOAP-ENV:Envelope xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\"><SOAP-ENV:Header/><SOAP-ENV:Body><SOAP-ENV:Fault><faultcode>Server.ClientProxy.OutdatedGlobalConf</faultcode><faultstring>Global configuration is expired</faultstring><faultactor/><detail><xroad:faultDetail xmlns:xroad=\"http://x-road.eu/xsd/xroad.xsd\">OutdatedGlobalConf: \n" +
-            "\tat ee.ria.xroad.common.conf.globalconf.GlobalConf.verifyValidity(GlobalConf.java:160)\n" +
-            "\tat ee.ria.xroad.proxy.util.MessageProcessorBase.cacheConfigurationForCurrentThread(MessageProcessorBase.java:64)\n" +
-            "\tat ee.ria.xroad.proxy.util.MessageProcessorBase.&lt;init&gt;(MessageProcessorBase.java:55)\n" +
-            "\tat ee.ria.xroad.proxy.clientproxy.AsicContainerClientRequestProcessor.&lt;init&gt;(AsicContainerClientRequestProcessor.java:108)\n" +
-            "\tat ee.ria.xroad.proxy.clientproxy.AsicContainerHandler.createRequestProcessor(AsicContainerHandler.java:63)\n" +
-            "\tat ee.ria.xroad.proxy.clientproxy.AbstractClientProxyHandler.handle(AbstractClientProxyHandler.java:80)\n" +
-            "\tat ee.ria.xroad.proxy.clientproxy.AsicContainerHandler.handle(AsicContainerHandler.java:39)\n" +
-            "\tat org.eclipse.jetty.server.handler.HandlerCollection.handle(HandlerCollection.java:154)\n" +
-            "\tat org.eclipse.jetty.server.handler.HandlerWrapper.handle(HandlerWrapper.java:116)\n" +
-            "\tat org.eclipse.jetty.server.Server.handle(Server.java:370)\n" +
-            "\tat org.eclipse.jetty.server.AbstractHttpConnection.handleRequest(AbstractHttpConnection.java:494)\n" +
-            "\tat org.eclipse.jetty.server.AbstractHttpConnection.headerComplete(AbstractHttpConnection.java:971)\n" +
-            "\tat org.eclipse.jetty.server.AbstractHttpConnection$RequestHandler.headerComplete(AbstractHttpConnection.java:1033)\n" +
-            "\tat org.eclipse.jetty.http.HttpParser.parseNext(HttpParser.java:640)\n" +
-            "\tat org.eclipse.jetty.http.HttpParser.parseAvailable(HttpParser.java:231)\n" +
-            "\tat org.eclipse.jetty.server.AsyncHttpConnection.handle(AsyncHttpConnection.java:82)\n" +
-            "\tat org.eclipse.jetty.io.nio.SelectChannelEndPoint.handle(SelectChannelEndPoint.java:696)\n" +
-            "\tat org.eclipse.jetty.io.nio.SelectChannelEndPoint$1.run(SelectChannelEndPoint.java:53)\n" +
-            "\tat org.eclipse.jetty.util.thread.QueuedThreadPool.runJob(QueuedThreadPool.java:608)\n" +
-            "\tat org.eclipse.jetty.util.thread.QueuedThreadPool$3.run(QueuedThreadPool.java:543)\n" +
-            "\tat java.lang.Thread.run(Thread.java:745)\n" +
-            "</xroad:faultDetail></detail></SOAP-ENV:Fault></SOAP-ENV:Body></SOAP-ENV:Envelope>";
+    private static final String OUTDATED_GLOBAL_CONF =
+            "<?xml version=\"1.0\" encoding=\"utf-8\" ?><SOAP-ENV:Envelope xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\"><SOAP-ENV:Header/><SOAP-ENV:Body><SOAP-ENV:Fault><faultcode>Server.ClientProxy.OutdatedGlobalConf</faultcode><faultstring>Global configuration is expired</faultstring><faultactor/><detail><xroad:faultDetail xmlns:xroad=\"http://x-road.eu/xsd/xroad.xsd\">OutdatedGlobalConf: \n"
+                    +
+                    "\tat ee.ria.xroad.common.conf.globalconf.GlobalConf.verifyValidity(GlobalConf.java:160)\n" +
+                    "\tat ee.ria.xroad.proxy.util.MessageProcessorBase.cacheConfigurationForCurrentThread(MessageProcessorBase.java:64)\n"
+                    +
+                    "\tat ee.ria.xroad.proxy.util.MessageProcessorBase.&lt;init&gt;(MessageProcessorBase.java:55)\n" +
+                    "\tat ee.ria.xroad.proxy.clientproxy.AsicContainerClientRequestProcessor.&lt;init&gt;(AsicContainerClientRequestProcessor.java:108)\n"
+                    +
+                    "\tat ee.ria.xroad.proxy.clientproxy.AsicContainerHandler.createRequestProcessor(AsicContainerHandler.java:63)\n"
+                    +
+                    "\tat ee.ria.xroad.proxy.clientproxy.AbstractClientProxyHandler.handle(AbstractClientProxyHandler.java:80)\n"
+                    +
+                    "\tat ee.ria.xroad.proxy.clientproxy.AsicContainerHandler.handle(AsicContainerHandler.java:39)\n" +
+                    "\tat org.eclipse.jetty.server.handler.HandlerCollection.handle(HandlerCollection.java:154)\n" +
+                    "\tat org.eclipse.jetty.server.handler.HandlerWrapper.handle(HandlerWrapper.java:116)\n" +
+                    "\tat org.eclipse.jetty.server.Server.handle(Server.java:370)\n" +
+                    "\tat org.eclipse.jetty.server.AbstractHttpConnection.handleRequest(AbstractHttpConnection.java:494)\n"
+                    +
+                    "\tat org.eclipse.jetty.server.AbstractHttpConnection.headerComplete(AbstractHttpConnection.java:971)\n"
+                    +
+                    "\tat org.eclipse.jetty.server.AbstractHttpConnection$RequestHandler.headerComplete(AbstractHttpConnection.java:1033)\n"
+                    +
+                    "\tat org.eclipse.jetty.http.HttpParser.parseNext(HttpParser.java:640)\n" +
+                    "\tat org.eclipse.jetty.http.HttpParser.parseAvailable(HttpParser.java:231)\n" +
+                    "\tat org.eclipse.jetty.server.AsyncHttpConnection.handle(AsyncHttpConnection.java:82)\n" +
+                    "\tat org.eclipse.jetty.io.nio.SelectChannelEndPoint.handle(SelectChannelEndPoint.java:696)\n" +
+                    "\tat org.eclipse.jetty.io.nio.SelectChannelEndPoint$1.run(SelectChannelEndPoint.java:53)\n" +
+                    "\tat org.eclipse.jetty.util.thread.QueuedThreadPool.runJob(QueuedThreadPool.java:608)\n" +
+                    "\tat org.eclipse.jetty.util.thread.QueuedThreadPool$3.run(QueuedThreadPool.java:543)\n" +
+                    "\tat java.lang.Thread.run(Thread.java:745)\n" +
+                    "</xroad:faultDetail></detail></SOAP-ENV:Fault></SOAP-ENV:Body></SOAP-ENV:Envelope>";
 
     private static final String TEST_REQUEST_PATH = "dummy-request-path";
 
@@ -151,6 +159,4 @@ public class ListClientsRestTest  {
             log.error("expected exception: ", expected);
         }
     }
-
-
 }

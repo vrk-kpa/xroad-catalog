@@ -22,10 +22,11 @@
  */
 package fi.vrk.xroad.catalog.collector.mock;
 
+import fi.vrk.xroad.catalog.collector.util.CatalogCollectorRuntimeException;
+
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
-import fi.vrk.xroad.catalog.collector.util.CatalogCollectorRuntimeException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.ClassPathResource;

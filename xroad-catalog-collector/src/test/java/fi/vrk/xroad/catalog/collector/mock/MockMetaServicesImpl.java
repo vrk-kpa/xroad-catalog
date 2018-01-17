@@ -22,96 +22,82 @@
  */
 package fi.vrk.xroad.catalog.collector.mock;
 
-import com.google.common.base.Splitter;
-import com.sun.net.httpserver.HttpExchange;
-import com.sun.net.httpserver.HttpHandler;
-import com.sun.net.httpserver.HttpServer;
-import fi.vrk.xroad.catalog.collector.util.CatalogCollectorRuntimeException;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.boot.test.TestRestTemplate;
-import org.springframework.web.client.RestClientException;
+import fi.vrk.xroad.catalog.collector.util.ClientTypeUtil;
+import fi.vrk.xroad.catalog.collector.wsimport.*;
+import fi.vrk.xroad.catalog.collector.wsimport.XRoadServiceIdentifierType;
 
-import java.io.IOException;
-import java.io.OutputStream;
-import java.net.InetSocketAddress;
-import java.net.URI;
+import lombok.extern.slf4j.Slf4j;
+
+import javax.activation.DataHandler;
+import javax.annotation.Resource;
+import javax.jws.WebService;
+import javax.xml.ws.Holder;
+import javax.xml.ws.WebServiceContext;
+
 import java.text.MessageFormat;
-import java.util.Map;
+import java.util.Collections;
+import java.util.List;
 
 /**
- * TestRestTemplate which fires up HttpServer to server each request,
- * parses GET request for WSDL, and returns a sample WSDL
- * with populated serviceCode and version.
+ * Mock metaservices -service which answers something valid and semi-reasonable
+ * dummy data when queried for listMethods
  */
+@WebService(serviceName = "producerPortService", targetNamespace = "http://metadata.x-road.eu/",
+        wsdlLocation = "schema/metaservices.wsdl")
 @Slf4j
-public class WsdlMockRestTemplate extends TestRestTemplate {
+public class MockMetaServicesImpl implements MetaServicesPort {
 
-    @Getter
-    @Setter
-    private HttpServer server;
+    @Resource
+    private WebServiceContext ctx;
 
-    private static final int PORT = 8933;
-
-    public void startServer() throws Exception {
-        setServer(HttpServer.create(new InetSocketAddress(PORT), 0));
-        getServer().createContext("/", new DynamicHttpHandler());
-        getServer().setExecutor(null); // creates a default executor
-        log.info("Starting local http server {} in port {}", getServer(), PORT);
-        getServer().start();
-    }
-
-    public void stopServer() throws Exception {
-        log.info("Stopping local http server {} in port {}", getServer(), PORT);
-        getServer().stop(0);
+    @Override
+    public List<XRoadServiceIdentifierType> allowedMethods() {
+        return Collections.emptyList();
     }
 
     @Override
-    public <T> T getForObject(String url, Class<T> responseType, Object... urlVariables) throws RestClientException {
-        try {
-            log.info("starting server for url: " + url);
-            startServer();
-            log.info("getting response: " + url);
-            T result = super.getForObject(url, responseType);
-            log.info("received response: " + result);
-            log.info("calling service stop ");
-            stopServer();
-            return result;
-        } catch (Exception e) {
-            log.error("Error getting resource from through http {}", url, e);
-            throw new CatalogCollectorRuntimeException("Error reading resource from httpserver", e);
-        }
+    public ListMethodsResponse listMethods(ListMethods listMethods,
+                                           Holder<XRoadClientIdentifierType> client,
+                                           Holder<XRoadServiceIdentifierType> service,
+                                           Holder<String> userId,
+                                           Holder<String> id,
+                                           Holder<String> protocolVersion) {
+        log.info("mock listMethods");
+        log.info("client= {}", ClientTypeUtil.toString(client.value));
+
+        ListMethodsResponse response = new ListMethodsResponse();
+        response.getService().add(generateService("testServiceFoo", "v1", service.value));
+        response.getService().add(generateService("testServiceBar", "v1", service.value));
+        response.getService().add(generateService("testServiceBaz", "v1", service.value));
+        return response;
     }
 
+    @Override
+    public void getWsdl(GetWsdl getWsdl, Holder<XRoadClientIdentifierType> client,
+            Holder<XRoadServiceIdentifierType> service, Holder<String> userId, Holder<String> id,
+            Holder<String> protocolVersion, Holder<GetWsdlResponse> getWsdlResponse, Holder<DataHandler> wsdl) {
 
-    static class DynamicHttpHandler implements HttpHandler {
-
-        @Override
-        public void handle(HttpExchange exchange) throws IOException {
-            URI uri = exchange.getRequestURI();
-            String query = uri.getQuery();
-            log.info("parsing query [{}]", query);
-            Map<String, String> params = Splitter.on('&').trimResults().withKeyValueSeparator("=").split(query);
-            String serviceCode = params.get("serviceCode");
-            String version = params.get("version");
-            assert serviceCode != null;
-            assert version != null;
-            log.info("params: {}", params);
-
-            // write example wsdl with populated serviceCode + version
-            exchange.getResponseHeaders().add("Content-Type", "application/xml");
-            exchange.sendResponseHeaders(200, 0);
-            OutputStream os = exchange.getResponseBody();
-            String wsdl = getWsdl(serviceCode, version);
-            os.write(wsdl.getBytes("UTF-8"));
-            log.info("wrote response, closing");
-            os.close();
-        }
+        final GetWsdlResponse response = new GetWsdlResponse();
+        response.setServiceCode(getWsdl.getServiceCode());
+        response.setServiceVersion(getWsdl.getServiceVersion());
+        getWsdlResponse.value = response;
+        final String tmp = MessageFormat.format(WSDL_TEMPLATE, getWsdl.getServiceCode(), getWsdl.getServiceVersion());
+        wsdl.value = new DataHandler(tmp, "text/xml");
+        log.info("Returning WSDL");
     }
 
-    private static String getWsdl(String serviceCode, String serviceVersion) {
-        return MessageFormat.format(WSDL_TEMPLATE, serviceCode, serviceVersion);
+    private XRoadServiceIdentifierType generateService(String serviceCode,
+                                                       String serviceVersion,
+                                                       XRoadServiceIdentifierType serviceHeader) {
+        XRoadServiceIdentifierType service = new XRoadServiceIdentifierType();
+        service.setXRoadInstance(serviceHeader.getXRoadInstance());
+        service.setMemberClass(serviceHeader.getMemberClass());
+        service.setMemberCode(serviceHeader.getMemberCode());
+        service.setSubsystemCode(serviceHeader.getSubsystemCode());
+        service.setServiceCode(serviceCode);
+        service.setServiceVersion(serviceVersion);
+        service.setObjectType(XRoadObjectType.SERVICE);
+        return service;
     }
 
     private static String WSDL_TEMPLATE = "<wsdl:definitions xmlns:soap=\"http://schemas.xmlsoap.org/wsdl/soap/\"\n" +

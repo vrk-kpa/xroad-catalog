@@ -22,21 +22,20 @@
  */
 package fi.vrk.xroad.catalog.collector.actors;
 
-import com.google.common.base.Strings;
+import fi.vrk.xroad.catalog.collector.util.ClientTypeUtil;
+import fi.vrk.xroad.catalog.collector.util.XRoadClient;
 import fi.vrk.xroad.catalog.collector.wsimport.XRoadServiceIdentifierType;
 import fi.vrk.xroad.catalog.persistence.CatalogService;
 import fi.vrk.xroad.catalog.persistence.entity.ServiceId;
 import fi.vrk.xroad.catalog.persistence.entity.SubsystemId;
+
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.RestOperations;
-import org.springframework.web.util.UriComponentsBuilder;
 
-import java.net.URI;
+import java.net.URL;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -48,36 +47,42 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class FetchWsdlActor extends XRoadCatalogActor {
 
     private static AtomicInteger COUNTER = new AtomicInteger(0);
-    private static final String WSDL_CONTEXT_PATH = "/wsdl";
 
-    @Value("${xroad-catalog.fetch-wsdl-host}")
-    private String host;
+    @Value("${xroad-catalog.xroad-instance}")
+    private String xroadInstance;
 
-    @Autowired
-    @Qualifier("wsdlRestOperations")
-    private RestOperations restOperations;
+    @Value("${xroad-catalog.member-code}")
+    private String memberCode;
+
+    @Value("${xroad-catalog.member-class}")
+    private String memberClass;
+
+    @Value("${xroad-catalog.subsystem-code}")
+    private String subsystemCode;
+
+    @Value("${xroad-catalog.webservices-endpoint}")
+    private String webservicesEndpoint;
 
     @Autowired
     protected CatalogService catalogService;
 
-    public String getHost() {
-        return host;
-    }
-
+    private XRoadClient xroadClient;
 
     @Override
-    protected boolean handleMessage(Object message)  {
+    public void preStart() throws Exception {
+        xroadClient = new XRoadClient(
+                ClientTypeUtil.toSubsystem(xroadInstance, memberClass, memberCode, subsystemCode),
+                new URL(webservicesEndpoint));
+    }
+
+    @Override
+    protected boolean handleMessage(Object message) {
         if (message instanceof XRoadServiceIdentifierType) {
-            log.info("fetching wsdl [{}] {}", COUNTER.addAndGet(1), message);
             XRoadServiceIdentifierType service = (XRoadServiceIdentifierType) message;
-            // get wsdl
-            URI url = buildUri(service);
-            String wsdl = restOperations.getForObject(url, String.class);
-            log.debug("url: {} received wsdl: {} for ", url, wsdl);
-            catalogService.saveWsdl(createSubsystemId(service),
-                    createServiceId(service),
-                    wsdl);
-            log.info("saved wsdl successfully");
+            log.info("Fetching wsdl [{}] {}", COUNTER.addAndGet(1), ClientTypeUtil.toString(service));
+            String wsdl = xroadClient.getWsdl(service);
+            catalogService.saveWsdl(createSubsystemId(service), createServiceId(service), wsdl);
+            log.info("Saved wsdl successfully");
             return true;
         } else {
             return false;
@@ -96,24 +101,4 @@ public class FetchWsdlActor extends XRoadCatalogActor {
                 service.getSubsystemCode());
     }
 
-    private URI buildUri(XRoadServiceIdentifierType service) {
-        assert service.getXRoadInstance() != null;
-        assert service.getMemberClass() != null;
-        assert service.getMemberCode() != null;
-        assert service.getServiceCode() != null;
-
-        UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(getHost())
-                .path(WSDL_CONTEXT_PATH)
-                .queryParam("xRoadInstance", service.getXRoadInstance())
-                .queryParam("memberClass", service.getMemberClass())
-                .queryParam("memberCode", service.getMemberCode())
-                .queryParam("serviceCode", service.getServiceCode());
-        if (!Strings.isNullOrEmpty(service.getSubsystemCode())) {
-            builder = builder.queryParam("subsystemCode", service.getSubsystemCode());
-        }
-        if (!Strings.isNullOrEmpty(service.getServiceVersion())) {
-            builder = builder.queryParam("version", service.getServiceVersion());
-        }
-        return builder.build().toUri();
-    }
 }

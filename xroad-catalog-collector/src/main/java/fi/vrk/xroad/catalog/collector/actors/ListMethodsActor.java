@@ -22,8 +22,6 @@
  */
 package fi.vrk.xroad.catalog.collector.actors;
 
-import akka.actor.ActorRef;
-import fi.vrk.xroad.catalog.collector.util.CatalogCollectorRuntimeException;
 import fi.vrk.xroad.catalog.collector.util.ClientTypeUtil;
 import fi.vrk.xroad.catalog.collector.util.XRoadClient;
 import fi.vrk.xroad.catalog.collector.wsimport.ClientType;
@@ -34,13 +32,15 @@ import fi.vrk.xroad.catalog.persistence.CatalogService;
 import fi.vrk.xroad.catalog.persistence.entity.Member;
 import fi.vrk.xroad.catalog.persistence.entity.Service;
 import fi.vrk.xroad.catalog.persistence.entity.Subsystem;
+
+import akka.actor.ActorRef;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -71,17 +71,12 @@ public class ListMethodsActor extends XRoadCatalogActor {
     @Value("${xroad-catalog.webservices-endpoint}")
     private String webservicesEndpoint;
 
-    @Value("${xroad-catalog.ssl-keystore}")
-    private String keystore;
-
-    @Value("${xroad-catalog.ssl-keystore-password}")
-    private String keystorePassword;
-
     @Autowired
     protected CatalogService catalogService;
 
     // supervisor-created pool of list methods actors
     private ActorRef fetchWsdlPoolRef;
+    private XRoadClient xroadClient;
 
     public ListMethodsActor(ActorRef fetchWsdlPoolRef) {
         this.fetchWsdlPoolRef = fetchWsdlPoolRef;
@@ -89,10 +84,9 @@ public class ListMethodsActor extends XRoadCatalogActor {
 
     @Override
     public void preStart() throws Exception {
-        log.info("preStart {}", this.hashCode());
-        System.setProperty("javax.net.ssl.keyStore", keystore);
-        System.setProperty("javax.net.ssl.keyStorePassword", keystorePassword);
-        super.preStart();
+        xroadClient = new XRoadClient(
+                ClientTypeUtil.toSubsystem(xroadInstance, memberClass, memberCode, subsystemCode),
+                new URL(webservicesEndpoint));
     }
 
     @Override
@@ -103,45 +97,32 @@ public class ListMethodsActor extends XRoadCatalogActor {
             log.info("{} onReceive {}", COUNTER.addAndGet(1), this.hashCode());
             ClientType clientType = (ClientType) message;
 
-            Subsystem subsystem = new Subsystem(new Member(clientType.getId().getXRoadInstance(), clientType.getId()
-                    .getMemberClass(),
-                    clientType.getId().getMemberCode(), clientType.getName()), clientType.getId()
-                    .getSubsystemCode());
+            Subsystem subsystem = new Subsystem(
+                    new Member(clientType.getId().getXRoadInstance(), clientType.getId().getMemberClass(),
+                            clientType.getId().getMemberCode(), clientType.getName()),
+                    clientType.getId().getSubsystemCode());
 
             log.info("{} Handling subsystem {} ", COUNTER, subsystem);
             log.info("Fetching methods for the client with listMethods -service...");
 
-            XRoadClientIdentifierType xroadId = new XRoadClientIdentifierType();
-            xroadId.setXRoadInstance(xroadInstance);
-            xroadId.setMemberClass(memberClass);
-            xroadId.setMemberCode(memberCode);
-            xroadId.setSubsystemCode(subsystemCode);
-            xroadId.setObjectType(XRoadObjectType.SUBSYSTEM);
+            // fetch the methods
+            log.info("calling web service at {}", webservicesEndpoint);
+            List<XRoadServiceIdentifierType> result = xroadClient.getMethods(clientType.getId());
+            log.info("Received all methods for client {} ", ClientTypeUtil.toString(clientType));
 
-            try {
-                // fetch the methods
-                log.info("calling web service at {}", webservicesEndpoint);
-                List<XRoadServiceIdentifierType> result = XRoadClient.getMethods(webservicesEndpoint, xroadId,
-                        clientType);
-                log.info("Received all methods for client {} ", ClientTypeUtil.toString(clientType));
-
-                // Save services for subsystems
-                List<Service> services = new ArrayList<>();
-                for (XRoadServiceIdentifierType service : result) {
-                    services.add(new Service(subsystem, service.getServiceCode(), service.getServiceVersion()));
-                }
-                catalogService.saveServices(subsystem.createKey(), services);
-
-                // get wsdls
-                for (XRoadServiceIdentifierType service : result) {
-                    log.info("{} Sending service {} to new MethodActor ", COUNTER, service.getServiceCode());
-                    fetchWsdlPoolRef.tell(service, getSender());
-                }
-                return true;
-            } catch (MalformedURLException e) {
-                log.error("Failed to get methods for subsystem {} \n {}", subsystem, e.toString());
-                throw new CatalogCollectorRuntimeException("Malformed URL", e);
+            // Save services for subsystems
+            List<Service> services = new ArrayList<>();
+            for (XRoadServiceIdentifierType service : result) {
+                services.add(new Service(subsystem, service.getServiceCode(), service.getServiceVersion()));
             }
+            catalogService.saveServices(subsystem.createKey(), services);
+
+            // get wsdls
+            for (XRoadServiceIdentifierType service : result) {
+                log.info("{} Sending service {} to new MethodActor ", COUNTER, service.getServiceCode());
+                fetchWsdlPoolRef.tell(service, getSender());
+            }
+            return true;
 
         } else {
             return false;

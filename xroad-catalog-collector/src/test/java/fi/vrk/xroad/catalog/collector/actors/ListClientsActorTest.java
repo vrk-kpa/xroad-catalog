@@ -22,13 +22,6 @@
  */
 package fi.vrk.xroad.catalog.collector.actors;
 
-import akka.actor.ActorSystem;
-import akka.actor.InternalActorRef;
-import akka.actor.Props;
-import akka.testkit.JavaTestKit;
-import akka.testkit.TestActorRef;
-import akka.testkit.TestKit;
-import com.google.common.collect.HashMultiset;
 import fi.vrk.xroad.catalog.collector.wsimport.ClientList;
 import fi.vrk.xroad.catalog.collector.wsimport.ClientType;
 import fi.vrk.xroad.catalog.collector.wsimport.XRoadClientIdentifierType;
@@ -37,9 +30,25 @@ import fi.vrk.xroad.catalog.persistence.CatalogService;
 import fi.vrk.xroad.catalog.persistence.CatalogServiceImpl;
 import fi.vrk.xroad.catalog.persistence.entity.Member;
 import fi.vrk.xroad.catalog.persistence.entity.Subsystem;
-import org.junit.*;
+
+import akka.actor.ActorSystem;
+import akka.actor.InternalActorRef;
+import akka.actor.Props;
+import akka.testkit.JavaTestKit;
+import akka.testkit.TestActorRef;
+import akka.testkit.TestKit;
+import com.google.common.collect.HashMultiset;
+import org.junit.AfterClass;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.*;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
@@ -47,15 +56,22 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.web.client.RestOperations;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 /**
  * Test for client actor
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({ListClientsActor.class})
+@PrepareForTest( {ListClientsActor.class})
 @ActiveProfiles("development")
 public class ListClientsActorTest extends TestKit {
 
@@ -65,13 +81,13 @@ public class ListClientsActorTest extends TestKit {
     @Mock
     private RestOperations restOperations;
 
-
     private InternalActorRef listMethodsPoolRef;
 
     @InjectMocks
     protected ListClientsActor listClientsActor;
 
-    @Captor ArgumentCaptor<Collection<Member>> argumentCaptor;
+    @Captor
+    ArgumentCaptor<Collection<Member>> argumentCaptor;
 
     static ActorSystem _system;
 
@@ -92,6 +108,7 @@ public class ListClientsActorTest extends TestKit {
 
     /**
      * Setup test
+     *
      * @throws Exception
      */
     @Before
@@ -111,10 +128,7 @@ public class ListClientsActorTest extends TestKit {
     @Test
     public void testOnReceive() throws Exception {
 
-
-
         List<ClientType> memberlist = new ArrayList<>();
-
 
         memberlist.add(createClientType(XRoadObjectType.MEMBER, "member1", null));
         memberlist.add(createClientType(XRoadObjectType.SUBSYSTEM, "member1", "sub1"));
@@ -130,7 +144,7 @@ public class ListClientsActorTest extends TestKit {
         when(cMock.getMember()).thenReturn(memberlist);
 
 //        doNothing().when(listMethodsPoolRef).tell(Matchers.anyObject(), Matchers.anyObject());
-    //    doNothing().when(listMethodsPoolRef).tell(Matchers.any(ClientType.class), Matchers.any(ActorRef.class));
+        //    doNothing().when(listMethodsPoolRef).tell(Matchers.any(ClientType.class), Matchers.any(ActorRef.class));
 
         // Call onReceive
         listClientsActor.onReceive(ListClientsActor.START_COLLECTING);
@@ -142,8 +156,6 @@ public class ListClientsActorTest extends TestKit {
         subsystems.add(new Subsystem(member1, "sub2"));
         subsystems.add(new Subsystem(member1, "sub3"));
         member1.setSubsystems(subsystems);
-
-
 
         Member member2 = new Member("FI", "GOV", "member2", "member2");
         subsystems = new HashSet<>();

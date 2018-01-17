@@ -1,27 +1,21 @@
 buildscript {
+    ext {
+        springBootVersion = '1.5.9.RELEASE'
+    }
     repositories {
         mavenCentral()
         jcenter()
     }
     dependencies {
-        classpath("org.springframework.boot:spring-boot-gradle-plugin:1.3.2.RELEASE")
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
     }
-}
-
-plugins {
-    id "com.github.hierynomus.license" version "0.12.1"
-}
-
-license {
-    header project.file('LICENSE.txt')
-    include '**/*.java'
 }
 
 apply plugin: 'java'
 apply plugin: 'maven'
 apply plugin: 'eclipse'
 apply plugin: 'idea'
-apply plugin: 'spring-boot'
+apply plugin: 'org.springframework.boot'
 apply plugin: 'jacoco'
 
 group = 'fi.vrk.xroad'
@@ -29,7 +23,6 @@ version = '1.0-SNAPSHOT'
 
 repositories {
     mavenCentral()
-    maven { url "https://repository.jboss.org/nexus/content/repositories/releases" }
 }
 
 sourceCompatibility = 1.8
@@ -38,19 +31,15 @@ targetCompatibility = 1.8
 configurations {
     provided
 }
- 
+
 dependencies {
     compile("org.springframework.boot:spring-boot-starter-data-jpa")
-    compile("com.h2database:h2")
-    compile("org.postgresql:postgresql:9.4.1207.jre7")
-    compile("org.projectlombok:lombok:1.16.6")
+    compile("com.h2database:h2:1.4.196")
+    compile("org.postgresql:postgresql:9.4.1212")
+    compile("org.projectlombok:lombok:1.16.18")
     compile('com.google.guava:guava:19.0')
-    testCompile("junit:junit")
-    testCompile("org.springframework.boot:spring-boot-starter-test")
-}
 
-task wrapper(type: Wrapper) {
-    gradleVersion = '2.3'
+    testCompile("org.springframework.boot:spring-boot-starter-test")
 }
 
 tasks.withType(org.springframework.boot.gradle.run.BootRunTask) {
