@@ -38,6 +38,7 @@ import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.frontend.ClientProxy;
 import org.apache.cxf.message.Attachment;
 import org.apache.cxf.message.Message;
+import org.apache.cxf.transport.http.HTTPConduit;
 
 import javax.activation.DataHandler;
 import javax.xml.ws.BindingProvider;
@@ -171,6 +172,11 @@ public class XRoadClient {
         MetaServicesPort port = service.getMetaServicesPortSoap11();
         BindingProvider bindingProvider = (BindingProvider) port;
         bindingProvider.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, url.toString());
+
+        final HTTPConduit conduit = (HTTPConduit) ClientProxy.getClient(port).getConduit();
+        conduit.getClient().setConnectionTimeout(30000);
+        conduit.getClient().setReceiveTimeout(60000);
+
         return port;
     }
 

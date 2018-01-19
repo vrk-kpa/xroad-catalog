@@ -82,3 +82,4 @@ public class FetchWsdlActorTest {
         Mockito.verify(catalogService).saveWsdl(Matchers.any(), Matchers.any(), Matchers.anyString());
     }
 }
+

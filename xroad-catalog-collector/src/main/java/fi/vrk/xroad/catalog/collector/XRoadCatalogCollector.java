@@ -55,8 +55,13 @@ public class XRoadCatalogCollector {
         ApplicationContext context = SpringApplication.run(XRoadCatalogCollector.class, args);
 
         final Environment env = context.getEnvironment();
-        System.setProperty("javax.net.ssl.keyStore", env.getProperty("xroad-catalog.ssl-keystore"));
-        System.setProperty("javax.net.ssl.keyStorePassword", env.getProperty("xroad-catalog.ssl-keystore-password"));
+
+        final String keystore = env.getProperty("xroad-catalog.ssl-keystore");
+        final String keystorePw = env.getProperty("xroad-catalog.ssl-keystore-password");
+        if (keystore != null && keystorePw != null) {
+            System.setProperty("javax.net.ssl.keyStore", keystore);
+            System.setProperty("javax.net.ssl.keyStorePassword", keystorePw);
+        }
 
         ActorSystem system = context.getBean(ActorSystem.class);
 
@@ -71,11 +76,11 @@ public class XRoadCatalogCollector {
         ActorRef supervisor = system.actorOf(ext.props("supervisor"));
 
         system.scheduler().schedule(Duration.Zero(),
-                        Duration.create(collectorInterval, TimeUnit.MINUTES),
-                        supervisor,
-                        Supervisor.START_COLLECTING,
-                        system.dispatcher(),
-                        ActorRef.noSender());
+                Duration.create(collectorInterval, TimeUnit.MINUTES),
+                supervisor,
+                Supervisor.START_COLLECTING,
+                system.dispatcher(),
+                ActorRef.noSender());
     }
 
 }
