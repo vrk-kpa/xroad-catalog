@@ -39,6 +39,9 @@ sourceSets {
 jar {
     baseName = 'xroad-catalog-collector'
     from project.file('LICENSE.txt')
+    manifest {
+        attributes 'Implementation-Version' : version
+    }
 }
 
 task wsImport {
@@ -76,10 +79,10 @@ dependencies {
     compile 'com.typesafe.akka:akka-actor_2.11:2.4.20'
     compile 'com.typesafe.akka:akka-slf4j_2.11:2.4.20'
     compile 'ch.qos.logback:logback-classic:1.2.3'
-    compile 'org.projectlombok:lombok:1.16.18'
     compile 'org.apache.cxf:cxf-rt-frontend-jaxws:3.2.1'
     compile 'org.apache.cxf:cxf-rt-transports-http:3.2.1'
     compile 'org.apache.cxf:cxf-core:3.2.1'
+    compileOnly 'org.projectlombok:lombok:1.16.18'
 
     wsimport "com.sun.xml.ws:jaxws-tools:2.2.10"
 
@@ -89,6 +92,7 @@ dependencies {
     testCompile 'org.powermock:powermock-core:1.6.4'
     testCompile 'org.powermock:powermock-module-junit4:1.6.4'
     testCompile 'org.powermock:powermock-api-mockito:1.6.4'
+    testCompileOnly 'org.projectlombok:lombok:1.16.18'
 
 }
 

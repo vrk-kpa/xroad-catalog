@@ -34,6 +34,11 @@ task wrapper(type: Wrapper) {
     gradleVersion = '4.4.1'
 }
 
+allprojects {
+    group = 'fi.vrk.xroad'
+    version = '0.10.0'
+}
+
 subprojects {
     apply plugin: 'com.github.hierynomus.license'
 

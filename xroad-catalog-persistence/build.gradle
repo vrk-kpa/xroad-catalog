@@ -18,9 +18,6 @@ apply plugin: 'idea'
 apply plugin: 'org.springframework.boot'
 apply plugin: 'jacoco'
 
-group = 'fi.vrk.xroad'
-version = '1.0-SNAPSHOT'
-
 repositories {
     mavenCentral()
 }
@@ -28,18 +25,15 @@ repositories {
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
-configurations {
-    provided
-}
-
 dependencies {
     compile("org.springframework.boot:spring-boot-starter-data-jpa")
     compile("com.h2database:h2:1.4.196")
-    compile("org.postgresql:postgresql:9.4.1212")
-    compile("org.projectlombok:lombok:1.16.18")
-    compile('com.google.guava:guava:19.0')
+    compile("org.postgresql:postgresql:42.2.0")
+    compile('com.google.guava:guava:23.6-jre')
+    compileOnly("org.projectlombok:lombok:1.16.18")
 
     testCompile("org.springframework.boot:spring-boot-starter-test")
+    testCompileOnly 'org.projectlombok:lombok:1.16.18'
 }
 
 tasks.withType(org.springframework.boot.gradle.run.BootRunTask) {
