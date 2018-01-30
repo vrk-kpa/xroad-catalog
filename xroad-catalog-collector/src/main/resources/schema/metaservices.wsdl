@@ -8,15 +8,11 @@
                   xmlns:xs="http://www.w3.org/2001/XMLSchema"
                   xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/">
     <wsdl:types>
-        <xs:schema
-                xmlns:xmime="http://www.w3.org/2005/05/xmlmime"
-                targetNamespace="http://x-road.eu/xsd/xroad.xsd"
-                elementFormDefault="qualified">
+        <xs:schema targetNamespace="http://x-road.eu/xsd/xroad.xsd" elementFormDefault="qualified">
             <xs:include schemaLocation="http://x-road.eu/xsd/xroad.xsd"/>
             <xs:include schemaLocation="list-clients.xsd"/>
             <xs:import namespace="http://x-road.eu/xsd/identifiers"
                        schemaLocation="http://x-road.eu/xsd/identifiers.xsd"/>
-            <xs:import namespace="http://www.w3.org/2005/05/xmlmime"/>
 
             <xs:element name="listMethods">
                 <xs:complexType>
@@ -31,8 +27,7 @@
             <xs:element name="listMethodsResponse">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element maxOccurs="unbounded" minOccurs="0"
-                                    name="service"
+                        <xs:element maxOccurs="unbounded" minOccurs="0" name="service"
                                     type="id:XRoadServiceIdentifierType"/>
                     </xs:sequence>
                 </xs:complexType>
@@ -40,8 +35,7 @@
             <xs:element name="allowedMethodsResponse">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element maxOccurs="unbounded" minOccurs="0"
-                                    name="serviceCode"
+                        <xs:element maxOccurs="unbounded" minOccurs="0" name="service"
                                     type="id:XRoadServiceIdentifierType"/>
                     </xs:sequence>
                 </xs:complexType>
@@ -62,12 +56,12 @@
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
-            <xs:element name="wsdl" type="xs:base64Binary" xmime:expectedContentTypes="application/octet-stream"/>
         </xs:schema>
     </wsdl:types>
 
     <wsdl:message name="listMethodsResponse">
         <wsdl:part name="listMethodsResponse" element="xrd:listMethodsResponse"/>
+
         <wsdl:part name="client" element="xrd:client"/>
         <wsdl:part name="service" element="xrd:service"/>
         <wsdl:part name="userId" element="xrd:userId"/>
@@ -77,6 +71,7 @@
 
     <wsdl:message name="listMethods">
         <wsdl:part name="listMethods" element="xrd:listMethods"/>
+
         <wsdl:part name="client" element="xrd:client"/>
         <wsdl:part name="service" element="xrd:service"/>
         <wsdl:part name="userId" element="xrd:userId"/>
@@ -85,15 +80,18 @@
     </wsdl:message>
 
     <wsdl:message name="allowedMethodsResponse">
-        <wsdl:part name="allowedMethodsResponse"
-                   element="xrd:allowedMethodsResponse"/>
+        <wsdl:part name="allowedMethodsResponse" element="xrd:allowedMethodsResponse"/>
+
+        <wsdl:part name="client" element="xrd:client"/>
+        <wsdl:part name="service" element="xrd:service"/>
+        <wsdl:part name="userId" element="xrd:userId"/>
+        <wsdl:part name="id" element="xrd:id"/>
+        <wsdl:part name="protocolVersion" element="xrd:protocolVersion"/>
     </wsdl:message>
 
     <wsdl:message name="allowedMethods">
         <wsdl:part name="allowedMethods" element="xrd:allowedMethods"/>
-    </wsdl:message>
 
-    <wsdl:message name="requestheader">
         <wsdl:part name="client" element="xrd:client"/>
         <wsdl:part name="service" element="xrd:service"/>
         <wsdl:part name="userId" element="xrd:userId"/>
@@ -103,6 +101,7 @@
 
     <wsdl:message name="getWsdl">
         <wsdl:part name="getWsdl" element="xrd:getWsdl"/>
+
         <wsdl:part name="client" element="xrd:client"/>
         <wsdl:part name="service" element="xrd:service"/>
         <wsdl:part name="userId" element="xrd:userId"/>
@@ -112,7 +111,9 @@
 
     <wsdl:message name="getWsdlResponse">
         <wsdl:part name="getWsdlResponse" element="xrd:getWsdlResponse"/>
-        <wsdl:part name="wsdl" element="xrd:wsdl"/>
+        <!-- the wsdl is returned as an attachment -->
+        <wsdl:part name="wsdl" type="xs:base64Binary"/>
+
         <wsdl:part name="client" element="xrd:client"/>
         <wsdl:part name="service" element="xrd:service"/>
         <wsdl:part name="userId" element="xrd:userId"/>
@@ -147,20 +148,20 @@
         <wsdl:operation name="allowedMethods">
             <soap:operation soapAction=""/>
             <wsdl:input name="allowedMethods">
-                <soap:body use="literal"/>
-                <soap:header message="meta:requestheader" part="client" use="literal"/>
-                <soap:header message="meta:requestheader" part="service" use="literal"/>
-                <soap:header message="meta:requestheader" part="userId" use="literal"/>
-                <soap:header message="meta:requestheader" part="id" use="literal"/>
-                <soap:header message="meta:requestheader" part="protocolVersion" use="literal"/>
+                <soap:body parts="allowedMethods" use="literal"/>
+                <soap:header message="meta:allowedMethods" part="client" use="literal"/>
+                <soap:header message="meta:allowedMethods" part="service" use="literal"/>
+                <soap:header message="meta:allowedMethods" part="userId" use="literal"/>
+                <soap:header message="meta:allowedMethods" part="id" use="literal"/>
+                <soap:header message="meta:allowedMethods" part="protocolVersion" use="literal"/>
             </wsdl:input>
             <wsdl:output name="allowedMethodsResponse">
-                <soap:body use="literal"/>
-                <soap:header message="meta:requestheader" part="client" use="literal"/>
-                <soap:header message="meta:requestheader" part="service" use="literal"/>
-                <soap:header message="meta:requestheader" part="userId" use="literal"/>
-                <soap:header message="meta:requestheader" part="id" use="literal"/>
-                <soap:header message="meta:requestheader" part="protocolVersion" use="literal"/>
+                <soap:body parts="allowedMethodsResponse" use="literal"/>
+                <soap:header message="meta:allowedMethodsResponse" part="client" use="literal"/>
+                <soap:header message="meta:allowedMethodsResponse" part="service" use="literal"/>
+                <soap:header message="meta:allowedMethodsResponse" part="userId" use="literal"/>
+                <soap:header message="meta:allowedMethodsResponse" part="id" use="literal"/>
+                <soap:header message="meta:allowedMethodsResponse" part="protocolVersion" use="literal"/>
             </wsdl:output>
         </wsdl:operation>
         <wsdl:operation name="listMethods">
@@ -194,7 +195,7 @@
             </wsdl:input>
             <wsdl:output name="getWsdlResponse">
                 <mime:multipartRelated>
-                    <mime:part name="response">
+                    <mime:part>
                         <soap:body parts="getWsdlResponse" use="literal"/>
                         <soap:header message="meta:getWsdlResponse" part="client" use="literal"/>
                         <soap:header message="meta:getWsdlResponse" part="service" use="literal"/>
@@ -202,7 +203,7 @@
                         <soap:header message="meta:getWsdlResponse" part="id" use="literal"/>
                         <soap:header message="meta:getWsdlResponse" part="protocolVersion" use="literal"/>
                     </mime:part>
-                    <mime:part name="attachment">
+                    <mime:part>
                         <mime:content part="wsdl" type="text/xml"/>
                     </mime:part>
                 </mime:multipartRelated>

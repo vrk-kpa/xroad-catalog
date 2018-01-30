@@ -110,7 +110,7 @@ public class XRoadClient {
         getWsdl.setServiceVersion(service.getServiceVersion());
 
         final Holder<GetWsdlResponse> response = new Holder<>();
-        final Holder<DataHandler> wsdl = new Holder<>();
+        final Holder<byte[]> wsdl = new Holder<>();
 
         metaServicesPort.getWsdl(getWsdl,
                 holder(tmpClientId),
@@ -121,12 +121,11 @@ public class XRoadClient {
                 response,
                 wsdl);
 
-        DataHandler dh;
-        if ( wsdl.value == null ) {
+        if (!(wsdl.value instanceof byte[])) {
             // Apache CXF does not map the attachment returned by the security server to the wsdl
             // output parameter due to missing Content-Id header. Extract the attachment from the
             // response context.
-
+            DataHandler dh;
             final Client client = ClientProxy.getClient(metaServicesPort);
             final Collection<Attachment> attachments =
                     (Collection<Attachment>)client.getResponseContext().get(Message.ATTACHMENTS);
@@ -135,15 +134,14 @@ public class XRoadClient {
             } else {
                 throw new CatalogCollectorRuntimeException("Expected one WSDL attachment");
             }
+            try (ByteArrayOutputStream buf = new ByteArrayOutputStream()) {
+                dh.writeTo(buf);
+                return buf.toString(StandardCharsets.UTF_8.name());
+            } catch (IOException e) {
+                throw new CatalogCollectorRuntimeException("Error downloading wsdl", e);
+            }
         } else {
-            dh = wsdl.value;
-        }
-
-        try (ByteArrayOutputStream buf = new ByteArrayOutputStream()) {
-            dh.writeTo(buf);
-            return buf.toString(StandardCharsets.UTF_8.name());
-        } catch (IOException e) {
-            throw new CatalogCollectorRuntimeException("Error downloading wsdl", e);
+            return new String(wsdl.value, StandardCharsets.UTF_8);
         }
     }
 

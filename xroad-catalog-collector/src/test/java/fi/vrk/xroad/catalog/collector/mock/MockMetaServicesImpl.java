@@ -23,20 +23,26 @@
 package fi.vrk.xroad.catalog.collector.mock;
 
 import fi.vrk.xroad.catalog.collector.util.ClientTypeUtil;
-import fi.vrk.xroad.catalog.collector.wsimport.*;
+import fi.vrk.xroad.catalog.collector.wsimport.AllowedMethods;
+import fi.vrk.xroad.catalog.collector.wsimport.AllowedMethodsResponse;
+import fi.vrk.xroad.catalog.collector.wsimport.GetWsdl;
+import fi.vrk.xroad.catalog.collector.wsimport.GetWsdlResponse;
+import fi.vrk.xroad.catalog.collector.wsimport.ListMethods;
+import fi.vrk.xroad.catalog.collector.wsimport.ListMethodsResponse;
+import fi.vrk.xroad.catalog.collector.wsimport.MetaServicesPort;
+import fi.vrk.xroad.catalog.collector.wsimport.XRoadClientIdentifierType;
+import fi.vrk.xroad.catalog.collector.wsimport.XRoadObjectType;
 import fi.vrk.xroad.catalog.collector.wsimport.XRoadServiceIdentifierType;
 
 import lombok.extern.slf4j.Slf4j;
 
-import javax.activation.DataHandler;
 import javax.annotation.Resource;
 import javax.jws.WebService;
 import javax.xml.ws.Holder;
 import javax.xml.ws.WebServiceContext;
 
+import java.nio.charset.StandardCharsets;
 import java.text.MessageFormat;
-import java.util.Collections;
-import java.util.List;
 
 /**
  * Mock metaservices -service which answers something valid and semi-reasonable
@@ -51,8 +57,10 @@ public class MockMetaServicesImpl implements MetaServicesPort {
     private WebServiceContext ctx;
 
     @Override
-    public List<XRoadServiceIdentifierType> allowedMethods() {
-        return Collections.emptyList();
+    public AllowedMethodsResponse allowedMethods(AllowedMethods allowedMethods,
+            Holder<XRoadClientIdentifierType> client, Holder<XRoadServiceIdentifierType> service, Holder<String> userId,
+            Holder<String> id, Holder<String> protocolVersion) {
+        throw new UnsupportedOperationException("not implemented");
     }
 
     @Override
@@ -75,14 +83,14 @@ public class MockMetaServicesImpl implements MetaServicesPort {
     @Override
     public void getWsdl(GetWsdl getWsdl, Holder<XRoadClientIdentifierType> client,
             Holder<XRoadServiceIdentifierType> service, Holder<String> userId, Holder<String> id,
-            Holder<String> protocolVersion, Holder<GetWsdlResponse> getWsdlResponse, Holder<DataHandler> wsdl) {
+            Holder<String> protocolVersion, Holder<GetWsdlResponse> getWsdlResponse, Holder<byte[]> wsdl) {
 
         final GetWsdlResponse response = new GetWsdlResponse();
         response.setServiceCode(getWsdl.getServiceCode());
         response.setServiceVersion(getWsdl.getServiceVersion());
         getWsdlResponse.value = response;
         final String tmp = MessageFormat.format(WSDL_TEMPLATE, getWsdl.getServiceCode(), getWsdl.getServiceVersion());
-        wsdl.value = new DataHandler(tmp, "text/xml");
+        wsdl.value = tmp.getBytes(StandardCharsets.UTF_8);
         log.info("Returning WSDL");
     }
 

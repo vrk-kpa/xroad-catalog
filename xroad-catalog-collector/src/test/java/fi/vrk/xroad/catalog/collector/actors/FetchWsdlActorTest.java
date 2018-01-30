@@ -46,11 +46,7 @@ import org.springframework.test.context.junit4.SpringRunner;
  * Test actorsystem actor creation and call
  */
 @RunWith(SpringRunner.class)
-@SpringBootTest(
-        classes = DevelopmentConfiguration.class,
-        webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT
-)
-//
+@SpringBootTest(classes = DevelopmentConfiguration.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @TestPropertySource(properties = {
         "xroad-catalog.webservices-endpoint=http://localhost:${local.server.port}/metaservices"
 })
