@@ -93,7 +93,7 @@ public class ListClientsActor extends XRoadCatalogActor {
             HashMap<MemberId, Member> m = new HashMap();
 
             for (ClientType clientType : clientList.getMember()) {
-                log.info("{} - ClientType {}  ", counter++, ClientTypeUtil.toString(clientType));
+                log.info("{} - {}", counter++, ClientTypeUtil.toString(clientType));
                 Member newMember = new Member(clientType.getId().getXRoadInstance(), clientType.getId()
                         .getMemberClass(),
                         clientType.getId().getMemberCode(), clientType.getName());

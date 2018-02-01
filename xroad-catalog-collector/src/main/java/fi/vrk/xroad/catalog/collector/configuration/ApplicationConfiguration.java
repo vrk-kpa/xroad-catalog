@@ -22,27 +22,25 @@
  */
 package fi.vrk.xroad.catalog.collector.configuration;
 
+import fi.vrk.xroad.catalog.collector.extension.SpringExtension;
+
 import akka.actor.ActorSystem;
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigFactory;
-import fi.vrk.xroad.catalog.collector.extension.SpringExtension;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.context.web.SpringBootServletInitializer;
+import org.springframework.boot.web.support.SpringBootServletInitializer;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.*;
-import org.springframework.core.io.ClassPathResource;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ImportResource;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
-import org.springframework.http.converter.HttpMessageConverter;
-import org.springframework.http.converter.xml.MarshallingHttpMessageConverter;
-import org.springframework.oxm.jaxb.Jaxb2Marshaller;
 import org.springframework.web.client.RestOperations;
 import org.springframework.web.client.RestTemplate;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Common conf for development and production
@@ -50,9 +48,7 @@ import java.util.List;
 @Configuration
 @Lazy
 @ComponentScan(basePackages = {
-        "fi.vrk.xroad.catalog.collector.services",
         "fi.vrk.xroad.catalog.collector.actors",
-        "fi.vrk.xroad.catalog.collector.mock",
         "fi.vrk.xroad.catalog.collector.extension",
         "fi.vrk.xroad.catalog"
         + ".persistence" })
@@ -128,6 +124,5 @@ public class ApplicationConfiguration extends SpringBootServletInitializer {
         rf.setReadTimeout(timeout);
         rf.setConnectTimeout(timeout);
     }
-
 
 }

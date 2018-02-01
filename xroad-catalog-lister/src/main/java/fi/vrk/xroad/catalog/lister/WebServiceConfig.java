@@ -20,9 +20,10 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
+
 package fi.vrk.xroad.catalog.lister;
 
-import org.springframework.boot.context.embedded.ServletRegistrationBean;
+import org.springframework.boot.web.servlet.ServletRegistrationBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -40,25 +41,25 @@ import java.util.List;
 @EnableWs
 @Configuration
 public class WebServiceConfig extends WsConfigurerAdapter {
-	@Bean
-	public ServletRegistrationBean messageDispatcherServlet(ApplicationContext applicationContext) {
-		MessageDispatcherServlet servlet = new MessageDispatcherServlet();
-		servlet.setApplicationContext(applicationContext);
-		servlet.setTransformWsdlLocations(true);
-		return new ServletRegistrationBean(servlet, "/ws/*");
-	}
+    @Bean
+    public ServletRegistrationBean messageDispatcherServlet(ApplicationContext applicationContext) {
+        MessageDispatcherServlet servlet = new MessageDispatcherServlet();
+        servlet.setApplicationContext(applicationContext);
+        servlet.setTransformWsdlLocations(true);
+        return new ServletRegistrationBean(servlet, "/ws/*");
+    }
 
-	@Bean(name = "services")
-	public Wsdl11Definition defaultWsdl11Definition() {
-		SimpleWsdl11Definition wsdl11Definition = new SimpleWsdl11Definition();
-		wsdl11Definition.setWsdl(new ClassPathResource("services.wsdl"));
-		return wsdl11Definition;
-	}
+    @Bean(name = "services")
+    public Wsdl11Definition defaultWsdl11Definition() {
+        SimpleWsdl11Definition wsdl11Definition = new SimpleWsdl11Definition();
+        wsdl11Definition.setWsdl(new ClassPathResource("services.wsdl"));
+        return wsdl11Definition;
+    }
 
-	@Override
-	public void addInterceptors(List<EndpointInterceptor> interceptors) {
-		interceptors.add(new SoapEnvelopeLoggingInterceptor());
-		interceptors.add(new ServiceEndpointInterceptor());
-		interceptors.add(new WsdlCdataInterceptor());
-	}
+    @Override
+    public void addInterceptors(List<EndpointInterceptor> interceptors) {
+        interceptors.add(new SoapEnvelopeLoggingInterceptor());
+        interceptors.add(new ServiceEndpointInterceptor());
+        interceptors.add(new WsdlCdataInterceptor());
+    }
 }

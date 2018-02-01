@@ -22,19 +22,20 @@
  */
 package fi.vrk.xroad.catalog.collector;
 
+import fi.vrk.xroad.catalog.collector.actors.Supervisor;
+import fi.vrk.xroad.catalog.collector.extension.SpringExtension;
 
 import akka.actor.ActorRef;
 import akka.actor.ActorSystem;
 import akka.event.Logging;
 import akka.event.LoggingAdapter;
-import fi.vrk.xroad.catalog.collector.actors.Supervisor;
-import fi.vrk.xroad.catalog.collector.extension.SpringExtension;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.env.Environment;
 import scala.concurrent.duration.Duration;
 
 import java.util.concurrent.TimeUnit;
@@ -47,32 +48,39 @@ import java.util.concurrent.TimeUnit;
 @Configuration
 @EnableAutoConfiguration
 @ComponentScan("fi.vrk.xroad.catalog.collector.configuration")
-public class XRoadCatalogCollector  {
+public class XRoadCatalogCollector {
 
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args) {
 
-        ApplicationContext context =
-            SpringApplication.run(XRoadCatalogCollector.class, args);
+        ApplicationContext context = SpringApplication.run(XRoadCatalogCollector.class, args);
+
+        final Environment env = context.getEnvironment();
+
+        final String keystore = env.getProperty("xroad-catalog.ssl-keystore");
+        final String keystorePw = env.getProperty("xroad-catalog.ssl-keystore-password");
+        if (keystore != null && keystorePw != null) {
+            System.setProperty("javax.net.ssl.keyStore", keystore);
+            System.setProperty("javax.net.ssl.keyStorePassword", keystorePw);
+        }
 
         ActorSystem system = context.getBean(ActorSystem.class);
 
         final LoggingAdapter log = Logging.getLogger(system, "Application");
-        Long collectorInterval = (Long)context.getBean("getCollectorInterval");
+        Long collectorInterval = (Long) context.getBean("getCollectorInterval");
 
         log.info("Starting up catalog collector with collector interval of {}", collectorInterval);
-
 
         SpringExtension ext = context.getBean(SpringExtension.class);
 
         // Use the Spring Extension to create props for a named actor bean
-        ActorRef supervisor = system.actorOf(
-                ext.props("supervisor"));
+        ActorRef supervisor = system.actorOf(ext.props("supervisor"));
 
-        system.scheduler().schedule(Duration.Zero(), Duration.create(collectorInterval,
-                TimeUnit.MINUTES), supervisor,
-                Supervisor
-                .START_COLLECTING,
-                system.dispatcher(), null);
-
+        system.scheduler().schedule(Duration.Zero(),
+                Duration.create(collectorInterval, TimeUnit.MINUTES),
+                supervisor,
+                Supervisor.START_COLLECTING,
+                system.dispatcher(),
+                ActorRef.noSender());
     }
+
 }

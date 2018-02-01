@@ -22,28 +22,39 @@
  */
 package fi.vrk.xroad.catalog.collector.actors;
 
+import fi.vrk.xroad.catalog.collector.configuration.DevelopmentConfiguration;
+import fi.vrk.xroad.catalog.collector.extension.SpringExtension;
+import fi.vrk.xroad.catalog.collector.wsimport.XRoadObjectType;
+import fi.vrk.xroad.catalog.collector.wsimport.XRoadServiceIdentifierType;
+import fi.vrk.xroad.catalog.persistence.CatalogService;
+
 import akka.actor.ActorRef;
 import akka.actor.ActorSystem;
-import fi.vrk.xroad.catalog.collector.XRoadCatalogCollector;
-import fi.vrk.xroad.catalog.collector.extension.SpringExtension;
-import fi.vrk.xroad.catalog.collector.wsimport.XRoadServiceIdentifierType;
+import akka.testkit.TestActorRef;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Matchers;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.SpringApplicationConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.TestPropertySource;
+import org.springframework.test.context.junit4.SpringRunner;
 
 /**
  * Test actorsystem actor creation and call
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(XRoadCatalogCollector.class)
-@Transactional
+@RunWith(SpringRunner.class)
+@SpringBootTest(classes = DevelopmentConfiguration.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@TestPropertySource(properties = {
+        "xroad-catalog.webservices-endpoint=http://localhost:${local.server.port}/metaservices"
+})
 @Slf4j
 public class FetchWsdlActorTest {
 
+    @MockBean
+    CatalogService catalogService;
 
     @Autowired
     ActorSystem actorSystem;
@@ -52,16 +63,19 @@ public class FetchWsdlActorTest {
     SpringExtension springExtension;
 
     @Test
-    public void testBasicPlumbing() throws Exception {
-        // just tells actor to do something
-        ActorRef fetchWsdlActor = actorSystem.actorOf(springExtension.props("fetchWsdlActor"));
+    public void testBasicPlumbing() {
+        TestActorRef fetchWsdlActor = TestActorRef.create(actorSystem, springExtension.props("fetchWsdlActor"));
         XRoadServiceIdentifierType service = new XRoadServiceIdentifierType();
-        service.setXRoadInstance("inst");
-        service.setMemberClass("mcl");
-        service.setMemberCode("mco");
-        service.setSubsystemCode("sub");
-        service.setServiceCode("sc");
-        service.setServiceVersion("sv");
+        service.setObjectType(XRoadObjectType.SERVICE);
+        service.setXRoadInstance("INSTANCE");
+        service.setMemberClass("CLASS");
+        service.setMemberCode("CODE");
+        service.setSubsystemCode("SUBSYSTEM");
+        service.setServiceCode("aService");
+        service.setServiceVersion("v1");
         fetchWsdlActor.tell(service, ActorRef.noSender());
+
+        Mockito.verify(catalogService).saveWsdl(Matchers.any(), Matchers.any(), Matchers.anyString());
     }
 }
+

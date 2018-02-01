@@ -22,11 +22,12 @@
  */
 package fi.vrk.xroad.catalog.collector.mock;
 
-import com.sun.net.httpserver.HttpServer;
 import fi.vrk.xroad.catalog.collector.util.CatalogCollectorRuntimeException;
+
+import com.sun.net.httpserver.HttpServer;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.boot.test.TestRestTemplate;
 import org.springframework.web.client.RestClientException;
+import org.springframework.web.client.RestTemplate;
 
 /**
  * Creates a http server and serves the file requested from classpath.
@@ -34,7 +35,7 @@ import org.springframework.web.client.RestClientException;
  *
  */
 @Slf4j
-public class MockRestTemplate extends TestRestTemplate implements MockHttpServer {
+public class MockRestTemplate extends RestTemplate implements MockHttpServer {
 
     protected HttpServer server;
 

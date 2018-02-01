@@ -24,14 +24,14 @@ package fi.vrk.xroad.catalog.lister;
 
 import fi.vrk.xroad.xroad_catalog_lister.ListMembers;
 import fi.vrk.xroad.xroad_catalog_lister.ListMembersResponse;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.test.SpringApplicationConfiguration;
-import org.springframework.boot.test.WebIntegrationTest;
+import org.springframework.boot.context.embedded.LocalServerPort;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.oxm.jaxb.Jaxb2Marshaller;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.util.ClassUtils;
 import org.springframework.ws.client.core.WebServiceTemplate;
 
@@ -41,15 +41,14 @@ import static org.junit.Assert.assertNotNull;
 /**
  * Http tests for lister interface
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(classes = ListerApplication.class)
-@WebIntegrationTest(randomPort = true)
+@RunWith(SpringRunner.class)
+@SpringBootTest(classes = ListerApplication.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class ApplicationTests {
 
 	private Jaxb2Marshaller marshaller = new Jaxb2Marshaller();
 
-	@Value("${local.server.port}")
-	private int port = 0;
+	@LocalServerPort
+	private int port;
 
 	@Before
 	public void init() throws Exception {

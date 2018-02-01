@@ -22,11 +22,11 @@
  */
 package fi.vrk.xroad.catalog.collector.actors;
 
+import fi.vrk.xroad.catalog.collector.util.CatalogCollectorRuntimeException;
+
 import akka.actor.Terminated;
 import akka.actor.UntypedActor;
-import fi.vrk.xroad.catalog.collector.util.CatalogCollectorRuntimeException;
 import lombok.extern.slf4j.Slf4j;
-import scala.Option;
 
 /**
  * Base class for all actors in the system.
@@ -49,15 +49,4 @@ public abstract class XRoadCatalogActor extends UntypedActor {
         }
     }
 
-    @Override
-    public void postStop() throws Exception {
-        log.info("postStop");
-        super.postStop();
-    }
-
-    @Override
-    public void preRestart(Throwable reason, Option<Object> message) throws Exception {
-        log.info("preRestart {} {} {} ", this.hashCode(), reason, message);
-        super.preRestart(reason, message);
-    }
 }

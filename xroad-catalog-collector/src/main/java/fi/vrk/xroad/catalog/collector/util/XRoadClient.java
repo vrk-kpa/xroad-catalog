@@ -22,14 +22,33 @@
  */
 package fi.vrk.xroad.catalog.collector.util;
 
-import fi.vrk.xroad.catalog.collector.wsimport.*;
-import lombok.extern.slf4j.Slf4j;
+import fi.vrk.xroad.catalog.collector.wsimport.GetWsdl;
+import fi.vrk.xroad.catalog.collector.wsimport.GetWsdlResponse;
+import fi.vrk.xroad.catalog.collector.wsimport.ListMethods;
+import fi.vrk.xroad.catalog.collector.wsimport.ListMethodsResponse;
+import fi.vrk.xroad.catalog.collector.wsimport.MetaServicesPort;
+import fi.vrk.xroad.catalog.collector.wsimport.ProducerPortService;
+import fi.vrk.xroad.catalog.collector.wsimport.XRoadClientIdentifierType;
+import fi.vrk.xroad.catalog.collector.wsimport.XRoadIdentifierType;
+import fi.vrk.xroad.catalog.collector.wsimport.XRoadObjectType;
+import fi.vrk.xroad.catalog.collector.wsimport.XRoadServiceIdentifierType;
 
-import javax.xml.namespace.QName;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.cxf.endpoint.Client;
+import org.apache.cxf.frontend.ClientProxy;
+import org.apache.cxf.message.Attachment;
+import org.apache.cxf.message.Message;
+import org.apache.cxf.transport.http.HTTPConduit;
+
+import javax.activation.DataHandler;
 import javax.xml.ws.BindingProvider;
 import javax.xml.ws.Holder;
-import java.net.MalformedURLException;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
+import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 
@@ -39,63 +58,129 @@ import java.util.UUID;
 @Slf4j
 public class XRoadClient {
 
-    private XRoadClient() {
-        // Private empty constructor
+    final MetaServicesPort metaServicesPort;
+    final XRoadClientIdentifierType clientId;
+
+    public XRoadClient(XRoadClientIdentifierType clientId, URL serverUrl) {
+        this.metaServicesPort = getMetaServicesPort(serverUrl);
+
+        final XRoadClientIdentifierType tmp = new XRoadClientIdentifierType();
+        copyIdentifierType(tmp, clientId);
+        this.clientId = tmp;
     }
 
     /**
      * Calls the service using JAX-WS endpoints that have been generated from wsdl
      */
-    public static List<XRoadServiceIdentifierType> getMethods(String securityServerHost, XRoadClientIdentifierType
-                                                              securityServerIdentity,
-                                                              ClientType client)
-            throws MalformedURLException {
-
+    public List<XRoadServiceIdentifierType> getMethods(XRoadClientIdentifierType member) {
         XRoadServiceIdentifierType serviceIdentifierType = new XRoadServiceIdentifierType();
-        copyIdentifierType(serviceIdentifierType, client.getId());
+        copyIdentifierType(serviceIdentifierType, member);
+
+        XRoadClientIdentifierType tmpClientId = new XRoadClientIdentifierType();
+        copyIdentifierType(tmpClientId, clientId);
 
         serviceIdentifierType.setServiceCode("listMethods");
         serviceIdentifierType.setServiceVersion("v1");
         serviceIdentifierType.setObjectType(XRoadObjectType.SERVICE);
 
-        URL url = new URL(securityServerHost);
-        log.info("SOAP call at url {} for member {} and service {}", url, ClientTypeUtil.toString
-                (securityServerIdentity), ClientTypeUtil
-                .toString(serviceIdentifierType));
-
-        MetaServicesPort port = getMetaServicesPort(url);
-
-        ListMethodsResponse response = port.listMethods(
-                new ListMethods(),
-                new Holder<>(securityServerIdentity),
-                new Holder<>(serviceIdentifierType),
-                new Holder<>("xroad-catalog-collector-"+ UUID.randomUUID()),
-                new Holder<>("xroad-catalog-collector"),
-                new Holder<>("4.x"));
+        ListMethodsResponse response = metaServicesPort.listMethods(new ListMethods(),
+                holder(tmpClientId),
+                holder(serviceIdentifierType),
+                userId(),
+                queryId(),
+                protocolVersion());
 
         return response.getService();
+    }
+
+    public String getWsdl(XRoadServiceIdentifierType service) {
+
+        XRoadServiceIdentifierType serviceIdentifierType = new XRoadServiceIdentifierType();
+        copyIdentifierType(serviceIdentifierType, service);
+
+        XRoadClientIdentifierType tmpClientId = new XRoadClientIdentifierType();
+        copyIdentifierType(tmpClientId, clientId);
+
+        serviceIdentifierType.setServiceCode("getWsdl");
+        serviceIdentifierType.setServiceVersion("v1");
+        serviceIdentifierType.setObjectType(XRoadObjectType.SERVICE);
+
+        final GetWsdl getWsdl = new GetWsdl();
+        getWsdl.setServiceCode(service.getServiceCode());
+        getWsdl.setServiceVersion(service.getServiceVersion());
+
+        final Holder<GetWsdlResponse> response = new Holder<>();
+        final Holder<byte[]> wsdl = new Holder<>();
+
+        metaServicesPort.getWsdl(getWsdl,
+                holder(tmpClientId),
+                holder(serviceIdentifierType),
+                userId(),
+                queryId(),
+                protocolVersion(),
+                response,
+                wsdl);
+
+        if (!(wsdl.value instanceof byte[])) {
+            // Apache CXF does not map the attachment returned by the security server to the wsdl
+            // output parameter due to missing Content-Id header. Extract the attachment from the
+            // response context.
+            DataHandler dh;
+            final Client client = ClientProxy.getClient(metaServicesPort);
+            final Collection<Attachment> attachments =
+                    (Collection<Attachment>)client.getResponseContext().get(Message.ATTACHMENTS);
+            if (attachments != null && attachments.size() == 1) {
+                dh = attachments.iterator().next().getDataHandler();
+            } else {
+                throw new CatalogCollectorRuntimeException("Expected one WSDL attachment");
+            }
+            try (ByteArrayOutputStream buf = new ByteArrayOutputStream()) {
+                dh.writeTo(buf);
+                return buf.toString(StandardCharsets.UTF_8.name());
+            } catch (IOException e) {
+                throw new CatalogCollectorRuntimeException("Error downloading wsdl", e);
+            }
+        } else {
+            return new String(wsdl.value, StandardCharsets.UTF_8);
+        }
+    }
+
+
+    private static Holder<String> queryId() {
+        return holder("xroad-catalog-collector-" + UUID.randomUUID());
+    }
+
+    private static Holder<String> protocolVersion() {
+        return holder("4.0");
+    }
+
+    private static Holder<String> userId() {
+        return holder("xroad-catalog-collector");
+    }
+
+    private static <T> Holder<T> holder(T value) {
+        return new Holder<>(value);
     }
 
     /**
      * MetaServicesPort for url
      */
-    public static MetaServicesPort getMetaServicesPort(URL url) {
-        URL wsdl = XRoadClient.class.getClassLoader()
-                .getResource("schema/list-methods.wsdl");
-        ProducerPortService service = new ProducerPortService(wsdl,
-                new QName("http://metadata.x-road.eu/", "producerPortService"));
+    private static MetaServicesPort getMetaServicesPort(URL url) {
+        ProducerPortService service = new ProducerPortService();
         MetaServicesPort port = service.getMetaServicesPortSoap11();
         BindingProvider bindingProvider = (BindingProvider) port;
-        bindingProvider.getRequestContext()
-                .put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, url.toString());
+        bindingProvider.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, url.toString());
+
+        final HTTPConduit conduit = (HTTPConduit) ClientProxy.getClient(port).getConduit();
+        conduit.getClient().setConnectionTimeout(30000);
+        conduit.getClient().setReceiveTimeout(60000);
+
         return port;
     }
 
-    protected static void copyIdentifierType
-    (XRoadIdentifierType target, XRoadIdentifierType source) {
-
+    private static void copyIdentifierType(XRoadIdentifierType target, XRoadIdentifierType source) {
         target.setGroupCode(source.getGroupCode());
-        target.setObjectType(XRoadObjectType.fromValue(source.getObjectType().value()));
+        target.setObjectType(source.getObjectType());
         target.setMemberCode(source.getMemberCode());
         target.setServiceVersion(source.getServiceVersion());
         target.setMemberClass(source.getMemberClass());

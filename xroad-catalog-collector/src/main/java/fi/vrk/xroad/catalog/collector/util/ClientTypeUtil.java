@@ -22,8 +22,10 @@
  */
 package fi.vrk.xroad.catalog.collector.util;
 
-
 import fi.vrk.xroad.catalog.collector.wsimport.ClientType;
+import fi.vrk.xroad.catalog.collector.wsimport.XRoadClientIdentifierType;
+import fi.vrk.xroad.catalog.collector.wsimport.XRoadIdentifierType;
+import fi.vrk.xroad.catalog.collector.wsimport.XRoadObjectType;
 
 /**
  * Helper for client type
@@ -38,37 +40,40 @@ public class ClientTypeUtil {
      * Helper for logging
      */
     public static String toString(ClientType c) {
-        StringBuilder sb = new StringBuilder("");
-        sb.append("ObjectType: ");
-        sb.append(c.getId().getObjectType());
-        sb.append(" Name: ");
-        sb.append(c.getName());
-        sb.append(" XRoadInstance: ");
-        sb.append(c.getId().getXRoadInstance());
-        sb.append(" MemberClass: ");
-        sb.append(c.getId().getMemberClass());
-        sb.append(" MemberCode: ");
-        sb.append(c.getId().getMemberCode());
-        sb.append(" SubsystemCode: ");
-        sb.append(c.getId().getSubsystemCode());
-        return sb.toString();
+        return toString(c.getId()) + ":" + c.getName();
     }
 
     /**
      * Helper for logging
      */
-    public static String toString(fi.vrk.xroad.catalog.collector.wsimport.XRoadIdentifierType c) {
-        StringBuilder sb = new StringBuilder("");
-        sb.append("ObjectType: ");
+    public static String toString(XRoadIdentifierType c) {
+        StringBuilder sb = new StringBuilder(128);
         sb.append(c.getObjectType());
-        sb.append(" XRoadInstance: ");
+        sb.append(":");
         sb.append(c.getXRoadInstance());
-        sb.append(" MemberClass: ");
+        sb.append("/");
         sb.append(c.getMemberClass());
-        sb.append(" MemberCode: ");
+        sb.append("/");
         sb.append(c.getMemberCode());
-        sb.append(" SubsystemCode: ");
+        sb.append("/");
         sb.append(c.getSubsystemCode());
+        if (c.getObjectType().equals(XRoadObjectType.SERVICE)) {
+            sb.append("/");
+            sb.append(c.getServiceCode());
+            sb.append("/");
+            sb.append(c.getServiceVersion());
+        }
         return sb.toString();
+    }
+
+    public static XRoadClientIdentifierType toSubsystem(String xroadInstance, String memberClass, String memberCode,
+            String subsystemCode) {
+        XRoadClientIdentifierType xroadId = new XRoadClientIdentifierType();
+        xroadId.setXRoadInstance(xroadInstance);
+        xroadId.setMemberClass(memberClass);
+        xroadId.setMemberCode(memberCode);
+        xroadId.setSubsystemCode(subsystemCode);
+        xroadId.setObjectType(XRoadObjectType.SUBSYSTEM);
+        return xroadId;
     }
 }
