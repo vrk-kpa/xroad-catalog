@@ -1,6 +1,6 @@
 buildscript {
     ext {
-        springBootVersion = '1.5.9.RELEASE'
+        springBootVersion = '1.5.10.RELEASE'
     }
     repositories {
         mavenCentral()
@@ -85,6 +85,7 @@ dependencies {
     compile project(':xroad-catalog-persistence')
 
     compile("org.springframework.boot:spring-boot-starter-web-services")
+    compile("com.fasterxml.jackson.core:jackson-databind:$jacksonVersion")
     compile("wsdl4j:wsdl4j:1.6.3")
     compile(files(genJaxb.classesDir).builtBy(genJaxb))
     compile('commons-beanutils:commons-beanutils:1.9.3')

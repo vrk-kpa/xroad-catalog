@@ -47,5 +47,8 @@ subprojects {
         include "**/*.java"
         exclude "**/wsimport/*"
     }
+    ext {
+        jacksonVersion="2.8.11"
+    }
 }
 

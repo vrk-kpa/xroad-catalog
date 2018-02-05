@@ -1,6 +1,6 @@
 buildscript {
     ext {
-        springBootVersion = '1.5.9.RELEASE'
+        springBootVersion = '1.5.10.RELEASE'
     }
     repositories {
         mavenCentral()
@@ -76,6 +76,7 @@ dependencies {
     compile project(':xroad-catalog-persistence')
 
     compile 'org.springframework.boot:spring-boot-starter-web-services'
+    compile "com.fasterxml.jackson.core:jackson-databind:$jacksonVersion"
     compile 'com.typesafe.akka:akka-actor_2.11:2.4.20'
     compile 'com.typesafe.akka:akka-slf4j_2.11:2.4.20'
     compile 'ch.qos.logback:logback-classic:1.2.3'
