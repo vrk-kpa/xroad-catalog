@@ -19,6 +19,9 @@ sudo yum install xroad-catalog-lister xroad-catalog-collector
 # or
 rpm -i install xroad-catalog-lister xroad-catalog-collector 
 ```
+
+Instructions on how to build the RPM packages using Docker can be found [here](xroad-catalog-persistence/README.md#build-rpm-packages-on-non-redhat-platform)
+
 Configure parameters in /etc/xroad/xroad-catalog/collector-production.properties, especially X-Road instance information and URL of security server.
 ```
 xroad-catalog.xroad-instance=FI

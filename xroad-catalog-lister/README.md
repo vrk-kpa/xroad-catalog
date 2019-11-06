@@ -25,5 +25,11 @@ Or
 | curl http://localhost:8080/ws/services.wsdl                                            |  Get WSDL                   |
 
 
+## Build RPM Packages on Non-RedHat Platform
+
+    $ ./gradlew clean build
+    $ cd 
+    $ docker build -t lister-rpm packages/xroad-catalog-lister/docker
+    $ docker run -v $PWD/..:/workspace  -v /etc/passwd:/etc/passwd:ro -v /etc/group:/etc/group:ro lister-rpm
 
 
