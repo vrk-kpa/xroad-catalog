@@ -22,17 +22,17 @@ and does not autocreate anything.
 
 ## Run
 ```sh
-gradle bootRun
+../gradlew bootRun
 ```
 or
 ```sh
-gradle bootRun -Dspring.profiles.active=production
+../gradlew bootRun -Dspring.profiles.active=production
 ```
 
 ## Test
 
 ```sh
-gradle test
+../gradlew test
 ```
 
 

@@ -3,12 +3,12 @@
 ## Build
 
 
-    $ gradle clean build
+    $ ../gradlew clean build
 
 
 ## Run
 
-    $ gradle bootRun
+    $ ../gradlew bootRun
 
 Or
 
@@ -32,6 +32,6 @@ Then run the collector with profile sshtest
 First make sure that xroad-catalog-persistence is located next to xroad-catalog-collector. The RPM build
  uses sql files from xroad-catalog-persistence/src/main/sql.
  
-    $ gradle clean build
+    $ ../gradlew clean build
     $ docker build -t collector-rpm packages/xroad-catalog-collector/docker
-    $ docker run -v $PWD/..:/workspace  -v /etc/passwd:/etc/passwd:ro -v /etc/group:/etc/group:ro collector-rpm
+    $ docker run -v $PWD/..:/workspace collector-rpm
