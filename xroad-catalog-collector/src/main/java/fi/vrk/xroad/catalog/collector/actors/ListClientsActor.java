@@ -86,7 +86,9 @@ public class ListClientsActor extends XRoadCatalogActor {
             String listClientsUrl = host + "/listClients";
 
             log.info("Getting client list from {}", listClientsUrl);
-            ClientList clientList = restOperations.getForObject(listClientsUrl, ClientList.class);
+            // ClientList clientList = restOperations.getForObject(listClientsUrl, ClientList.class);
+
+            ClientList clientList = ClientListUtil.clientListFromResponse(listClientsUrl);
 
 
             int counter = 1;

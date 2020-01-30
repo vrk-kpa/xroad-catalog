@@ -75,6 +75,7 @@ task wsImport {
 dependencies {
     compile project(':xroad-catalog-persistence')
 
+    compile 'org.json:json:20171018'
     compile 'org.springframework.boot:spring-boot-starter-web-services'
     compile "com.fasterxml.jackson.core:jackson-databind:$jacksonVersion"
     compile 'com.typesafe.akka:akka-actor_2.11:2.4.20'
