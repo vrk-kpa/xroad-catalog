@@ -24,6 +24,7 @@ package fi.vrk.xroad.catalog.collector.actors;
 
 import akka.actor.ActorRef;
 import fi.vrk.xroad.catalog.collector.util.ClientTypeUtil;
+import fi.vrk.xroad.catalog.collector.util.ClientListUtil;
 import fi.vrk.xroad.catalog.collector.wsimport.ClientList;
 import fi.vrk.xroad.catalog.collector.wsimport.ClientType;
 import fi.vrk.xroad.catalog.collector.wsimport.XRoadObjectType;
