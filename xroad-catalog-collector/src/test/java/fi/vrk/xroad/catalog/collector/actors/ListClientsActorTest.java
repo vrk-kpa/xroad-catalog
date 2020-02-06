@@ -22,6 +22,7 @@
  */
 package fi.vrk.xroad.catalog.collector.actors;
 
+import fi.vrk.xroad.catalog.collector.util.ClientListUtil;
 import fi.vrk.xroad.catalog.collector.wsimport.ClientList;
 import fi.vrk.xroad.catalog.collector.wsimport.ClientType;
 import fi.vrk.xroad.catalog.collector.wsimport.XRoadClientIdentifierType;
@@ -54,7 +55,6 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.util.ReflectionTestUtils;
-import org.springframework.web.client.RestOperations;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -62,7 +62,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -71,15 +70,12 @@ import static org.mockito.Mockito.when;
  * Test for client actor
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest( {ListClientsActor.class})
+@PrepareForTest( {ListClientsActor.class, ClientListUtil.class})
 @ActiveProfiles("development")
 public class ListClientsActorTest extends TestKit {
 
     @Mock
     private CatalogService catalogService = new CatalogServiceImpl();
-
-    @Mock
-    private RestOperations restOperations;
 
     private InternalActorRef listMethodsPoolRef;
 
@@ -140,7 +136,8 @@ public class ListClientsActorTest extends TestKit {
         memberlist.add(createClientType(XRoadObjectType.SUBSYSTEM, "member2", "sssub2"));
 
         ClientList cMock = mock(ClientList.class);
-        doReturn(cMock).when(restOperations).getForObject("http://localhost/listClients", ClientList.class);
+        PowerMockito.mockStatic(ClientListUtil.class);
+        when(ClientListUtil.clientListFromResponse("http://localhost/listClients")).thenReturn(cMock);
         when(cMock.getMember()).thenReturn(memberlist);
 
 //        doNothing().when(listMethodsPoolRef).tell(Matchers.anyObject(), Matchers.anyObject());
