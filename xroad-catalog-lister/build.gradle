@@ -93,7 +93,7 @@ dependencies {
     jaxb("org.glassfish.jaxb:jaxb-xjc:2.2.11")
     jaxb("org.glassfish.jaxb:jaxb-runtime:2.2.11")
 
-    compileOnly("org.projectlombok:lombok:1.18.8")
+    compileOnly("org.projectlombok:lombok:1.16.18")
 
     testCompile("org.springframework.boot:spring-boot-starter-test")
 }

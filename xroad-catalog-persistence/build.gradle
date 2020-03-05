@@ -28,12 +28,12 @@ targetCompatibility = 1.8
 dependencies {
     compile("org.springframework.boot:spring-boot-starter-data-jpa")
     compile("com.h2database:h2:1.4.196")
-    compile("org.postgresql:postgresql:42.2.10")
-    compile('com.google.guava:guava:28.0-jre')
-    compileOnly("org.projectlombok:lombok:1.18.8")
+    compile("org.postgresql:postgresql:42.2.0")
+    compile('com.google.guava:guava:23.6-jre')
+    compileOnly("org.projectlombok:lombok:1.16.18")
 
     testCompile("org.springframework.boot:spring-boot-starter-test")
-    testCompileOnly 'org.projectlombok:lombok:1.18.8'
+    testCompileOnly 'org.projectlombok:lombok:1.16.18'
 }
 
 tasks.withType(org.springframework.boot.gradle.run.BootRunTask) {

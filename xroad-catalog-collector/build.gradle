@@ -75,7 +75,6 @@ task wsImport {
 dependencies {
     compile project(':xroad-catalog-persistence')
 
-    compile 'org.json:json:20190722'
     compile 'org.springframework.boot:spring-boot-starter-web-services'
     compile "com.fasterxml.jackson.core:jackson-databind:$jacksonVersion"
     compile 'com.typesafe.akka:akka-actor_2.11:2.4.20'
@@ -84,7 +83,7 @@ dependencies {
     compile 'org.apache.cxf:cxf-rt-frontend-jaxws:3.2.1'
     compile 'org.apache.cxf:cxf-rt-transports-http:3.2.1'
     compile 'org.apache.cxf:cxf-core:3.2.1'
-    compileOnly 'org.projectlombok:lombok:1.18.8'
+    compileOnly 'org.projectlombok:lombok:1.16.18'
 
     wsimport "com.sun.xml.ws:jaxws-tools:2.2.10"
 
@@ -94,7 +93,7 @@ dependencies {
     testCompile 'org.powermock:powermock-core:1.6.4'
     testCompile 'org.powermock:powermock-module-junit4:1.6.4'
     testCompile 'org.powermock:powermock-api-mockito:1.6.4'
-    testCompileOnly 'org.projectlombok:lombok:1.18.8'
+    testCompileOnly 'org.projectlombok:lombok:1.16.18'
 
 }
 
