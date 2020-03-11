@@ -108,4 +108,13 @@ public interface CatalogService {
      */
     void saveWsdl(SubsystemId subsystemId, ServiceId serviceId, String wsdl);
 
+    /**
+     * Saves given openApi data. The openApi can either be a new one, or an update to an existing one.
+     * Updates "changed" field based on whether data is different compared to last time.
+     * @param subsystemId identifier of the subsystem
+     * @param serviceId identifier of the service
+     * @param openApi the actual openApi
+     */
+    void saveOpenApi(SubsystemId subsystemId, ServiceId serviceId, String openApi);
+
 }

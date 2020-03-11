@@ -126,6 +126,49 @@ CACHE 1;
 ALTER SEQUENCE wsdl_external_id_seq OWNED BY wsdl.external_id;
 
 
+CREATE TABLE open_api (
+    id bigint NOT NULL,
+    service_id bigint NOT NULL,
+    data text NOT NULL,
+    external_id text NOT NULL,
+    created timestamp with time zone NOT NULL,
+    changed timestamp with time zone NOT NULL,
+    fetched timestamp with time zone NOT NULL,
+    removed timestamp with time zone
+);
+
+
+
+
+
+CREATE SEQUENCE openapi_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+
+ALTER SEQUENCE openapi_id_seq OWNED BY open_api.id;
+
+CREATE SEQUENCE openapi_external_id_seq
+START WITH 1
+INCREMENT BY 1
+NO MINVALUE
+NO MAXVALUE
+CACHE 1;
+
+
+
+ALTER SEQUENCE openapi_external_id_seq OWNED BY open_api.external_id;
+
+
+
+
+
+
+
 
 ALTER TABLE ONLY member
     ADD CONSTRAINT primary_key_client PRIMARY KEY (id);
@@ -147,16 +190,25 @@ ALTER TABLE ONLY wsdl
     ADD CONSTRAINT primary_key_wsdl PRIMARY KEY (id);
 
 
+
+ALTER TABLE ONLY open_api
+    ADD CONSTRAINT primary_key_openapi PRIMARY KEY (id);
+
+
+
 CREATE UNIQUE INDEX idx_wsdl_external_id ON wsdl USING btree (external_id);
+CREATE UNIQUE INDEX idx_openapi_external_id ON open_api USING btree (external_id);
 CREATE UNIQUE INDEX idx_member_natural_keys ON member(member_code, member_class, x_road_instance);
 CREATE UNIQUE INDEX idx_service_unique_fields ON service(subsystem_id, service_code, service_version);
 CREATE UNIQUE INDEX idx_subsystem_unique_fields ON subsystem(member_id, subsystem_code);
 
 CREATE INDEX idx_wsdl_changed ON wsdl(changed);
+CREATE INDEX idx_openapi_changed ON open_api(changed);
 CREATE INDEX idx_service_changed ON service(changed);
 CREATE INDEX idx_subsystem_changed ON subsystem(changed);
 CREATE INDEX idx_member_changed ON member(changed);
 CREATE INDEX idx_wsdl_service_id ON wsdl(service_id);
+CREATE INDEX idx_openapi_service_id ON open_api(service_id);
 
 
 
@@ -171,6 +223,11 @@ ALTER TABLE ONLY wsdl
 
 
 
+ALTER TABLE ONLY open_api
+    ADD CONSTRAINT foreign_key_service FOREIGN KEY (service_id) REFERENCES service(id);
+
+
+
 ALTER TABLE ONLY service
     ADD CONSTRAINT foreign_key_subsystem FOREIGN KEY (subsystem_id) REFERENCES subsystem(id);
 
@@ -179,3 +236,4 @@ ALTER TABLE member OWNER TO xroad_catalog;
 ALTER TABLE service OWNER TO xroad_catalog;
 ALTER TABLE subsystem OWNER TO xroad_catalog;
 ALTER TABLE wsdl OWNER TO xroad_catalog;
+ALTER TABLE open_api OWNER TO xroad_catalog;

@@ -22,16 +22,7 @@
  */
 package fi.vrk.xroad.catalog.collector.util;
 
-import fi.vrk.xroad.catalog.collector.wsimport.GetWsdl;
-import fi.vrk.xroad.catalog.collector.wsimport.GetWsdlResponse;
-import fi.vrk.xroad.catalog.collector.wsimport.ListMethods;
-import fi.vrk.xroad.catalog.collector.wsimport.ListMethodsResponse;
-import fi.vrk.xroad.catalog.collector.wsimport.MetaServicesPort;
-import fi.vrk.xroad.catalog.collector.wsimport.ProducerPortService;
-import fi.vrk.xroad.catalog.collector.wsimport.XRoadClientIdentifierType;
-import fi.vrk.xroad.catalog.collector.wsimport.XRoadIdentifierType;
-import fi.vrk.xroad.catalog.collector.wsimport.XRoadObjectType;
-import fi.vrk.xroad.catalog.collector.wsimport.XRoadServiceIdentifierType;
+import fi.vrk.xroad.catalog.collector.wsimport.*;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.cxf.endpoint.Client;
@@ -142,6 +133,58 @@ public class XRoadClient {
             }
         } else {
             return new String(wsdl.value, StandardCharsets.UTF_8);
+        }
+    }
+
+    public String getOpenApi(XRoadServiceIdentifierType service) {
+
+        XRoadServiceIdentifierType serviceIdentifierType = new XRoadServiceIdentifierType();
+        copyIdentifierType(serviceIdentifierType, service);
+
+        XRoadClientIdentifierType tmpClientId = new XRoadClientIdentifierType();
+        copyIdentifierType(tmpClientId, clientId);
+
+        serviceIdentifierType.setServiceCode("getOpenApi");
+        serviceIdentifierType.setServiceVersion("v1");
+        serviceIdentifierType.setObjectType(XRoadObjectType.SERVICE);
+
+        final GetOpenApi getOpenApi = new GetOpenApi();
+        getOpenApi.setServiceCode(service.getServiceCode());
+        getOpenApi.setServiceVersion(service.getServiceVersion());
+
+        final Holder<GetOpenApiResponse> response = new Holder<>();
+        final Holder<byte[]> openApi = new Holder<>();
+
+        metaServicesPort.getOpenApi(getOpenApi,
+                holder(tmpClientId),
+                holder(serviceIdentifierType),
+                userId(),
+                queryId(),
+                protocolVersion(),
+                response,
+                openApi);
+
+        if (!(openApi.value instanceof byte[])) {
+            // Apache CXF does not map the attachment returned by the security server to the openApi
+            // output parameter due to missing Content-Id header. Extract the attachment from the
+            // response context.
+            DataHandler dh;
+            final Client client = ClientProxy.getClient(metaServicesPort);
+            final Collection<Attachment> attachments =
+                    (Collection<Attachment>)client.getResponseContext().get(Message.ATTACHMENTS);
+            if (attachments != null && attachments.size() == 1) {
+                dh = attachments.iterator().next().getDataHandler();
+            } else {
+                throw new CatalogCollectorRuntimeException("Expected one openApi attachment");
+            }
+            try (ByteArrayOutputStream buf = new ByteArrayOutputStream()) {
+                dh.writeTo(buf);
+                return buf.toString(StandardCharsets.UTF_8.name());
+            } catch (IOException e) {
+                throw new CatalogCollectorRuntimeException("Error downloading openApi", e);
+            }
+        } else {
+            return new String(openApi.value, StandardCharsets.UTF_8);
         }
     }
 

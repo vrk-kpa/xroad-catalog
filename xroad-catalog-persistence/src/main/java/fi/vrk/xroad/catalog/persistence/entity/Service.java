@@ -35,7 +35,7 @@ import java.util.Set;
 @Entity
 @Getter
 @Setter
-@ToString(exclude = {"subsystem","wsdls"})
+@ToString(exclude = {"subsystem","wsdls","openApis"})
 public class Service {
     @Id
     @Column(nullable = false)
@@ -57,6 +57,10 @@ public class Service {
     @Getter(AccessLevel.NONE) // do not create default getter/setter, we provide a wrapper that hides the collection
     @OneToMany(mappedBy = "service", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<Wsdl> wsdls = new HashSet<>();
+    @Getter(AccessLevel.NONE) // do not create default getter/setter, we provide a wrapper that hides the collection
+    @OneToMany(mappedBy = "service", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Set<OpenApi> openApis = new HashSet<>();
+
 
     public Service() {
         // Empty constructor
@@ -83,6 +87,18 @@ public class Service {
         wsdls.add(wsdl);
     }
     public Wsdl getWsdl() { return wsdls.isEmpty() ? null : wsdls.iterator().next(); }
+
+    /**
+     * Add given openApi to set of openApis. Create the set if needed.
+     */
+    public void setOpenApi(OpenApi openApi) {
+        if (openApis == null) {
+            openApis = new HashSet<>();
+        }
+        openApis.clear();
+        openApis.add(openApi);
+    }
+    public OpenApi getOpenApi() { return openApis.isEmpty() ? null : openApis.iterator().next(); }
 
     /**
      * @return comparable & equals-able natural key _within one subsystem_
