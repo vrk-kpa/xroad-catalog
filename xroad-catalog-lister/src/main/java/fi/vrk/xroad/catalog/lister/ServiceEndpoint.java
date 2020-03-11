@@ -24,6 +24,7 @@ package fi.vrk.xroad.catalog.lister;
 
 import com.google.common.collect.Lists;
 import fi.vrk.xroad.catalog.persistence.CatalogService;
+import fi.vrk.xroad.catalog.persistence.entity.OpenApi;
 import fi.vrk.xroad.catalog.persistence.entity.Wsdl;
 import fi.vrk.xroad.xroad_catalog_lister.*;
 import lombok.extern.slf4j.Slf4j;
@@ -68,6 +69,19 @@ public class ServiceEndpoint {
                     + " not found");
         }
         response.setWsdl(wsdl.getData());
+        return response;
+    }
+
+    @PayloadRoot(namespace = NAMESPACE_URI, localPart = "GetOpenApi")
+    @ResponsePayload
+    public GetOpenApiResponse getOpenApi(@RequestPayload GetOpenApi request) {
+        GetOpenApiResponse response = new GetOpenApiResponse();
+        OpenApi openApi = catalogService.getOpenApi(request.getExternalId());
+        if (openApi == null) {
+            throw new OpenApiNotFoundException("OpenApi with external id " + request.getExternalId()
+                    + " not found");
+        }
+        response.setOpenApi(openApi.getData());
         return response;
     }
 

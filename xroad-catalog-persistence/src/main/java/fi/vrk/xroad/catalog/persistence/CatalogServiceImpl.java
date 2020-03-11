@@ -91,6 +91,18 @@ public class CatalogServiceImpl implements CatalogService {
     }
 
     @Override
+    public OpenApi getOpenApi(String externalId) {
+        List<OpenApi> matches = openApiRepository.findAnyByExternalId(externalId);
+        if (matches.size() > 1) {
+            throw new IllegalStateException("multiple matches found to " + externalId + ": " + matches);
+        } else if (matches.size() == 1) {
+            return matches.iterator().next();
+        } else {
+            return null;
+        }
+    }
+
+    @Override
     public void saveAllMembersAndSubsystems(Collection<Member> members) {
         LocalDateTime now = LocalDateTime.now();
         // process members

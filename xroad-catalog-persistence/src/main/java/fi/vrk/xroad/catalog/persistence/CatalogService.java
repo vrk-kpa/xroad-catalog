@@ -74,6 +74,13 @@ public interface CatalogService {
     Wsdl getWsdl(String externalId);
 
     /**
+     * Returns the full OpenApi object. Only returns active ones, removed are not found.
+     * @return Wsdl, if any, null if not found
+     * @throws RuntimeException if multiple matches found.
+     */
+    OpenApi getOpenApi(String externalId);
+
+    /**
      * Stores given members and subsystems. This should be the full dataset of both items
      * - items not included in the parameters are marked as removed, if the existed previously.
      *
