@@ -59,6 +59,18 @@ public class ServiceEndpoint {
         return response;
     }
 
+    @PayloadRoot(namespace = NAMESPACE_URI, localPart = "isSoapProvider")
+    @ResponsePayload
+    public boolean isSoapProvider(@RequestPayload Service request) {
+        return !request.getWsdl().getExternalId().isEmpty();
+    }
+
+    @PayloadRoot(namespace = NAMESPACE_URI, localPart = "isRestProvider")
+    @ResponsePayload
+    public boolean isRestProvider(@RequestPayload Service request) {
+        return !request.getOpenapi().getExternalId().isEmpty();
+    }
+
     @PayloadRoot(namespace = NAMESPACE_URI, localPart = "GetWsdl")
     @ResponsePayload
     public GetWsdlResponse getWsdl(@RequestPayload GetWsdl request) {
