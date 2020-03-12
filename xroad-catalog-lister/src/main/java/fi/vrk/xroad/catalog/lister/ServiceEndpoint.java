@@ -81,7 +81,7 @@ public class ServiceEndpoint {
             throw new OpenApiNotFoundException("OpenApi with external id " + request.getExternalId()
                     + " not found");
         }
-        response.setOpenApi(openApi.getData());
+        response.setOpenapi(openApi.getData());
         return response;
     }
 
