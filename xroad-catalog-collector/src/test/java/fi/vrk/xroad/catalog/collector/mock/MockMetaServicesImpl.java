@@ -23,20 +23,12 @@
 package fi.vrk.xroad.catalog.collector.mock;
 
 import fi.vrk.xroad.catalog.collector.util.ClientTypeUtil;
-import fi.vrk.xroad.catalog.collector.wsimport.AllowedMethods;
-import fi.vrk.xroad.catalog.collector.wsimport.AllowedMethodsResponse;
-import fi.vrk.xroad.catalog.collector.wsimport.GetWsdl;
-import fi.vrk.xroad.catalog.collector.wsimport.GetWsdlResponse;
-import fi.vrk.xroad.catalog.collector.wsimport.ListMethods;
-import fi.vrk.xroad.catalog.collector.wsimport.ListMethodsResponse;
-import fi.vrk.xroad.catalog.collector.wsimport.MetaServicesPort;
-import fi.vrk.xroad.catalog.collector.wsimport.XRoadClientIdentifierType;
-import fi.vrk.xroad.catalog.collector.wsimport.XRoadObjectType;
-import fi.vrk.xroad.catalog.collector.wsimport.XRoadServiceIdentifierType;
+import fi.vrk.xroad.catalog.collector.wsimport.*;
 
 import lombok.extern.slf4j.Slf4j;
 
 import javax.annotation.Resource;
+import javax.jws.WebParam;
 import javax.jws.WebService;
 import javax.xml.ws.Holder;
 import javax.xml.ws.WebServiceContext;
@@ -92,6 +84,21 @@ public class MockMetaServicesImpl implements MetaServicesPort {
         final String tmp = MessageFormat.format(WSDL_TEMPLATE, getWsdl.getServiceCode(), getWsdl.getServiceVersion());
         wsdl.value = tmp.getBytes(StandardCharsets.UTF_8);
         log.info("Returning WSDL");
+    }
+
+    @Override
+    public void getOpenApi(GetOpenApi getOpenApi, Holder<XRoadClientIdentifierType> client,
+                    Holder<XRoadServiceIdentifierType> service, Holder<String> userId,
+                    Holder<String> id, Holder<String> protocolVersion,
+                    Holder<GetOpenApiResponse> getOpenApiResponse, Holder<byte[]> openapi) {
+
+        final GetOpenApiResponse response = new GetOpenApiResponse();
+        response.setServiceCode(getOpenApi.getServiceCode());
+        response.setServiceVersion(getOpenApi.getServiceVersion());
+        getOpenApiResponse.value = response;
+        final String tmp = MessageFormat.format(WSDL_TEMPLATE, getOpenApi.getServiceCode(), getOpenApi.getServiceVersion());
+        openapi.value = tmp.getBytes(StandardCharsets.UTF_8);
+        log.info("Returning OPENAPI");
     }
 
     private XRoadServiceIdentifierType generateService(String serviceCode,
