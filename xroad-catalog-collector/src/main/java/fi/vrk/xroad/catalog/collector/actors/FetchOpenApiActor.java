@@ -38,7 +38,7 @@ import java.net.URL;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * Actor which fetches one wsdl
+ * Actor which fetches one openapi
  */
 @Component
 @Scope("prototype")
