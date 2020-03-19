@@ -43,7 +43,7 @@ public class MethodListUtil {
     }
 
 
-    public static List<Service> methodListFromResponse(ClientType clientType, Subsystem subsystem) {
+    public static List<XRoadServiceIdentifierType> methodListFromResponse(ClientType clientType, Subsystem subsystem) {
         final String url = new StringBuilder().append("http://ss1/r1/")
                 .append(clientType.getId().getXRoadInstance()).append("/")
                 .append(clientType.getId().getMemberClass()).append("/")
@@ -66,7 +66,7 @@ public class MethodListUtil {
         ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, entity, String.class);
         JSONObject json = new JSONObject(response.getBody());
         JSONArray serviceList = json.getJSONArray("service");
-        List<Service> restServices = new ArrayList<>();
+        List<XRoadServiceIdentifierType> restServices = new ArrayList<>();
         for (int i = 0; i < serviceList.length(); i++) {
             JSONObject service = serviceList.getJSONObject(i);
             XRoadServiceIdentifierType xRoadServiceIdentifierType = new XRoadServiceIdentifierType();
@@ -76,7 +76,7 @@ public class MethodListUtil {
             xRoadServiceIdentifierType.setServiceCode(service.optString("service_code"));
             xRoadServiceIdentifierType.setXRoadInstance(service.optString("xroad_instance"));
             xRoadServiceIdentifierType.setObjectType(XRoadObjectType.fromValue(service.optString("object_type")));
-            restServices.add(new Service(subsystem, xRoadServiceIdentifierType.getServiceCode(), "v1"));
+            restServices.add(xRoadServiceIdentifierType);
         }
 
         return restServices;

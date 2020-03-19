@@ -106,7 +106,7 @@ public class ListMethodsActor extends XRoadCatalogActor {
             log.info("{} Handling subsystem {} ", COUNTER, subsystem);
             log.info("Fetching methods for the client with listMethods -service...");
 
-            List<Service> restServices = MethodListUtil.methodListFromResponse(clientType, subsystem);
+            List<XRoadServiceIdentifierType> restServices = MethodListUtil.methodListFromResponse(clientType, subsystem);
             log.info("Received all REST methods for client {} ", ClientTypeUtil.toString(clientType));
 
             // fetch the methods
@@ -116,8 +116,8 @@ public class ListMethodsActor extends XRoadCatalogActor {
 
             // Save services for subsystems
             List<Service> services = new ArrayList<>();
-            for (Service service : restServices) {
-                services.add(service);
+            for (XRoadServiceIdentifierType service : restServices) {
+                services.add(new Service(subsystem, service.getServiceCode(), service.getServiceVersion()));
             }
             for (XRoadServiceIdentifierType service : soapServices) {
                 services.add(new Service(subsystem, service.getServiceCode(), service.getServiceVersion()));
@@ -132,7 +132,8 @@ public class ListMethodsActor extends XRoadCatalogActor {
             }
 
             // get openApis
-            for (Service service : restServices) {
+            for (XRoadServiceIdentifierType service : restServices) {
+                log.info("{} Sending service {} to new MethodActor ", COUNTER, service.getServiceCode());
                 fetchOpenApiPoolRef.tell(service, getSender());
             }
 

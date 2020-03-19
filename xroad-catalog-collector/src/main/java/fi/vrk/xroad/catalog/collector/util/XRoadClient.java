@@ -144,18 +144,18 @@ public class XRoadClient {
         XRoadClientIdentifierType tmpClientId = new XRoadClientIdentifierType();
         copyIdentifierType(tmpClientId, clientId);
 
-        serviceIdentifierType.setServiceCode("getOpenApi");
+        serviceIdentifierType.setServiceCode("getOpenAPI");
         serviceIdentifierType.setServiceVersion("v1");
         serviceIdentifierType.setObjectType(XRoadObjectType.SERVICE);
 
-        final GetOpenApi getOpenApi = new GetOpenApi();
+        final GetOpenAPI getOpenApi = new GetOpenAPI();
         getOpenApi.setServiceCode(service.getServiceCode());
         getOpenApi.setServiceVersion(service.getServiceVersion());
 
-        final Holder<GetOpenApiResponse> response = new Holder<>();
+        final Holder<GetOpenAPIResponse> response = new Holder<>();
         final Holder<byte[]> openApi = new Holder<>();
 
-        metaServicesPort.getOpenApi(getOpenApi,
+        metaServicesPort.getOpenAPI(getOpenApi,
                 holder(tmpClientId),
                 holder(serviceIdentifierType),
                 userId(),

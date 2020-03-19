@@ -84,10 +84,10 @@ public class ServiceEndpoint {
         return response;
     }
 
-    @PayloadRoot(namespace = NAMESPACE_URI, localPart = "GetOpenApi")
+    @PayloadRoot(namespace = NAMESPACE_URI, localPart = "GetOpenAPI")
     @ResponsePayload
-    public GetOpenApiResponse getOpenApi(@RequestPayload GetOpenApi request) {
-        GetOpenApiResponse response = new GetOpenApiResponse();
+    public GetOpenAPIResponse getOpenApi(@RequestPayload GetOpenAPI request) {
+        GetOpenAPIResponse response = new GetOpenAPIResponse();
         OpenApi openApi = catalogService.getOpenApi(request.getExternalId());
         if (openApi == null) {
             throw new OpenApiNotFoundException("OpenApi with external id " + request.getExternalId()

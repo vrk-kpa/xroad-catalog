@@ -142,7 +142,7 @@ http://x-road.eu/xsd/identifiers ">
                 </xs:complexType>
             </xs:element>
 
-            <xs:element name="GetOpenApi">
+            <xs:element name="getOpenAPI">
                 <xs:complexType>
                     <xs:sequence>
                         <xs:element name="externalId" type="xs:string"/>
@@ -150,7 +150,7 @@ http://x-road.eu/xsd/identifiers ">
                 </xs:complexType>
             </xs:element>
 
-            <xs:element name="GetOpenApiResponse">
+            <xs:element name="getOpenAPIResponse">
                 <xs:complexType>
                     <xs:sequence>
                         <xs:element name="openapi" type="xs:string"/>
@@ -264,12 +264,12 @@ http://x-road.eu/xsd/identifiers ">
         <wsdl:part element="tns:GetWsdl" name="body">
         </wsdl:part>
     </wsdl:message>
-    <wsdl:message name="GetOpenApiResponse">
-        <wsdl:part element="tns:GetOpenApiResponse" name="body">
+    <wsdl:message name="getOpenAPIResponse">
+        <wsdl:part element="tns:getOpenAPIResponse" name="body">
         </wsdl:part>
     </wsdl:message>
-    <wsdl:message name="GetOpenApi">
-        <wsdl:part element="tns:GetOpenApi" name="body">
+    <wsdl:message name="getOpenAPI">
+        <wsdl:part element="tns:getOpenAPI" name="body">
         </wsdl:part>
     </wsdl:message>
     <wsdl:portType name="ServicesPort">
@@ -285,10 +285,10 @@ http://x-road.eu/xsd/identifiers ">
             <wsdl:output message="tns:GetWsdlResponse" name="GetWsdlResponse">
             </wsdl:output>
         </wsdl:operation>
-        <wsdl:operation name="GetOpenApi">
-            <wsdl:input message="tns:GetOpenApi" name="GetOpenApi">
+        <wsdl:operation name="getOpenAPI">
+            <wsdl:input message="tns:getOpenAPI" name="getOpenAPI">
             </wsdl:input>
-            <wsdl:output message="tns:GetOpenApiResponse" name="GetOpenApiResponse">
+            <wsdl:output message="tns:getOpenAPIResponse" name="getOpenAPIResponse">
             </wsdl:output>
         </wsdl:operation>
     </wsdl:portType>
@@ -338,10 +338,10 @@ http://x-road.eu/xsd/identifiers ">
                 <soap:header message="tns:requestheader" part="protocolVersion" use="literal"/>
             </wsdl:output>
         </wsdl:operation>
-        <wsdl:operation name="GetOpenApi">
+        <wsdl:operation name="getOpenAPI">
             <soap:operation soapAction=""/>
             <id:version>v1</id:version>
-            <wsdl:input name="GetOpenApi">
+            <wsdl:input name="getOpenAPI">
                 <soap:body parts="body" use="literal"/>
                 <soap:header message="tns:requestheader" part="client" use="literal"/>
                 <soap:header message="tns:requestheader" part="service" use="literal"/>
@@ -350,7 +350,7 @@ http://x-road.eu/xsd/identifiers ">
                 <soap:header message="tns:requestheader" part="issue" use="literal"/>
                 <soap:header message="tns:requestheader" part="protocolVersion" use="literal"/>
             </wsdl:input>
-            <wsdl:output name="GetOpenApiResponse">
+            <wsdl:output name="getOpenAPIResponse">
                 <soap:body parts="body" use="literal"/>
                 <soap:header message="tns:requestheader" part="client" use="literal"/>
                 <soap:header message="tns:requestheader" part="service" use="literal"/>
