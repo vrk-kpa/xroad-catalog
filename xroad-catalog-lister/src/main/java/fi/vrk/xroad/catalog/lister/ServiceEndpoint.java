@@ -26,6 +26,7 @@ import com.google.common.collect.Lists;
 import fi.vrk.xroad.catalog.persistence.CatalogService;
 import fi.vrk.xroad.catalog.persistence.entity.OpenApi;
 import fi.vrk.xroad.catalog.persistence.entity.Wsdl;
+import fi.vrk.xroad.catalog.persistence.entity.Service;
 import fi.vrk.xroad.xroad_catalog_lister.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,16 +60,22 @@ public class ServiceEndpoint {
         return response;
     }
 
-    @PayloadRoot(namespace = NAMESPACE_URI, localPart = "isSoapProvider")
+    @PayloadRoot(namespace = NAMESPACE_URI, localPart = "IsSoapProvider")
     @ResponsePayload
-    public boolean isSoapProvider(@RequestPayload Service request) {
-        return !request.getWsdl().getExternalId().isEmpty();
+    public IsSoapProviderResponse isSoapProvider(@RequestPayload IsSoapProvider request) {
+        IsSoapProviderResponse response = new IsSoapProviderResponse();
+        Service service = catalogService.getService(request.getServiceCode());
+        response.setProvider(service.hasWsdl());
+        return response;
     }
 
-    @PayloadRoot(namespace = NAMESPACE_URI, localPart = "isRestProvider")
+    @PayloadRoot(namespace = NAMESPACE_URI, localPart = "IsRestProvider")
     @ResponsePayload
-    public boolean isRestProvider(@RequestPayload Service request) {
-        return !request.getOpenapi().getExternalId().isEmpty();
+    public IsRestProviderResponse isRestProvider(@RequestPayload IsRestProvider request) {
+        IsRestProviderResponse response = new IsRestProviderResponse();
+        Service service = catalogService.getService(request.getServiceCode());
+        response.setProvider(service.hasOpenApi());
+        return response;
     }
 
     @PayloadRoot(namespace = NAMESPACE_URI, localPart = "GetWsdl")

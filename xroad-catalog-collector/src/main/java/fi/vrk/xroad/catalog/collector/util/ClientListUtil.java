@@ -59,7 +59,7 @@ public class ClientListUtil {
             xRoadClientIdentifierType.setSubsystemCode(id.optString("subsystem_code"));
             xRoadClientIdentifierType.setGroupCode(id.optString("group_code"));
             xRoadClientIdentifierType.setServiceCode(id.optString("service_code"));
-            xRoadClientIdentifierType.setServiceVersion(id.optString("service_cersion"));
+            xRoadClientIdentifierType.setServiceVersion(id.optString("service_version"));
             xRoadClientIdentifierType.setSecurityCategoryCode(id.optString("security_category_code"));
             xRoadClientIdentifierType.setServerCode(id.optString("server_code"));
             xRoadClientIdentifierType.setObjectType(XRoadObjectType.fromValue(id.optString("object_type")));

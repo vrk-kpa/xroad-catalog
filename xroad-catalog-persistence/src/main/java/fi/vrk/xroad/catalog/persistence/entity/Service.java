@@ -55,10 +55,10 @@ public class Service {
     // http://stackoverflow.com/questions/1444227/making-a-onetoone-relation-lazy
     // https://developer.jboss.org/wiki/SomeExplanationsOnLazyLoadingone-to-one
     @Getter(AccessLevel.NONE) // do not create default getter/setter, we provide a wrapper that hides the collection
-    @OneToMany(mappedBy = "service", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "service", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private Set<Wsdl> wsdls = new HashSet<>();
     @Getter(AccessLevel.NONE) // do not create default getter/setter, we provide a wrapper that hides the collection
-    @OneToMany(mappedBy = "service", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "service", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private Set<OpenApi> openApis = new HashSet<>();
 
 
@@ -87,6 +87,10 @@ public class Service {
         wsdls.add(wsdl);
     }
     public Wsdl getWsdl() { return wsdls.isEmpty() ? null : wsdls.iterator().next(); }
+
+    public boolean hasWsdl() { return !wsdls.isEmpty(); }
+
+    public boolean hasOpenApi() { return !openApis.isEmpty(); }
 
     /**
      * Add given openApi to set of openApis. Create the set if needed.

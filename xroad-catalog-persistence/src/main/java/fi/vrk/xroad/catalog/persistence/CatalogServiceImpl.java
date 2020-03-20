@@ -103,6 +103,11 @@ public class CatalogServiceImpl implements CatalogService {
     }
 
     @Override
+    public Service getService(String serviceCode) {
+        return serviceRepository.findAnyByCode(serviceCode);
+    }
+
+    @Override
     public void saveAllMembersAndSubsystems(Collection<Member> members) {
         LocalDateTime now = LocalDateTime.now();
         // process members
