@@ -43,28 +43,14 @@ public class MethodListUtil {
     }
 
 
-    public static List<XRoadServiceIdentifierType> methodListFromResponse(ClientType clientType, Subsystem subsystem) {
+    public static List<XRoadServiceIdentifierType> methodListFromResponse(ClientType clientType) {
         final String url = new StringBuilder().append("http://ss1/r1/")
                 .append(clientType.getId().getXRoadInstance()).append("/")
                 .append(clientType.getId().getMemberClass()).append("/")
                 .append(clientType.getId().getMemberCode()).append("/")
                 .append(clientType.getId().getSubsystemCode()).append("/listMethods/v1").toString();
 
-        final String clientHeader = new StringBuilder()
-                .append(clientType.getId().getXRoadInstance()).append("/")
-                .append(clientType.getId().getMemberClass()).append("/")
-                .append(clientType.getId().getMemberCode()).append("/")
-                .append(clientType.getId().getSubsystemCode()).toString();
-
-        RestTemplate restTemplate = new RestTemplate();
-        HttpHeaders headers = new HttpHeaders();
-        List<MediaType> mediaTypes = new ArrayList<>();
-        mediaTypes.add(MediaType.APPLICATION_JSON);
-        headers.setAccept(mediaTypes);
-        headers.set("X-Road-Client", clientHeader);
-        final HttpEntity<String> entity = new HttpEntity<>(headers);
-        ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, entity, String.class);
-        JSONObject json = new JSONObject(response.getBody());
+        JSONObject json = MethodListUtil.getJSON(url, clientType);
         JSONArray serviceList = json.getJSONArray("service");
         List<XRoadServiceIdentifierType> restServices = new ArrayList<>();
         for (int i = 0; i < serviceList.length(); i++) {
@@ -80,6 +66,40 @@ public class MethodListUtil {
         }
 
         return restServices;
+    }
+
+    public static String openApiFromResponse(ClientType clientType) {
+        final String url = new StringBuilder().append("http://ss1/r1/")
+                .append(clientType.getId().getXRoadInstance()).append("/")
+                .append(clientType.getId().getMemberClass()).append("/")
+                .append(clientType.getId().getMemberCode()).append("/")
+                .append(clientType.getId().getSubsystemCode()).append("/getOpenAPI?serviceCode=")
+                .append(clientType.getId().getServiceCode()).toString();
+
+        JSONObject json = MethodListUtil.getJSON(url, clientType);
+
+        return json.toString();
+    }
+
+    private static String createHeader(ClientType clientType) {
+        return new StringBuilder()
+                .append(clientType.getId().getXRoadInstance()).append("/")
+                .append(clientType.getId().getMemberClass()).append("/")
+                .append(clientType.getId().getMemberCode()).append("/")
+                .append(clientType.getId().getSubsystemCode()).toString();
+    }
+
+    private static JSONObject getJSON(String url, ClientType clientType) {
+        RestTemplate restTemplate = new RestTemplate();
+        HttpHeaders headers = new HttpHeaders();
+        List<MediaType> mediaTypes = new ArrayList<>();
+        mediaTypes.add(MediaType.APPLICATION_JSON);
+        headers.setAccept(mediaTypes);
+        headers.set("X-Road-Client", MethodListUtil.createHeader(clientType));
+        final HttpEntity<String> entity = new HttpEntity<>(headers);
+        ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, entity, String.class);
+        JSONObject json = new JSONObject(response.getBody());
+        return json;
     }
 
 }

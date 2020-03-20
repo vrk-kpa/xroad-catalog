@@ -56,22 +56,6 @@
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
-            <xs:element name="getOpenAPI">
-                <xs:complexType>
-                    <xs:sequence>
-                        <xs:element name="serviceCode" type="xs:string"/>
-                        <xs:element name="serviceVersion" type="xs:string"/>
-                    </xs:sequence>
-                </xs:complexType>
-            </xs:element>
-            <xs:element name="getOpenAPIResponse">
-                <xs:complexType>
-                    <xs:sequence>
-                        <xs:element name="serviceCode" type="xs:string"/>
-                        <xs:element name="serviceVersion" type="xs:string"/>
-                    </xs:sequence>
-                </xs:complexType>
-            </xs:element>
         </xs:schema>
     </wsdl:types>
 
@@ -125,32 +109,10 @@
         <wsdl:part name="protocolVersion" element="xrd:protocolVersion"/>
     </wsdl:message>
 
-    <wsdl:message name="getOpenAPI">
-        <wsdl:part name="getOpenAPI" element="xrd:getOpenAPI"/>
-
-        <wsdl:part name="client" element="xrd:client"/>
-        <wsdl:part name="service" element="xrd:service"/>
-        <wsdl:part name="userId" element="xrd:userId"/>
-        <wsdl:part name="id" element="xrd:id"/>
-        <wsdl:part name="protocolVersion" element="xrd:protocolVersion"/>
-    </wsdl:message>
-
     <wsdl:message name="getWsdlResponse">
         <wsdl:part name="getWsdlResponse" element="xrd:getWsdlResponse"/>
         <!-- the wsdl is returned as an attachment -->
         <wsdl:part name="wsdl" type="xs:base64Binary"/>
-
-        <wsdl:part name="client" element="xrd:client"/>
-        <wsdl:part name="service" element="xrd:service"/>
-        <wsdl:part name="userId" element="xrd:userId"/>
-        <wsdl:part name="id" element="xrd:id"/>
-        <wsdl:part name="protocolVersion" element="xrd:protocolVersion"/>
-    </wsdl:message>
-
-    <wsdl:message name="getOpenAPIResponse">
-        <wsdl:part name="getOpenAPIResponse" element="xrd:getOpenAPIResponse"/>
-        <!-- the wsdl is returned as an attachment -->
-        <wsdl:part name="openapi" type="xs:base64Binary"/>
 
         <wsdl:part name="client" element="xrd:client"/>
         <wsdl:part name="service" element="xrd:service"/>
@@ -177,10 +139,6 @@
         <wsdl:operation name="getWsdl">
             <wsdl:input message="meta:getWsdl" name="getWsdl"/>
             <wsdl:output message="meta:getWsdlResponse" name="getWsdlResponse"/>
-        </wsdl:operation>
-        <wsdl:operation name="getOpenAPI">
-            <wsdl:input message="meta:getOpenAPI" name="getOpenAPI"/>
-            <wsdl:output message="meta:getOpenAPIResponse" name="getOpenAPIResponse"/>
         </wsdl:operation>
     </wsdl:portType>
 
@@ -247,32 +205,6 @@
                     </mime:part>
                     <mime:part>
                         <mime:content part="wsdl" type="text/xml"/>
-                    </mime:part>
-                </mime:multipartRelated>
-            </wsdl:output>
-        </wsdl:operation>
-        <wsdl:operation name="getOpenAPI">
-            <soap:operation soapAction=""/>
-            <wsdl:input name="getOpenAPI">
-                <soap:body parts="getOpenAPI" use="literal"/>
-                <soap:header message="meta:getOpenAPI" part="client" use="literal"/>
-                <soap:header message="meta:getOpenAPI" part="service" use="literal"/>
-                <soap:header message="meta:getOpenAPI" part="userId" use="literal"/>
-                <soap:header message="meta:getOpenAPI" part="id" use="literal"/>
-                <soap:header message="meta:getOpenAPI" part="protocolVersion" use="literal"/>
-            </wsdl:input>
-            <wsdl:output name="getOpenAPIResponse">
-                <mime:multipartRelated>
-                    <mime:part>
-                        <soap:body parts="getOpenAPIResponse" use="literal"/>
-                        <soap:header message="meta:getOpenAPIResponse" part="client" use="literal"/>
-                        <soap:header message="meta:getOpenAPIResponse" part="service" use="literal"/>
-                        <soap:header message="meta:getOpenAPIResponse" part="userId" use="literal"/>
-                        <soap:header message="meta:getOpenAPIResponse" part="id" use="literal"/>
-                        <soap:header message="meta:getOpenAPIResponse" part="protocolVersion" use="literal"/>
-                    </mime:part>
-                    <mime:part>
-                        <mime:content part="openapi" type="text/xml"/>
                     </mime:part>
                 </mime:multipartRelated>
             </wsdl:output>

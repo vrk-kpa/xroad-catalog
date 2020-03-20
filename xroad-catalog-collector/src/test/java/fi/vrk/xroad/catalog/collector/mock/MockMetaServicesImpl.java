@@ -86,21 +86,6 @@ public class MockMetaServicesImpl implements MetaServicesPort {
         log.info("Returning WSDL");
     }
 
-    @Override
-    public void getOpenApi(GetOpenApi getOpenApi, Holder<XRoadClientIdentifierType> client,
-                    Holder<XRoadServiceIdentifierType> service, Holder<String> userId,
-                    Holder<String> id, Holder<String> protocolVersion,
-                    Holder<GetOpenApiResponse> getOpenApiResponse, Holder<byte[]> openapi) {
-
-        final GetOpenApiResponse response = new GetOpenApiResponse();
-        response.setServiceCode(getOpenApi.getServiceCode());
-        response.setServiceVersion(getOpenApi.getServiceVersion());
-        getOpenApiResponse.value = response;
-        final String tmp = MessageFormat.format(WSDL_TEMPLATE, getOpenApi.getServiceCode(), getOpenApi.getServiceVersion());
-        openapi.value = tmp.getBytes(StandardCharsets.UTF_8);
-        log.info("Returning OPENAPI");
-    }
-
     private XRoadServiceIdentifierType generateService(String serviceCode,
                                                        String serviceVersion,
                                                        XRoadServiceIdentifierType serviceHeader) {

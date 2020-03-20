@@ -137,55 +137,21 @@ public class XRoadClient {
     }
 
     public String getOpenApi(XRoadServiceIdentifierType service) {
+        ClientType clientType = new ClientType();
+        XRoadClientIdentifierType xRoadClientIdentifierType = new XRoadClientIdentifierType();
+        xRoadClientIdentifierType.setXRoadInstance(service.getXRoadInstance());
+        xRoadClientIdentifierType.setMemberClass(service.getMemberClass());
+        xRoadClientIdentifierType.setMemberCode(service.getMemberCode());
+        xRoadClientIdentifierType.setSubsystemCode(service.getSubsystemCode());
+        xRoadClientIdentifierType.setGroupCode(service.getGroupCode());
+        xRoadClientIdentifierType.setServiceCode(service.getServiceCode());
+        xRoadClientIdentifierType.setServiceVersion(service.getServiceVersion());
+        xRoadClientIdentifierType.setSecurityCategoryCode(service.getSecurityCategoryCode());
+        xRoadClientIdentifierType.setServerCode(service.getServerCode());
+        xRoadClientIdentifierType.setObjectType(service.getObjectType());
+        clientType.setId(xRoadClientIdentifierType);
 
-        XRoadServiceIdentifierType serviceIdentifierType = new XRoadServiceIdentifierType();
-        copyIdentifierType(serviceIdentifierType, service);
-
-        XRoadClientIdentifierType tmpClientId = new XRoadClientIdentifierType();
-        copyIdentifierType(tmpClientId, clientId);
-
-        serviceIdentifierType.setServiceCode("getOpenAPI");
-        serviceIdentifierType.setServiceVersion("v1");
-        serviceIdentifierType.setObjectType(XRoadObjectType.SERVICE);
-
-        final GetOpenAPI getOpenApi = new GetOpenAPI();
-        getOpenApi.setServiceCode(service.getServiceCode());
-        getOpenApi.setServiceVersion(service.getServiceVersion());
-
-        final Holder<GetOpenAPIResponse> response = new Holder<>();
-        final Holder<byte[]> openApi = new Holder<>();
-
-        metaServicesPort.getOpenAPI(getOpenApi,
-                holder(tmpClientId),
-                holder(serviceIdentifierType),
-                userId(),
-                queryId(),
-                protocolVersion(),
-                response,
-                openApi);
-
-        if (!(openApi.value instanceof byte[])) {
-            // Apache CXF does not map the attachment returned by the security server to the openApi
-            // output parameter due to missing Content-Id header. Extract the attachment from the
-            // response context.
-            DataHandler dh;
-            final Client client = ClientProxy.getClient(metaServicesPort);
-            final Collection<Attachment> attachments =
-                    (Collection<Attachment>)client.getResponseContext().get(Message.ATTACHMENTS);
-            if (attachments != null && attachments.size() == 1) {
-                dh = attachments.iterator().next().getDataHandler();
-            } else {
-                throw new CatalogCollectorRuntimeException("Expected one openApi attachment");
-            }
-            try (ByteArrayOutputStream buf = new ByteArrayOutputStream()) {
-                dh.writeTo(buf);
-                return buf.toString(StandardCharsets.UTF_8.name());
-            } catch (IOException e) {
-                throw new CatalogCollectorRuntimeException("Error downloading openApi", e);
-            }
-        } else {
-            return new String(openApi.value, StandardCharsets.UTF_8);
-        }
+        return MethodListUtil.openApiFromResponse(clientType);
     }
 
 
