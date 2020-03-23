@@ -1,4 +1,9 @@
-# xroad-catalog
+## About the repository 
+
+This repository contains information about the X-Road Catalog, source codes, its development, installation and documentation.
+
+## Introduction to X-Road Catalog
+
 The purpose of this piece of software is to collect information, more specifically members, subsystems and services, from a X-RoadCatalog instance and offer an interface where the information can be read.
 
 The software consists of theree parts:
@@ -10,6 +15,47 @@ The software consists of theree parts:
   * Can be used as an X-Road service (X-Road headers are in place)
 - [xroad-catalog-persistence](xroad-catalog-persistence/README.md)
   * Library used to persist and read persisted data. Used by both of the above.
+  
+![X-Road Catalog overview](xroad-catalog.png)
+
+## Environments
+* Internal development environment in the AWS: [AWS xroad-catalog](http://xroad-catalog.i.palveluvayla.com)
+* DVV test
+* DVV production
+
+## Version management
+For versioning, [GitHub Flow](https://guides.github.com/introduction/flow/) is used
+
+* Anything in the master branch is deployable
+* To work on something new, create a branch off from master and given a descriptively name(ie: new-oauth2-scopes)
+* Commit to that branch locally and regularly push your work to the same named branch on the server
+* When you need feedback or help, or you think the branch is ready for merging, open a pull request
+* After someone else has reviewed and signed off on the feature, you can merge it into master
+* Once it is merged and pushed to master, you can and should deploy immediately
+
+## Tools
+Running the X-Road Catalog software requires Linux (Ubuntu or RHEL). As a development environment,  only Ubuntu (>=16.04, 18.04 recommended) is currently supported. It should be possible to use some other Linux distribution for development, but the instructions and helper scripts assume Ubuntu. If you are using some other operating system (e.g. Windows or macOS), the easiest option is to first install Ubuntu 18.04 into a virtual machine.
+
+
+*Required for building*
+* OpenJDK / JDK version 8
+* Gradle
+
+*Recommended for development environment*
+* Docker (for deb/rpm packaging)
+* LXD (https://linuxcontainers.org/lxd/)
+  * for setting up a local X-Road instance
+* Ansible
+  * for automating the X-Road instance installation
+
+The development environment should have at least 8GB of memory and 20GB of free disk space (applies to a virtual machine as well), especially if you set up a local X-Road instance.
+
+## Jenkins jobs
+Jenkins job for building the XRoad-Catalog Collector: [xroad-catalog-collector-build](https://dev-jenkins.palveluvayla.com:8082/job/xroad-catalog-collector-build/)
+Jenkins job for building the XRoad-Catalog Lister: [xroad-catalog-lister-build](https://dev-jenkins.palveluvayla.com:8082/job/xroad-catalog-lister-build/)
+Jenkins job for deployment of the XRoad-Catalog Collector: [deploy-xroad-catalog-collector](https://dev-jenkins.palveluvayla.com:8082/view/xroad-catalog/job/deploy-xroad-catalog-collector/)
+Jenkins job for deployment of the XRoad-Catalog Lister: [deploy-xroad-catalog-lister](https://dev-jenkins.palveluvayla.com:8082/view/xroad-catalog/job/deploy-xroad-catalog-lister/)
+
   
 ## Installation
 The installable software consists of xroad-catalog-collector and xroad-catalog-lister. Both are provides as RPM packages. 

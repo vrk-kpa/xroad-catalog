@@ -1,6 +1,9 @@
 # xroad-catalog-persistence
 Persistence library for xroad-catalog
 
+## Introduction to X-Road Catalog Collector
+
+The purpose of this piece of software is to persist and read persisted data. Used by the Collector and Lister
 
 ## Create database
 ```sh
