@@ -20,8 +20,8 @@ The software consists of theree parts:
 
 ## Environments
 * Internal development environment in the AWS: [AWS xroad-catalog](http://xroad-catalog.i.palveluvayla.com)
-* DVV test
-* DVV production
+* DVV test: [servicerepotest](https://servicerepotest01.csc.fi)
+* DVV production [servicerepoprod](https://servicerepoprod01.csc.fi)
 
 ## Version management
 For versioning, [GitHub Flow](https://guides.github.com/introduction/flow/) is used
@@ -51,10 +51,10 @@ Running the X-Road Catalog software requires Linux (Ubuntu or RHEL). As a develo
 The development environment should have at least 8GB of memory and 20GB of free disk space (applies to a virtual machine as well), especially if you set up a local X-Road instance.
 
 ## Jenkins jobs
-Jenkins job for building the XRoad-Catalog Collector: [xroad-catalog-collector-build](https://dev-jenkins.palveluvayla.com:8082/job/xroad-catalog-collector-build/)
-Jenkins job for building the XRoad-Catalog Lister: [xroad-catalog-lister-build](https://dev-jenkins.palveluvayla.com:8082/job/xroad-catalog-lister-build/)
-Jenkins job for deployment of the XRoad-Catalog Collector: [deploy-xroad-catalog-collector](https://dev-jenkins.palveluvayla.com:8082/view/xroad-catalog/job/deploy-xroad-catalog-collector/)
-Jenkins job for deployment of the XRoad-Catalog Lister: [deploy-xroad-catalog-lister](https://dev-jenkins.palveluvayla.com:8082/view/xroad-catalog/job/deploy-xroad-catalog-lister/)
+* Jenkins job for building the XRoad-Catalog Collector: [xroad-catalog-collector-build](https://dev-jenkins.palveluvayla.com:8082/job/xroad-catalog-collector-build/)
+* Jenkins job for building the XRoad-Catalog Lister: [xroad-catalog-lister-build](https://dev-jenkins.palveluvayla.com:8082/job/xroad-catalog-lister-build/)
+* Jenkins job for deployment of the XRoad-Catalog Collector: [deploy-xroad-catalog-collector](https://dev-jenkins.palveluvayla.com:8082/view/xroad-catalog/job/deploy-xroad-catalog-collector/)
+* Jenkins job for deployment of the XRoad-Catalog Lister: [deploy-xroad-catalog-lister](https://dev-jenkins.palveluvayla.com:8082/view/xroad-catalog/job/deploy-xroad-catalog-lister/)
 
   
 ## Installation
