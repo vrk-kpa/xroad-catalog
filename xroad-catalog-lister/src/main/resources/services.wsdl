@@ -142,6 +142,54 @@ http://x-road.eu/xsd/identifiers ">
                 </xs:complexType>
             </xs:element>
 
+            <xs:element name="GetOpenAPI">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="externalId" type="xs:string"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+
+            <xs:element name="GetOpenAPIResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="openapi" type="xs:string"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+
+            <xs:element name="IsSoapProvider">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="serviceCode" type="xs:string"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+
+            <xs:element name="IsSoapProviderResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="provider" type="xs:boolean"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+
+            <xs:element name="IsRestProvider">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="serviceCode" type="xs:string"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+
+            <xs:element name="IsRestProviderResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="provider" type="xs:boolean"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+
             <xs:complexType name="MemberList">
                 <xs:sequence>
                     <xs:element maxOccurs="unbounded" minOccurs="0" name="member" type="tns:Member"/>
@@ -191,6 +239,7 @@ http://x-road.eu/xsd/identifiers ">
                     <xs:element name="serviceCode" type="xs:string"/>
                     <xs:element name="serviceVersion" type="xs:string"/>
                     <xs:element name="wsdl" type="tns:WSDL"/>
+                    <xs:element name="openapi" type="tns:OPENAPI"/>
                     <xs:element name="created" type="xs:dateTime"/>
                     <xs:element name="changed" type="xs:dateTime"/>
                     <xs:element name="fetched" type="xs:dateTime"/>
@@ -199,6 +248,16 @@ http://x-road.eu/xsd/identifiers ">
             </xs:complexType>
 
             <xs:complexType name="WSDL">
+                <xs:sequence>
+                    <xs:element name="externalId" type="xs:string"/>
+                    <xs:element name="created" type="xs:dateTime"/>
+                    <xs:element name="changed" type="xs:dateTime"/>
+                    <xs:element name="fetched" type="xs:dateTime"/>
+                    <xs:element name="removed" type="xs:dateTime"/>
+                </xs:sequence>
+            </xs:complexType>
+
+            <xs:complexType name="OPENAPI">
                 <xs:sequence>
                     <xs:element name="externalId" type="xs:string"/>
                     <xs:element name="created" type="xs:dateTime"/>
@@ -237,7 +296,30 @@ http://x-road.eu/xsd/identifiers ">
         <wsdl:part element="tns:GetWsdl" name="body">
         </wsdl:part>
     </wsdl:message>
-
+    <wsdl:message name="GetOpenAPIResponse">
+        <wsdl:part element="tns:GetOpenAPIResponse" name="body">
+        </wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="GetOpenAPI">
+        <wsdl:part element="tns:GetOpenAPI" name="body">
+        </wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="IsSoapProviderResponse">
+        <wsdl:part element="tns:IsSoapProviderResponse" name="body">
+        </wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="IsSoapProvider">
+        <wsdl:part element="tns:IsSoapProvider" name="body">
+        </wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="IsRestProviderResponse">
+        <wsdl:part element="tns:IsRestProviderResponse" name="body">
+        </wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="IsRestProvider">
+        <wsdl:part element="tns:IsRestProvider" name="body">
+        </wsdl:part>
+    </wsdl:message>
     <wsdl:portType name="ServicesPort">
         <wsdl:operation name="ListMembers">
             <wsdl:input message="tns:ListMembers" name="ListMembers">
@@ -249,6 +331,24 @@ http://x-road.eu/xsd/identifiers ">
             <wsdl:input message="tns:GetWsdl" name="GetWsdl">
             </wsdl:input>
             <wsdl:output message="tns:GetWsdlResponse" name="GetWsdlResponse">
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="GetOpenAPI">
+            <wsdl:input message="tns:GetOpenAPI" name="GetOpenAPI">
+            </wsdl:input>
+            <wsdl:output message="tns:GetOpenAPIResponse" name="GetOpenAPIResponse">
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="IsSoapProvider">
+            <wsdl:input message="tns:IsSoapProvider" name="IsSoapProvider">
+            </wsdl:input>
+            <wsdl:output message="tns:IsSoapProviderResponse" name="IsSoapProviderResponse">
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="IsRestProvider">
+            <wsdl:input message="tns:IsRestProvider" name="IsRestProvider">
+            </wsdl:input>
+            <wsdl:output message="tns:IsRestProviderResponse" name="IsRestProviderResponse">
             </wsdl:output>
         </wsdl:operation>
     </wsdl:portType>
@@ -289,6 +389,46 @@ http://x-road.eu/xsd/identifiers ">
                 <soap:header message="tns:requestheader" part="protocolVersion" use="literal"/>
             </wsdl:input>
             <wsdl:output name="GetWsdlResponse">
+                <soap:body parts="body" use="literal"/>
+                <soap:header message="tns:requestheader" part="client" use="literal"/>
+                <soap:header message="tns:requestheader" part="service" use="literal"/>
+                <soap:header message="tns:requestheader" part="userId" use="literal"/>
+                <soap:header message="tns:requestheader" part="id" use="literal"/>
+                <soap:header message="tns:requestheader" part="issue" use="literal"/>
+                <soap:header message="tns:requestheader" part="protocolVersion" use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="GetOpenAPI">
+            <soap:operation soapAction=""/>
+            <id:version>v1</id:version>
+            <wsdl:input name="GetOpenAPI">
+                <soap:body parts="body" use="literal"/>
+                <soap:header message="tns:requestheader" part="client" use="literal"/>
+                <soap:header message="tns:requestheader" part="service" use="literal"/>
+                <soap:header message="tns:requestheader" part="userId" use="literal"/>
+                <soap:header message="tns:requestheader" part="id" use="literal"/>
+                <soap:header message="tns:requestheader" part="issue" use="literal"/>
+                <soap:header message="tns:requestheader" part="protocolVersion" use="literal"/>
+            </wsdl:input>
+            <wsdl:output name="GetOpenAPIResponse">
+                <soap:body parts="body" use="literal"/>
+                <soap:header message="tns:requestheader" part="client" use="literal"/>
+                <soap:header message="tns:requestheader" part="service" use="literal"/>
+                <soap:header message="tns:requestheader" part="userId" use="literal"/>
+                <soap:header message="tns:requestheader" part="id" use="literal"/>
+                <soap:header message="tns:requestheader" part="issue" use="literal"/>
+                <soap:header message="tns:requestheader" part="protocolVersion" use="literal"/>
+            </wsdl:output>
+            <wsdl:output name="IsSoapProviderResponse">
+                <soap:body parts="body" use="literal"/>
+                <soap:header message="tns:requestheader" part="client" use="literal"/>
+                <soap:header message="tns:requestheader" part="service" use="literal"/>
+                <soap:header message="tns:requestheader" part="userId" use="literal"/>
+                <soap:header message="tns:requestheader" part="id" use="literal"/>
+                <soap:header message="tns:requestheader" part="issue" use="literal"/>
+                <soap:header message="tns:requestheader" part="protocolVersion" use="literal"/>
+            </wsdl:output>
+            <wsdl:output name="IsRestProviderResponse">
                 <soap:body parts="body" use="literal"/>
                 <soap:header message="tns:requestheader" part="client" use="literal"/>
                 <soap:header message="tns:requestheader" part="service" use="literal"/>

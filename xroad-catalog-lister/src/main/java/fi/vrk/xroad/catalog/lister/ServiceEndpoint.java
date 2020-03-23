@@ -24,7 +24,9 @@ package fi.vrk.xroad.catalog.lister;
 
 import com.google.common.collect.Lists;
 import fi.vrk.xroad.catalog.persistence.CatalogService;
+import fi.vrk.xroad.catalog.persistence.entity.OpenApi;
 import fi.vrk.xroad.catalog.persistence.entity.Wsdl;
+import fi.vrk.xroad.catalog.persistence.entity.Service;
 import fi.vrk.xroad.xroad_catalog_lister.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,6 +60,24 @@ public class ServiceEndpoint {
         return response;
     }
 
+    @PayloadRoot(namespace = NAMESPACE_URI, localPart = "IsSoapProvider")
+    @ResponsePayload
+    public IsSoapProviderResponse isSoapProvider(@RequestPayload IsSoapProvider request) {
+        IsSoapProviderResponse response = new IsSoapProviderResponse();
+        Service service = catalogService.getService(request.getServiceCode());
+        response.setProvider(service.hasWsdl());
+        return response;
+    }
+
+    @PayloadRoot(namespace = NAMESPACE_URI, localPart = "IsRestProvider")
+    @ResponsePayload
+    public IsRestProviderResponse isRestProvider(@RequestPayload IsRestProvider request) {
+        IsRestProviderResponse response = new IsRestProviderResponse();
+        Service service = catalogService.getService(request.getServiceCode());
+        response.setProvider(service.hasOpenApi());
+        return response;
+    }
+
     @PayloadRoot(namespace = NAMESPACE_URI, localPart = "GetWsdl")
     @ResponsePayload
     public GetWsdlResponse getWsdl(@RequestPayload GetWsdl request) {
@@ -68,6 +88,19 @@ public class ServiceEndpoint {
                     + " not found");
         }
         response.setWsdl(wsdl.getData());
+        return response;
+    }
+
+    @PayloadRoot(namespace = NAMESPACE_URI, localPart = "GetOpenAPI")
+    @ResponsePayload
+    public GetOpenAPIResponse getOpenApi(@RequestPayload GetOpenAPI request) {
+        GetOpenAPIResponse response = new GetOpenAPIResponse();
+        OpenApi openApi = catalogService.getOpenApi(request.getExternalId());
+        if (openApi == null) {
+            throw new OpenApiNotFoundException("OpenApi with external id " + request.getExternalId()
+                    + " not found");
+        }
+        response.setOpenapi(openApi.getData());
         return response;
     }
 

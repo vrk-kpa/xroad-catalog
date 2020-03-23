@@ -23,10 +23,9 @@
 package fi.vrk.xroad.catalog.collector.actors;
 
 import fi.vrk.xroad.catalog.collector.util.ClientTypeUtil;
+import fi.vrk.xroad.catalog.collector.util.MethodListUtil;
 import fi.vrk.xroad.catalog.collector.util.XRoadClient;
 import fi.vrk.xroad.catalog.collector.wsimport.ClientType;
-import fi.vrk.xroad.catalog.collector.wsimport.XRoadClientIdentifierType;
-import fi.vrk.xroad.catalog.collector.wsimport.XRoadObjectType;
 import fi.vrk.xroad.catalog.collector.wsimport.XRoadServiceIdentifierType;
 import fi.vrk.xroad.catalog.persistence.CatalogService;
 import fi.vrk.xroad.catalog.persistence.entity.Member;
@@ -76,10 +75,12 @@ public class ListMethodsActor extends XRoadCatalogActor {
 
     // supervisor-created pool of list methods actors
     private ActorRef fetchWsdlPoolRef;
+    private ActorRef fetchOpenApiPoolRef;
     private XRoadClient xroadClient;
 
-    public ListMethodsActor(ActorRef fetchWsdlPoolRef) {
+    public ListMethodsActor(ActorRef fetchWsdlPoolRef, ActorRef fetchOpenApiPoolRef) {
         this.fetchWsdlPoolRef = fetchWsdlPoolRef;
+        this.fetchOpenApiPoolRef = fetchOpenApiPoolRef;
     }
 
     @Override
@@ -105,23 +106,37 @@ public class ListMethodsActor extends XRoadCatalogActor {
             log.info("{} Handling subsystem {} ", COUNTER, subsystem);
             log.info("Fetching methods for the client with listMethods -service...");
 
+            List<XRoadServiceIdentifierType> restServices = MethodListUtil.methodListFromResponse(clientType);
+            log.info("Received all REST methods for client {} ", ClientTypeUtil.toString(clientType));
+
             // fetch the methods
             log.info("calling web service at {}", webservicesEndpoint);
-            List<XRoadServiceIdentifierType> result = xroadClient.getMethods(clientType.getId());
-            log.info("Received all methods for client {} ", ClientTypeUtil.toString(clientType));
+            List<XRoadServiceIdentifierType> soapServices = xroadClient.getMethods(clientType.getId());
+            log.info("Received all SOAP methods for client {} ", ClientTypeUtil.toString(clientType));
 
             // Save services for subsystems
             List<Service> services = new ArrayList<>();
-            for (XRoadServiceIdentifierType service : result) {
+            for (XRoadServiceIdentifierType service : restServices) {
                 services.add(new Service(subsystem, service.getServiceCode(), service.getServiceVersion()));
             }
+            for (XRoadServiceIdentifierType service : soapServices) {
+                services.add(new Service(subsystem, service.getServiceCode(), service.getServiceVersion()));
+            }
+
             catalogService.saveServices(subsystem.createKey(), services);
 
             // get wsdls
-            for (XRoadServiceIdentifierType service : result) {
+            for (XRoadServiceIdentifierType service : soapServices) {
                 log.info("{} Sending service {} to new MethodActor ", COUNTER, service.getServiceCode());
                 fetchWsdlPoolRef.tell(service, getSender());
             }
+
+            // get openApis
+            for (XRoadServiceIdentifierType service : restServices) {
+                log.info("{} Sending service {} to new MethodActor ", COUNTER, service.getServiceCode());
+                fetchOpenApiPoolRef.tell(service, getSender());
+            }
+
             return true;
 
         } else {

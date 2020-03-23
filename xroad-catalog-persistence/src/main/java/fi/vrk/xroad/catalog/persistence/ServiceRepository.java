@@ -27,6 +27,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 
+import java.util.List;
+
 public interface ServiceRepository extends CrudRepository<Service, Long> {
     /**
      * Only returns non-removed services
@@ -62,4 +64,7 @@ public interface ServiceRepository extends CrudRepository<Service, Long> {
                                    @Param("memberCode") String memberCode,
                                    @Param("subsystemCode") String subsystemCode,
                                    @Param("serviceCode") String serviceCode);
+
+    @Query("SELECT s FROM Service s WHERE s.serviceCode = :serviceCode")
+    Service findAnyByCode(@Param("serviceCode") String serviceCode);
 }

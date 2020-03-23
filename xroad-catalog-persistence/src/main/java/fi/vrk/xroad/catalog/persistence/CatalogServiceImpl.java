@@ -54,6 +54,9 @@ public class CatalogServiceImpl implements CatalogService {
     ServiceRepository serviceRepository;
 
     @Autowired
+    OpenApiRepository openApiRepository;
+
+    @Autowired
     WsdlRepository wsdlRepository;
 
     @Override
@@ -85,6 +88,23 @@ public class CatalogServiceImpl implements CatalogService {
         } else {
             return null;
         }
+    }
+
+    @Override
+    public OpenApi getOpenApi(String externalId) {
+        List<OpenApi> matches = openApiRepository.findAnyByExternalId(externalId);
+        if (matches.size() > 1) {
+            throw new IllegalStateException("multiple matches found to " + externalId + ": " + matches);
+        } else if (matches.size() == 1) {
+            return matches.iterator().next();
+        } else {
+            return null;
+        }
+    }
+
+    @Override
+    public Service getService(String serviceCode) {
+        return serviceRepository.findAnyByCode(serviceCode);
     }
 
     @Override
@@ -243,6 +263,56 @@ public class CatalogServiceImpl implements CatalogService {
                     oldWsdl.setData(wsdl.getData());
                 }
                 oldWsdl.getStatusInfo().setFetched(now);
+            }
+        }
+    }
+
+    @Override
+    public void saveOpenApi(SubsystemId subsystemId, ServiceId serviceId, String openApiString) {
+        Assert.notNull(subsystemId, "subsystemId is required");
+        Assert.notNull(serviceId, "serviceId is required");
+        Service oldService;
+        // bit ugly this one, would be a little cleaner if
+        // https://jira.spring.io/browse/DATAJPA-209 was resolved
+        if (serviceId.getServiceVersion() == null) {
+            oldService = serviceRepository.findActiveNullVersionByNaturalKey(
+                    subsystemId.getXRoadInstance(),
+                    subsystemId.getMemberClass(), subsystemId.getMemberCode(),
+                    subsystemId.getSubsystemCode(), serviceId.getServiceCode());
+        } else {
+            oldService = serviceRepository.findActiveByNaturalKey(subsystemId.getXRoadInstance(),
+                    subsystemId.getMemberClass(), subsystemId.getMemberCode(),
+                    subsystemId.getSubsystemCode(), serviceId.getServiceCode(),
+                    serviceId.getServiceVersion());
+        }
+        if (oldService == null) {
+            throw new IllegalStateException("service " + serviceId + " not found!");
+        }
+        LocalDateTime now = LocalDateTime.now();
+        OpenApi openApi = new OpenApi();
+        openApi.setData(openApiString);
+        OpenApi oldOpenApi = oldService.getOpenApi();
+        if (oldOpenApi == null) {
+            openApi.initializeExternalId();
+            openApi.getStatusInfo().setTimestampsForNew(now);
+            oldService.setOpenApi(openApi);
+            openApi.setService(oldService);
+            openApiRepository.save(openApi);
+        } else {
+            if (oldOpenApi.getStatusInfo().isRemoved()) {
+                // resurrect
+                oldOpenApi.setData(openApi.getData());
+                oldOpenApi.getStatusInfo().setChanged(now);
+                oldOpenApi.getStatusInfo().setRemoved(null);
+                oldOpenApi.getStatusInfo().setFetched(now);
+            } else {
+                // update existing
+                boolean wsdlChanged = !oldOpenApi.getData().equals(openApi.getData());
+                if (wsdlChanged) {
+                    oldOpenApi.getStatusInfo().setChanged(now);
+                    oldOpenApi.setData(openApi.getData());
+                }
+                oldOpenApi.getStatusInfo().setFetched(now);
             }
         }
     }

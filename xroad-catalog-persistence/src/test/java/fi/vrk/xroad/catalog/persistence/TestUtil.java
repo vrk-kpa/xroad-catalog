@@ -148,7 +148,7 @@ public class TestUtil {
 
     public void shallowCopyFields(Service from, Service to) {
         // only copy simple non-jpa-magical primitive properties
-        BeanUtils.copyProperties(from, to, "id", "statusInfo", "subsystem", "wsdl");
+        BeanUtils.copyProperties(from, to, "id", "statusInfo", "subsystem", "wsdl", "openApi");
     }
 
     public void entityManagerDetach(Object entity) {

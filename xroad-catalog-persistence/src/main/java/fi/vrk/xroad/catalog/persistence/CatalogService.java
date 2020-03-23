@@ -74,6 +74,20 @@ public interface CatalogService {
     Wsdl getWsdl(String externalId);
 
     /**
+     * Returns the full OpenApi object. Only returns active ones, removed are not found.
+     * @return Wsdl, if any, null if not found
+     * @throws RuntimeException if multiple matches found.
+     */
+    OpenApi getOpenApi(String externalId);
+
+    /**
+     * Returns the full Service object. Only returns active ones, removed are not found.
+     * @return Service, if any, null if not found
+     * @throws RuntimeException if multiple matches found.
+     */
+    Service getService(String serviceCode);
+
+    /**
      * Stores given members and subsystems. This should be the full dataset of both items
      * - items not included in the parameters are marked as removed, if the existed previously.
      *
@@ -107,5 +121,14 @@ public interface CatalogService {
      * @param wsdl the actual wsdl
      */
     void saveWsdl(SubsystemId subsystemId, ServiceId serviceId, String wsdl);
+
+    /**
+     * Saves given openApi data. The openApi can either be a new one, or an update to an existing one.
+     * Updates "changed" field based on whether data is different compared to last time.
+     * @param subsystemId identifier of the subsystem
+     * @param serviceId identifier of the service
+     * @param openApi the actual openApi
+     */
+    void saveOpenApi(SubsystemId subsystemId, ServiceId serviceId, String openApi);
 
 }

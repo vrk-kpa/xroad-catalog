@@ -22,16 +22,7 @@
  */
 package fi.vrk.xroad.catalog.collector.util;
 
-import fi.vrk.xroad.catalog.collector.wsimport.GetWsdl;
-import fi.vrk.xroad.catalog.collector.wsimport.GetWsdlResponse;
-import fi.vrk.xroad.catalog.collector.wsimport.ListMethods;
-import fi.vrk.xroad.catalog.collector.wsimport.ListMethodsResponse;
-import fi.vrk.xroad.catalog.collector.wsimport.MetaServicesPort;
-import fi.vrk.xroad.catalog.collector.wsimport.ProducerPortService;
-import fi.vrk.xroad.catalog.collector.wsimport.XRoadClientIdentifierType;
-import fi.vrk.xroad.catalog.collector.wsimport.XRoadIdentifierType;
-import fi.vrk.xroad.catalog.collector.wsimport.XRoadObjectType;
-import fi.vrk.xroad.catalog.collector.wsimport.XRoadServiceIdentifierType;
+import fi.vrk.xroad.catalog.collector.wsimport.*;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.cxf.endpoint.Client;
@@ -143,6 +134,24 @@ public class XRoadClient {
         } else {
             return new String(wsdl.value, StandardCharsets.UTF_8);
         }
+    }
+
+    public String getOpenApi(XRoadServiceIdentifierType service) {
+        ClientType clientType = new ClientType();
+        XRoadClientIdentifierType xRoadClientIdentifierType = new XRoadClientIdentifierType();
+        xRoadClientIdentifierType.setXRoadInstance(service.getXRoadInstance());
+        xRoadClientIdentifierType.setMemberClass(service.getMemberClass());
+        xRoadClientIdentifierType.setMemberCode(service.getMemberCode());
+        xRoadClientIdentifierType.setSubsystemCode(service.getSubsystemCode());
+        xRoadClientIdentifierType.setGroupCode(service.getGroupCode());
+        xRoadClientIdentifierType.setServiceCode(service.getServiceCode());
+        xRoadClientIdentifierType.setServiceVersion(service.getServiceVersion());
+        xRoadClientIdentifierType.setSecurityCategoryCode(service.getSecurityCategoryCode());
+        xRoadClientIdentifierType.setServerCode(service.getServerCode());
+        xRoadClientIdentifierType.setObjectType(service.getObjectType());
+        clientType.setId(xRoadClientIdentifierType);
+
+        return MethodListUtil.openApiFromResponse(clientType);
     }
 
 

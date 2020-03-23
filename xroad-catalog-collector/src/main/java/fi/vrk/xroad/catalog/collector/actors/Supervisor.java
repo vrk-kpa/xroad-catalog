@@ -51,6 +51,7 @@ public class Supervisor extends XRoadCatalogActor {
     public static final String LIST_CLIENTS_ACTOR_ROUTER = "list-clients-actor-router";
     public static final String LIST_METHODS_ACTOR_ROUTER = "list-methods-actor-router";
     public static final String FETCH_WSDL_ACTOR_ROUTER = "fetch-wsdl-actor-router";
+    public static final String FETCH_OPENAPI_ACTOR_ROUTER = "fetch-openapi-actor-router";
 
     @Autowired
     private SpringExtension springExtension;
@@ -58,12 +59,16 @@ public class Supervisor extends XRoadCatalogActor {
     private ActorRef listClientsPoolRouter;
     private ActorRef listMethodsPoolRouter;
     private ActorRef fetchWsdlPoolRouter;
+    private ActorRef fetchOpenApiPoolRouter;
 
     @Value("${xroad-catalog.list-methods-pool-size}")
     private int listMethodsPoolSize;
 
     @Value("${xroad-catalog.fetch-wsdl-pool-size}")
     private int fetchWsdlPoolSize;
+
+    @Value("${xroad-catalog.fetch-openapi-pool-size}")
+    private int fetchOpenApiPoolSize;
 
     @Override
     public void preStart() throws Exception {
@@ -84,11 +89,18 @@ public class Supervisor extends XRoadCatalogActor {
                         .props(springExtension.props("fetchWsdlActor")),
                 FETCH_WSDL_ACTOR_ROUTER);
 
+        fetchOpenApiPoolRouter = getContext().actorOf(new SmallestMailboxPool(fetchOpenApiPoolSize)
+                        .withSupervisorStrategy(new OneForOneStrategy(-1,
+                                Duration.Inf(),
+                                (Throwable t) -> restart()))
+                        .props(springExtension.props("fetchOpenApiActor")),
+                FETCH_OPENAPI_ACTOR_ROUTER);
+
         listMethodsPoolRouter = getContext().actorOf(new SmallestMailboxPool(listMethodsPoolSize)
                         .withSupervisorStrategy(new OneForOneStrategy(-1,
                                 Duration.Inf(),
                                 (Throwable t) -> restart()))
-                        .props(springExtension.props("listMethodsActor", fetchWsdlPoolRouter)),
+                        .props(springExtension.props("listMethodsActor", fetchWsdlPoolRouter, fetchOpenApiPoolRouter)),
                 LIST_METHODS_ACTOR_ROUTER);
 
         listClientsPoolRouter = getContext().actorOf(new SmallestMailboxPool(1)
