@@ -5,6 +5,8 @@ Persistence library for xroad-catalog
 
 The purpose of this piece of software is to persist and read persisted data. Used by the Collector and Lister
 
+![X-Road Persistence overview](db.png)
+
 ## Create database
 ```sh
 sudo -u postgres psql --file=src/main/sql/init_database.sql
