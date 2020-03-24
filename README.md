@@ -21,7 +21,10 @@ The software consists of theree parts:
 ## Environments
 * Internal development environment in the AWS: [AWS xroad-catalog](http://xroad-catalog.i.palveluvayla.com)
 * DVV test: [servicerepotest](https://servicerepotest01.csc.fi)
-* DVV production [servicerepoprod](https://servicerepoprod01.csc.fi)
+* DVV production: [servicerepoprod](https://servicerepoprod01.csc.fi)
+* XRoad CS(Central Service): [XRoad cs](https://ice-cs.i.palveluvayla.com:4000)
+* XRoad SS1(Security Server 1): [XRoad ss1](https://ice-ss1.i.palveluvayla.com:4000)
+* XRoad SS1(Security Server 2): [XRoad ss2](https://ice-ss2.i.palveluvayla.com:4000)
 
 ## Version management
 For versioning, [GitHub Flow](https://guides.github.com/introduction/flow/) is used
@@ -34,7 +37,8 @@ For versioning, [GitHub Flow](https://guides.github.com/introduction/flow/) is u
 * Once it is merged and pushed to master, you can and should deploy immediately
 
 ## Tools
-Running the X-Road Catalog software requires Linux (Ubuntu or RHEL). As a development environment,  only Ubuntu (>=16.04, 18.04 recommended) is currently supported. It should be possible to use some other Linux distribution for development, but the instructions and helper scripts assume Ubuntu. If you are using some other operating system (e.g. Windows or macOS), the easiest option is to first install Ubuntu 18.04 into a virtual machine.
+Running the X-Road Catalog software requires Linux (Ubuntu or RHEL). As a development environment,  only RHEL (>=7 recommended) is currently supported. 
+If you are using some other operating system (e.g. Windows or macOS), the easiest option is to first install Ubuntu 18.04 or RHEL 7.0 into a virtual machine.
 
 
 *Required for building*
