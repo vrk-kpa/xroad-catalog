@@ -37,8 +37,7 @@ For versioning, [GitHub Flow](https://guides.github.com/introduction/flow/) is u
 * Once it is merged and pushed to master, you can and should deploy immediately
 
 ## Tools
-Running the X-Road Catalog software requires Linux (Ubuntu or RHEL). As a development environment,  only RHEL (>=7 recommended) is currently supported. 
-If you are using some other operating system (e.g. Windows or macOS), the easiest option is to first install Ubuntu 18.04 or RHEL 7.0 into a virtual machine.
+Running the X-Road Catalog software requires Linux (Ubuntu or RHEL). If you are using some other operating system (e.g. Windows or macOS), the easiest option is to first install Ubuntu 18.04 or RHEL 7.0 into a virtual machine.
 
 
 *Required for building*
