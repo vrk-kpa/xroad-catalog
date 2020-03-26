@@ -136,7 +136,7 @@ public class XRoadClient {
         }
     }
 
-    public String getOpenApi(XRoadServiceIdentifierType service) {
+    public String getOpenApi(XRoadServiceIdentifierType service, String host) {
         ClientType clientType = new ClientType();
         XRoadClientIdentifierType xRoadClientIdentifierType = new XRoadClientIdentifierType();
         xRoadClientIdentifierType.setXRoadInstance(service.getXRoadInstance());
@@ -151,7 +151,7 @@ public class XRoadClient {
         xRoadClientIdentifierType.setObjectType(service.getObjectType());
         clientType.setId(xRoadClientIdentifierType);
 
-        return MethodListUtil.openApiFromResponse(clientType);
+        return MethodListUtil.openApiFromResponse(clientType, host);
     }
 
 

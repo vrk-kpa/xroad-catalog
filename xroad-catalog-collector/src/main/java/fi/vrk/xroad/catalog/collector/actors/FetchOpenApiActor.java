@@ -47,6 +47,9 @@ public class FetchOpenApiActor extends XRoadCatalogActor {
 
     private static AtomicInteger COUNTER = new AtomicInteger(0);
 
+    @Value("${xroad-catalog.security-server-host}")
+    private String xroadSecurityServerHost;
+
     @Value("${xroad-catalog.xroad-instance}")
     private String xroadInstance;
 
@@ -79,7 +82,7 @@ public class FetchOpenApiActor extends XRoadCatalogActor {
         if (message instanceof XRoadServiceIdentifierType) {
             XRoadServiceIdentifierType service = (XRoadServiceIdentifierType) message;
             log.info("Fetching openApi [{}] {}", COUNTER.addAndGet(1), ClientTypeUtil.toString(service));
-            String openApi = xroadClient.getOpenApi(service);
+            String openApi = xroadClient.getOpenApi(service, xroadSecurityServerHost);
             catalogService.saveOpenApi(createSubsystemId(service), createServiceId(service), openApi);
             log.info("Saved openApi successfully");
             return true;
