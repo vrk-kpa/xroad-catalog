@@ -27,6 +27,7 @@ import fi.vrk.xroad.catalog.persistence.entity.Service;
 import fi.vrk.xroad.catalog.persistence.entity.Subsystem;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.web.client.RestTemplate;
 
@@ -38,13 +39,14 @@ import java.util.List;
  */
 public class MethodListUtil {
 
+
     private MethodListUtil() {
         // Private empty constructor
     }
 
 
-    public static List<XRoadServiceIdentifierType> methodListFromResponse(ClientType clientType) {
-        final String url = new StringBuilder().append("http://ss1/r1/")
+    public static List<XRoadServiceIdentifierType> methodListFromResponse(ClientType clientType, String host) {
+        final String url = new StringBuilder().append(host).append("/r1/")
                 .append(clientType.getId().getXRoadInstance()).append("/")
                 .append(clientType.getId().getMemberClass()).append("/")
                 .append(clientType.getId().getMemberCode()).append("/")
@@ -68,8 +70,8 @@ public class MethodListUtil {
         return restServices;
     }
 
-    public static String openApiFromResponse(ClientType clientType) {
-        final String url = new StringBuilder().append("http://ss1/r1/")
+    public static String openApiFromResponse(ClientType clientType, String host) {
+        final String url = new StringBuilder().append(host).append("/r1/")
                 .append(clientType.getId().getXRoadInstance()).append("/")
                 .append(clientType.getId().getMemberClass()).append("/")
                 .append(clientType.getId().getMemberCode()).append("/")
