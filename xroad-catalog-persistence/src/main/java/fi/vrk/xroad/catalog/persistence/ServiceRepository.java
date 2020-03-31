@@ -65,6 +65,9 @@ public interface ServiceRepository extends CrudRepository<Service, Long> {
                                    @Param("subsystemCode") String subsystemCode,
                                    @Param("serviceCode") String serviceCode);
 
-    @Query("SELECT s FROM Service s WHERE s.serviceCode = :serviceCode AND s.statusInfo.removed IS NULL")
-    Service findActiveByCode(@Param("serviceCode") String serviceCode);
+    @Query("SELECT s FROM Service s WHERE s.serviceCode = :serviceCode "
+            +"AND s.subsystem.subsystemCode = :subsystemCode "
+            + "AND s.statusInfo.removed IS NULL")
+    Service findActiveByServiceAndSubsystem(@Param("serviceCode") String serviceCode,
+                                            @Param("subsystemCode") String subsystemCode);
 }

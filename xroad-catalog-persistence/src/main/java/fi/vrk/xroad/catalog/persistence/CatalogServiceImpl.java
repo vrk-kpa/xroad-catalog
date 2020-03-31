@@ -103,8 +103,8 @@ public class CatalogServiceImpl implements CatalogService {
     }
 
     @Override
-    public Service getService(String serviceCode) {
-        return serviceRepository.findActiveByCode(serviceCode);
+    public Service getService(String serviceCode, String subsystemCode) {
+        return serviceRepository.findActiveByServiceAndSubsystem(serviceCode, subsystemCode);
     }
 
     @Override
