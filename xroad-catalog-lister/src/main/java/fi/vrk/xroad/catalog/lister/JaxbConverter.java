@@ -22,13 +22,11 @@
  */
 package fi.vrk.xroad.catalog.lister;
 
+import fi.vrk.xroad.catalog.persistence.entity.OpenApi;
 import fi.vrk.xroad.catalog.persistence.entity.Service;
 import fi.vrk.xroad.catalog.persistence.entity.Subsystem;
 import fi.vrk.xroad.catalog.persistence.entity.Wsdl;
-import fi.vrk.xroad.xroad_catalog_lister.Member;
-import fi.vrk.xroad.xroad_catalog_lister.ServiceList;
-import fi.vrk.xroad.xroad_catalog_lister.SubsystemList;
-import fi.vrk.xroad.xroad_catalog_lister.WSDL;
+import fi.vrk.xroad.xroad_catalog_lister.*;
 import org.springframework.stereotype.Component;
 
 import javax.xml.datatype.DatatypeConfigurationException;
@@ -136,6 +134,17 @@ public class JaxbConverter {
             if (wsdl != null) {
                 cs.setWsdl(convertWsdl(service.getWsdl()));
             }
+            OpenApi openApi = null;
+            if (onlyActiveChildren) {
+                if (service.getOpenApi() != null && !service.getOpenApi().getStatusInfo().isRemoved()) {
+                    openApi = service.getOpenApi();
+                }
+            } else {
+                openApi = service.getOpenApi();
+            }
+            if (openApi != null) {
+                cs.setOpenapi(convertOpenApi(service.getOpenApi()));
+            }
             converted.add(cs);
         }
         return converted;
@@ -148,6 +157,16 @@ public class JaxbConverter {
         cw.setFetched(toXmlGregorianCalendar(wsdl.getStatusInfo().getFetched()));
         cw.setRemoved(toXmlGregorianCalendar(wsdl.getStatusInfo().getRemoved()));
         cw.setExternalId(wsdl.getExternalId());
+        return cw;
+    }
+
+    private OPENAPI convertOpenApi(OpenApi openApi) {
+        OPENAPI cw = new OPENAPI();
+        cw.setChanged(toXmlGregorianCalendar(openApi.getStatusInfo().getChanged()));
+        cw.setCreated(toXmlGregorianCalendar(openApi.getStatusInfo().getCreated()));
+        cw.setFetched(toXmlGregorianCalendar(openApi.getStatusInfo().getFetched()));
+        cw.setRemoved(toXmlGregorianCalendar(openApi.getStatusInfo().getRemoved()));
+        cw.setExternalId(openApi.getExternalId());
         return cw;
     }
 
