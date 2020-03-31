@@ -65,6 +65,9 @@ public class ServiceEndpoint {
     public IsSoapProviderResponse isSoapProvider(@RequestPayload IsSoapProvider request) {
         IsSoapProviderResponse response = new IsSoapProviderResponse();
         Service service = catalogService.getService(request.getServiceCode());
+        if (service == null) {
+            throw new ServiceNotFoundException("Service not found with serviceCode " + request.getServiceCode());
+        }
         response.setProvider(service.hasWsdl());
         return response;
     }
@@ -74,6 +77,9 @@ public class ServiceEndpoint {
     public IsRestProviderResponse isRestProvider(@RequestPayload IsRestProvider request) {
         IsRestProviderResponse response = new IsRestProviderResponse();
         Service service = catalogService.getService(request.getServiceCode());
+        if (service == null) {
+            throw new ServiceNotFoundException("Service not found with serviceCode " + request.getServiceCode());
+        }
         response.setProvider(service.hasOpenApi());
         return response;
     }
