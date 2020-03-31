@@ -85,7 +85,7 @@ public interface CatalogService {
      * @return Service, if any, null if not found
      * @throws RuntimeException if multiple matches found.
      */
-    Service getService(String serviceCode);
+    Service getService(String serviceCode, String subsystemCode);
 
     /**
      * Stores given members and subsystems. This should be the full dataset of both items

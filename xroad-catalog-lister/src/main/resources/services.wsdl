@@ -162,6 +162,7 @@ http://x-road.eu/xsd/identifiers ">
                 <xs:complexType>
                     <xs:sequence>
                         <xs:element name="serviceCode" type="xs:string"/>
+                        <xs:element name="subsystemCode" type="xs:string"/>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
@@ -178,6 +179,7 @@ http://x-road.eu/xsd/identifiers ">
                 <xs:complexType>
                     <xs:sequence>
                         <xs:element name="serviceCode" type="xs:string"/>
+                        <xs:element name="subsystemCode" type="xs:string"/>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
