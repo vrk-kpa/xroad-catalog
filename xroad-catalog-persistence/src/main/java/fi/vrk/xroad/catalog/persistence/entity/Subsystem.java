@@ -50,7 +50,7 @@ public class Subsystem {
     @JoinColumn(name = "MEMBER_ID")
     private Member member;
     @Getter(AccessLevel.NONE) // do not create default getter, we provide the substitute
-    @OneToMany(mappedBy = "subsystem", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "subsystem", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private Set<Service> services = new HashSet<>();
     @Embedded
     private StatusInfo statusInfo = new StatusInfo();

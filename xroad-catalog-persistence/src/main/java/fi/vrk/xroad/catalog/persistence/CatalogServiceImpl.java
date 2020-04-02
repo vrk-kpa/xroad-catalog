@@ -23,6 +23,7 @@
 package fi.vrk.xroad.catalog.persistence;
 
 import fi.vrk.xroad.catalog.persistence.entity.*;
+import fi.vrk.xroad.catalog.persistence.entity.Subsystem;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -30,10 +31,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
 import java.time.LocalDateTime;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.StreamSupport;
 
 /**
@@ -76,6 +74,11 @@ public class CatalogServiceImpl implements CatalogService {
     @Override
     public Iterable<Member> getAllMembers(LocalDateTime changedAfter) {
         return memberRepository.findAllChangedSince(changedAfter);
+    }
+
+    @Override
+    public Member getMember(String xRoadInstance, String memberClass, String memberCode) {
+        return memberRepository.findActiveByNaturalKey(xRoadInstance, memberClass, memberCode);
     }
 
     @Override
