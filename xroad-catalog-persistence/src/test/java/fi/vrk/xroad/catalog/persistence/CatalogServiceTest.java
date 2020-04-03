@@ -22,12 +22,7 @@
  */
 package fi.vrk.xroad.catalog.persistence;
 
-import fi.vrk.xroad.catalog.persistence.entity.Member;
-import fi.vrk.xroad.catalog.persistence.entity.Service;
-import fi.vrk.xroad.catalog.persistence.entity.ServiceId;
-import fi.vrk.xroad.catalog.persistence.entity.Subsystem;
-import fi.vrk.xroad.catalog.persistence.entity.SubsystemId;
-import fi.vrk.xroad.catalog.persistence.entity.Wsdl;
+import fi.vrk.xroad.catalog.persistence.entity.*;
 
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
@@ -87,6 +82,9 @@ public class CatalogServiceTest {
     WsdlRepository wsdlRepository;
 
     @Autowired
+    OpenApiRepository openApiRepository;
+
+    @Autowired
     TestUtil testUtil;
 
     @Test
@@ -95,6 +93,14 @@ public class CatalogServiceTest {
         assertNotNull(wsdl);
         assertEquals("<?xml version=\"1.0\" standalone=\"no\"?><wsdl-6-1-1-1-changed/>", wsdl.getData());
         assertEquals(7, wsdl.getService().getSubsystem().getId());
+    }
+
+    @Test
+    public void testGetOpenApi() {
+        OpenApi openApi = catalogService.getOpenApi("3003");
+        assertNotNull(openApi);
+        assertEquals("<openapi>", openApi.getData());
+        assertEquals(8, openApi.getService().getSubsystem().getId());
     }
 
     @Test
@@ -209,6 +215,14 @@ public class CatalogServiceTest {
 
         Member member3 = memberRepository.findOne(1L);
         assertNotEquals(changed, member3.getStatusInfo().getChanged());
+    }
+
+    @Test
+    public void testGetMember() {
+        Member member = memberRepository.findOne(1L);
+        Member foundMember = catalogService.getMember(member.getXRoadInstance(),
+                member.getMemberClass(), member.getMemberCode());
+        assertNotNull(foundMember);
     }
 
     @Test
@@ -409,6 +423,13 @@ public class CatalogServiceTest {
     }
 
     @Test
+    public void testGetService() {
+        Service service = serviceRepository.findOne(1L);
+        Service foundService = catalogService.getService(service.getServiceCode(), service.getSubsystem().getSubsystemCode());
+        assertNotNull(foundService);
+    }
+
+    @Test
     public void testSaveRemovedServices() {
         // test data:
         // member (7) -> subsystem (8) -> service (6) -> wsdl (4)
@@ -438,7 +459,7 @@ public class CatalogServiceTest {
         Subsystem checkedSub = subsystemRepository.findOne(8L);
         testUtil.assertAllSame(originalSub.getStatusInfo(), checkedSub.getStatusInfo());
 
-        assertEquals(Arrays.asList(5L, 6L, 8L, 9L, 10L),
+        assertEquals(Arrays.asList(5L, 6L, 8L, 9L, 10L, 11L, 12L),
                 new ArrayList<>(testUtil.getIds(checkedSub.getAllServices())));
         assertTrue(checkedSub.getActiveServices().isEmpty());
         Service checkedService5 = (Service) testUtil.getEntity(checkedSub.getAllServices(), 5L).get();
@@ -484,6 +505,28 @@ public class CatalogServiceTest {
     }
 
     @Test
+    public void testOverwriteIdenticalOpenApi() {
+        OpenApi originalOpenApi = openApiRepository.findOne(2L);
+        Service originalService = originalOpenApi.getService();
+        ServiceId originalServiceId = originalOpenApi.getService().createKey();
+        SubsystemId originalSubsystemId = originalOpenApi.getService().getSubsystem().createKey();
+        // detach, so we dont modify those objects in the next steps
+        testUtil.entityManagerClear();
+
+        catalogService.saveOpenApi(originalSubsystemId, originalServiceId, originalOpenApi.getData());
+        testUtil.entityManagerFlush();
+        testUtil.entityManagerClear();
+
+        OpenApi checkedOpenApi = openApiRepository.findOne(2L);
+        assertEquals(originalOpenApi.getExternalId(), checkedOpenApi.getExternalId());
+        assertEquals(originalOpenApi.getData(), checkedOpenApi.getData());
+        assertEquals(originalOpenApi.getExternalId(), checkedOpenApi.getExternalId());
+        assertEquals(originalOpenApi.getService().createKey(), originalServiceId);
+        testUtil.assertFetchedIsOnlyDifferent(originalOpenApi.getStatusInfo(), checkedOpenApi.getStatusInfo());
+        testUtil.assertAllSame(originalService.getStatusInfo(), checkedOpenApi.getService().getStatusInfo());
+    }
+
+    @Test
     public void testOverwriteModifiedWsdl() {
         // "changed" is updated
         // fetched is also updated
@@ -506,6 +549,28 @@ public class CatalogServiceTest {
         testUtil.assertEqualities(originalWsdl.getStatusInfo(), checkedWsdl.getStatusInfo(),
                 true, false, true, false);
         testUtil.assertAllSame(originalService.getStatusInfo(), checkedWsdl.getService().getStatusInfo());
+    }
+
+    @Test
+    public void testOverwriteModifiedOpenApi() {
+        OpenApi originalOpenApi = openApiRepository.findOne(2L);
+        Service originalService = originalOpenApi.getService();
+        ServiceId originalServiceId = originalOpenApi.getService().createKey();
+        SubsystemId originalSubsystemId = originalOpenApi.getService().getSubsystem().createKey();
+        // detach, so we dont modify those objects in the next steps
+        testUtil.entityManagerClear();
+
+        catalogService.saveOpenApi(originalSubsystemId, originalServiceId, originalOpenApi.getData() + "-modification");
+        testUtil.entityManagerFlush();
+        testUtil.entityManagerClear();
+
+        OpenApi checkedOpenApi = openApiRepository.findOne(2L);
+        assertEquals(originalOpenApi.getExternalId(), checkedOpenApi.getExternalId());
+        assertNotEquals(originalOpenApi.getData(), checkedOpenApi.getData());
+        assertEquals(originalOpenApi.getService().createKey(), originalServiceId);
+        testUtil.assertEqualities(originalOpenApi.getStatusInfo(), checkedOpenApi.getStatusInfo(),
+                true, false, true, false);
+        testUtil.assertAllSame(originalService.getStatusInfo(), checkedOpenApi.getService().getStatusInfo());
     }
 
     @Test
@@ -537,6 +602,34 @@ public class CatalogServiceTest {
     }
 
     @Test
+    public void testSaveNewOpenApi() {
+        // member (5) -> subsystem (6) -> service (3) -> wsdl (*new*)
+        Service oldService = serviceRepository.findOne(12L);
+        ServiceId originalServiceId = oldService.createKey();
+        SubsystemId originalSubsystemId = oldService.getSubsystem().createKey();
+        // detach, so we dont modify those objects in the next steps
+        testUtil.entityManagerClear();
+
+        OpenApi newOpenApi = new OpenApi();
+        final String data = "<testopenapi/>";
+        catalogService.saveOpenApi(originalSubsystemId, originalServiceId, data);
+        testUtil.entityManagerFlush();
+        testUtil.entityManagerClear();
+
+        Service checkedService = serviceRepository.findOne(12L);
+        OpenApi checkedOpenApi = checkedService.getOpenApi();
+        log.info("externalId [{}]", checkedOpenApi.getExternalId());
+        assertNotNull(checkedOpenApi.getExternalId());
+        assertEquals(data, checkedOpenApi.getData());
+        assertEquals(checkedOpenApi.getService().createKey(), originalServiceId);
+        assertNotNull(checkedOpenApi.getStatusInfo().getCreated());
+        assertNotNull(checkedOpenApi.getStatusInfo().getChanged());
+        assertNotNull(checkedOpenApi.getStatusInfo().getFetched());
+        assertNull(checkedOpenApi.getStatusInfo().getRemoved());
+        testUtil.assertAllSame(oldService.getStatusInfo(), checkedOpenApi.getService().getStatusInfo());
+    }
+
+    @Test
     public void testResurrectWsdl() {
         // member (7) -> subsystem (8) -> service (9, removed) -> wsdl (7, removed)
         Service oldService = serviceRepository.findOne(9L);
@@ -565,6 +658,34 @@ public class CatalogServiceTest {
     }
 
     @Test
+    public void testResurrectOpenApi() {
+        // member (7) -> subsystem (8) -> service (9, removed) -> wsdl (7, removed)
+        Service oldService = serviceRepository.findOne(11L);
+        // fix test data so that service is not removed
+        oldService.getStatusInfo().setRemoved(null);
+        ServiceId originalServiceId = oldService.createKey();
+        SubsystemId originalSubsystemId = oldService.getSubsystem().createKey();
+        OpenApi originalOpenApi = oldService.getOpenApi();
+        // detach, so we dont modify those objects in the next steps
+        testUtil.entityManagerFlush();
+        testUtil.entityManagerClear();
+
+        catalogService.saveOpenApi(originalSubsystemId, originalServiceId, originalOpenApi.getData());
+        testUtil.entityManagerFlush();
+        testUtil.entityManagerClear();
+
+        Service checkedService = serviceRepository.findOne(11L);
+        OpenApi checkedOpenApi = checkedService.getOpenApi();
+        assertEquals(originalOpenApi.getExternalId(), checkedOpenApi.getExternalId());
+        assertEquals(1L, checkedOpenApi.getId());
+        assertEquals(originalOpenApi.getData(), checkedOpenApi.getData());
+        assertEquals(checkedOpenApi.getService().createKey(), originalServiceId);
+        testUtil.assertEqualities(originalOpenApi.getStatusInfo(), checkedOpenApi.getStatusInfo(),
+                true, false, false, false);
+        assertNull(checkedOpenApi.getStatusInfo().getRemoved());
+    }
+
+    @Test
     public void testSaveWsdlFailsForRemovedService() {
         // member (7) -> subsystem (8) -> service (9, removed) -> wsdl (7, removed)
         Service oldService = serviceRepository.findOne(9L);
@@ -576,6 +697,24 @@ public class CatalogServiceTest {
 
         try {
             catalogService.saveWsdl(originalSubsystemId, originalServiceId, originalWsdl.getData());
+            fail("should have throw exception since service is removed");
+        } catch (Exception expected) {
+            // Exception is expected }
+        }
+    }
+
+    @Test
+    public void testSaveOpenApiFailsForRemovedService() {
+        // member (7) -> subsystem (8) -> service (9, removed) -> wsdl (7, removed)
+        Service oldService = serviceRepository.findOne(9L);
+        ServiceId originalServiceId = oldService.createKey();
+        SubsystemId originalSubsystemId = oldService.getSubsystem().createKey();
+        OpenApi originalOpenApi = oldService.getOpenApi();
+        // detach, so we dont modify those objects in the next steps
+        testUtil.entityManagerClear();
+
+        try {
+            catalogService.saveWsdl(originalSubsystemId, originalServiceId, originalOpenApi.getData());
             fail("should have throw exception since service is removed");
         } catch (Exception expected) {
             // Exception is expected }
