@@ -96,12 +96,9 @@ dependencies {
     compileOnly("org.projectlombok:lombok:1.16.18")
 
     testCompile("org.springframework.boot:spring-boot-starter-test")
-
-    testImplementation('org.junit.jupiter:junit-jupiter:5.4.0')
 }
 
 test {
-
     testLogging {
         events "passed", "skipped", "failed", "standardOut", "standardError"
     }
