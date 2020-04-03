@@ -72,6 +72,10 @@ INSERT INTO service (id, subsystem_id, service_code, service_version, created, c
 VALUES (9, 8, 'removed-service_7-1-4', 'v1', '2016-01-01 00:00:00+02', '2016-01-01 00:00:00+02', '2016-01-01 00:00:00+02', '2016-01-01 00:00:00+02');
 INSERT INTO service (id, subsystem_id, service_code, service_version, created, changed, fetched,  removed)
 VALUES (10, 8, 'service-with-null-version', NULL, '2016-01-01 00:00:00+02', '2016-01-01 00:00:00+02', '2016-01-01 00:00:00+02', NULL);
+INSERT INTO service (id, subsystem_id, service_code, service_version, created, changed, fetched,  removed)
+VALUES (11, 8, 'removed-service_7-1-5', 'v1', '2016-01-01 00:00:00+02', '2016-01-01 00:00:00+02', '2016-01-01 00:00:00+02', '2016-01-01 00:00:00+02');
+INSERT INTO service (id, subsystem_id, service_code, service_version, created, changed, fetched,  removed)
+VALUES (12, 8, 'dummy-service_7-1-5', 'v1', '2016-01-01 00:00:00+02', '2016-01-01 00:00:00+02', '2016-01-01 00:00:00+02', NULL);
 
 INSERT INTO wsdl (id, service_id, data, external_id, created, changed, fetched,  removed)
 VALUES (3, 4, '<?xml version="1.0" standalone="no"?><wsdl-6-1-1-1-changed/>', '1000', '2016-01-01 00:00:00+02', '2017-01-02 00:00:00+02', '2017-01-02 00:00:00+02', NULL);
@@ -83,6 +87,11 @@ INSERT INTO wsdl (id, service_id, data, external_id, created, changed, fetched, 
 VALUES (6, 8, '<?xml version="1.0" standalone="no"?><removed-service_7-1-3-alive-wsdl/>', '3000', '2016-01-01 00:00:00+02', '2016-01-01 00:00:00+02', '2016-01-01 00:00:00+02', NULL);
 INSERT INTO wsdl (id, service_id, data, external_id, created, changed, fetched,  removed)
 VALUES (7, 9, '<?xml version="1.0" standalone="no"?><removed-service_7-1-4-removed-wsdl/>', '3001', '2016-01-01 00:00:00+02', '2016-01-01 00:00:00+02', '2016-01-01 00:00:00+02', '2016-01-01 00:00:00+02');
+
+INSERT INTO open_api (id, service_id, data, external_id, created, changed, fetched, removed)
+VALUES (1, 11, '<openapi>', '3003', '2016-01-01 00:00:00+02', '2016-01-01 00:00:00+02', '2016-01-01 00:00:00+02', '2016-01-01 00:00:00+02');
+INSERT INTO open_api (id, service_id, data, external_id, created, changed, fetched, removed)
+VALUES (2, 12, '<openapi>', '3004', '2016-01-01 00:00:00+02', '2016-01-01 00:00:00+02', '2016-01-01 00:00:00+02', NULL);
 
 INSERT INTO wsdl (id, service_id, data, external_id, created, changed, fetched,  removed)
 VALUES (1, 1, '<?xml version="1.0" standalone="no"?>

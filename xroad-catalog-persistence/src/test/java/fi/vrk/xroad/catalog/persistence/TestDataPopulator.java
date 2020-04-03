@@ -65,6 +65,7 @@ public class TestDataPopulator {
             Member testMember = testUtil.createTestMember("testmember-" + i);
             members.add(testMember);
         }
+
         catalogService.saveAllMembersAndSubsystems(members);
     }
 
