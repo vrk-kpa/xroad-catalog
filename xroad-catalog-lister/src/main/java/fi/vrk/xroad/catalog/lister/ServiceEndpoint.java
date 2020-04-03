@@ -35,6 +35,8 @@ import org.springframework.ws.server.endpoint.annotation.PayloadRoot;
 import org.springframework.ws.server.endpoint.annotation.RequestPayload;
 import org.springframework.ws.server.endpoint.annotation.ResponsePayload;
 
+import java.util.concurrent.atomic.AtomicReference;
+
 @Endpoint
 @Slf4j
 public class ServiceEndpoint {
@@ -60,29 +62,56 @@ public class ServiceEndpoint {
         return response;
     }
 
-    @PayloadRoot(namespace = NAMESPACE_URI, localPart = "IsSoapProvider")
+    @PayloadRoot(namespace = NAMESPACE_URI, localPart = "IsSoapService")
     @ResponsePayload
-    public IsSoapProviderResponse isSoapProvider(@RequestPayload IsSoapProvider request) {
-        IsSoapProviderResponse response = new IsSoapProviderResponse();
+    public IsSoapServiceResponse IsSoapService(@RequestPayload IsSoapService request) {
+        IsSoapServiceResponse response = new IsSoapServiceResponse();
         Service service = catalogService.getService(request.getServiceCode(), request.getSubsystemCode());
         if (service == null) {
             throw new ServiceNotFoundException("Service with serviceCode \"" + request.getServiceCode()
             + "\" and subsystemCode \"" + request.getSubsystemCode() + "\" not found");
         }
-        response.setProvider(service.hasWsdl());
+        response.setSoap(service.hasWsdl());
         return response;
     }
 
-    @PayloadRoot(namespace = NAMESPACE_URI, localPart = "IsRestProvider")
+    @PayloadRoot(namespace = NAMESPACE_URI, localPart = "IsRestService")
     @ResponsePayload
-    public IsRestProviderResponse isRestProvider(@RequestPayload IsRestProvider request) {
-        IsRestProviderResponse response = new IsRestProviderResponse();
+    public IsRestServiceResponse IsRestService(@RequestPayload IsRestService request) {
+        IsRestServiceResponse response = new IsRestServiceResponse();
         Service service = catalogService.getService(request.getServiceCode(), request.getSubsystemCode());
         if (service == null) {
             throw new ServiceNotFoundException("Service with serviceCode \"" + request.getServiceCode()
                     + "\" and subsystemCode \"" + request.getSubsystemCode() + "\" not found");
         }
-        response.setProvider(service.hasOpenApi());
+        response.setRest(service.hasOpenApi());
+        return response;
+    }
+
+    @PayloadRoot(namespace = NAMESPACE_URI, localPart = "IsProvider")
+    @ResponsePayload
+    public IsProviderResponse isProvider(@RequestPayload IsProvider request) {
+        AtomicReference<Boolean> isProvider = new AtomicReference<>();
+        isProvider.set(Boolean.FALSE);
+        fi.vrk.xroad.catalog.persistence.entity.Member member = catalogService.getMember(request.getXRoadInstance(),
+                request.getMemberClass(), request.getMemberCode());
+
+        if (member == null) {
+            throw new MemberNotFoundException("Member with xRoadInstance \"" + request.getXRoadInstance()
+                    + "\", memberClass \"" + request.getMemberClass()
+                    + "\" and memberCode \"" + request.getMemberCode() + "\" not found");
+        }
+
+        member.getAllSubsystems().forEach(subsystem -> {
+            subsystem.getAllServices().forEach(service ->  {
+                if (service.hasWsdl() || service.hasOpenApi()) {
+                    isProvider.set(Boolean.TRUE);
+                }
+            });
+        });
+
+        IsProviderResponse response = new IsProviderResponse();
+        response.setProvider(isProvider.get());
         return response;
     }
 

@@ -67,6 +67,15 @@ public interface CatalogService {
     Iterable<Member> getAllMembers(LocalDateTime changedAfter);
 
     /**
+     * Returns full Member object
+     * @param xRoadInstance name of the instance
+     * @param memberClass member class
+     * @param memberCode member  code
+     * @return Member entity
+     */
+    Member getMember(String xRoadInstance, String memberClass, String memberCode);
+
+    /**
      * Returns the full Wsdl object. Only returns active ones, removed are not found.
      * @return Wsdl, if any, null if not found
      * @throws RuntimeException if multiple matches found.
