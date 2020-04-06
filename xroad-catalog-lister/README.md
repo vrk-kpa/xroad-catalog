@@ -10,8 +10,9 @@ The main endpoints this software provides:
 * ListMembers - endpoint to list all the members the Catalog Collector has stored to the db
 * GetWsdl - endpoint to retrieve a WSDL description for a given service
 * GetOpenAPI - endpoint to retrieve an OpenAPI description for a given service
-* IsSoapProvider - endpoint for requesting whether a given service is a SOAP service
-* IsRestProvider - endpoint for requesting whether a given service is a REST service
+* IsSoapService - endpoint for requesting whether a given service is a SOAP service
+* IsRestService - endpoint for requesting whether a given service is a REST service
+* IsProvider - endpoint for requesting whether a given member is a provider
 
 ## Build
 ```sh
@@ -689,10 +690,10 @@ Response
 </SOAP-ENV:Envelope>
 ```
 
-### 4. IsRestProvider
+### 4. IsRestService
 Request
 
-curl -k -d @restproviderrequest.xml --header "Content-Type: text/xml" -X POST http://localhost:8080/ws/IsRestProvider
+curl -k -d @RestServiceRequest.xml --header "Content-Type: text/xml" -X POST http://localhost:8080/ws/IsRestService
 ```xml
 <soapenv:Envelope 
 xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" 
@@ -718,9 +719,10 @@ xmlns:xrcl="http://xroad.vrk.fi/xroad-catalog-lister">
       </xro:service>
    </soapenv:Header>
    <soapenv:Body>
-      <xrcl:IsRestProvider>
+      <xrcl:IsRestService>
          <xrcl:serviceCode>PetStoreNew</xrcl:serviceCode>
-      </xrcl:IsRestProvider>
+         <xrcl:subsystemCode>MANAGEMENT</xrcl:subsystemCode>
+      </xrcl:IsRestService>
    </soapenv:Body>
 </soapenv:Envelope>
 
@@ -749,17 +751,17 @@ Response
     </xro:service>
   </SOAP-ENV:Header>
   <SOAP-ENV:Body>
-    <ns2:IsRestProviderResponse xmlns:ns2="http://xroad.vrk.fi/xroad-catalog-lister">
-      <ns2:provider>true</ns2:provider>
-    </ns2:IsRestProviderResponse>
+    <ns2:IsRestServiceResponse xmlns:ns2="http://xroad.vrk.fi/xroad-catalog-lister">
+      <ns2:rest>true</ns2:rest>
+    </ns2:IsRestServiceResponse>
   </SOAP-ENV:Body>
 </SOAP-ENV:Envelope>
 ```
 
-### 5. IsSoapProvider
+### 5. IsSoapService
 Request
 
-curl -k -d @soapproviderrequest.xml --header "Content-Type: text/xml" -X POST http://localhost:8080/ws/IsSoapProvider
+curl -k -d @SoapServiceRequest.xml --header "Content-Type: text/xml" -X POST http://localhost:8080/ws/IsSoapService
 ```xml
 <soapenv:Envelope 
 xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" 
@@ -785,9 +787,10 @@ xmlns:xrcl="http://xroad.vrk.fi/xroad-catalog-lister">
       </xro:service>
    </soapenv:Header>
    <soapenv:Body>
-      <xrcl:IsSoapProvider>
+      <xrcl:IsSoapService>
          <xrcl:serviceCode>ownerChange</xrcl:serviceCode>
-      </xrcl:IsSoapProvider>
+         <xrcl:subsystemCode>MANAGEMENT</xrcl:subsystemCode>
+      </xrcl:IsSoapService>
    </soapenv:Body>
 </soapenv:Envelope>
 
@@ -816,9 +819,9 @@ Response
     </xro:service>
   </SOAP-ENV:Header>
   <SOAP-ENV:Body>
-    <ns2:IsSoapProviderResponse xmlns:ns2="http://xroad.vrk.fi/xroad-catalog-lister">
-      <ns2:provider>true</ns2:provider>
-    </ns2:IsSoapProviderResponse>
+    <ns2:IsSoapServiceResponse xmlns:ns2="http://xroad.vrk.fi/xroad-catalog-lister">
+      <ns2:soap>true</ns2:soap>
+    </ns2:IsSoapServiceResponse>
   </SOAP-ENV:Body>
 </SOAP-ENV:Envelope>
 ```
