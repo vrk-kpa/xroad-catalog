@@ -826,6 +826,76 @@ Response
 </SOAP-ENV:Envelope>
 ```
 
+### 6. IsProvider
+Request
+
+curl -k -d @IsProviderRequest.xml --header "Content-Type: text/xml" -X POST http://localhost:8080/ws/IsProvider
+```xml
+<soapenv:Envelope 
+xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" 
+xmlns:xro="http://x-road.eu/xsd/xroad.xsd" 
+xmlns:iden="http://x-road.eu/xsd/identifiers" 
+xmlns:xrcl="http://xroad.vrk.fi/xroad-catalog-lister">
+   <soapenv:Header>
+      <xro:protocolVersion>4.x</xro:protocolVersion>
+      <xro:id>ID11234</xro:id>
+      <xro:userId>EE1234567890</xro:userId>
+      <xro:client iden:objectType="MEMBER">
+         <iden:xRoadInstance>FI</iden:xRoadInstance>
+         <iden:memberClass>GOV</iden:memberClass>
+         <iden:memberCode>1710128-9</iden:memberCode>
+      </xro:client>
+      <xro:service iden:objectType="SERVICE">
+         <iden:xRoadInstance>FI</iden:xRoadInstance>
+         <iden:memberClass>GOV</iden:memberClass>
+         <iden:memberCode>1710128-9</iden:memberCode>
+         <iden:subsystemCode>SS1</iden:subsystemCode>
+         <iden:serviceCode>ListMembers</iden:serviceCode>
+         <iden:serviceVersion>v1</iden:serviceVersion>
+      </xro:service>
+   </soapenv:Header>
+   <soapenv:Body>
+      <xrcl:IsProvider>
+         <xrcl:xRoadInstance>DEV</xrcl:xRoadInstance>
+         <xrcl:memberClass>GOV</xrcl:memberClass>
+         <xrcl:memberCode>1234</xrcl:memberCode>
+      </xrcl:IsProvider>
+   </soapenv:Body>
+</soapenv:Envelope>
+
+```
+
+Response
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/">
+  <SOAP-ENV:Header>
+    <xro:protocolVersion xmlns:xro="http://x-road.eu/xsd/xroad.xsd">4.x</xro:protocolVersion>
+    <xro:id xmlns:xro="http://x-road.eu/xsd/xroad.xsd">ID11234</xro:id>
+    <xro:userId xmlns:xro="http://x-road.eu/xsd/xroad.xsd">EE1234567890</xro:userId>
+    <xro:client xmlns:xro="http://x-road.eu/xsd/xroad.xsd" xmlns:iden="http://x-road.eu/xsd/identifiers" iden:objectType="MEMBER">
+      <iden:xRoadInstance>FI</iden:xRoadInstance>
+      <iden:memberClass>GOV</iden:memberClass>
+      <iden:memberCode>1710128-9</iden:memberCode>
+    </xro:client>
+    <xro:service xmlns:xro="http://x-road.eu/xsd/xroad.xsd" xmlns:iden="http://x-road.eu/xsd/identifiers" iden:objectType="SERVICE">
+      <iden:xRoadInstance>FI</iden:xRoadInstance>
+      <iden:memberClass>GOV</iden:memberClass>
+      <iden:memberCode>1710128-9</iden:memberCode>
+      <iden:subsystemCode>SS1</iden:subsystemCode>
+      <iden:serviceCode>ListMembers</iden:serviceCode>
+      <iden:serviceVersion>v1</iden:serviceVersion>
+    </xro:service>
+  </SOAP-ENV:Header>
+  <SOAP-ENV:Body>
+    <ns2:IsProviderResponse xmlns:ns2="http://xroad.vrk.fi/xroad-catalog-lister">
+      <ns2:provider>true</ns2:provider>
+    </ns2:IsProviderResponse>
+  </SOAP-ENV:Body>
+</SOAP-ENV:Envelope>
+```
+
+
 ## Build RPM Packages on Non-RedHat Platform
  
     $ ../gradlew clean build
