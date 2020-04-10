@@ -20,16 +20,33 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package fi.vrk.xroad.catalog.persistence;
+package fi.vrk.xroad.catalog.persistence.entity;
 
-import fi.vrk.xroad.catalog.persistence.entity.Wsdl;
-import org.springframework.data.repository.CrudRepository;
+import lombok.*;
 
-import java.util.List;
+import javax.persistence.*;
 
-public interface WsdlRepository extends CrudRepository<Wsdl, Long> {
-    /**
-     * Returns also removed items
-     */
-    List<Wsdl> findAnyByExternalId(String externalId);
+@Entity
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@ToString(exclude = {"organization"})
+@EqualsAndHashCode(exclude = {"id", "organization"})
+public class OrganizationName {
+
+    @Id
+    @Column(nullable = false)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "ORGANIZATION_NAME_GEN")
+    @SequenceGenerator(name = "ORGANIZATION_NAME_GEN", sequenceName = "ORGANIZATION_NAME_ID_SEQ", allocationSize = 1)
+    private long id;
+    @Column(nullable = false)
+    private String language;
+    @Column(nullable = false)
+    private String type;
+    @Column(nullable = false)
+    private String value;
+    @ManyToOne
+    @JoinColumn(name = "ORGANIZATION_ID")
+    private Organization organization;
 }

@@ -20,42 +20,33 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package fi.vrk.xroad.catalog.lister;
+package fi.vrk.xroad.catalog.persistence.entity;
 
-import fi.vrk.xroad.catalog.persistence.service.CatalogService;
-import fi.vrk.xroad.xroad_catalog_lister.Member;
-import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import lombok.*;
 
-import javax.xml.datatype.XMLGregorianCalendar;
+import javax.persistence.*;
+import java.util.HashSet;
+import java.util.Set;
 
-/**
- * XML interface for lister
- */
-@Component
-@Slf4j
-public class JaxbCatalogServiceImpl implements JaxbCatalogService {
-
-    @Autowired
-    @Setter
-    private CatalogService catalogService;
-
-    @Autowired
-    @Setter
-    private JaxbConverter jaxbConverter;
-
-    @Override
-    public Iterable<Member> getAllMembers(XMLGregorianCalendar changedAfter)  {
-        log.info("getAllMembers changedAfter:{}", changedAfter);
-        Iterable<fi.vrk.xroad.catalog.persistence.entity.Member> entities;
-        if (changedAfter != null) {
-            entities = catalogService.getAllMembers(jaxbConverter.toLocalDateTime(changedAfter));
-        } else {
-            entities = catalogService.getAllMembers();
-        }
-
-        return jaxbConverter.convertMembers(entities, false);
-    }
+@Entity
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@ToString(exclude = {"streetAddress","municipalityNames"})
+@EqualsAndHashCode(exclude = {"id","streetAddress","municipalityNames"})
+public class Municipality {
+    @Id
+    @Column(nullable = false)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "MUNICIPALITY_GEN")
+    @SequenceGenerator(name = "MUNICIPALITY_GEN", sequenceName = "MUNICIPALITY_ID_SEQ", allocationSize = 1)
+    private long id;
+    @Column(nullable = false)
+    private String code;
+    @ManyToOne
+    @JoinColumn(name = "STREETADDRESS_ID")
+    private StreetAddress streetAddress;
+    @Getter(AccessLevel.NONE) // do not create default getter, we provide the substitute
+    @OneToMany(mappedBy = "municipality", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private Set<MunicipalityName> municipalityNames = new HashSet<>();
 }

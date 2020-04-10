@@ -20,10 +20,12 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package fi.vrk.xroad.catalog.persistence;
+package fi.vrk.xroad.catalog.persistence.service;
 
 import fi.vrk.xroad.catalog.persistence.entity.*;
 import fi.vrk.xroad.catalog.persistence.entity.Subsystem;
+import fi.vrk.xroad.catalog.persistence.repository.*;
+import fi.vrk.xroad.catalog.persistence.service.CatalogService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;

@@ -28,6 +28,9 @@ import fi.vrk.xroad.catalog.persistence.entity.Subsystem;
 import fi.vrk.xroad.catalog.persistence.entity.Wsdl;
 
 import com.google.common.collect.Lists;
+import fi.vrk.xroad.catalog.persistence.repository.MemberRepository;
+import fi.vrk.xroad.catalog.persistence.repository.SubsystemRepository;
+import fi.vrk.xroad.catalog.persistence.service.CatalogService;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Before;
 import org.junit.Test;

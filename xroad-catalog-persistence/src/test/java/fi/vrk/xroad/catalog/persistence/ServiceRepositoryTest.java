@@ -24,6 +24,7 @@ package fi.vrk.xroad.catalog.persistence;
 
 import fi.vrk.xroad.catalog.persistence.entity.Service;
 
+import fi.vrk.xroad.catalog.persistence.repository.ServiceRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 import org.junit.runner.RunWith;

@@ -20,42 +20,23 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package fi.vrk.xroad.catalog.lister;
+package fi.vrk.xroad.catalog.persistence.repository;
 
-import fi.vrk.xroad.catalog.persistence.service.CatalogService;
-import fi.vrk.xroad.xroad_catalog_lister.Member;
-import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import fi.vrk.xroad.catalog.persistence.entity.Subsystem;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.query.Param;
 
-import javax.xml.datatype.XMLGregorianCalendar;
+public interface SubsystemRepository extends CrudRepository<Subsystem, Long> {
 
-/**
- * XML interface for lister
- */
-@Component
-@Slf4j
-public class JaxbCatalogServiceImpl implements JaxbCatalogService {
-
-    @Autowired
-    @Setter
-    private CatalogService catalogService;
-
-    @Autowired
-    @Setter
-    private JaxbConverter jaxbConverter;
-
-    @Override
-    public Iterable<Member> getAllMembers(XMLGregorianCalendar changedAfter)  {
-        log.info("getAllMembers changedAfter:{}", changedAfter);
-        Iterable<fi.vrk.xroad.catalog.persistence.entity.Member> entities;
-        if (changedAfter != null) {
-            entities = catalogService.getAllMembers(jaxbConverter.toLocalDateTime(changedAfter));
-        } else {
-            entities = catalogService.getAllMembers();
-        }
-
-        return jaxbConverter.convertMembers(entities, false);
-    }
+    @Query("SELECT s FROM Subsystem s WHERE s.subsystemCode = :subsystemCode "
+            + "AND s.member.xRoadInstance = :xRoadInstance "
+            + "AND s.member.memberClass = :memberClass "
+            + "AND s.member.memberCode = :memberCode "
+            + "AND s.statusInfo.removed IS NULL")
+    Subsystem findActiveByNaturalKey(@Param("xRoadInstance") String xRoadInstance,
+                                     @Param("memberClass") String memberClass,
+                                     @Param("memberCode") String memberCode,
+                                     @Param("subsystemCode") String subsystemCode);
 }
+

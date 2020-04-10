@@ -20,42 +20,41 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package fi.vrk.xroad.catalog.lister;
+package fi.vrk.xroad.catalog.persistence.entity;
 
-import fi.vrk.xroad.catalog.persistence.service.CatalogService;
-import fi.vrk.xroad.xroad_catalog_lister.Member;
-import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import lombok.*;
 
-import javax.xml.datatype.XMLGregorianCalendar;
+import javax.persistence.*;
 
-/**
- * XML interface for lister
- */
-@Component
-@Slf4j
-public class JaxbCatalogServiceImpl implements JaxbCatalogService {
+@Entity
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@ToString(exclude = {"organization"})
+@EqualsAndHashCode(exclude = {"id", "organization"})
+public class PhoneNumber {
 
-    @Autowired
-    @Setter
-    private CatalogService catalogService;
-
-    @Autowired
-    @Setter
-    private JaxbConverter jaxbConverter;
-
-    @Override
-    public Iterable<Member> getAllMembers(XMLGregorianCalendar changedAfter)  {
-        log.info("getAllMembers changedAfter:{}", changedAfter);
-        Iterable<fi.vrk.xroad.catalog.persistence.entity.Member> entities;
-        if (changedAfter != null) {
-            entities = catalogService.getAllMembers(jaxbConverter.toLocalDateTime(changedAfter));
-        } else {
-            entities = catalogService.getAllMembers();
-        }
-
-        return jaxbConverter.convertMembers(entities, false);
-    }
+    @Id
+    @Column(nullable = false)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "PHONENUMBER_GEN")
+    @SequenceGenerator(name = "PHONENUMBER_GEN", sequenceName = "PHONENUMBER_ID_SEQ", allocationSize = 1)
+    private long id;
+    @Column(nullable = false)
+    private String language;
+    @Column
+    private String additionalInformation;
+    @Column
+    private String serviceChargeType;
+    @Column
+    private String chargeDescription;
+    @Column(nullable = false)
+    private String prefixNumber;
+    @Column(nullable = false)
+    private Boolean isFinnishServiceNumber;
+    @Column(nullable = false)
+    private String number;
+    @ManyToOne
+    @JoinColumn(name = "ORGANIZATION_ID")
+    private Organization organization;
 }

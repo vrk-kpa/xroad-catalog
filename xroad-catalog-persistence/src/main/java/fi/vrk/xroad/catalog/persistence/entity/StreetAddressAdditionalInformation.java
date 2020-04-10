@@ -20,23 +20,30 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package fi.vrk.xroad.catalog.persistence;
+package fi.vrk.xroad.catalog.persistence.entity;
 
-import fi.vrk.xroad.catalog.persistence.entity.Subsystem;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.CrudRepository;
-import org.springframework.data.repository.query.Param;
+import lombok.*;
 
-public interface SubsystemRepository extends CrudRepository<Subsystem, Long> {
+import javax.persistence.*;
 
-    @Query("SELECT s FROM Subsystem s WHERE s.subsystemCode = :subsystemCode "
-            + "AND s.member.xRoadInstance = :xRoadInstance "
-            + "AND s.member.memberClass = :memberClass "
-            + "AND s.member.memberCode = :memberCode "
-            + "AND s.statusInfo.removed IS NULL")
-    Subsystem findActiveByNaturalKey(@Param("xRoadInstance") String xRoadInstance,
-                                     @Param("memberClass") String memberClass,
-                                     @Param("memberCode") String memberCode,
-                                     @Param("subsystemCode") String subsystemCode);
+@Entity
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@ToString(exclude = {"streetAddress"})
+@EqualsAndHashCode(exclude = {"id","streetAddress"})
+public class StreetAddressAdditionalInformation {
+    @Id
+    @Column(nullable = false)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "STREETADDRESS_ADDITIONAL_INFORMATION_GEN")
+    @SequenceGenerator(name = "STREETADDRESS_ADDITIONAL_INFORMATION_GEN", sequenceName = "STREET_ADDRESS_ADDITIONAL_INFORMATION_ID_SEQ", allocationSize = 1)
+    private long id;
+    @Column(nullable = false)
+    private String language;
+    @Column(nullable = false)
+    private String value;
+    @ManyToOne
+    @JoinColumn(name = "STREETADDRESS_ID")
+    private StreetAddress streetAddress;
 }
-

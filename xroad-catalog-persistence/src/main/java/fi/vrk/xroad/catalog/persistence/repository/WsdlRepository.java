@@ -20,42 +20,16 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package fi.vrk.xroad.catalog.lister;
+package fi.vrk.xroad.catalog.persistence.repository;
 
-import fi.vrk.xroad.catalog.persistence.service.CatalogService;
-import fi.vrk.xroad.xroad_catalog_lister.Member;
-import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import fi.vrk.xroad.catalog.persistence.entity.Wsdl;
+import org.springframework.data.repository.CrudRepository;
 
-import javax.xml.datatype.XMLGregorianCalendar;
+import java.util.List;
 
-/**
- * XML interface for lister
- */
-@Component
-@Slf4j
-public class JaxbCatalogServiceImpl implements JaxbCatalogService {
-
-    @Autowired
-    @Setter
-    private CatalogService catalogService;
-
-    @Autowired
-    @Setter
-    private JaxbConverter jaxbConverter;
-
-    @Override
-    public Iterable<Member> getAllMembers(XMLGregorianCalendar changedAfter)  {
-        log.info("getAllMembers changedAfter:{}", changedAfter);
-        Iterable<fi.vrk.xroad.catalog.persistence.entity.Member> entities;
-        if (changedAfter != null) {
-            entities = catalogService.getAllMembers(jaxbConverter.toLocalDateTime(changedAfter));
-        } else {
-            entities = catalogService.getAllMembers();
-        }
-
-        return jaxbConverter.convertMembers(entities, false);
-    }
+public interface WsdlRepository extends CrudRepository<Wsdl, Long> {
+    /**
+     * Returns also removed items
+     */
+    List<Wsdl> findAnyByExternalId(String externalId);
 }

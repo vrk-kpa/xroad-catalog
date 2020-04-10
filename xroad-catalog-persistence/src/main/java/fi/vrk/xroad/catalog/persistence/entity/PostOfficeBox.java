@@ -20,42 +20,30 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package fi.vrk.xroad.catalog.lister;
+package fi.vrk.xroad.catalog.persistence.entity;
 
-import fi.vrk.xroad.catalog.persistence.service.CatalogService;
-import fi.vrk.xroad.xroad_catalog_lister.Member;
-import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import lombok.*;
 
-import javax.xml.datatype.XMLGregorianCalendar;
+import javax.persistence.*;
 
-/**
- * XML interface for lister
- */
-@Component
-@Slf4j
-public class JaxbCatalogServiceImpl implements JaxbCatalogService {
-
-    @Autowired
-    @Setter
-    private CatalogService catalogService;
-
-    @Autowired
-    @Setter
-    private JaxbConverter jaxbConverter;
-
-    @Override
-    public Iterable<Member> getAllMembers(XMLGregorianCalendar changedAfter)  {
-        log.info("getAllMembers changedAfter:{}", changedAfter);
-        Iterable<fi.vrk.xroad.catalog.persistence.entity.Member> entities;
-        if (changedAfter != null) {
-            entities = catalogService.getAllMembers(jaxbConverter.toLocalDateTime(changedAfter));
-        } else {
-            entities = catalogService.getAllMembers();
-        }
-
-        return jaxbConverter.convertMembers(entities, false);
-    }
+@Entity
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@ToString(exclude = {"postOfficeBoxAddress"})
+@EqualsAndHashCode(exclude = {"id","postOfficeBoxAddress"})
+public class PostOfficeBox {
+    @Id
+    @Column(nullable = false)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "POSTOFFICE_BOX_GEN")
+    @SequenceGenerator(name = "POSTOFFICE_BOX_GEN", sequenceName = "POSTOFFICE_BOX_ID_SEQ", allocationSize = 1)
+    private long id;
+    @Column(nullable = false)
+    private String language;
+    @Column(nullable = false)
+    private String value;
+    @ManyToOne
+    @JoinColumn(name = "POST_OFFICE_BOX_ID")
+    private PostOfficeBoxAddress postOfficeBoxAddress;
 }
