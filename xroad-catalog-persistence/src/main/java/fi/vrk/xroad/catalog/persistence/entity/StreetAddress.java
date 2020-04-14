@@ -34,7 +34,7 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString(exclude = {"address","streets","postOffices","municipalities","additionalInformation"})
-@EqualsAndHashCode(exclude = {"id","address","streets","postOffices","municipalities","additionalInformation"})
+@EqualsAndHashCode(exclude = {"id","address","streets","postOffices","municipalities","additionalInformation","statusInfo"})
 public class StreetAddress {
     @Id
     @Column(nullable = false)
@@ -54,15 +54,21 @@ public class StreetAddress {
     private String longitude;
     @Column(nullable = false)
     private String coordinateState;
+    @Embedded
+    private StatusInfo statusInfo = new StatusInfo();
+    @Builder.Default
     @Getter(AccessLevel.NONE) // do not create default getter, we provide the substitute
     @OneToMany(mappedBy = "streetAddress", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private Set<Street> streets = new HashSet<>();
+    @Builder.Default
     @Getter(AccessLevel.NONE) // do not create default getter, we provide the substitute
     @OneToMany(mappedBy = "streetAddress", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private Set<StreetAddressPostOffice> postOffices = new HashSet<>();
+    @Builder.Default
     @Getter(AccessLevel.NONE) // do not create default getter, we provide the substitute
     @OneToMany(mappedBy = "streetAddress", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private Set<Municipality> municipalities = new HashSet<>();
+    @Builder.Default
     @Getter(AccessLevel.NONE) // do not create default getter, we provide the substitute
     @OneToMany(mappedBy = "streetAddress", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private Set<StreetAddressAdditionalInformation> additionalInformation = new HashSet<>();

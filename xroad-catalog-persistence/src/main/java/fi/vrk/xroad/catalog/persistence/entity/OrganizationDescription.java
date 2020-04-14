@@ -32,7 +32,8 @@ import javax.persistence.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString(exclude = {"organization"})
-@EqualsAndHashCode(exclude = {"id", "organization"})
+@EqualsAndHashCode(exclude = {"id", "organization","statusInfo"})
+@Builder
 public class OrganizationDescription {
 
     @Id
@@ -46,6 +47,8 @@ public class OrganizationDescription {
     private String type;
     @Column(nullable = false)
     private String value;
+    @Embedded
+    private StatusInfo statusInfo = new StatusInfo();
     @ManyToOne
     @JoinColumn(name = "ORGANIZATION_ID")
     private Organization organization;

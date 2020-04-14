@@ -52,6 +52,7 @@ public class Supervisor extends XRoadCatalogActor {
     public static final String LIST_METHODS_ACTOR_ROUTER = "list-methods-actor-router";
     public static final String FETCH_WSDL_ACTOR_ROUTER = "fetch-wsdl-actor-router";
     public static final String FETCH_OPENAPI_ACTOR_ROUTER = "fetch-openapi-actor-router";
+    public static final String FETCH_ORGANIZATIONS_ACTOR_ROUTER = "fetch-organizations-actor-router";
 
     @Autowired
     private SpringExtension springExtension;
@@ -60,6 +61,7 @@ public class Supervisor extends XRoadCatalogActor {
     private ActorRef listMethodsPoolRouter;
     private ActorRef fetchWsdlPoolRouter;
     private ActorRef fetchOpenApiPoolRouter;
+    private ActorRef fetchOrganizationsPoolRouter;
 
     @Value("${xroad-catalog.list-methods-pool-size}")
     private int listMethodsPoolSize;
@@ -69,6 +71,9 @@ public class Supervisor extends XRoadCatalogActor {
 
     @Value("${xroad-catalog.fetch-openapi-pool-size}")
     private int fetchOpenApiPoolSize;
+
+    @Value("${xroad-catalog.fetch-organizations-pool-size}")
+    private int fetchOrganizationsPoolSize;
 
     @Override
     public void preStart() throws Exception {
@@ -96,6 +101,13 @@ public class Supervisor extends XRoadCatalogActor {
                         .props(springExtension.props("fetchOpenApiActor")),
                 FETCH_OPENAPI_ACTOR_ROUTER);
 
+        fetchOrganizationsPoolRouter = getContext().actorOf(new SmallestMailboxPool(fetchOrganizationsPoolSize)
+                        .withSupervisorStrategy(new OneForOneStrategy(-1,
+                                Duration.Inf(),
+                                (Throwable t) -> restart()))
+                        .props(springExtension.props("fetchOrganizationsActor")),
+                FETCH_ORGANIZATIONS_ACTOR_ROUTER);
+
         listMethodsPoolRouter = getContext().actorOf(new SmallestMailboxPool(listMethodsPoolSize)
                         .withSupervisorStrategy(new OneForOneStrategy(-1,
                                 Duration.Inf(),
@@ -107,7 +119,7 @@ public class Supervisor extends XRoadCatalogActor {
                         .withSupervisorStrategy(new OneForOneStrategy(-1,
                                 Duration.Inf(),
                                 (Throwable t) -> restart()))
-                .props(springExtension.props("listClientsActor", listMethodsPoolRouter)),
+                .props(springExtension.props("listClientsActor", listMethodsPoolRouter, fetchOrganizationsPoolRouter)),
                 LIST_CLIENTS_ACTOR_ROUTER);
 
         super.preStart();

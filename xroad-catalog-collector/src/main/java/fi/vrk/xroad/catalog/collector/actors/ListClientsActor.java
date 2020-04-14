@@ -40,8 +40,10 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestOperations;
 
-import java.util.HashMap;
-import java.util.HashSet;
+import java.security.KeyManagementException;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.util.*;
 
 /**
  * Actor which fetches all clients, and delegates listing
@@ -54,7 +56,6 @@ public class ListClientsActor extends XRoadCatalogActor {
 
     public static final String START_COLLECTING = "StartCollecting";
 
-
     @Autowired
     @Qualifier("listClientsRestOperations")
     private RestOperations restOperations;
@@ -62,15 +63,16 @@ public class ListClientsActor extends XRoadCatalogActor {
     @Autowired
     protected CatalogService catalogService;
 
-
     @Value("${xroad-catalog.list-clients-host}")
     private String host;
 
     // supervisor-created pool of list methods actors
     protected ActorRef listMethodsPoolRef;
+    private ActorRef fetchOrganizationsPoolRef;
 
-    public ListClientsActor(ActorRef listMethodsPoolRef) {
+    public ListClientsActor(ActorRef listMethodsPoolRef, ActorRef fetchOrganizationsPoolRef) {
         this.listMethodsPoolRef = listMethodsPoolRef;
+        this.fetchOrganizationsPoolRef = fetchOrganizationsPoolRef;
     }
 
     @Override
@@ -80,15 +82,13 @@ public class ListClientsActor extends XRoadCatalogActor {
     }
 
     @Override
-    protected boolean handleMessage(Object message) {
+    protected boolean handleMessage(Object message) throws NoSuchAlgorithmException, KeyStoreException, KeyManagementException {
 
         if (START_COLLECTING.equals(message)) {
 
             String listClientsUrl = host + "/listClients";
 
             log.info("Getting client list from {}", listClientsUrl);
-            // ClientList clientList = restOperations.getForObject(listClientsUrl, ClientList.class);
-
             ClientList clientList = ClientListUtil.clientListFromResponse(listClientsUrl);
 
 
@@ -118,7 +118,11 @@ public class ListClientsActor extends XRoadCatalogActor {
                     listMethodsPoolRef.tell(clientType, getSelf());
                 }
             }
+
             log.info("all clients (" + (counter - 1) + ") sent to actor");
+
+            fetchOrganizationsPoolRef.tell(clientList, getSelf());
+
             return true;
         } else {
             return false;

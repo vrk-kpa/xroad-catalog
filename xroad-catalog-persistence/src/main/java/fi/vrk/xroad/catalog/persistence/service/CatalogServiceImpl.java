@@ -25,7 +25,6 @@ package fi.vrk.xroad.catalog.persistence.service;
 import fi.vrk.xroad.catalog.persistence.entity.*;
 import fi.vrk.xroad.catalog.persistence.entity.Subsystem;
 import fi.vrk.xroad.catalog.persistence.repository.*;
-import fi.vrk.xroad.catalog.persistence.service.CatalogService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -58,6 +57,27 @@ public class CatalogServiceImpl implements CatalogService {
 
     @Autowired
     WsdlRepository wsdlRepository;
+
+    @Autowired
+    OrganizationRepository organizationRepository;
+
+    @Autowired
+    OrganizationNameRepository organizationNameRepository;
+
+    @Autowired
+    OrganizationDescriptionRepository organizationDescriptionRepository;
+
+    @Autowired
+    EmailRepository emailRepository;
+
+    @Autowired
+    PhoneNumberRepository phoneNumberRepository;
+
+    @Autowired
+    WebpageRepository webpageRepository;
+
+    @Autowired
+    AddressRepository addressRepository;
 
     @Override
     public Iterable<Member> getActiveMembers() {
@@ -110,6 +130,11 @@ public class CatalogServiceImpl implements CatalogService {
     @Override
     public Service getService(String serviceCode, String subsystemCode) {
         return serviceRepository.findActiveByServiceAndSubsystem(serviceCode, subsystemCode);
+    }
+
+    @Override
+    public void saveAllOrganizationsWithDetails(Collection<Organization> organizations) {
+
     }
 
     @Override
@@ -320,6 +345,124 @@ public class CatalogServiceImpl implements CatalogService {
                 oldOpenApi.getStatusInfo().setFetched(now);
             }
         }
+    }
+
+    @Override
+    public Organization saveOrganization(Organization newValue) {
+        Optional<Organization> foundValue = Optional.ofNullable(organizationRepository
+                .findByBusinessCode(newValue.getBusinessCode()));
+        if (foundValue.isPresent()) {
+            Organization oldValue = foundValue.get();
+            StatusInfo statusInfo = oldValue.getStatusInfo();
+            statusInfo.setFetched(LocalDateTime.now());
+            if (!oldValue.equals(newValue)) {
+                statusInfo.setChanged(LocalDateTime.now());
+            }
+            newValue.setStatusInfo(statusInfo);
+        }
+        return organizationRepository.save(newValue);
+    }
+
+    @Override
+    public void saveOrganizationName(OrganizationName newValue, Long organizationId) {
+        List<OrganizationName> foundList = organizationNameRepository
+                .findAnyByOrganizationId(organizationId);
+        if (!foundList.isEmpty()) {
+            foundList.forEach(oldValue -> {
+                StatusInfo statusInfo = oldValue.getStatusInfo();
+                statusInfo.setFetched(LocalDateTime.now());
+                if (!oldValue.equals(newValue)) {
+                    statusInfo.setChanged(LocalDateTime.now());
+                }
+                newValue.setStatusInfo(statusInfo);
+            });
+        }
+        organizationNameRepository.save(newValue);
+    }
+
+    @Override
+    public void saveOrganizationDescription(OrganizationDescription newValue, Long organizationId) {
+        List<OrganizationDescription> foundList = organizationDescriptionRepository
+                .findAnyByOrganizationId(organizationId);
+        if (!foundList.isEmpty()) {
+            foundList.forEach(oldValue -> {
+                StatusInfo statusInfo = oldValue.getStatusInfo();
+                statusInfo.setFetched(LocalDateTime.now());
+                if (!oldValue.equals(newValue)) {
+                    statusInfo.setChanged(LocalDateTime.now());
+                }
+                newValue.setStatusInfo(statusInfo);
+            });
+        }
+        organizationDescriptionRepository.save(newValue);
+    }
+
+    @Override
+    public void saveEmail(Email newValue, Long organizationId) {
+        List<Email> foundList = emailRepository
+                .findAnyByOrganizationId(organizationId);
+        if (!foundList.isEmpty()) {
+            foundList.forEach(oldValue -> {
+                StatusInfo statusInfo = oldValue.getStatusInfo();
+                statusInfo.setFetched(LocalDateTime.now());
+                if (!oldValue.equals(newValue)) {
+                    statusInfo.setChanged(LocalDateTime.now());
+                }
+                newValue.setStatusInfo(statusInfo);
+            });
+        }
+        emailRepository.save(newValue);
+    }
+
+    @Override
+    public void savePhoneNumber(PhoneNumber newValue, Long organizationId) {
+        List<PhoneNumber> foundList = phoneNumberRepository
+                .findAnyByOrganizationId(organizationId);
+        if (!foundList.isEmpty()) {
+            foundList.forEach(oldValue -> {
+                StatusInfo statusInfo = oldValue.getStatusInfo();
+                statusInfo.setFetched(LocalDateTime.now());
+                if (!oldValue.equals(newValue)) {
+                    statusInfo.setChanged(LocalDateTime.now());
+                }
+                newValue.setStatusInfo(statusInfo);
+            });
+        }
+        phoneNumberRepository.save(newValue);
+    }
+
+    @Override
+    public void saveWebPage(Webpage newValue, Long organizationId) {
+        List<Webpage> foundList = webpageRepository
+                .findAnyByOrganizationId(organizationId);
+        if (!foundList.isEmpty()) {
+            foundList.forEach(oldValue -> {
+                StatusInfo statusInfo = oldValue.getStatusInfo();
+                statusInfo.setFetched(LocalDateTime.now());
+                if (!oldValue.equals(newValue)) {
+                    statusInfo.setChanged(LocalDateTime.now());
+                }
+                newValue.setStatusInfo(statusInfo);
+            });
+        }
+        webpageRepository.save(newValue);
+    }
+
+    @Override
+    public void saveAddress(Address newValue, Long organizationId) {
+        List<Address> foundList = addressRepository
+                .findAnyByOrganizationId(organizationId);
+        if (!foundList.isEmpty()) {
+            foundList.forEach(oldValue -> {
+                StatusInfo statusInfo = oldValue.getStatusInfo();
+                statusInfo.setFetched(LocalDateTime.now());
+                if (!oldValue.equals(newValue)) {
+                    statusInfo.setChanged(LocalDateTime.now());
+                }
+                newValue.setStatusInfo(statusInfo);
+            });
+        }
+        addressRepository.save(newValue);
     }
 
 }

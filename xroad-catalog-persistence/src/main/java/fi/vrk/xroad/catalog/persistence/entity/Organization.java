@@ -33,6 +33,7 @@ import java.util.Set;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 @ToString(exclude = {
         "organizationNames",
         "organizationDescriptions",
@@ -49,95 +50,7 @@ import java.util.Set;
         "phoneNumbers",
         "webPages",
         "addresses"})
-@NamedEntityGraph(
-        name = "organization.full-tree.graph",
-        attributeNodes = {
-                @NamedAttributeNode(value = "organizationNames"),
-                @NamedAttributeNode(value = "organizationDescriptions"),
-                @NamedAttributeNode(value = "emails"),
-                @NamedAttributeNode(value = "phoneNumbers"),
-                @NamedAttributeNode(value = "webPages"),
-                @NamedAttributeNode(value = "addresses", subgraph = "addresses.streetAddresses.graph"),
-                @NamedAttributeNode(value = "addresses", subgraph = "addresses.postOfficeBoxAddresses.graph"),
-        },
-        subgraphs = {
-                @NamedSubgraph(
-                        name = "addresses.streetAddresses.graph",
-                        attributeNodes = {
-                                @NamedAttributeNode(value = "streetAddresses",
-                                        subgraph = "streetAddresses.streets.graph"),
-                                @NamedAttributeNode(value = "streetAddresses",
-                                        subgraph = "streetAddresses.postOffices.graph"),
-                                @NamedAttributeNode(value = "streetAddresses",
-                                        subgraph = "streetAddresses.municipalities.graph"),
-                                @NamedAttributeNode(value = "streetAddresses",
-                                        subgraph = "streetAddresses.additionalInformation.graph")
-                        }),
-                @NamedSubgraph(
-                        name = "addresses.postOfficeBoxAddresses.graph",
-                        attributeNodes = {
-                                @NamedAttributeNode(value = "postOfficeBoxAddresses",
-                                        subgraph = "postOfficeBoxAddresses.postOffices.graph"),
-                                @NamedAttributeNode(value = "postOfficeBoxAddresses",
-                                        subgraph = "postOfficeBoxAddresses.postOfficesBoxes.graph"),
-                                @NamedAttributeNode(value = "postOfficeBoxAddresses",
-                                        subgraph = "postOfficeBoxAddresses.additionalInformation.graph")
-                        }),
-                @NamedSubgraph(
-                        name = "streetAddresses.streets.graph",
-                        attributeNodes = @NamedAttributeNode(value = "streets")),
-                @NamedSubgraph(
-                        name = "streetAddresses.postOffices.graph",
-                        attributeNodes = @NamedAttributeNode(value = "postOffices")),
-                @NamedSubgraph(
-                        name = "streetAddresses.municipalities.graph",
-                        attributeNodes = @NamedAttributeNode(value = "municipalities")),
-                @NamedSubgraph(
-                        name = "streetAddresses.additionalInformation.graph",
-                        attributeNodes = @NamedAttributeNode(value = "additionalInformation")),
-                @NamedSubgraph(
-                        name = "postOfficeBoxAddresses.postOffices.graph",
-                        attributeNodes = @NamedAttributeNode(value = "postOffices")),
-                @NamedSubgraph(
-                        name = "postOfficeBoxAddresses.postOfficesBoxes.graph",
-                        attributeNodes = @NamedAttributeNode(value = "postOfficesBoxes")),
-                @NamedSubgraph(
-                        name = "postOfficeBoxAddresses.additionalInformation.graph",
-                        attributeNodes = @NamedAttributeNode(value = "additionalInformation"))
-        }
-)
-@NamedQueries({
-        @NamedQuery(name = "Organization.findAllChangedSince",
-                query = Organization.FIND_ALL_CHANGED_QUERY)
-})
 public class Organization {
-
-    private static final String FIND_CHANGED_QUERY_PART_1 =
-            "SELECT DISTINCT mem " +
-                    "FROM Member mem " +
-                    "LEFT JOIN FETCH mem.subsystems fetchedSubs " +
-                    "LEFT JOIN FETCH fetchedSubs.services fetchedSers " +
-                    "LEFT JOIN FETCH fetchedSers.wsdls fetchedWsdls " +
-                    "WHERE ";
-    private static final String FIND_CHANGED_QUERY_PART_2 =
-            "mem.statusInfo.changed > :since " +
-                    "OR EXISTS ( " +
-                    "SELECT sub " +
-                    "FROM Subsystem sub " +
-                    "WHERE sub.member = mem " +
-                    "AND sub.statusInfo.changed > :since)" +
-                    "OR EXISTS ( " +
-                    "SELECT service " +
-                    "FROM Service service " +
-                    "WHERE service.subsystem.member = mem " +
-                    "AND service.statusInfo.changed > :since)" +
-                    "OR EXISTS ( " +
-                    "SELECT wsdl " +
-                    "FROM Wsdl wsdl " +
-                    "WHERE wsdl.service.subsystem.member = mem " +
-                    "AND wsdl.statusInfo.changed > :since) ";
-    static final String FIND_ALL_CHANGED_QUERY =
-            FIND_CHANGED_QUERY_PART_1 + FIND_CHANGED_QUERY_PART_2;
 
     @Id
     @Column(nullable = false)
@@ -152,21 +65,27 @@ public class Organization {
     private String businessCode;
     @Embedded
     private StatusInfo statusInfo = new StatusInfo();
+    @Builder.Default
     @Getter(AccessLevel.NONE) // do not create default getter, we provide the substitute
     @OneToMany(mappedBy = "organization", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private Set<OrganizationName> organizationNames = new HashSet<>();
+    @Builder.Default
     @Getter(AccessLevel.NONE) // do not create default getter, we provide the substitute
     @OneToMany(mappedBy = "organization", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private Set<OrganizationDescription> organizationDescriptions = new HashSet<>();
+    @Builder.Default
     @Getter(AccessLevel.NONE) // do not create default getter, we provide the substitute
     @OneToMany(mappedBy = "organization", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private Set<Email> emails = new HashSet<>();
+    @Builder.Default
     @Getter(AccessLevel.NONE) // do not create default getter, we provide the substitute
     @OneToMany(mappedBy = "organization", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private Set<PhoneNumber> phoneNumbers = new HashSet<>();
+    @Builder.Default
     @Getter(AccessLevel.NONE) // do not create default getter, we provide the substitute
     @OneToMany(mappedBy = "organization", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private Set<Webpage> webPages = new HashSet<>();
+    @Builder.Default
     @Getter(AccessLevel.NONE) // do not create default getter, we provide the substitute
     @OneToMany(mappedBy = "organization", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private Set<Address> addresses = new HashSet<>();

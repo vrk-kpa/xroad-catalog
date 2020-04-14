@@ -97,6 +97,13 @@ public interface CatalogService {
     Service getService(String serviceCode, String subsystemCode);
 
     /**
+     * Stores given organizations and related details.
+     *
+     * @param organizations all Organizations that currently exist.
+     */
+    void saveAllOrganizationsWithDetails(Collection<Organization> organizations);
+
+    /**
      * Stores given members and subsystems. This should be the full dataset of both items
      * - items not included in the parameters are marked as removed, if the existed previously.
      *
@@ -139,5 +146,54 @@ public interface CatalogService {
      * @param openApi the actual openApi
      */
     void saveOpenApi(SubsystemId subsystemId, ServiceId serviceId, String openApi);
+
+    /**
+     * Saves given organization data. The organization can either be a new one, or an update to an existing one.
+     * Updates "changed" field based on whether data is different compared to last time.
+     * @param newValue the actual organization
+     */
+    Organization saveOrganization(Organization newValue);
+
+    /**
+     * Saves given organizationName data.
+     * @param newValue the organizationName
+     * @param organizationId ID of the related organization
+     */
+    void saveOrganizationName(OrganizationName newValue, Long organizationId);
+
+    /**
+     * Saves given organizationDescription data.
+     * @param newValue the organizationDescription
+     * @param organizationId ID of the related organization
+     */
+    void saveOrganizationDescription(OrganizationDescription newValue, Long organizationId);
+
+    /**
+     * Saves given email data.
+     * @param newValue the actual email
+     * @param organizationId ID of the related organization
+     */
+    void saveEmail(Email newValue, Long organizationId);
+
+    /**
+     * Saves given phoneNumber data.
+     * @param newValue the actual phoneNumber
+     * @param organizationId ID of the related organization
+     */
+    void savePhoneNumber(PhoneNumber newValue, Long organizationId);
+
+    /**
+     * Saves given webPage data.
+     * @param newValue the actual webPage
+     * @param organizationId ID of the related organization
+     */
+    void saveWebPage(Webpage newValue, Long organizationId);
+
+    /**
+     * Saves given address data.
+     * @param newValue the actual address
+     * @param organizationId ID of the related organization
+     */
+    void saveAddress(Address newValue, Long organizationId);
 
 }

@@ -34,7 +34,7 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString(exclude = {"address","additionalInformation","postOffices","postOfficesBoxes"})
-@EqualsAndHashCode(exclude = {"id","address","additionalInformation","postOffices","postOfficesBoxes"})
+@EqualsAndHashCode(exclude = {"id","address","additionalInformation","postOffices","postOfficesBoxes","statusInfo"})
 public class PostOfficeBoxAddress {
     @Id
     @Column(nullable = false)
@@ -48,12 +48,17 @@ public class PostOfficeBoxAddress {
     private String postalCode;
     @Column
     private String municipality;
+    @Embedded
+    private StatusInfo statusInfo = new StatusInfo();
+    @Builder.Default
     @Getter(AccessLevel.NONE) // do not create default getter, we provide the substitute
     @OneToMany(mappedBy = "postOfficeBoxAddress", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private Set<PostOfficeBoxAddressAdditionalInformation> additionalInformation = new HashSet<>();
+    @Builder.Default
     @Getter(AccessLevel.NONE) // do not create default getter, we provide the substitute
     @OneToMany(mappedBy = "postOfficeBoxAddress", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private Set<PostOffice> postOffices = new HashSet<>();
+    @Builder.Default
     @Getter(AccessLevel.NONE) // do not create default getter, we provide the substitute
     @OneToMany(mappedBy = "postOfficeBoxAddress", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private Set<PostOfficeBox> postOfficesBoxes = new HashSet<>();

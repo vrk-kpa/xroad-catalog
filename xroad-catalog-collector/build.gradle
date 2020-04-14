@@ -75,6 +75,9 @@ task wsImport {
 dependencies {
     compile project(':xroad-catalog-persistence')
 
+    // https://mvnrepository.com/artifact/org.apache.httpcomponents/httpclient
+    compile group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.5'
+
     compile 'org.json:json:20171018'
     compile 'org.springframework.boot:spring-boot-starter-web-services'
     compile "com.fasterxml.jackson.core:jackson-databind:$jacksonVersion"

@@ -32,7 +32,7 @@ import javax.persistence.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString(exclude = {"postOfficeBoxAddress"})
-@EqualsAndHashCode(exclude = {"id","postOfficeBoxAddress"})
+@EqualsAndHashCode(exclude = {"id","postOfficeBoxAddress","statusInfo"})
 public class PostOfficeBoxAddressAdditionalInformation {
     @Id
     @Column(nullable = false)
@@ -43,6 +43,8 @@ public class PostOfficeBoxAddressAdditionalInformation {
     private String language;
     @Column(nullable = false)
     private String value;
+    @Embedded
+    private StatusInfo statusInfo = new StatusInfo();
     @ManyToOne
     @JoinColumn(name = "POST_OFFICE_BOX_ID")
     private PostOfficeBoxAddress postOfficeBoxAddress;

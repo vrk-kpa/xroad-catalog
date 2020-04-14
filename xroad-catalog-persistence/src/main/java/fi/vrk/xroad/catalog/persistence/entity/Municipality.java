@@ -34,7 +34,7 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString(exclude = {"streetAddress","municipalityNames"})
-@EqualsAndHashCode(exclude = {"id","streetAddress","municipalityNames"})
+@EqualsAndHashCode(exclude = {"id","streetAddress","municipalityNames","statusInfo"})
 public class Municipality {
     @Id
     @Column(nullable = false)
@@ -43,9 +43,12 @@ public class Municipality {
     private long id;
     @Column(nullable = false)
     private String code;
+    @Embedded
+    private StatusInfo statusInfo = new StatusInfo();
     @ManyToOne
     @JoinColumn(name = "STREETADDRESS_ID")
     private StreetAddress streetAddress;
+    @Builder.Default
     @Getter(AccessLevel.NONE) // do not create default getter, we provide the substitute
     @OneToMany(mappedBy = "municipality", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private Set<MunicipalityName> municipalityNames = new HashSet<>();

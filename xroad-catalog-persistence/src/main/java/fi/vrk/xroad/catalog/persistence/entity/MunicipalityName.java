@@ -32,7 +32,7 @@ import javax.persistence.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString(exclude = {"municipality"})
-@EqualsAndHashCode(exclude = {"id","municipality"})
+@EqualsAndHashCode(exclude = {"id","municipality","statusInfo"})
 public class MunicipalityName {
     @Id
     @Column(nullable = false)
@@ -43,6 +43,8 @@ public class MunicipalityName {
     private String language;
     @Column(nullable = false)
     private String value;
+    @Embedded
+    private StatusInfo statusInfo = new StatusInfo();
     @ManyToOne
     @JoinColumn(name = "MUNICIPALITY_ID")
     private Municipality municipality;
