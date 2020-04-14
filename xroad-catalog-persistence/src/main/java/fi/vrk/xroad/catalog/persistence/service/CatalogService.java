@@ -150,6 +150,7 @@ public interface CatalogService {
     /**
      * Saves given organization data. The organization can either be a new one, or an update to an existing one.
      * Updates "changed" field based on whether data is different compared to last time.
+     * @return saved organization
      * @param newValue the actual organization
      */
     Organization saveOrganization(Organization newValue);
@@ -191,9 +192,62 @@ public interface CatalogService {
 
     /**
      * Saves given address data.
+     * @return saved Address
      * @param newValue the actual address
      * @param organizationId ID of the related organization
      */
-    void saveAddress(Address newValue, Long organizationId);
+    Address saveAddress(Address newValue, Long organizationId);
+
+    /**
+     * Saves given StreetAddress data.
+     * @return saved StreetAddress
+     * @param newValue the actual StreetAddress
+     * @param addressId ID of the related address
+     */
+    StreetAddress saveStreetAddress(StreetAddress newValue, Long addressId);
+
+    /**
+     * Saves given StreetAddressMunicipality data.
+     * @return saved StreetAddressMunicipality
+     * @param newValue the actual StreetAddressMunicipality
+     * @param streetAddressId ID of the related street address
+     */
+    StreetAddressMunicipality saveStreetAddressMunicipality(StreetAddressMunicipality newValue,
+                                                            Long streetAddressId);
+
+    /**
+     * Saves given StreetAddressMunicipalityName data.
+     * @return saved StreetAddressMunicipality
+     * @param newValue the actual StreetAddressMunicipalityName
+     * @param streetAddressMunicipalityId ID of the related street address municipality
+     */
+    StreetAddressMunicipalityName saveStreetAddressMunicipalityName(StreetAddressMunicipalityName newValue,
+                                                            Long streetAddressMunicipalityId);
+
+    /**
+     * Saves given StreetAddressAdditionalInformation data.
+     * @return saved StreetAddressAdditionalInformation
+     * @param newValue the actual StreetAddressAdditionalInformation
+     * @param streetAddressId ID of the related street address
+     */
+    StreetAddressAdditionalInformation saveStreetAddressAdditionalInformation(StreetAddressAdditionalInformation newValue,
+                                                                              Long streetAddressId);
+
+    /**
+     * Saves given StreetAddressPostOffice data.
+     * @return saved StreetAddressMunicipality
+     * @param newValue the actual StreetAddressPostOffice
+     * @param streetAddressId ID of the related street address
+     */
+    StreetAddressPostOffice saveStreetAddressPostOffice(StreetAddressPostOffice newValue,
+                                                            Long streetAddressId);
+
+    /**
+     * Saves given Street data.
+     * @return saved Street
+     * @param newValue the actual Street
+     * @param streetAddressId ID of the related street address
+     */
+    Street saveStreet(Street newValue, Long streetAddressId);
 
 }

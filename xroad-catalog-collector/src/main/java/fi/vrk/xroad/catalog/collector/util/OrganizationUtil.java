@@ -150,27 +150,18 @@ public class OrganizationUtil {
         return addresses;
     }
 
-    public static List<StreetAddress> createStreetAddresses(JSONArray jsonArray) {
-        List<StreetAddress> streetAddresses = new ArrayList<>();
-        for (int i = 0; i < jsonArray.length(); i++) {
-            streetAddresses.add(StreetAddress.builder()
-                    .streetNumber(jsonArray.getJSONObject(i).getString("streetNumber"))
-                    .postalCode(jsonArray.getJSONObject(i).getString("postalCode"))
-                    .latitude(jsonArray.getJSONObject(i).getString("latitude"))
-                    .longitude(jsonArray.getJSONObject(i).getString("longitude"))
-                    .coordinateState(jsonArray.getJSONObject(i).getString("coordinateState"))
-                    .build());
-        }
-        return streetAddresses;
+    public static StreetAddress createStreetAddress(JSONObject jsonObject) {
+        return StreetAddress.builder()
+                .streetNumber(jsonObject.getString("streetNumber"))
+                .postalCode(jsonObject.getString("postalCode"))
+                .latitude(jsonObject.getString("latitude"))
+                .longitude(jsonObject.getString("longitude"))
+                .coordinateState(jsonObject.getString("coordinateState")).build();
     }
 
-    public static List<StreetAddressMunicipality> createStreetAddressMunicipalities(JSONArray jsonArray) {
-        List<StreetAddressMunicipality> municipalities = new ArrayList<>();
-        for (int i = 0; i < jsonArray.length(); i++) {
-            municipalities.add(StreetAddressMunicipality.builder()
-                    .code(jsonArray.getJSONObject(i).getString("code")).build());
-        }
-        return municipalities;
+    public static StreetAddressMunicipality createStreetAddressMunicipality(JSONObject jsonObject) {
+        return StreetAddressMunicipality.builder()
+                .code(jsonObject.getString("code")).build();
     }
 
     public static List<StreetAddressMunicipalityName> createStreetAddressMunicipalityNames(JSONArray jsonArray) {

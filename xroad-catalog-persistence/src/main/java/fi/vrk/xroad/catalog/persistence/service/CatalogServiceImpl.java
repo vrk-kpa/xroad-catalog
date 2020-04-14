@@ -79,6 +79,24 @@ public class CatalogServiceImpl implements CatalogService {
     @Autowired
     AddressRepository addressRepository;
 
+    @Autowired
+    StreetAddressRepository streetAddressRepository;
+
+    @Autowired
+    StreetAddressMunicipalityRepository streetAddressMunicipalityRepository;
+
+    @Autowired
+    StreetAddressMunicipalityNameRepository streetAddressMunicipalityNameRepository;
+
+    @Autowired
+    StreetAddressAdditionalInformationRepository streetAddressAdditionalInformationRepository;
+
+    @Autowired
+    StreetAddressPostOfficeRepository streetAddressPostOfficeRepository;
+
+    @Autowired
+    StreetRepository streetRepository;
+
     @Override
     public Iterable<Member> getActiveMembers() {
         return memberRepository.findAllActive();
@@ -449,7 +467,7 @@ public class CatalogServiceImpl implements CatalogService {
     }
 
     @Override
-    public void saveAddress(Address newValue, Long organizationId) {
+    public Address saveAddress(Address newValue, Long organizationId) {
         List<Address> foundList = addressRepository
                 .findAnyByOrganizationId(organizationId);
         if (!foundList.isEmpty()) {
@@ -462,7 +480,112 @@ public class CatalogServiceImpl implements CatalogService {
                 newValue.setStatusInfo(statusInfo);
             });
         }
-        addressRepository.save(newValue);
+        return addressRepository.save(newValue);
+    }
+
+    @Override
+    public StreetAddress saveStreetAddress(StreetAddress newValue, Long addressId) {
+        Optional<StreetAddress> foundValue = Optional.ofNullable(streetAddressRepository
+                .findByAddressId(addressId));
+        if (foundValue.isPresent()) {
+            StreetAddress oldValue = foundValue.get();
+            StatusInfo statusInfo = oldValue.getStatusInfo();
+            statusInfo.setFetched(LocalDateTime.now());
+            if (!oldValue.equals(newValue)) {
+                statusInfo.setChanged(LocalDateTime.now());
+            }
+            newValue.setStatusInfo(statusInfo);
+        }
+        return streetAddressRepository.save(newValue);
+    }
+
+    @Override
+    public StreetAddressMunicipality saveStreetAddressMunicipality(
+            StreetAddressMunicipality newValue, Long streetAddressId) {
+        Optional<StreetAddressMunicipality> foundValue =
+                Optional.ofNullable(streetAddressMunicipalityRepository
+                        .findByStreetAddressId(streetAddressId));
+        if (foundValue.isPresent()) {
+            StreetAddressMunicipality oldValue = foundValue.get();
+            StatusInfo statusInfo = oldValue.getStatusInfo();
+            statusInfo.setFetched(LocalDateTime.now());
+            if (!oldValue.equals(newValue)) {
+                statusInfo.setChanged(LocalDateTime.now());
+            }
+            newValue.setStatusInfo(statusInfo);
+        }
+        return streetAddressMunicipalityRepository.save(newValue);
+    }
+
+    @Override
+    public StreetAddressMunicipalityName saveStreetAddressMunicipalityName(
+            StreetAddressMunicipalityName newValue, Long streetAddressMunicipalityId) {
+        List<StreetAddressMunicipalityName> foundList = streetAddressMunicipalityNameRepository
+                .findAnyByStreetAddressMunicipalityId(streetAddressMunicipalityId);
+        if (!foundList.isEmpty()) {
+            foundList.forEach(oldValue -> {
+                StatusInfo statusInfo = oldValue.getStatusInfo();
+                statusInfo.setFetched(LocalDateTime.now());
+                if (!oldValue.equals(newValue)) {
+                    statusInfo.setChanged(LocalDateTime.now());
+                }
+                newValue.setStatusInfo(statusInfo);
+            });
+        }
+        return streetAddressMunicipalityNameRepository.save(newValue);
+    }
+
+    @Override
+    public StreetAddressAdditionalInformation saveStreetAddressAdditionalInformation(
+            StreetAddressAdditionalInformation newValue, Long streetAddressId) {
+        List<StreetAddressAdditionalInformation> foundList = streetAddressAdditionalInformationRepository
+                .findAnyByStreetAddressId(streetAddressId);
+        if (!foundList.isEmpty()) {
+            foundList.forEach(oldValue -> {
+                StatusInfo statusInfo = oldValue.getStatusInfo();
+                statusInfo.setFetched(LocalDateTime.now());
+                if (!oldValue.equals(newValue)) {
+                    statusInfo.setChanged(LocalDateTime.now());
+                }
+                newValue.setStatusInfo(statusInfo);
+            });
+        }
+        return streetAddressAdditionalInformationRepository.save(newValue);
+    }
+
+    @Override
+    public StreetAddressPostOffice saveStreetAddressPostOffice(StreetAddressPostOffice newValue,
+                                                                   Long streetAddressId) {
+        List<StreetAddressPostOffice> foundList = streetAddressPostOfficeRepository
+                .findAnyByStreetAddressId(streetAddressId);
+        if (!foundList.isEmpty()) {
+            foundList.forEach(oldValue -> {
+                StatusInfo statusInfo = oldValue.getStatusInfo();
+                statusInfo.setFetched(LocalDateTime.now());
+                if (!oldValue.equals(newValue)) {
+                    statusInfo.setChanged(LocalDateTime.now());
+                }
+                newValue.setStatusInfo(statusInfo);
+            });
+        }
+        return streetAddressPostOfficeRepository.save(newValue);
+    }
+
+    @Override
+    public Street saveStreet(Street newValue, Long streetAddressId) {
+        List<Street> foundList = streetRepository
+                .findAnyByStreetAddressId(streetAddressId);
+        if (!foundList.isEmpty()) {
+            foundList.forEach(oldValue -> {
+                StatusInfo statusInfo = oldValue.getStatusInfo();
+                statusInfo.setFetched(LocalDateTime.now());
+                if (!oldValue.equals(newValue)) {
+                    statusInfo.setChanged(LocalDateTime.now());
+                }
+                newValue.setStatusInfo(statusInfo);
+            });
+        }
+        return streetRepository.save(newValue);
     }
 
 }
