@@ -33,19 +33,21 @@ import javax.persistence.*;
 @AllArgsConstructor
 @ToString(exclude = {"postOfficeBoxAddress"})
 @EqualsAndHashCode(exclude = {"id","postOfficeBoxAddress","statusInfo"})
+@Builder
 public class PostOffice {
     @Id
     @Column(nullable = false)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "POSTOFFICE_GEN")
-    @SequenceGenerator(name = "POSTOFFICE_GEN", sequenceName = "POSTOFFICE_ID_SEQ", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "POST_OFFICE_GEN")
+    @SequenceGenerator(name = "POST_OFFICE_GEN", sequenceName = "POST_OFFICE_ID_SEQ", allocationSize = 1)
     private long id;
     @Column(nullable = false)
     private String language;
     @Column(nullable = false)
     private String value;
+    @Builder.Default
     @Embedded
     private StatusInfo statusInfo = new StatusInfo();
     @ManyToOne
-    @JoinColumn(name = "POST_OFFICE_BOX_ID")
+    @JoinColumn(name = "POST_OFFICE_BOX_ADDRESS_ID")
     private PostOfficeBoxAddress postOfficeBoxAddress;
 }

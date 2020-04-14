@@ -29,6 +29,6 @@ import java.util.List;
 
 public interface PostOfficeBoxAddressAdditionalInformationRepository extends CrudRepository<PostOfficeBoxAddressAdditionalInformation, Long> {
 
-    List<PostOfficeBoxAddressAdditionalInformation> findAnyByOrganizationId(Long organizationId);
+    List<PostOfficeBoxAddressAdditionalInformation> findAnyByPostOfficeBoxAddressId(Long postOfficeBoxAddressId);
 
 }

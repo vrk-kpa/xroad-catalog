@@ -20,14 +20,34 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package fi.vrk.xroad.catalog.persistence.repository;
+package fi.vrk.xroad.catalog.persistence.entity;
 
-import fi.vrk.xroad.catalog.persistence.entity.Street;
-import org.springframework.data.repository.CrudRepository;
+import lombok.*;
 
-import java.util.List;
+import javax.persistence.*;
 
-public interface StreetRepository extends CrudRepository<Street, Long> {
-
-    List<Street> findAnyByStreetAddressId(Long streetAddressId);
+@Entity
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@ToString(exclude = {"postOfficeBoxAddressMunicipality"})
+@EqualsAndHashCode(exclude = {"id","postOfficeBoxAddressMunicipality","statusInfo"})
+@Builder
+public class PostOfficeBoxAddressMunicipalityName {
+    @Id
+    @Column(nullable = false)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "POST_OFFICE_BOX_ADDRESS_MUNICIPALITY_NAME_GEN")
+    @SequenceGenerator(name = "POST_OFFICE_BOX_ADDRESS_MUNICIPALITY_NAME_GEN", sequenceName = "POST_OFFICE_BOX_ADDRESS_MUNICIPALITY_NAME_ID_SEQ", allocationSize = 1)
+    private long id;
+    @Column(nullable = false)
+    private String language;
+    @Column(nullable = false)
+    private String value;
+    @Builder.Default
+    @Embedded
+    private StatusInfo statusInfo = new StatusInfo();
+    @ManyToOne
+    @JoinColumn(name = "POST_OFFICE_BOX_ADDRESS_MUNICIPALITY_ID")
+    private PostOfficeBoxAddressMunicipality postOfficeBoxAddressMunicipality;
 }

@@ -35,11 +35,12 @@ import java.util.Set;
 @AllArgsConstructor
 @ToString(exclude = {"address","streets","postOffices","municipalities","additionalInformation"})
 @EqualsAndHashCode(exclude = {"id","address","streets","postOffices","municipalities","additionalInformation","statusInfo"})
+@Builder
 public class StreetAddress {
     @Id
     @Column(nullable = false)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "STREETADDRESS_GEN")
-    @SequenceGenerator(name = "STREETADDRESS_GEN", sequenceName = "STREETADDRESS_ID_SEQ", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "STREET_ADDRESS_GEN")
+    @SequenceGenerator(name = "STREET_ADDRESS_GEN", sequenceName = "STREET_ADDRESS_ID_SEQ", allocationSize = 1)
     private long id;
     @ManyToOne
     @JoinColumn(name = "ADDRESS_ID")
@@ -54,6 +55,7 @@ public class StreetAddress {
     private String longitude;
     @Column(nullable = false)
     private String coordinateState;
+    @Builder.Default
     @Embedded
     private StatusInfo statusInfo = new StatusInfo();
     @Builder.Default
@@ -67,7 +69,7 @@ public class StreetAddress {
     @Builder.Default
     @Getter(AccessLevel.NONE) // do not create default getter, we provide the substitute
     @OneToMany(mappedBy = "streetAddress", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    private Set<Municipality> municipalities = new HashSet<>();
+    private Set<StreetAddressMunicipality> municipalities = new HashSet<>();
     @Builder.Default
     @Getter(AccessLevel.NONE) // do not create default getter, we provide the substitute
     @OneToMany(mappedBy = "streetAddress", cascade = CascadeType.ALL, fetch = FetchType.EAGER)

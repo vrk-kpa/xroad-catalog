@@ -300,6 +300,25 @@ CREATE SEQUENCE street_address_id_seq
 
 ALTER SEQUENCE street_address_id_seq OWNED BY street_address.id;
 
+CREATE TABLE post_office_box_address (
+    id BIGSERIAL PRIMARY KEY NOT NULL,
+    address_id BIGSERIAL NOT NULL REFERENCES address(id),
+    postal_code TEXT NOT NULL,
+    created TIMESTAMP WITH TIME ZONE NOT NULL,
+    changed TIMESTAMP WITH TIME ZONE NOT NULL,
+    fetched TIMESTAMP WITH TIME ZONE NOT NULL,
+    removed TIMESTAMP WITH TIME ZONE
+);
+
+CREATE SEQUENCE post_office_box_address_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+ALTER SEQUENCE post_office_box_address_id_seq OWNED BY post_office_box_address.id;
+
 CREATE TABLE street (
     id BIGSERIAL PRIMARY KEY NOT NULL,
     street_address_id BIGSERIAL NOT NULL REFERENCES street_address(id),
@@ -340,7 +359,7 @@ CREATE SEQUENCE street_address_postoffice_id_seq
 
 ALTER SEQUENCE street_address_postoffice_id_seq OWNED BY street_address_postoffice.id;
 
-CREATE TABLE municipality (
+CREATE TABLE street_address_municipality (
     id BIGSERIAL PRIMARY KEY NOT NULL,
     street_address_id BIGSERIAL NOT NULL REFERENCES street_address(id),
     code TEXT NOT NULL,
@@ -350,18 +369,37 @@ CREATE TABLE municipality (
     removed TIMESTAMP WITH TIME ZONE
 );
 
-CREATE SEQUENCE municipality_id_seq
+CREATE SEQUENCE street_address_municipality_id_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
     NO MAXVALUE
     CACHE 1;
 
-ALTER SEQUENCE municipality_id_seq OWNED BY municipality.id;
+ALTER SEQUENCE street_address_municipality_id_seq OWNED BY street_address_municipality.id;
 
-CREATE TABLE municipality_name (
+CREATE TABLE post_office_box_address_municipality (
     id BIGSERIAL PRIMARY KEY NOT NULL,
-    municipality_id BIGSERIAL NOT NULL REFERENCES municipality(id),
+    post_office_box_address_id BIGSERIAL NOT NULL REFERENCES post_office_box_address(id),
+    code TEXT NOT NULL,
+    created TIMESTAMP WITH TIME ZONE NOT NULL,
+    changed TIMESTAMP WITH TIME ZONE NOT NULL,
+    fetched TIMESTAMP WITH TIME ZONE NOT NULL,
+    removed TIMESTAMP WITH TIME ZONE
+);
+
+CREATE SEQUENCE post_office_box_address_municipality_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+ALTER SEQUENCE post_office_box_address_municipality_id_seq OWNED BY post_office_box_address_municipality.id;
+
+CREATE TABLE street_address_municipality_name (
+    id BIGSERIAL PRIMARY KEY NOT NULL,
+    street_address_municipality_id BIGSERIAL NOT NULL REFERENCES street_address_municipality(id),
     language TEXT NOT NULL,
     value TEXT NOT NULL,
     created TIMESTAMP WITH TIME ZONE NOT NULL,
@@ -370,14 +408,34 @@ CREATE TABLE municipality_name (
     removed TIMESTAMP WITH TIME ZONE
 );
 
-CREATE SEQUENCE municipality_name_id_seq
+CREATE SEQUENCE post_office_box_address_municipality_name_id_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
     NO MAXVALUE
     CACHE 1;
 
-ALTER SEQUENCE municipality_name_id_seq OWNED BY municipality_name.id;
+ALTER SEQUENCE post_office_box_address_municipality_name_id_seq OWNED BY post_office_box_address_municipality_name.id;
+
+CREATE TABLE post_office_box_address_municipality_name (
+    id BIGSERIAL PRIMARY KEY NOT NULL,
+    post_office_box_address_municipality_id BIGSERIAL NOT NULL REFERENCES post_office_box_address_municipality(id),
+    language TEXT NOT NULL,
+    value TEXT NOT NULL,
+    created TIMESTAMP WITH TIME ZONE NOT NULL,
+    changed TIMESTAMP WITH TIME ZONE NOT NULL,
+    fetched TIMESTAMP WITH TIME ZONE NOT NULL,
+    removed TIMESTAMP WITH TIME ZONE
+);
+
+CREATE SEQUENCE post_office_box_address_municipality_name_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+ALTER SEQUENCE post_office_box_address_municipality_name_id_seq OWNED BY post_office_box_address_municipality_name.id;
 
 CREATE TABLE street_address_additional_information (
     id BIGSERIAL PRIMARY KEY NOT NULL,
@@ -398,26 +456,6 @@ CREATE SEQUENCE street_address_additional_information_id_seq
     CACHE 1;
 
 ALTER SEQUENCE street_address_additional_information_id_seq OWNED BY street_address_additional_information.id;
-
-CREATE TABLE post_office_box_address (
-    id BIGSERIAL PRIMARY KEY NOT NULL,
-    address_id BIGSERIAL NOT NULL REFERENCES address(id),
-    postal_code TEXT NOT NULL,
-    municipality TEXT,
-    created TIMESTAMP WITH TIME ZONE NOT NULL,
-    changed TIMESTAMP WITH TIME ZONE NOT NULL,
-    fetched TIMESTAMP WITH TIME ZONE NOT NULL,
-    removed TIMESTAMP WITH TIME ZONE
-);
-
-CREATE SEQUENCE post_office_box_address_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-ALTER SEQUENCE post_office_box_address_id_seq OWNED BY post_office_box_address.id;
 
 CREATE TABLE post_office_box (
     id BIGSERIAL PRIMARY KEY NOT NULL,
@@ -500,8 +538,10 @@ CREATE INDEX idx_member_changed ON member(changed);
 CREATE INDEX idx_organization_changed ON organization(changed);
 CREATE INDEX idx_address_changed ON address(changed);
 CREATE INDEX idx_email_changed ON email(changed);
-CREATE INDEX idx_municipality_changed ON municipality(changed);
-CREATE INDEX idx_municipality_name_changed ON municipality_name(changed);
+CREATE INDEX idx_street_address_municipality_changed ON street_address_municipality(changed);
+CREATE INDEX idx_street_address_municipality_name_changed ON street_address_municipality_name(changed);
+CREATE INDEX idx_post_office_box_address_municipality_changed ON post_office_box_address_municipality(changed);
+CREATE INDEX idx_post_office_box_address_municipality_name_changed ON post_office_box_address_municipality_name(changed);
 CREATE INDEX idx_organization_description_changed ON organization_description(changed);
 CREATE INDEX idx_organization_name_changed ON organization_name(changed);
 CREATE INDEX idx_phone_number_changed ON phone_number(changed);
@@ -538,10 +578,12 @@ ALTER TABLE address OWNER TO xroad_catalog;
 ALTER TABLE street_address OWNER TO xroad_catalog;
 ALTER TABLE street OWNER TO xroad_catalog;
 ALTER TABLE street_address_postoffice OWNER TO xroad_catalog;
-ALTER TABLE municipality OWNER TO xroad_catalog;
-ALTER TABLE municipality_name OWNER TO xroad_catalog;
+ALTER TABLE street_address_municipality OWNER TO xroad_catalog;
+ALTER TABLE street_address_municipality_name OWNER TO xroad_catalog;
 ALTER TABLE street_address_additional_information OWNER TO xroad_catalog;
 ALTER TABLE post_office_box_address OWNER TO xroad_catalog;
 ALTER TABLE post_office_box OWNER TO xroad_catalog;
 ALTER TABLE post_office OWNER TO xroad_catalog;
+ALTER TABLE post_office_box_address_municipality OWNER TO xroad_catalog;
+ALTER TABLE post_office_box_address_municipality_name OWNER TO xroad_catalog;
 ALTER TABLE post_office_box_address_additional_information OWNER TO xroad_catalog;

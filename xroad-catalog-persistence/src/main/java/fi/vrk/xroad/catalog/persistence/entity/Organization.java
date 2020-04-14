@@ -63,6 +63,7 @@ public class Organization {
     private String publishingStatus;
     @Column(nullable = false)
     private String businessCode;
+    @Builder.Default
     @Embedded
     private StatusInfo statusInfo = new StatusInfo();
     @Builder.Default

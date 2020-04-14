@@ -29,6 +29,6 @@ import java.util.List;
 
 public interface StreetAddressAdditionalInformationRepository extends CrudRepository<StreetAddressAdditionalInformation, Long> {
 
-    List<StreetAddressAdditionalInformation> findAnyByOrganizationId(Long organizationId);
+    List<StreetAddressAdditionalInformation> findAnyByStreetAddressId(Long streetAddressId);
 
 }

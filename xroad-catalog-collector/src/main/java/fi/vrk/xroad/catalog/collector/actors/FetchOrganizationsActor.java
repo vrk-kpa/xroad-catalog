@@ -70,7 +70,7 @@ public class FetchOrganizationsActor extends XRoadCatalogActor {
             for (int i = 0; i < organizationData.size(); i++) {
                 log.info("Saving {}. batch of {} organizations out of total {}",
                         (i + 1), organizationData.get(i).length(), numberOfOrganizations);
-                // saveBatch(organizationData.get(i));
+                saveBatch(organizationData.get(i));
             }
 
             log.info("Saved data of {} organizations successfully", numberOfOrganizations);
@@ -82,7 +82,7 @@ public class FetchOrganizationsActor extends XRoadCatalogActor {
     }
 
     private void saveBatch(JSONArray data) {
-        for (int i = 0; i < data.length(); i++) {
+/*        for (int i = 0; i < data.length(); i++) {
             Organization organization = OrganizationUtil.createOrganization(data.getJSONObject(i));
             List<Email> emails = OrganizationUtil.createEmails(data.getJSONObject(i).getJSONArray("emails"));
             List<Webpage> webPages = OrganizationUtil.createWebPages(data.getJSONObject(i).getJSONArray("webPages"));
@@ -134,7 +134,7 @@ public class FetchOrganizationsActor extends XRoadCatalogActor {
                 log.info("Saved address successfully");
             });
 
-        }
+        }*/
     }
 
 }

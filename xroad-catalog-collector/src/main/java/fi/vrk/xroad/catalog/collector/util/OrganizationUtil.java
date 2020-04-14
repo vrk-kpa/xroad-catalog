@@ -150,6 +150,127 @@ public class OrganizationUtil {
         return addresses;
     }
 
+    public static List<StreetAddress> createStreetAddresses(JSONArray jsonArray) {
+        List<StreetAddress> streetAddresses = new ArrayList<>();
+        for (int i = 0; i < jsonArray.length(); i++) {
+            streetAddresses.add(StreetAddress.builder()
+                    .streetNumber(jsonArray.getJSONObject(i).getString("streetNumber"))
+                    .postalCode(jsonArray.getJSONObject(i).getString("postalCode"))
+                    .latitude(jsonArray.getJSONObject(i).getString("latitude"))
+                    .longitude(jsonArray.getJSONObject(i).getString("longitude"))
+                    .coordinateState(jsonArray.getJSONObject(i).getString("coordinateState"))
+                    .build());
+        }
+        return streetAddresses;
+    }
+
+    public static List<StreetAddressMunicipality> createStreetAddressMunicipalities(JSONArray jsonArray) {
+        List<StreetAddressMunicipality> municipalities = new ArrayList<>();
+        for (int i = 0; i < jsonArray.length(); i++) {
+            municipalities.add(StreetAddressMunicipality.builder()
+                    .code(jsonArray.getJSONObject(i).getString("code")).build());
+        }
+        return municipalities;
+    }
+
+    public static List<StreetAddressMunicipalityName> createStreetAddressMunicipalityNames(JSONArray jsonArray) {
+        List<StreetAddressMunicipalityName> streetAddressMunicipalityNames = new ArrayList<>();
+        for (int i = 0; i < jsonArray.length(); i++) {
+            streetAddressMunicipalityNames.add(StreetAddressMunicipalityName.builder()
+                    .language(jsonArray.getJSONObject(i).getString("language"))
+                    .value(jsonArray.getJSONObject(i).getString("value")).build());
+        }
+        return streetAddressMunicipalityNames;
+    }
+
+    public static List<StreetAddressAdditionalInformation> createStreetAddressAdditionalInformation(JSONArray jsonArray) {
+        List<StreetAddressAdditionalInformation> additionalInformationList = new ArrayList<>();
+        for (int i = 0; i < jsonArray.length(); i++) {
+            additionalInformationList.add(StreetAddressAdditionalInformation.builder()
+                    .language(jsonArray.getJSONObject(i).getString("language"))
+                    .value(jsonArray.getJSONObject(i).getString("value")).build());
+        }
+        return additionalInformationList;
+    }
+
+    public static List<StreetAddressPostOffice> createStreetAddressPostOffices(JSONArray jsonArray) {
+        List<StreetAddressPostOffice> postOffices = new ArrayList<>();
+        for (int i = 0; i < jsonArray.length(); i++) {
+            postOffices.add(StreetAddressPostOffice.builder()
+                    .language(jsonArray.getJSONObject(i).getString("language"))
+                    .value(jsonArray.getJSONObject(i).getString("value")).build());
+        }
+        return postOffices;
+    }
+
+    public static List<Street> createStreets(JSONArray jsonArray) {
+        List<Street> streets = new ArrayList<>();
+        for (int i = 0; i < jsonArray.length(); i++) {
+            streets.add(Street.builder()
+                    .language(jsonArray.getJSONObject(i).getString("language"))
+                    .value(jsonArray.getJSONObject(i).getString("value")).build());
+        }
+        return streets;
+    }
+
+    public static List<PostOfficeBoxAddress> createPostOfficeBoxAddresses(JSONArray jsonArray) {
+        List<PostOfficeBoxAddress> postOfficeBoxAddresses = new ArrayList<>();
+        for (int i = 0; i < jsonArray.length(); i++) {
+            postOfficeBoxAddresses.add(PostOfficeBoxAddress.builder()
+                    .postalCode(jsonArray.getJSONObject(i).getString("postalCode")).build());
+        }
+        return postOfficeBoxAddresses;
+    }
+
+    public static List<PostOfficeBoxAddressAdditionalInformation> createPostOfficeBoxAddressAdditionalInformation(JSONArray jsonArray) {
+        List<PostOfficeBoxAddressAdditionalInformation> additionalInformationList = new ArrayList<>();
+        for (int i = 0; i < jsonArray.length(); i++) {
+            additionalInformationList.add(PostOfficeBoxAddressAdditionalInformation.builder()
+                    .language(jsonArray.getJSONObject(i).getString("language"))
+                    .value(jsonArray.getJSONObject(i).getString("value")).build());
+        }
+        return additionalInformationList;
+    }
+
+    public static List<PostOfficeBox> createPostOfficeBoxes(JSONArray jsonArray) {
+        List<PostOfficeBox> postOfficeBoxes = new ArrayList<>();
+        for (int i = 0; i < jsonArray.length(); i++) {
+            postOfficeBoxes.add(PostOfficeBox.builder()
+                    .language(jsonArray.getJSONObject(i).getString("language"))
+                    .value(jsonArray.getJSONObject(i).getString("value")).build());
+        }
+        return postOfficeBoxes;
+    }
+
+    public static List<PostOffice> createPostOffice(JSONArray jsonArray) {
+        List<PostOffice> postOffices = new ArrayList<>();
+        for (int i = 0; i < jsonArray.length(); i++) {
+            postOffices.add(PostOffice.builder()
+                    .language(jsonArray.getJSONObject(i).getString("language"))
+                    .value(jsonArray.getJSONObject(i).getString("value")).build());
+        }
+        return postOffices;
+    }
+
+    public static List<PostOfficeBoxAddressMunicipality> createPostOfficeBoxAddressMunicipalities(JSONArray jsonArray) {
+        List<PostOfficeBoxAddressMunicipality> municipalities = new ArrayList<>();
+        for (int i = 0; i < jsonArray.length(); i++) {
+            municipalities.add(PostOfficeBoxAddressMunicipality.builder()
+                    .code(jsonArray.getJSONObject(i).getString("code")).build());
+        }
+        return municipalities;
+    }
+
+    public static List<PostOfficeBoxAddressMunicipalityName> createPostOfficeBoxAddressMunicipalityNames(JSONArray jsonArray) {
+        List<PostOfficeBoxAddressMunicipalityName> streetAddressMunicipalityNames = new ArrayList<>();
+        for (int i = 0; i < jsonArray.length(); i++) {
+            streetAddressMunicipalityNames.add(PostOfficeBoxAddressMunicipalityName.builder()
+                    .language(jsonArray.getJSONObject(i).getString("language"))
+                    .value(jsonArray.getJSONObject(i).getString("value")).build());
+        }
+        return streetAddressMunicipalityNames;
+    }
+
     public static List<PhoneNumber> createPhoneNumbers(JSONArray jsonArray) {
         List<PhoneNumber> phoneNumbers = new ArrayList<>();
         for (int i = 0; i < jsonArray.length(); i++) {

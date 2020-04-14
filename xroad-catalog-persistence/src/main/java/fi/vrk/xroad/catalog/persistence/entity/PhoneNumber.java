@@ -55,6 +55,7 @@ public class PhoneNumber {
     private Boolean isFinnishServiceNumber;
     @Column(nullable = false)
     private String number;
+    @Builder.Default
     @Embedded
     private StatusInfo statusInfo = new StatusInfo();
     @ManyToOne

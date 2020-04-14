@@ -25,27 +25,33 @@ package fi.vrk.xroad.catalog.persistence.entity;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@ToString(exclude = {"municipality"})
-@EqualsAndHashCode(exclude = {"id","municipality","statusInfo"})
-public class MunicipalityName {
+@ToString(exclude = {"streetAddress","streetAddressMunicipalityNames"})
+@EqualsAndHashCode(exclude = {"id","streetAddress","streetAddressMunicipalityNames","statusInfo"})
+@Builder
+public class StreetAddressMunicipality {
     @Id
     @Column(nullable = false)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "MUNICIPALITY_NAME_GEN")
-    @SequenceGenerator(name = "MUNICIPALITY_NAME_GEN", sequenceName = "MUNICIPALITY_NAME_ID_SEQ", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "STREET_ADDRESS_MUNICIPALITY_GEN")
+    @SequenceGenerator(name = "STREET_ADDRESS_MUNICIPALITY_GEN", sequenceName = "STREET_ADDRESS_MUNICIPALITY_ID_SEQ", allocationSize = 1)
     private long id;
     @Column(nullable = false)
-    private String language;
-    @Column(nullable = false)
-    private String value;
+    private String code;
+    @Builder.Default
     @Embedded
     private StatusInfo statusInfo = new StatusInfo();
     @ManyToOne
-    @JoinColumn(name = "MUNICIPALITY_ID")
-    private Municipality municipality;
+    @JoinColumn(name = "STREET_ADDRESS_ID")
+    private StreetAddress streetAddress;
+    @Builder.Default
+    @Getter(AccessLevel.NONE) // do not create default getter, we provide the substitute
+    @OneToMany(mappedBy = "streetAddressMunicipality", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private Set<StreetAddressMunicipalityName> streetAddressMunicipalityNames = new HashSet<>();
 }

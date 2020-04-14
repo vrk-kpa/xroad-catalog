@@ -29,5 +29,5 @@ import java.util.List;
 
 public interface PostOfficeRepository extends CrudRepository<PostOffice, Long> {
 
-    List<PostOffice> findAnyByOrganizationId(Long organizationId);
+    List<PostOffice> findAnyByPostOfficeBoxAddressId(Long postOfficeBoxAddressId);
 }

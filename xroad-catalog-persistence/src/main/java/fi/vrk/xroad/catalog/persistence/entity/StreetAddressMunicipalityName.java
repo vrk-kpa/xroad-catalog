@@ -20,14 +20,34 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package fi.vrk.xroad.catalog.persistence.repository;
+package fi.vrk.xroad.catalog.persistence.entity;
 
-import fi.vrk.xroad.catalog.persistence.entity.Street;
-import org.springframework.data.repository.CrudRepository;
+import lombok.*;
 
-import java.util.List;
+import javax.persistence.*;
 
-public interface StreetRepository extends CrudRepository<Street, Long> {
-
-    List<Street> findAnyByStreetAddressId(Long streetAddressId);
+@Entity
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@ToString(exclude = {"streetAddressMunicipality"})
+@EqualsAndHashCode(exclude = {"id","streetAddressMunicipality","statusInfo"})
+@Builder
+public class StreetAddressMunicipalityName {
+    @Id
+    @Column(nullable = false)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "STREET_ADDRESS_MUNICIPALITY_NAME_GEN")
+    @SequenceGenerator(name = "STREET_ADDRESS_MUNICIPALITY_NAME_GEN", sequenceName = "STREET_ADDRESS_MUNICIPALITY_NAME_ID_SEQ", allocationSize = 1)
+    private long id;
+    @Column(nullable = false)
+    private String language;
+    @Column(nullable = false)
+    private String value;
+    @Builder.Default
+    @Embedded
+    private StatusInfo statusInfo = new StatusInfo();
+    @ManyToOne
+    @JoinColumn(name = "STREET_ADDRESS_MUNICIPALITY_ID")
+    private StreetAddressMunicipality streetAddressMunicipality;
 }

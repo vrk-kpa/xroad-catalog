@@ -47,6 +47,7 @@ public class Email {
     private String description;
     @Column(nullable = false)
     private String value;
+    @Builder.Default
     @Embedded
     private StatusInfo statusInfo = new StatusInfo();
     @ManyToOne

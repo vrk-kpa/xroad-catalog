@@ -47,6 +47,7 @@ public class OrganizationDescription {
     private String type;
     @Column(nullable = false)
     private String value;
+    @Builder.Default
     @Embedded
     private StatusInfo statusInfo = new StatusInfo();
     @ManyToOne

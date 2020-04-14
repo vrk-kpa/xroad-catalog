@@ -33,23 +33,25 @@ import java.util.Set;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@ToString(exclude = {"streetAddress","municipalityNames"})
-@EqualsAndHashCode(exclude = {"id","streetAddress","municipalityNames","statusInfo"})
-public class Municipality {
+@ToString(exclude = {"postOfficeBoxAddress","postOfficeBoxAddressMunicipalityNames"})
+@EqualsAndHashCode(exclude = {"id","postOfficeBoxAddress","postOfficeBoxAddressMunicipalityNames","statusInfo"})
+@Builder
+public class PostOfficeBoxAddressMunicipality {
     @Id
     @Column(nullable = false)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "MUNICIPALITY_GEN")
-    @SequenceGenerator(name = "MUNICIPALITY_GEN", sequenceName = "MUNICIPALITY_ID_SEQ", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "POST_OFFICE_BOX_ADDRESS_MUNICIPALITY_GEN")
+    @SequenceGenerator(name = "POST_OFFICE_BOX_ADDRESS_MUNICIPALITY_GEN", sequenceName = "POST_OFFICE_BOX_ADDRESS_MUNICIPALITY_ID_SEQ", allocationSize = 1)
     private long id;
     @Column(nullable = false)
     private String code;
+    @Builder.Default
     @Embedded
     private StatusInfo statusInfo = new StatusInfo();
     @ManyToOne
-    @JoinColumn(name = "STREETADDRESS_ID")
-    private StreetAddress streetAddress;
+    @JoinColumn(name = "POST_OFFICE_BOX_ADDRESS_ID")
+    private PostOfficeBoxAddress postOfficeBoxAddress;
     @Builder.Default
     @Getter(AccessLevel.NONE) // do not create default getter, we provide the substitute
-    @OneToMany(mappedBy = "municipality", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    private Set<MunicipalityName> municipalityNames = new HashSet<>();
+    @OneToMany(mappedBy = "postOfficeBoxAddressMunicipality", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private Set<PostOfficeBoxAddressMunicipalityName> postOfficeBoxAddressMunicipalityNames = new HashSet<>();
 }

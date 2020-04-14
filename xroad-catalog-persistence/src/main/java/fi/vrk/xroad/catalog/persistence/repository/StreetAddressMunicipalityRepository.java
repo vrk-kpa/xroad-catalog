@@ -22,13 +22,13 @@
  */
 package fi.vrk.xroad.catalog.persistence.repository;
 
-import fi.vrk.xroad.catalog.persistence.entity.Municipality;
+import fi.vrk.xroad.catalog.persistence.entity.StreetAddressMunicipality;
 import org.springframework.data.repository.CrudRepository;
 
 import java.util.List;
 
-public interface MunicipalityRepository extends CrudRepository<Municipality, Long> {
+public interface StreetAddressMunicipalityRepository extends CrudRepository<StreetAddressMunicipality, Long> {
 
-    List<Municipality> findAnyByOrganizationId(Long organizationId);
+    List<StreetAddressMunicipality> findAnyByStreetAddressId(Long streetAddressId);
 
 }

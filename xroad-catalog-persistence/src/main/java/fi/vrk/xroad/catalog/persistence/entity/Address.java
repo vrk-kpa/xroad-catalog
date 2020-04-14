@@ -49,6 +49,7 @@ public class Address {
     private String type;
     @Column(nullable = false)
     private String subType;
+    @Builder.Default
     @Embedded
     private StatusInfo statusInfo = new StatusInfo();
     @ManyToOne

@@ -38,8 +38,8 @@ public class Webpage {
 
     @Id
     @Column(nullable = false)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "WEBPAGE_GEN")
-    @SequenceGenerator(name = "WEBPAGE_GEN", sequenceName = "WEBPAGE_ID_SEQ", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "WEB_PAGE_GEN")
+    @SequenceGenerator(name = "WEB_PAGE_GEN", sequenceName = "WEB_PAGE_ID_SEQ", allocationSize = 1)
     private long id;
     @Column(nullable = false)
     private String language;
@@ -47,6 +47,7 @@ public class Webpage {
     private String url;
     @Column(nullable = false)
     private String value;
+    @Builder.Default
     @Embedded
     private StatusInfo statusInfo = new StatusInfo();
     @ManyToOne

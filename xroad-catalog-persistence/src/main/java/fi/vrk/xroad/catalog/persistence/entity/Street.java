@@ -33,6 +33,7 @@ import javax.persistence.*;
 @AllArgsConstructor
 @ToString(exclude = {"streetAddress"})
 @EqualsAndHashCode(exclude = {"id","streetAddress","statusInfo"})
+@Builder
 public class Street {
     @Id
     @Column(nullable = false)
@@ -43,9 +44,10 @@ public class Street {
     private String language;
     @Column(nullable = false)
     private String value;
+    @Builder.Default
     @Embedded
     private StatusInfo statusInfo = new StatusInfo();
     @ManyToOne
-    @JoinColumn(name = "STREETADDRESS_ID")
+    @JoinColumn(name = "STREET_ADDRESS_ID")
     private StreetAddress streetAddress;
 }
