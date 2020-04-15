@@ -83,16 +83,34 @@ public class CatalogServiceImpl implements CatalogService {
     StreetAddressRepository streetAddressRepository;
 
     @Autowired
+    PostOfficeBoxAddressRepository postOfficeBoxAddressRepository;
+
+    @Autowired
     StreetAddressMunicipalityRepository streetAddressMunicipalityRepository;
+
+    @Autowired
+    PostOfficeBoxAddressMunicipalityRepository postOfficeBoxAddressMunicipalityRepository;
 
     @Autowired
     StreetAddressMunicipalityNameRepository streetAddressMunicipalityNameRepository;
 
     @Autowired
+    PostOfficeBoxAddressMunicipalityNameRepository postOfficeBoxAddressMunicipalityNameRepository;
+
+    @Autowired
     StreetAddressAdditionalInformationRepository streetAddressAdditionalInformationRepository;
 
     @Autowired
+    PostOfficeBoxAddressAdditionalInformationRepository postOfficeBoxAddressAdditionalInformationRepository;
+
+    @Autowired
     StreetAddressPostOfficeRepository streetAddressPostOfficeRepository;
+
+    @Autowired
+    PostOfficeRepository postOfficeRepository;
+
+    @Autowired
+    PostOfficeBoxRepository postOfficeBoxRepository;
 
     @Autowired
     StreetRepository streetRepository;
@@ -382,9 +400,9 @@ public class CatalogServiceImpl implements CatalogService {
     }
 
     @Override
-    public void saveOrganizationName(OrganizationName newValue, Long organizationId) {
+    public void saveOrganizationName(OrganizationName newValue) {
         List<OrganizationName> foundList = organizationNameRepository
-                .findAnyByOrganizationId(organizationId);
+                .findAnyByOrganizationId(newValue.getOrganization().getId());
         if (!foundList.isEmpty()) {
             foundList.forEach(oldValue -> {
                 StatusInfo statusInfo = oldValue.getStatusInfo();
@@ -399,9 +417,9 @@ public class CatalogServiceImpl implements CatalogService {
     }
 
     @Override
-    public void saveOrganizationDescription(OrganizationDescription newValue, Long organizationId) {
+    public void saveOrganizationDescription(OrganizationDescription newValue) {
         List<OrganizationDescription> foundList = organizationDescriptionRepository
-                .findAnyByOrganizationId(organizationId);
+                .findAnyByOrganizationId(newValue.getOrganization().getId());
         if (!foundList.isEmpty()) {
             foundList.forEach(oldValue -> {
                 StatusInfo statusInfo = oldValue.getStatusInfo();
@@ -416,9 +434,9 @@ public class CatalogServiceImpl implements CatalogService {
     }
 
     @Override
-    public void saveEmail(Email newValue, Long organizationId) {
+    public void saveEmail(Email newValue) {
         List<Email> foundList = emailRepository
-                .findAnyByOrganizationId(organizationId);
+                .findAnyByOrganizationId(newValue.getOrganization().getId());
         if (!foundList.isEmpty()) {
             foundList.forEach(oldValue -> {
                 StatusInfo statusInfo = oldValue.getStatusInfo();
@@ -433,9 +451,9 @@ public class CatalogServiceImpl implements CatalogService {
     }
 
     @Override
-    public void savePhoneNumber(PhoneNumber newValue, Long organizationId) {
+    public void savePhoneNumber(PhoneNumber newValue) {
         List<PhoneNumber> foundList = phoneNumberRepository
-                .findAnyByOrganizationId(organizationId);
+                .findAnyByOrganizationId(newValue.getOrganization().getId());
         if (!foundList.isEmpty()) {
             foundList.forEach(oldValue -> {
                 StatusInfo statusInfo = oldValue.getStatusInfo();
@@ -450,9 +468,9 @@ public class CatalogServiceImpl implements CatalogService {
     }
 
     @Override
-    public void saveWebPage(Webpage newValue, Long organizationId) {
+    public void saveWebPage(Webpage newValue) {
         List<Webpage> foundList = webpageRepository
-                .findAnyByOrganizationId(organizationId);
+                .findAnyByOrganizationId(newValue.getOrganization().getId());
         if (!foundList.isEmpty()) {
             foundList.forEach(oldValue -> {
                 StatusInfo statusInfo = oldValue.getStatusInfo();
@@ -467,9 +485,9 @@ public class CatalogServiceImpl implements CatalogService {
     }
 
     @Override
-    public Address saveAddress(Address newValue, Long organizationId) {
+    public Address saveAddress(Address newValue) {
         List<Address> foundList = addressRepository
-                .findAnyByOrganizationId(organizationId);
+                .findAnyByOrganizationId(newValue.getOrganization().getId());
         if (!foundList.isEmpty()) {
             foundList.forEach(oldValue -> {
                 StatusInfo statusInfo = oldValue.getStatusInfo();
@@ -484,9 +502,9 @@ public class CatalogServiceImpl implements CatalogService {
     }
 
     @Override
-    public StreetAddress saveStreetAddress(StreetAddress newValue, Long addressId) {
+    public StreetAddress saveStreetAddress(StreetAddress newValue) {
         Optional<StreetAddress> foundValue = Optional.ofNullable(streetAddressRepository
-                .findByAddressId(addressId));
+                .findByAddressId(newValue.getAddress().getId()));
         if (foundValue.isPresent()) {
             StreetAddress oldValue = foundValue.get();
             StatusInfo statusInfo = oldValue.getStatusInfo();
@@ -500,11 +518,26 @@ public class CatalogServiceImpl implements CatalogService {
     }
 
     @Override
-    public StreetAddressMunicipality saveStreetAddressMunicipality(
-            StreetAddressMunicipality newValue, Long streetAddressId) {
+    public PostOfficeBoxAddress savePostOfficeBoxAddress(PostOfficeBoxAddress newValue) {
+        Optional<PostOfficeBoxAddress> foundValue = Optional.ofNullable(postOfficeBoxAddressRepository
+                .findByAddressId(newValue.getAddress().getId()));
+        if (foundValue.isPresent()) {
+            PostOfficeBoxAddress oldValue = foundValue.get();
+            StatusInfo statusInfo = oldValue.getStatusInfo();
+            statusInfo.setFetched(LocalDateTime.now());
+            if (!oldValue.equals(newValue)) {
+                statusInfo.setChanged(LocalDateTime.now());
+            }
+            newValue.setStatusInfo(statusInfo);
+        }
+        return postOfficeBoxAddressRepository.save(newValue);
+    }
+
+    @Override
+    public StreetAddressMunicipality saveStreetAddressMunicipality(StreetAddressMunicipality newValue) {
         Optional<StreetAddressMunicipality> foundValue =
                 Optional.ofNullable(streetAddressMunicipalityRepository
-                        .findByStreetAddressId(streetAddressId));
+                        .findByStreetAddressId(newValue.getStreetAddress().getId()));
         if (foundValue.isPresent()) {
             StreetAddressMunicipality oldValue = foundValue.get();
             StatusInfo statusInfo = oldValue.getStatusInfo();
@@ -518,10 +551,26 @@ public class CatalogServiceImpl implements CatalogService {
     }
 
     @Override
-    public StreetAddressMunicipalityName saveStreetAddressMunicipalityName(
-            StreetAddressMunicipalityName newValue, Long streetAddressMunicipalityId) {
+    public PostOfficeBoxAddressMunicipality savePostOfficeBoxAddressMunicipality(PostOfficeBoxAddressMunicipality newValue) {
+        Optional<PostOfficeBoxAddressMunicipality> foundValue =
+                Optional.ofNullable(postOfficeBoxAddressMunicipalityRepository
+                        .findByPostOfficeBoxAddressId(newValue.getPostOfficeBoxAddress().getId()));
+        if (foundValue.isPresent()) {
+            PostOfficeBoxAddressMunicipality oldValue = foundValue.get();
+            StatusInfo statusInfo = oldValue.getStatusInfo();
+            statusInfo.setFetched(LocalDateTime.now());
+            if (!oldValue.equals(newValue)) {
+                statusInfo.setChanged(LocalDateTime.now());
+            }
+            newValue.setStatusInfo(statusInfo);
+        }
+        return postOfficeBoxAddressMunicipalityRepository.save(newValue);
+    }
+
+    @Override
+    public StreetAddressMunicipalityName saveStreetAddressMunicipalityName(StreetAddressMunicipalityName newValue) {
         List<StreetAddressMunicipalityName> foundList = streetAddressMunicipalityNameRepository
-                .findAnyByStreetAddressMunicipalityId(streetAddressMunicipalityId);
+                .findAnyByStreetAddressMunicipalityId(newValue.getStreetAddressMunicipality().getId());
         if (!foundList.isEmpty()) {
             foundList.forEach(oldValue -> {
                 StatusInfo statusInfo = oldValue.getStatusInfo();
@@ -536,10 +585,26 @@ public class CatalogServiceImpl implements CatalogService {
     }
 
     @Override
-    public StreetAddressAdditionalInformation saveStreetAddressAdditionalInformation(
-            StreetAddressAdditionalInformation newValue, Long streetAddressId) {
+    public PostOfficeBoxAddressMunicipalityName savePostOfficeBoxAddressMunicipalityName(PostOfficeBoxAddressMunicipalityName newValue) {
+        List<PostOfficeBoxAddressMunicipalityName> foundList = postOfficeBoxAddressMunicipalityNameRepository
+                .findAnyByPostOfficeBoxAddressMunicipalityId(newValue.getPostOfficeBoxAddressMunicipality().getId());
+        if (!foundList.isEmpty()) {
+            foundList.forEach(oldValue -> {
+                StatusInfo statusInfo = oldValue.getStatusInfo();
+                statusInfo.setFetched(LocalDateTime.now());
+                if (!oldValue.equals(newValue)) {
+                    statusInfo.setChanged(LocalDateTime.now());
+                }
+                newValue.setStatusInfo(statusInfo);
+            });
+        }
+        return postOfficeBoxAddressMunicipalityNameRepository.save(newValue);
+    }
+
+    @Override
+    public StreetAddressAdditionalInformation saveStreetAddressAdditionalInformation(StreetAddressAdditionalInformation newValue) {
         List<StreetAddressAdditionalInformation> foundList = streetAddressAdditionalInformationRepository
-                .findAnyByStreetAddressId(streetAddressId);
+                .findAnyByStreetAddressId(newValue.getStreetAddress().getId());
         if (!foundList.isEmpty()) {
             foundList.forEach(oldValue -> {
                 StatusInfo statusInfo = oldValue.getStatusInfo();
@@ -554,10 +619,28 @@ public class CatalogServiceImpl implements CatalogService {
     }
 
     @Override
-    public StreetAddressPostOffice saveStreetAddressPostOffice(StreetAddressPostOffice newValue,
-                                                                   Long streetAddressId) {
+    public PostOfficeBoxAddressAdditionalInformation savePostOfficeBoxStreetAddressAdditionalInformation(
+            PostOfficeBoxAddressAdditionalInformation newValue) {
+        List<PostOfficeBoxAddressAdditionalInformation> foundList =
+                postOfficeBoxAddressAdditionalInformationRepository
+                        .findAnyByPostOfficeBoxAddressId(newValue.getPostOfficeBoxAddress().getId());
+        if (!foundList.isEmpty()) {
+            foundList.forEach(oldValue -> {
+                StatusInfo statusInfo = oldValue.getStatusInfo();
+                statusInfo.setFetched(LocalDateTime.now());
+                if (!oldValue.equals(newValue)) {
+                    statusInfo.setChanged(LocalDateTime.now());
+                }
+                newValue.setStatusInfo(statusInfo);
+            });
+        }
+        return postOfficeBoxAddressAdditionalInformationRepository.save(newValue);
+    }
+
+    @Override
+    public StreetAddressPostOffice saveStreetAddressPostOffice(StreetAddressPostOffice newValue) {
         List<StreetAddressPostOffice> foundList = streetAddressPostOfficeRepository
-                .findAnyByStreetAddressId(streetAddressId);
+                .findAnyByStreetAddressId(newValue.getStreetAddress().getId());
         if (!foundList.isEmpty()) {
             foundList.forEach(oldValue -> {
                 StatusInfo statusInfo = oldValue.getStatusInfo();
@@ -572,9 +655,43 @@ public class CatalogServiceImpl implements CatalogService {
     }
 
     @Override
-    public Street saveStreet(Street newValue, Long streetAddressId) {
+    public PostOffice savePostOffice(PostOffice newValue) {
+        List<PostOffice> foundList = postOfficeRepository
+                .findAnyByPostOfficeBoxAddressId(newValue.getPostOfficeBoxAddress().getId());
+        if (!foundList.isEmpty()) {
+            foundList.forEach(oldValue -> {
+                StatusInfo statusInfo = oldValue.getStatusInfo();
+                statusInfo.setFetched(LocalDateTime.now());
+                if (!oldValue.equals(newValue)) {
+                    statusInfo.setChanged(LocalDateTime.now());
+                }
+                newValue.setStatusInfo(statusInfo);
+            });
+        }
+        return postOfficeRepository.save(newValue);
+    }
+
+    @Override
+    public PostOfficeBox savePostOfficeBox(PostOfficeBox newValue) {
+        List<PostOfficeBox> foundList = postOfficeBoxRepository
+                .findAnyByPostOfficeBoxAddressId(newValue.getPostOfficeBoxAddress().getId());
+        if (!foundList.isEmpty()) {
+            foundList.forEach(oldValue -> {
+                StatusInfo statusInfo = oldValue.getStatusInfo();
+                statusInfo.setFetched(LocalDateTime.now());
+                if (!oldValue.equals(newValue)) {
+                    statusInfo.setChanged(LocalDateTime.now());
+                }
+                newValue.setStatusInfo(statusInfo);
+            });
+        }
+        return postOfficeBoxRepository.save(newValue);
+    }
+
+    @Override
+    public Street saveStreet(Street newValue) {
         List<Street> foundList = streetRepository
-                .findAnyByStreetAddressId(streetAddressId);
+                .findAnyByStreetAddressId(newValue.getStreetAddress().getId());
         if (!foundList.isEmpty()) {
             foundList.forEach(oldValue -> {
                 StatusInfo statusInfo = oldValue.getStatusInfo();

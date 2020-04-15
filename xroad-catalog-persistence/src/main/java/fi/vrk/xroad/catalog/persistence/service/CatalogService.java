@@ -158,96 +158,125 @@ public interface CatalogService {
     /**
      * Saves given organizationName data.
      * @param newValue the organizationName
-     * @param organizationId ID of the related organization
      */
-    void saveOrganizationName(OrganizationName newValue, Long organizationId);
+    void saveOrganizationName(OrganizationName newValue);
 
     /**
      * Saves given organizationDescription data.
      * @param newValue the organizationDescription
-     * @param organizationId ID of the related organization
      */
-    void saveOrganizationDescription(OrganizationDescription newValue, Long organizationId);
+    void saveOrganizationDescription(OrganizationDescription newValue);
 
     /**
      * Saves given email data.
      * @param newValue the actual email
-     * @param organizationId ID of the related organization
      */
-    void saveEmail(Email newValue, Long organizationId);
+    void saveEmail(Email newValue);
 
     /**
      * Saves given phoneNumber data.
      * @param newValue the actual phoneNumber
-     * @param organizationId ID of the related organization
      */
-    void savePhoneNumber(PhoneNumber newValue, Long organizationId);
+    void savePhoneNumber(PhoneNumber newValue);
 
     /**
      * Saves given webPage data.
      * @param newValue the actual webPage
-     * @param organizationId ID of the related organization
      */
-    void saveWebPage(Webpage newValue, Long organizationId);
+    void saveWebPage(Webpage newValue);
 
     /**
      * Saves given address data.
      * @return saved Address
      * @param newValue the actual address
-     * @param organizationId ID of the related organization
      */
-    Address saveAddress(Address newValue, Long organizationId);
+    Address saveAddress(Address newValue);
 
     /**
      * Saves given StreetAddress data.
      * @return saved StreetAddress
      * @param newValue the actual StreetAddress
-     * @param addressId ID of the related address
      */
-    StreetAddress saveStreetAddress(StreetAddress newValue, Long addressId);
+    StreetAddress saveStreetAddress(StreetAddress newValue);
+
+    /**
+     * Saves given PostOfficeBoxAddress data.
+     * @return saved PostOfficeBoxAddress
+     * @param newValue the actual PostOfficeBoxAddress
+     */
+    PostOfficeBoxAddress savePostOfficeBoxAddress(PostOfficeBoxAddress newValue);
 
     /**
      * Saves given StreetAddressMunicipality data.
      * @return saved StreetAddressMunicipality
      * @param newValue the actual StreetAddressMunicipality
-     * @param streetAddressId ID of the related street address
      */
-    StreetAddressMunicipality saveStreetAddressMunicipality(StreetAddressMunicipality newValue,
-                                                            Long streetAddressId);
+    StreetAddressMunicipality saveStreetAddressMunicipality(StreetAddressMunicipality newValue);
+
+    /**
+     * Saves given PostOfficeBoxAddressMunicipality data.
+     * @return saved PostOfficeBoxAddressMunicipality
+     * @param newValue the actual PostOfficeBoxAddressMunicipality
+     */
+    PostOfficeBoxAddressMunicipality savePostOfficeBoxAddressMunicipality(PostOfficeBoxAddressMunicipality newValue);
+
 
     /**
      * Saves given StreetAddressMunicipalityName data.
-     * @return saved StreetAddressMunicipality
+     * @return saved StreetAddressMunicipalityName
      * @param newValue the actual StreetAddressMunicipalityName
-     * @param streetAddressMunicipalityId ID of the related street address municipality
      */
-    StreetAddressMunicipalityName saveStreetAddressMunicipalityName(StreetAddressMunicipalityName newValue,
-                                                            Long streetAddressMunicipalityId);
+    StreetAddressMunicipalityName saveStreetAddressMunicipalityName(StreetAddressMunicipalityName newValue);
+
+    /**
+     * Saves given PostOfficeBoxAddressMunicipalityName data.
+     * @return saved PostOfficeBoxAddressMunicipalityName
+     * @param newValue the actual PostOfficeBoxAddressMunicipalityName
+     */
+    PostOfficeBoxAddressMunicipalityName savePostOfficeBoxAddressMunicipalityName(
+            PostOfficeBoxAddressMunicipalityName newValue);
 
     /**
      * Saves given StreetAddressAdditionalInformation data.
      * @return saved StreetAddressAdditionalInformation
      * @param newValue the actual StreetAddressAdditionalInformation
-     * @param streetAddressId ID of the related street address
      */
-    StreetAddressAdditionalInformation saveStreetAddressAdditionalInformation(StreetAddressAdditionalInformation newValue,
-                                                                              Long streetAddressId);
+    StreetAddressAdditionalInformation saveStreetAddressAdditionalInformation(StreetAddressAdditionalInformation newValue);
+
+    /**
+     * Saves given PostOfficeBoxAddressAdditionalInformation data.
+     * @return saved PostOfficeBoxAddressAdditionalInformation
+     * @param newValue the actual PostOfficeBoxAddressAdditionalInformation
+     */
+    PostOfficeBoxAddressAdditionalInformation savePostOfficeBoxStreetAddressAdditionalInformation(
+            PostOfficeBoxAddressAdditionalInformation newValue);
 
     /**
      * Saves given StreetAddressPostOffice data.
-     * @return saved StreetAddressMunicipality
+     * @return saved StreetAddressPostOffice
      * @param newValue the actual StreetAddressPostOffice
-     * @param streetAddressId ID of the related street address
      */
-    StreetAddressPostOffice saveStreetAddressPostOffice(StreetAddressPostOffice newValue,
-                                                            Long streetAddressId);
+    StreetAddressPostOffice saveStreetAddressPostOffice(StreetAddressPostOffice newValue);
+
+    /**
+     * Saves given PostOffice data.
+     * @return saved PostOffice
+     * @param newValue the actual PostOffice
+     */
+    PostOffice savePostOffice(PostOffice newValue);
+
+    /**
+     * Saves given PostOfficeBox data.
+     * @return saved PostOfficeBox
+     * @param newValue the actual PostOfficeBox
+     */
+    PostOfficeBox savePostOfficeBox(PostOfficeBox newValue);
 
     /**
      * Saves given Street data.
      * @return saved Street
      * @param newValue the actual Street
-     * @param streetAddressId ID of the related street address
      */
-    Street saveStreet(Street newValue, Long streetAddressId);
+    Street saveStreet(Street newValue);
 
 }

@@ -204,16 +204,13 @@ public class OrganizationUtil {
         return streets;
     }
 
-    public static List<PostOfficeBoxAddress> createPostOfficeBoxAddresses(JSONArray jsonArray) {
-        List<PostOfficeBoxAddress> postOfficeBoxAddresses = new ArrayList<>();
-        for (int i = 0; i < jsonArray.length(); i++) {
-            postOfficeBoxAddresses.add(PostOfficeBoxAddress.builder()
-                    .postalCode(jsonArray.getJSONObject(i).getString("postalCode")).build());
-        }
-        return postOfficeBoxAddresses;
+    public static PostOfficeBoxAddress createPostOfficeBoxAddress(JSONObject jsonObject) {
+        return PostOfficeBoxAddress.builder()
+                .postalCode(jsonObject.getString("postalCode")).build();
     }
 
-    public static List<PostOfficeBoxAddressAdditionalInformation> createPostOfficeBoxAddressAdditionalInformation(JSONArray jsonArray) {
+    public static List<PostOfficeBoxAddressAdditionalInformation> createPostOfficeBoxAddressAdditionalInformation(
+            JSONArray jsonArray) {
         List<PostOfficeBoxAddressAdditionalInformation> additionalInformationList = new ArrayList<>();
         for (int i = 0; i < jsonArray.length(); i++) {
             additionalInformationList.add(PostOfficeBoxAddressAdditionalInformation.builder()
@@ -243,13 +240,9 @@ public class OrganizationUtil {
         return postOffices;
     }
 
-    public static List<PostOfficeBoxAddressMunicipality> createPostOfficeBoxAddressMunicipalities(JSONArray jsonArray) {
-        List<PostOfficeBoxAddressMunicipality> municipalities = new ArrayList<>();
-        for (int i = 0; i < jsonArray.length(); i++) {
-            municipalities.add(PostOfficeBoxAddressMunicipality.builder()
-                    .code(jsonArray.getJSONObject(i).getString("code")).build());
-        }
-        return municipalities;
+    public static PostOfficeBoxAddressMunicipality createPostOfficeBoxAddressMunicipality(JSONObject jsonObject) {
+        return PostOfficeBoxAddressMunicipality.builder()
+                .code(jsonObject.getString("code")).build();
     }
 
     public static List<PostOfficeBoxAddressMunicipalityName> createPostOfficeBoxAddressMunicipalityNames(JSONArray jsonArray) {

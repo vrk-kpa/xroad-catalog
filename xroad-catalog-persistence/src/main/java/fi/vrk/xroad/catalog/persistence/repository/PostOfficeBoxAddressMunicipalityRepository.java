@@ -25,10 +25,9 @@ package fi.vrk.xroad.catalog.persistence.repository;
 import fi.vrk.xroad.catalog.persistence.entity.PostOfficeBoxAddressMunicipality;
 import org.springframework.data.repository.CrudRepository;
 
-import java.util.List;
 
 public interface PostOfficeBoxAddressMunicipalityRepository extends CrudRepository<PostOfficeBoxAddressMunicipality, Long> {
 
-    List<PostOfficeBoxAddressMunicipality> findAnyByPostOfficeBoxAddressId(Long postOfficeBoxAddressId);
+    PostOfficeBoxAddressMunicipality findByPostOfficeBoxAddressId(Long postOfficeBoxAddressId);
 
 }
