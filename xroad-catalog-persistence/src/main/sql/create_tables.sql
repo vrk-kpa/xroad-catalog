@@ -235,7 +235,7 @@ CREATE SEQUENCE phone_number_id_seq
 
 ALTER SEQUENCE phone_number_id_seq OWNED BY phone_number.id;
 
-CREATE TABLE webpage (
+CREATE TABLE web_page (
     id BIGSERIAL PRIMARY KEY NOT NULL,
     organization_id BIGSERIAL NOT NULL REFERENCES organization(id),
     language TEXT NOT NULL,
@@ -247,14 +247,14 @@ CREATE TABLE webpage (
     removed TIMESTAMP WITH TIME ZONE
 );
 
-CREATE SEQUENCE webpage_id_seq
+CREATE SEQUENCE web_page_id_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
     NO MAXVALUE
     CACHE 1;
 
-ALTER SEQUENCE webpage_id_seq OWNED BY webpage.id;
+ALTER SEQUENCE web_page_id_seq OWNED BY web_page.id;
 
 CREATE TABLE address (
     id BIGSERIAL PRIMARY KEY NOT NULL,
@@ -339,7 +339,7 @@ CREATE SEQUENCE street_id_seq
 
 ALTER SEQUENCE street_id_seq OWNED BY street.id;
 
-CREATE TABLE street_address_postoffice (
+CREATE TABLE street_address_post_office (
     id BIGSERIAL PRIMARY KEY NOT NULL,
     street_address_id BIGSERIAL NOT NULL REFERENCES street_address(id),
     language TEXT NOT NULL,
@@ -350,14 +350,14 @@ CREATE TABLE street_address_postoffice (
     removed TIMESTAMP WITH TIME ZONE
 );
 
-CREATE SEQUENCE street_address_postoffice_id_seq
+CREATE SEQUENCE street_address_post_office_id_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
     NO MAXVALUE
     CACHE 1;
 
-ALTER SEQUENCE street_address_postoffice_id_seq OWNED BY street_address_postoffice.id;
+ALTER SEQUENCE street_address_post_office_id_seq OWNED BY street_address_post_office.id;
 
 CREATE TABLE street_address_municipality (
     id BIGSERIAL PRIMARY KEY NOT NULL,
@@ -522,13 +522,6 @@ CREATE UNIQUE INDEX idx_openapi_external_id ON open_api USING btree (external_id
 CREATE UNIQUE INDEX idx_member_natural_keys ON member(member_code, member_class, x_road_instance);
 CREATE UNIQUE INDEX idx_service_unique_fields ON service(subsystem_id, service_code, service_version);
 CREATE UNIQUE INDEX idx_subsystem_unique_fields ON subsystem(member_id, subsystem_code);
-CREATE UNIQUE INDEX idx_organization_unique_fields ON organization(organization_type, business_code);
-CREATE UNIQUE INDEX idx_organization_description_unique_fields ON organization_description(type, value);
-CREATE UNIQUE INDEX idx_organization_name_unique_fields ON organization_name(type, value);
-CREATE UNIQUE INDEX idx_email_unique_fields ON email(description, value);
-CREATE UNIQUE INDEX idx_address_unique_fields ON address(country, type, sub_type);
-CREATE UNIQUE INDEX idx_webpage_unique_fields ON webpage(url, value);
-CREATE UNIQUE INDEX idx_phone_number_unique_fields ON phone_number(additional_information, prefix_number, number);
 
 CREATE INDEX idx_wsdl_changed ON wsdl(changed);
 CREATE INDEX idx_openapi_changed ON open_api(changed);
@@ -552,8 +545,8 @@ CREATE INDEX idx_post_office_box_address_additional_information_changed ON post_
 CREATE INDEX idx_street_changed ON street(changed);
 CREATE INDEX idx_street_address_changed ON street_address(changed);
 CREATE INDEX idx_street_address_additional_information_changed ON street_address_additional_information(changed);
-CREATE INDEX idx_street_address_postoffice_changed ON street_address_postoffice(changed);
-CREATE INDEX idx_webpage_changed ON webpage(changed);
+CREATE INDEX idx_street_address_post_office_changed ON street_address_post_office(changed);
+CREATE INDEX idx_webpage_changed ON web_page(changed);
 CREATE INDEX idx_wsdl_service_id ON wsdl(service_id);
 CREATE INDEX idx_openapi_service_id ON open_api(service_id);
 CREATE INDEX idx_organization_description_organization_id ON organization_description(organization_id);
@@ -561,7 +554,7 @@ CREATE INDEX idx_organization_name_organization_id ON organization_name(organiza
 CREATE INDEX idx_email_organization_id ON email(organization_id);
 CREATE INDEX idx_address_organization_id ON address(organization_id);
 CREATE INDEX idx_phone_number_organization_id ON phone_number(organization_id);
-CREATE INDEX idx_webpage_organization_id ON webpage(organization_id);
+CREATE INDEX idx_webpage_organization_id ON web_page(organization_id);
 
 ALTER TABLE member OWNER TO xroad_catalog;
 ALTER TABLE service OWNER TO xroad_catalog;
@@ -573,11 +566,11 @@ ALTER TABLE organization_name OWNER TO xroad_catalog;
 ALTER TABLE organization_description OWNER TO xroad_catalog;
 ALTER TABLE email OWNER TO xroad_catalog;
 ALTER TABLE phone_number OWNER TO xroad_catalog;
-ALTER TABLE webpage OWNER TO xroad_catalog;
+ALTER TABLE web_page OWNER TO xroad_catalog;
 ALTER TABLE address OWNER TO xroad_catalog;
 ALTER TABLE street_address OWNER TO xroad_catalog;
 ALTER TABLE street OWNER TO xroad_catalog;
-ALTER TABLE street_address_postoffice OWNER TO xroad_catalog;
+ALTER TABLE street_address_post_office OWNER TO xroad_catalog;
 ALTER TABLE street_address_municipality OWNER TO xroad_catalog;
 ALTER TABLE street_address_municipality_name OWNER TO xroad_catalog;
 ALTER TABLE street_address_additional_information OWNER TO xroad_catalog;

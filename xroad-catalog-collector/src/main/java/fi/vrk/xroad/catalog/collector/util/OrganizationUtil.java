@@ -58,10 +58,10 @@ public class OrganizationUtil {
                 .append("/api").append("/v11").append("/Organization").toString();
         String response = getResponseBody(url);
         JSONObject json = new JSONObject(response);
-        JSONArray itemList = json.getJSONArray("itemList");
+        JSONArray itemList = json.optJSONArray("itemList");
         List<String> idsList = new ArrayList<>();
         for (int i = 0; i < itemList.length(); i++) {
-            String id = itemList.getJSONObject(i).getString("id");
+            String id = itemList.optJSONObject(i).optString("id");
             idsList.add(id);
         }
 
@@ -89,9 +89,9 @@ public class OrganizationUtil {
     }
 
     public static Organization createOrganization(JSONObject jsonObject) {
-        return Organization.builder().businessCode(jsonObject.getString("businessCode"))
-                .organizationType(jsonObject.getString("organizationType"))
-                .publishingStatus(jsonObject.getString("publishingStatus"))
+        return Organization.builder().businessCode(jsonObject.optString("businessCode"))
+                .organizationType(jsonObject.optString("organizationType"))
+                .publishingStatus(jsonObject.optString("publishingStatus"))
                 .build();
     }
 
@@ -99,20 +99,20 @@ public class OrganizationUtil {
         List<Email> emails = new ArrayList<>();
         for (int i = 0; i < jsonArray.length(); i++) {
             emails.add(Email.builder()
-                    .description(jsonArray.getJSONObject(i).getString("description"))
-                    .language(jsonArray.getJSONObject(i).getString("language"))
-                    .value(jsonArray.getJSONObject(i).getString("value")).build());
+                    .description(jsonArray.optJSONObject(i).optString("description"))
+                    .language(jsonArray.optJSONObject(i).optString("language"))
+                    .value(jsonArray.optJSONObject(i).optString("value")).build());
         }
         return emails;
     }
 
-    public static List<Webpage> createWebPages(JSONArray jsonArray) {
-        List<Webpage> webPages = new ArrayList<>();
+    public static List<WebPage> createWebPages(JSONArray jsonArray) {
+        List<WebPage> webPages = new ArrayList<>();
         for (int i = 0; i < jsonArray.length(); i++) {
-            webPages.add(Webpage.builder()
-                    .url(jsonArray.getJSONObject(i).getString("url"))
-                    .language(jsonArray.getJSONObject(i).getString("language"))
-                    .value(jsonArray.getJSONObject(i).getString("value")).build());
+            webPages.add(WebPage.builder()
+                    .url(jsonArray.optJSONObject(i).optString("url"))
+                    .language(jsonArray.optJSONObject(i).optString("language"))
+                    .value(jsonArray.optJSONObject(i).optString("value")).build());
         }
         return webPages;
     }
@@ -121,9 +121,9 @@ public class OrganizationUtil {
         List<OrganizationDescription> organizationDescriptions = new ArrayList<>();
         for (int i = 0; i < jsonArray.length(); i++) {
             organizationDescriptions.add(OrganizationDescription.builder()
-                    .type(jsonArray.getJSONObject(i).getString("type"))
-                    .language(jsonArray.getJSONObject(i).getString("language"))
-                    .value(jsonArray.getJSONObject(i).getString("value")).build());
+                    .type(jsonArray.optJSONObject(i).optString("type"))
+                    .language(jsonArray.optJSONObject(i).optString("language"))
+                    .value(jsonArray.optJSONObject(i).optString("value")).build());
         }
         return organizationDescriptions;
     }
@@ -132,9 +132,9 @@ public class OrganizationUtil {
         List<OrganizationName> organizationNames = new ArrayList<>();
         for (int i = 0; i < jsonArray.length(); i++) {
             organizationNames.add(OrganizationName.builder()
-                    .type(jsonArray.getJSONObject(i).getString("type"))
-                    .language(jsonArray.getJSONObject(i).getString("language"))
-                    .value(jsonArray.getJSONObject(i).getString("value")).build());
+                    .type(jsonArray.optJSONObject(i).optString("type"))
+                    .language(jsonArray.optJSONObject(i).optString("language"))
+                    .value(jsonArray.optJSONObject(i).optString("value")).build());
         }
         return organizationNames;
     }
@@ -143,33 +143,33 @@ public class OrganizationUtil {
         List<Address> addresses = new ArrayList<>();
         for (int i = 0; i < jsonArray.length(); i++) {
             addresses.add(Address.builder()
-                    .type(jsonArray.getJSONObject(i).getString("type"))
-                    .subType(jsonArray.getJSONObject(i).getString("subType"))
-                    .country(jsonArray.getJSONObject(i).getString("country")).build());
+                    .type(jsonArray.optJSONObject(i).optString("type"))
+                    .subType(jsonArray.optJSONObject(i).optString("subType"))
+                    .country(jsonArray.optJSONObject(i).optString("country")).build());
         }
         return addresses;
     }
 
     public static StreetAddress createStreetAddress(JSONObject jsonObject) {
         return StreetAddress.builder()
-                .streetNumber(jsonObject.getString("streetNumber"))
-                .postalCode(jsonObject.getString("postalCode"))
-                .latitude(jsonObject.getString("latitude"))
-                .longitude(jsonObject.getString("longitude"))
-                .coordinateState(jsonObject.getString("coordinateState")).build();
+                .streetNumber(jsonObject.optString("streetNumber"))
+                .postalCode(jsonObject.optString("postalCode"))
+                .latitude(jsonObject.optString("latitude"))
+                .longitude(jsonObject.optString("longitude"))
+                .coordinateState(jsonObject.optString("coordinateState")).build();
     }
 
     public static StreetAddressMunicipality createStreetAddressMunicipality(JSONObject jsonObject) {
         return StreetAddressMunicipality.builder()
-                .code(jsonObject.getString("code")).build();
+                .code(jsonObject.optString("code")).build();
     }
 
     public static List<StreetAddressMunicipalityName> createStreetAddressMunicipalityNames(JSONArray jsonArray) {
         List<StreetAddressMunicipalityName> streetAddressMunicipalityNames = new ArrayList<>();
         for (int i = 0; i < jsonArray.length(); i++) {
             streetAddressMunicipalityNames.add(StreetAddressMunicipalityName.builder()
-                    .language(jsonArray.getJSONObject(i).getString("language"))
-                    .value(jsonArray.getJSONObject(i).getString("value")).build());
+                    .language(jsonArray.optJSONObject(i).optString("language"))
+                    .value(jsonArray.optJSONObject(i).optString("value")).build());
         }
         return streetAddressMunicipalityNames;
     }
@@ -178,8 +178,8 @@ public class OrganizationUtil {
         List<StreetAddressAdditionalInformation> additionalInformationList = new ArrayList<>();
         for (int i = 0; i < jsonArray.length(); i++) {
             additionalInformationList.add(StreetAddressAdditionalInformation.builder()
-                    .language(jsonArray.getJSONObject(i).getString("language"))
-                    .value(jsonArray.getJSONObject(i).getString("value")).build());
+                    .language(jsonArray.optJSONObject(i).optString("language"))
+                    .value(jsonArray.optJSONObject(i).optString("value")).build());
         }
         return additionalInformationList;
     }
@@ -188,8 +188,8 @@ public class OrganizationUtil {
         List<StreetAddressPostOffice> postOffices = new ArrayList<>();
         for (int i = 0; i < jsonArray.length(); i++) {
             postOffices.add(StreetAddressPostOffice.builder()
-                    .language(jsonArray.getJSONObject(i).getString("language"))
-                    .value(jsonArray.getJSONObject(i).getString("value")).build());
+                    .language(jsonArray.optJSONObject(i).optString("language"))
+                    .value(jsonArray.optJSONObject(i).optString("value")).build());
         }
         return postOffices;
     }
@@ -198,15 +198,15 @@ public class OrganizationUtil {
         List<Street> streets = new ArrayList<>();
         for (int i = 0; i < jsonArray.length(); i++) {
             streets.add(Street.builder()
-                    .language(jsonArray.getJSONObject(i).getString("language"))
-                    .value(jsonArray.getJSONObject(i).getString("value")).build());
+                    .language(jsonArray.optJSONObject(i).optString("language"))
+                    .value(jsonArray.optJSONObject(i).optString("value")).build());
         }
         return streets;
     }
 
     public static PostOfficeBoxAddress createPostOfficeBoxAddress(JSONObject jsonObject) {
         return PostOfficeBoxAddress.builder()
-                .postalCode(jsonObject.getString("postalCode")).build();
+                .postalCode(jsonObject.optString("postalCode")).build();
     }
 
     public static List<PostOfficeBoxAddressAdditionalInformation> createPostOfficeBoxAddressAdditionalInformation(
@@ -214,8 +214,8 @@ public class OrganizationUtil {
         List<PostOfficeBoxAddressAdditionalInformation> additionalInformationList = new ArrayList<>();
         for (int i = 0; i < jsonArray.length(); i++) {
             additionalInformationList.add(PostOfficeBoxAddressAdditionalInformation.builder()
-                    .language(jsonArray.getJSONObject(i).getString("language"))
-                    .value(jsonArray.getJSONObject(i).getString("value")).build());
+                    .language(jsonArray.optJSONObject(i).optString("language"))
+                    .value(jsonArray.optJSONObject(i).optString("value")).build());
         }
         return additionalInformationList;
     }
@@ -224,8 +224,8 @@ public class OrganizationUtil {
         List<PostOfficeBox> postOfficeBoxes = new ArrayList<>();
         for (int i = 0; i < jsonArray.length(); i++) {
             postOfficeBoxes.add(PostOfficeBox.builder()
-                    .language(jsonArray.getJSONObject(i).getString("language"))
-                    .value(jsonArray.getJSONObject(i).getString("value")).build());
+                    .language(jsonArray.optJSONObject(i).optString("language"))
+                    .value(jsonArray.optJSONObject(i).optString("value")).build());
         }
         return postOfficeBoxes;
     }
@@ -234,23 +234,23 @@ public class OrganizationUtil {
         List<PostOffice> postOffices = new ArrayList<>();
         for (int i = 0; i < jsonArray.length(); i++) {
             postOffices.add(PostOffice.builder()
-                    .language(jsonArray.getJSONObject(i).getString("language"))
-                    .value(jsonArray.getJSONObject(i).getString("value")).build());
+                    .language(jsonArray.optJSONObject(i).optString("language"))
+                    .value(jsonArray.optJSONObject(i).optString("value")).build());
         }
         return postOffices;
     }
 
     public static PostOfficeBoxAddressMunicipality createPostOfficeBoxAddressMunicipality(JSONObject jsonObject) {
         return PostOfficeBoxAddressMunicipality.builder()
-                .code(jsonObject.getString("code")).build();
+                .code(jsonObject.optString("code")).build();
     }
 
     public static List<PostOfficeBoxAddressMunicipalityName> createPostOfficeBoxAddressMunicipalityNames(JSONArray jsonArray) {
         List<PostOfficeBoxAddressMunicipalityName> streetAddressMunicipalityNames = new ArrayList<>();
         for (int i = 0; i < jsonArray.length(); i++) {
             streetAddressMunicipalityNames.add(PostOfficeBoxAddressMunicipalityName.builder()
-                    .language(jsonArray.getJSONObject(i).getString("language"))
-                    .value(jsonArray.getJSONObject(i).getString("value")).build());
+                    .language(jsonArray.optJSONObject(i).optString("language"))
+                    .value(jsonArray.optJSONObject(i).optString("value")).build());
         }
         return streetAddressMunicipalityNames;
     }
@@ -259,13 +259,13 @@ public class OrganizationUtil {
         List<PhoneNumber> phoneNumbers = new ArrayList<>();
         for (int i = 0; i < jsonArray.length(); i++) {
             phoneNumbers.add(PhoneNumber.builder()
-                    .additionalInformation(jsonArray.getJSONObject(i).getString("additionalInformation"))
-                    .number(jsonArray.getJSONObject(i).getString("number"))
-                    .isFinnishServiceNumber(jsonArray.getJSONObject(i).getBoolean("isFinnishServiceNumber"))
-                    .prefixNumber(jsonArray.getJSONObject(i).getString("prefixNumber"))
-                    .language(jsonArray.getJSONObject(i).getString("language"))
-                    .chargeDescription(jsonArray.getJSONObject(i).getString("chargeDescription"))
-                    .serviceChargeType(jsonArray.getJSONObject(i).getString("serviceChargeType")).build());
+                    .additionalInformation(jsonArray.optJSONObject(i).optString("additionalInformation"))
+                    .number(jsonArray.optJSONObject(i).optString("number"))
+                    .isFinnishServiceNumber(jsonArray.optJSONObject(i).getBoolean("isFinnishServiceNumber"))
+                    .prefixNumber(jsonArray.optJSONObject(i).optString("prefixNumber"))
+                    .language(jsonArray.optJSONObject(i).optString("language"))
+                    .chargeDescription(jsonArray.optJSONObject(i).optString("chargeDescription"))
+                    .serviceChargeType(jsonArray.optJSONObject(i).optString("serviceChargeType")).build());
         }
         return phoneNumbers;
     }
@@ -296,7 +296,7 @@ public class OrganizationUtil {
 
         ret = "{\"items\":" + ret + "}";
         JSONObject json = new JSONObject(ret);
-        JSONArray itemList = json.getJSONArray("items");
+        JSONArray itemList = json.optJSONArray("items");
 
         return itemList;
     }

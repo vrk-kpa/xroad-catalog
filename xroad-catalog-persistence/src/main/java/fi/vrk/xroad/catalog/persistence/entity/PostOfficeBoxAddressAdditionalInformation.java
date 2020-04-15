@@ -37,8 +37,8 @@ import javax.persistence.*;
 public class PostOfficeBoxAddressAdditionalInformation {
     @Id
     @Column(nullable = false)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "POSTOFFICE_BOX_ADDRESS_ADDITIONAL_INFORMATION_GEN")
-    @SequenceGenerator(name = "POSTOFFICE_BOX_ADDRESS_ADDITIONAL_INFORMATION_GEN", sequenceName = "POSTOFFICE_BOX_ADDRESS_ADDITIONAL_INFORMATION_ID_SEQ", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "POST_OFFICE_BOX_ADDRESS_ADDITIONAL_INFORMATION_GEN")
+    @SequenceGenerator(name = "POST_OFFICE_BOX_ADDRESS_ADDITIONAL_INFORMATION_GEN", sequenceName = "POST_OFFICE_BOX_ADDRESS_ADDITIONAL_INFORMATION_ID_SEQ", allocationSize = 1)
     private long id;
     @Column(nullable = false)
     private String language;

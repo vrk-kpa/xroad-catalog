@@ -26,8 +26,9 @@ import fi.vrk.xroad.catalog.persistence.entity.PhoneNumber;
 import org.springframework.data.repository.CrudRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface PhoneNumberRepository extends CrudRepository<PhoneNumber, Long> {
 
-    List<PhoneNumber> findAnyByOrganizationId(Long organizationId);
+    Optional<List<PhoneNumber>> findAnyByOrganizationId(Long organizationId);
 }

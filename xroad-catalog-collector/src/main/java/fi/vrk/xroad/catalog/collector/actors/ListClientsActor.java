@@ -66,7 +66,7 @@ public class ListClientsActor extends XRoadCatalogActor {
     @Value("${xroad-catalog.list-clients-host}")
     private String host;
 
-    // supervisor-created pool of list methods actors
+    // supervisor-created pool of list clients actors
     protected ActorRef listMethodsPoolRef;
     private ActorRef fetchOrganizationsPoolRef;
 

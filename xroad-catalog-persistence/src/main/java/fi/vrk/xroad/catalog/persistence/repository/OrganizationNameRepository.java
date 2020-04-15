@@ -26,8 +26,9 @@ import fi.vrk.xroad.catalog.persistence.entity.OrganizationName;
 import org.springframework.data.repository.CrudRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface OrganizationNameRepository extends CrudRepository<OrganizationName, Long> {
 
-    List<OrganizationName> findAnyByOrganizationId(Long organizationId);
+    Optional<List<OrganizationName>> findAnyByOrganizationId(Long organizationId);
 }

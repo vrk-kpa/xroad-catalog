@@ -28,7 +28,6 @@ import fi.vrk.xroad.catalog.persistence.entity.*;
 import fi.vrk.xroad.catalog.persistence.service.CatalogService;
 import lombok.extern.slf4j.Slf4j;
 import org.json.JSONArray;
-import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -84,18 +83,18 @@ public class FetchOrganizationsActor extends XRoadCatalogActor {
 
     private void saveBatch(JSONArray data) {
         for (int i = 0; i < data.length(); i++) {
-            Organization organization = OrganizationUtil.createOrganization(data.getJSONObject(i));
-            List<Email> emails = OrganizationUtil.createEmails(data.getJSONObject(i).getJSONArray("emails"));
-            List<Webpage> webPages = OrganizationUtil.createWebPages(data.getJSONObject(i).getJSONArray("webPages"));
+            Organization organization = OrganizationUtil.createOrganization(data.optJSONObject(i));
+            List<Email> emails = OrganizationUtil.createEmails(data.optJSONObject(i).optJSONArray("emails"));
+            List<WebPage> webPages = OrganizationUtil.createWebPages(data.optJSONObject(i).optJSONArray("webPages"));
             List<OrganizationDescription> organizationDescriptions = OrganizationUtil.createDescriptions(data
-                    .getJSONObject(i).getJSONArray("organizationDescriptions"));
+                    .optJSONObject(i).optJSONArray("organizationDescriptions"));
             List<OrganizationName> organizationNames = OrganizationUtil.createNames(data
-                    .getJSONObject(i).getJSONArray("organizationNames"));
+                    .optJSONObject(i).optJSONArray("organizationNames"));
             List<Address> addresses = OrganizationUtil.createAddresses(data
-                    .getJSONObject(i).getJSONArray("addresses"));
-            JSONArray addressesListJson = data.getJSONObject(i).getJSONArray("addresses");
+                    .optJSONObject(i).optJSONArray("addresses"));
+            JSONArray addressesListJson = data.optJSONObject(i).optJSONArray("addresses");
             List<PhoneNumber> phoneNumbers = OrganizationUtil.createPhoneNumbers(data
-                    .getJSONObject(i).getJSONArray("phoneNumbers"));
+                    .optJSONObject(i).optJSONArray("phoneNumbers"));
 
             Organization savedOrganization = catalogService.saveOrganization(organization);
             log.info("Saved organization successfully");
@@ -130,20 +129,20 @@ public class FetchOrganizationsActor extends XRoadCatalogActor {
                 log.info("Saved webPage successfully");
             });
 
-            addresses.forEach(address -> {
+/*            addresses.forEach(address -> {
                 address.setOrganization(savedOrganization);
                 Address savedAddress = catalogService.saveAddress(address);
 
                 for (int j = 0; j < addressesListJson.length(); j++) {
 
                     // save StreetAddress
-                    JSONObject streetAddressJson = addressesListJson.getJSONObject(j).getJSONObject("streetAddress");
+                    JSONObject streetAddressJson = addressesListJson.optJSONObject(j).optJSONObject("streetAddress");
                     StreetAddress streetAddress = OrganizationUtil.createStreetAddress(streetAddressJson);
                     streetAddress.setAddress(savedAddress);
                     StreetAddress savedStreetAddress = catalogService.saveStreetAddress(streetAddress);
 
                     // save StreetAddressMunicipality
-                    JSONObject streetAddressMunicipalityJson = streetAddressJson.getJSONObject("municipality");
+                    JSONObject streetAddressMunicipalityJson = streetAddressJson.optJSONObject("municipality");
                     StreetAddressMunicipality streetAddressMunicipality = OrganizationUtil
                             .createStreetAddressMunicipality(streetAddressMunicipalityJson);
                     streetAddressMunicipality.setStreetAddress(savedStreetAddress);
@@ -151,8 +150,8 @@ public class FetchOrganizationsActor extends XRoadCatalogActor {
                             .saveStreetAddressMunicipality(streetAddressMunicipality);
 
                     // save StreetAddressMunicipalityName
-                    JSONArray streetAddressMunicipalityNamesJson = streetAddressJson.getJSONObject("municipality")
-                            .getJSONArray("name");
+                    JSONArray streetAddressMunicipalityNamesJson = streetAddressJson.optJSONObject("municipality")
+                            .optJSONArray("name");
                     List<StreetAddressMunicipalityName> streetAddressMunicipalityNames = OrganizationUtil
                             .createStreetAddressMunicipalityNames(streetAddressMunicipalityNamesJson);
                     streetAddressMunicipalityNames.forEach(municipalityName -> {
@@ -162,7 +161,7 @@ public class FetchOrganizationsActor extends XRoadCatalogActor {
 
                     // save StreetAddressAdditionalInformation
                     JSONArray streetAddressAdditionaInformationJsonArray = streetAddressJson
-                            .getJSONArray("additionalInformation");
+                            .optJSONArray("additionalInformation");
                     List<StreetAddressAdditionalInformation> streetAddressAdditionalInformationList = OrganizationUtil
                             .createStreetAddressAdditionalInformation(streetAddressAdditionaInformationJsonArray);
                     streetAddressAdditionalInformationList.forEach(additionalInfo -> {
@@ -172,7 +171,7 @@ public class FetchOrganizationsActor extends XRoadCatalogActor {
 
                     // save PostOffice
                     JSONArray streetAddressPostOfficeJsonArray = streetAddressJson
-                            .getJSONArray("postOffice");
+                            .optJSONArray("postOffice");
                     List<StreetAddressPostOffice> streetAddressPostOfficeList = OrganizationUtil
                             .createStreetAddressPostOffices(streetAddressPostOfficeJsonArray);
                     streetAddressPostOfficeList.forEach(postOffice -> {
@@ -181,7 +180,7 @@ public class FetchOrganizationsActor extends XRoadCatalogActor {
                     });
 
                     // save Street
-                    JSONArray streetJsonArray = streetAddressJson.getJSONArray("street");
+                    JSONArray streetJsonArray = streetAddressJson.optJSONArray("street");
                     List<Street> streetList = OrganizationUtil.createStreets(streetJsonArray);
                     streetList.forEach(street -> {
                         street.setStreetAddress(savedStreetAddress);
@@ -189,8 +188,8 @@ public class FetchOrganizationsActor extends XRoadCatalogActor {
                     });
 
                     // save PostOfficeBoxAddress
-                    JSONObject postOfficeBoxAddressJson = addressesListJson.getJSONObject(j)
-                            .getJSONObject("postOfficeBoxStreetAddress");
+                    JSONObject postOfficeBoxAddressJson = addressesListJson.optJSONObject(j)
+                            .optJSONObject("postOfficeBoxStreetAddress");
                     PostOfficeBoxAddress postOfficeBoxAddress = OrganizationUtil.createPostOfficeBoxAddress(postOfficeBoxAddressJson);
                     postOfficeBoxAddress.setAddress(savedAddress);
                     PostOfficeBoxAddress savedPostOfficeBoxAddress = catalogService
@@ -198,7 +197,7 @@ public class FetchOrganizationsActor extends XRoadCatalogActor {
 
                     // save PostOfficeBoxAddressAdditionalInformation
                     JSONArray postOfficeBoxAddressAdditionalInformationJsonArray = postOfficeBoxAddressJson
-                            .getJSONArray("additionalInformation");
+                            .optJSONArray("additionalInformation");
                     List<PostOfficeBoxAddressAdditionalInformation> postOfficeBoxAddressAdditionalInformationList
                             = OrganizationUtil.createPostOfficeBoxAddressAdditionalInformation(
                                     postOfficeBoxAddressAdditionalInformationJsonArray);
@@ -208,7 +207,7 @@ public class FetchOrganizationsActor extends XRoadCatalogActor {
                     });
 
                     // save PostOffice
-                    JSONArray postOfficeJsonArray = postOfficeBoxAddressJson.getJSONArray("postOffice");
+                    JSONArray postOfficeJsonArray = postOfficeBoxAddressJson.optJSONArray("postOffice");
                     List<PostOffice> postOfficeList = OrganizationUtil.createPostOffice(postOfficeJsonArray);
                     postOfficeList.forEach(postOffice -> {
                         postOffice.setPostOfficeBoxAddress(savedPostOfficeBoxAddress);
@@ -216,7 +215,7 @@ public class FetchOrganizationsActor extends XRoadCatalogActor {
                     });
 
                     // save PostOfficeBoxAddressMunicipality
-                    JSONObject postOfficeBoxAddressMunicipalityJson = postOfficeBoxAddressJson.getJSONObject("municipality");
+                    JSONObject postOfficeBoxAddressMunicipalityJson = postOfficeBoxAddressJson.optJSONObject("municipality");
                     PostOfficeBoxAddressMunicipality postOfficeBoxAddressMunicipality = OrganizationUtil
                             .createPostOfficeBoxAddressMunicipality(postOfficeBoxAddressMunicipalityJson);
                     postOfficeBoxAddressMunicipality.setPostOfficeBoxAddress(savedPostOfficeBoxAddress);
@@ -225,7 +224,7 @@ public class FetchOrganizationsActor extends XRoadCatalogActor {
 
                     // save PostOfficeBoxAddressMunicipalityName
                     JSONArray postOfficeBoxAddressMunicipalityNamesJson = postOfficeBoxAddressJson
-                            .getJSONObject("municipality").getJSONArray("name");
+                            .optJSONObject("municipality").optJSONArray("name");
                     List<PostOfficeBoxAddressMunicipalityName> postOfficeBoxAddressMunicipalityNames =
                             OrganizationUtil.createPostOfficeBoxAddressMunicipalityNames(
                                     postOfficeBoxAddressMunicipalityNamesJson);
@@ -236,7 +235,7 @@ public class FetchOrganizationsActor extends XRoadCatalogActor {
 
                     // save PostOfficeBox
                     JSONArray postOfficeBoxJsonArray = postOfficeBoxAddressJson
-                            .getJSONArray("postOfficeBox");
+                            .optJSONArray("postOfficeBox");
                     List<PostOfficeBox> postOfficeBoxList = OrganizationUtil
                             .createPostOfficeBoxes(postOfficeBoxJsonArray);
                     postOfficeBoxList.forEach(postOfficeBox -> {
@@ -246,7 +245,7 @@ public class FetchOrganizationsActor extends XRoadCatalogActor {
 
                 }
                 log.info("Saved address successfully");
-            });
+            });*/
 
         }
     }

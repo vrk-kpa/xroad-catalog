@@ -26,9 +26,10 @@ import fi.vrk.xroad.catalog.persistence.entity.Email;
 import org.springframework.data.repository.CrudRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface EmailRepository extends CrudRepository<Email, Long> {
 
-    List<Email> findAnyByOrganizationId(Long organizationId);
+    Optional<List<Email>> findAnyByOrganizationId(Long organizationId);
 
 }

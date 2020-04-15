@@ -39,8 +39,8 @@ import java.util.Set;
 public class PostOfficeBoxAddress {
     @Id
     @Column(nullable = false)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "POSTOFFICE_BOX_ADDRESS_GEN")
-    @SequenceGenerator(name = "POSTOFFICE_BOX_ADDRESS_GEN", sequenceName = "POSTOFFICE_BOX_ADDRESS_ID_SEQ", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "POST_OFFICE_BOX_ADDRESS_GEN")
+    @SequenceGenerator(name = "POST_OFFICE_BOX_ADDRESS_GEN", sequenceName = "POST_OFFICE_BOX_ADDRESS_ID_SEQ", allocationSize = 1)
     private long id;
     @ManyToOne
     @JoinColumn(name = "ADDRESS_ID")

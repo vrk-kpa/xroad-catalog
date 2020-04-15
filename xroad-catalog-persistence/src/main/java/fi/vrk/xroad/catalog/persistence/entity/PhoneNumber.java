@@ -38,8 +38,8 @@ public class PhoneNumber {
 
     @Id
     @Column(nullable = false)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "PHONENUMBER_GEN")
-    @SequenceGenerator(name = "PHONENUMBER_GEN", sequenceName = "PHONENUMBER_ID_SEQ", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "PHONE_NUMBER_GEN")
+    @SequenceGenerator(name = "PHONE_NUMBER_GEN", sequenceName = "PHONE_NUMBER_ID_SEQ", allocationSize = 1)
     private long id;
     @Column(nullable = false)
     private String language;

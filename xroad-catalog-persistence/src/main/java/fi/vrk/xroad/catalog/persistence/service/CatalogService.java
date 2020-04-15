@@ -97,13 +97,6 @@ public interface CatalogService {
     Service getService(String serviceCode, String subsystemCode);
 
     /**
-     * Stores given organizations and related details.
-     *
-     * @param organizations all Organizations that currently exist.
-     */
-    void saveAllOrganizationsWithDetails(Collection<Organization> organizations);
-
-    /**
      * Stores given members and subsystems. This should be the full dataset of both items
      * - items not included in the parameters are marked as removed, if the existed previously.
      *
@@ -183,7 +176,7 @@ public interface CatalogService {
      * Saves given webPage data.
      * @param newValue the actual webPage
      */
-    void saveWebPage(Webpage newValue);
+    void saveWebPage(WebPage newValue);
 
     /**
      * Saves given address data.

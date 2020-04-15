@@ -74,7 +74,7 @@ public class CatalogServiceImpl implements CatalogService {
     PhoneNumberRepository phoneNumberRepository;
 
     @Autowired
-    WebpageRepository webpageRepository;
+    WebPageRepository webpageRepository;
 
     @Autowired
     AddressRepository addressRepository;
@@ -166,11 +166,6 @@ public class CatalogServiceImpl implements CatalogService {
     @Override
     public Service getService(String serviceCode, String subsystemCode) {
         return serviceRepository.findActiveByServiceAndSubsystem(serviceCode, subsystemCode);
-    }
-
-    @Override
-    public void saveAllOrganizationsWithDetails(Collection<Organization> organizations) {
-
     }
 
     @Override
@@ -395,16 +390,22 @@ public class CatalogServiceImpl implements CatalogService {
                 statusInfo.setChanged(LocalDateTime.now());
             }
             newValue.setStatusInfo(statusInfo);
+        } else {
+            StatusInfo statusInfo = new StatusInfo();
+            statusInfo.setCreated(LocalDateTime.now());
+            statusInfo.setChanged(LocalDateTime.now());
+            statusInfo.setFetched(LocalDateTime.now());
+            newValue.setStatusInfo(statusInfo);
         }
         return organizationRepository.save(newValue);
     }
 
     @Override
     public void saveOrganizationName(OrganizationName newValue) {
-        List<OrganizationName> foundList = organizationNameRepository
+        Optional<List<OrganizationName>> foundList = organizationNameRepository
                 .findAnyByOrganizationId(newValue.getOrganization().getId());
-        if (!foundList.isEmpty()) {
-            foundList.forEach(oldValue -> {
+        if (foundList.isPresent() && !foundList.get().isEmpty()) {
+            foundList.get().forEach(oldValue -> {
                 StatusInfo statusInfo = oldValue.getStatusInfo();
                 statusInfo.setFetched(LocalDateTime.now());
                 if (!oldValue.equals(newValue)) {
@@ -412,16 +413,22 @@ public class CatalogServiceImpl implements CatalogService {
                 }
                 newValue.setStatusInfo(statusInfo);
             });
+        } else {
+            StatusInfo statusInfo = new StatusInfo();
+            statusInfo.setCreated(LocalDateTime.now());
+            statusInfo.setChanged(LocalDateTime.now());
+            statusInfo.setFetched(LocalDateTime.now());
+            newValue.setStatusInfo(statusInfo);
         }
         organizationNameRepository.save(newValue);
     }
 
     @Override
     public void saveOrganizationDescription(OrganizationDescription newValue) {
-        List<OrganizationDescription> foundList = organizationDescriptionRepository
+        Optional<List<OrganizationDescription>> foundList = organizationDescriptionRepository
                 .findAnyByOrganizationId(newValue.getOrganization().getId());
-        if (!foundList.isEmpty()) {
-            foundList.forEach(oldValue -> {
+        if (foundList.isPresent() && !foundList.get().isEmpty()) {
+            foundList.get().forEach(oldValue -> {
                 StatusInfo statusInfo = oldValue.getStatusInfo();
                 statusInfo.setFetched(LocalDateTime.now());
                 if (!oldValue.equals(newValue)) {
@@ -429,16 +436,22 @@ public class CatalogServiceImpl implements CatalogService {
                 }
                 newValue.setStatusInfo(statusInfo);
             });
+        } else {
+            StatusInfo statusInfo = new StatusInfo();
+            statusInfo.setCreated(LocalDateTime.now());
+            statusInfo.setChanged(LocalDateTime.now());
+            statusInfo.setFetched(LocalDateTime.now());
+            newValue.setStatusInfo(statusInfo);
         }
         organizationDescriptionRepository.save(newValue);
     }
 
     @Override
     public void saveEmail(Email newValue) {
-        List<Email> foundList = emailRepository
+        Optional<List<Email>> foundList = emailRepository
                 .findAnyByOrganizationId(newValue.getOrganization().getId());
-        if (!foundList.isEmpty()) {
-            foundList.forEach(oldValue -> {
+        if (foundList.isPresent() && !foundList.get().isEmpty()) {
+            foundList.get().forEach(oldValue -> {
                 StatusInfo statusInfo = oldValue.getStatusInfo();
                 statusInfo.setFetched(LocalDateTime.now());
                 if (!oldValue.equals(newValue)) {
@@ -446,16 +459,22 @@ public class CatalogServiceImpl implements CatalogService {
                 }
                 newValue.setStatusInfo(statusInfo);
             });
+        } else {
+            StatusInfo statusInfo = new StatusInfo();
+            statusInfo.setCreated(LocalDateTime.now());
+            statusInfo.setChanged(LocalDateTime.now());
+            statusInfo.setFetched(LocalDateTime.now());
+            newValue.setStatusInfo(statusInfo);
         }
         emailRepository.save(newValue);
     }
 
     @Override
     public void savePhoneNumber(PhoneNumber newValue) {
-        List<PhoneNumber> foundList = phoneNumberRepository
+        Optional<List<PhoneNumber>> foundList = phoneNumberRepository
                 .findAnyByOrganizationId(newValue.getOrganization().getId());
-        if (!foundList.isEmpty()) {
-            foundList.forEach(oldValue -> {
+        if (foundList.isPresent() && !foundList.get().isEmpty()) {
+            foundList.get().forEach(oldValue -> {
                 StatusInfo statusInfo = oldValue.getStatusInfo();
                 statusInfo.setFetched(LocalDateTime.now());
                 if (!oldValue.equals(newValue)) {
@@ -463,16 +482,22 @@ public class CatalogServiceImpl implements CatalogService {
                 }
                 newValue.setStatusInfo(statusInfo);
             });
+        } else {
+            StatusInfo statusInfo = new StatusInfo();
+            statusInfo.setCreated(LocalDateTime.now());
+            statusInfo.setChanged(LocalDateTime.now());
+            statusInfo.setFetched(LocalDateTime.now());
+            newValue.setStatusInfo(statusInfo);
         }
         phoneNumberRepository.save(newValue);
     }
 
     @Override
-    public void saveWebPage(Webpage newValue) {
-        List<Webpage> foundList = webpageRepository
+    public void saveWebPage(WebPage newValue) {
+        Optional<List<WebPage>> foundList = webpageRepository
                 .findAnyByOrganizationId(newValue.getOrganization().getId());
-        if (!foundList.isEmpty()) {
-            foundList.forEach(oldValue -> {
+        if (foundList.isPresent() && !foundList.get().isEmpty()) {
+            foundList.get().forEach(oldValue -> {
                 StatusInfo statusInfo = oldValue.getStatusInfo();
                 statusInfo.setFetched(LocalDateTime.now());
                 if (!oldValue.equals(newValue)) {
@@ -480,6 +505,12 @@ public class CatalogServiceImpl implements CatalogService {
                 }
                 newValue.setStatusInfo(statusInfo);
             });
+        } else {
+            StatusInfo statusInfo = new StatusInfo();
+            statusInfo.setCreated(LocalDateTime.now());
+            statusInfo.setChanged(LocalDateTime.now());
+            statusInfo.setFetched(LocalDateTime.now());
+            newValue.setStatusInfo(statusInfo);
         }
         webpageRepository.save(newValue);
     }

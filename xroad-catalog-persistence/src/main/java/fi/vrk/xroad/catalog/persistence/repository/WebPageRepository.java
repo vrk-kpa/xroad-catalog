@@ -20,37 +20,15 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package fi.vrk.xroad.catalog.persistence.entity;
+package fi.vrk.xroad.catalog.persistence.repository;
 
-import lombok.*;
+import fi.vrk.xroad.catalog.persistence.entity.WebPage;
+import org.springframework.data.repository.CrudRepository;
 
-import javax.persistence.*;
+import java.util.List;
+import java.util.Optional;
 
-@Entity
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
-@ToString(exclude = {"organization"})
-@EqualsAndHashCode(exclude = {"id", "organization","statusInfo"})
-@Builder
-public class Webpage {
+public interface WebPageRepository extends CrudRepository<WebPage, Long> {
 
-    @Id
-    @Column(nullable = false)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "WEB_PAGE_GEN")
-    @SequenceGenerator(name = "WEB_PAGE_GEN", sequenceName = "WEB_PAGE_ID_SEQ", allocationSize = 1)
-    private long id;
-    @Column(nullable = false)
-    private String language;
-    @Column(nullable = false)
-    private String url;
-    @Column(nullable = false)
-    private String value;
-    @Builder.Default
-    @Embedded
-    private StatusInfo statusInfo = new StatusInfo();
-    @ManyToOne
-    @JoinColumn(name = "ORGANIZATION_ID")
-    private Organization organization;
+    Optional<List<WebPage>> findAnyByOrganizationId(Long organizationId);
 }

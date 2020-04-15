@@ -37,8 +37,8 @@ import javax.persistence.*;
 public class PostOfficeBox {
     @Id
     @Column(nullable = false)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "POSTOFFICE_BOX_GEN")
-    @SequenceGenerator(name = "POSTOFFICE_BOX_GEN", sequenceName = "POSTOFFICE_BOX_ID_SEQ", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "POST_OFFICE_BOX_GEN")
+    @SequenceGenerator(name = "POST_OFFICE_BOX_GEN", sequenceName = "POST_OFFICE_BOX_ID_SEQ", allocationSize = 1)
     private long id;
     @Column(nullable = false)
     private String language;

@@ -141,7 +141,8 @@ public class ServiceEndpoint {
         return response;
     }
 
-    @PayloadRoot(namespace = NAMESPACE_URI, localPart = "GetOpenAPI")
+
+/*    @PayloadRoot(namespace = NAMESPACE_URI, localPart = "GetOpenAPI")
     @ResponsePayload
     public GetOpenAPIResponse getOrganizationDetails(@RequestPayload GetOpenAPI request) {
         GetOpenAPIResponse response = new GetOpenAPIResponse();
@@ -152,6 +153,6 @@ public class ServiceEndpoint {
         }
         response.setOpenapi(openApi.getData());
         return response;
-    }
+    }*/
 
 }
