@@ -190,9 +190,6 @@ public class JaxbConverter {
         }
     }
 
-
-
-
     /**
      * Convert entities to XML objects
      * @param organizations Iterable of Organization entities
@@ -378,6 +375,10 @@ public class JaxbConverter {
             Iterable<fi.vrk.xroad.catalog.persistence.entity.StreetAddress> streetAddresses = address.getAllStreetAddresses();
             co.getStreetAddresses().getStreetAddress().addAll(convertStreetAddresses(streetAddresses));
 
+            co.setPostOfficeBoxAddresses(new PostOfficeBoxAddressList());
+            Iterable<fi.vrk.xroad.catalog.persistence.entity.PostOfficeBoxAddress> postOfficeBoxAddresses
+                    = address.getAllPostOfficeBoxAddresses();
+            co.getPostOfficeBoxAddresses().getPostOfficeBoxAddress().addAll(convertPostOfficeBoxAddresses(postOfficeBoxAddresses));
 
             converted.add(co);
         }
@@ -532,6 +533,162 @@ public class JaxbConverter {
             co.setRemoved(toXmlGregorianCalendar(streetAddressAdditionalInformation.getStatusInfo().getRemoved()));
             co.setLanguage(streetAddressAdditionalInformation.getLanguage());
             co.setValue(streetAddressAdditionalInformation.getValue());
+            converted.add(co);
+        }
+        return converted;
+    }
+
+    /**
+     * Convert entities to XML objects
+     * @param postOfficeBoxAddresses Iterable of PostOfficeBoxAddresses entities
+     * @return collection of XML objects
+     */
+    private Collection<fi.vrk.xroad.xroad_catalog_lister.PostOfficeBoxAddress> convertPostOfficeBoxAddresses(
+            Iterable<fi.vrk.xroad.catalog.persistence.entity.PostOfficeBoxAddress> postOfficeBoxAddresses) {
+        List<fi.vrk.xroad.xroad_catalog_lister.PostOfficeBoxAddress> converted = new ArrayList<>();
+        for (fi.vrk.xroad.catalog.persistence.entity.PostOfficeBoxAddress postOfficeBoxAddress: postOfficeBoxAddresses) {
+            fi.vrk.xroad.xroad_catalog_lister.PostOfficeBoxAddress co = new fi.vrk.xroad.xroad_catalog_lister.PostOfficeBoxAddress();
+            co.setChanged(toXmlGregorianCalendar(postOfficeBoxAddress.getStatusInfo().getChanged()));
+            co.setCreated(toXmlGregorianCalendar(postOfficeBoxAddress.getStatusInfo().getCreated()));
+            co.setFetched(toXmlGregorianCalendar(postOfficeBoxAddress.getStatusInfo().getFetched()));
+            co.setRemoved(toXmlGregorianCalendar(postOfficeBoxAddress.getStatusInfo().getRemoved()));
+            co.setPostalCode(postOfficeBoxAddress.getPostalCode());
+            co.setPostalCode(postOfficeBoxAddress.getPostalCode());
+
+            co.setAdditionalInformation(new PostOfficeBoxAddressAdditionalInformationList());
+            Iterable<fi.vrk.xroad.catalog.persistence.entity.PostOfficeBoxAddressAdditionalInformation> postOfficeBoxAddressAdditionalInformation
+                    = postOfficeBoxAddress.getAllAdditionalInformation();
+            co.getAdditionalInformation().getPostOfficeBoxAddressAdditionalInformation()
+                    .addAll(convertPostOfficeBoxAddressAdditionalInformation(postOfficeBoxAddressAdditionalInformation));
+
+            co.setPostOfficeBoxAddressMunicipalities(new PostOfficeBoxAddressMunicipalityList());
+            Iterable<fi.vrk.xroad.catalog.persistence.entity.PostOfficeBoxAddressMunicipality> postOfficeBoxAddressMunicipalities
+                    = postOfficeBoxAddress.getAllMunicipalities();
+            co.getPostOfficeBoxAddressMunicipalities().getPostOfficeBoxAddressMunicipality()
+                    .addAll(convertPostOfficeBoxAddressMunicipalities(postOfficeBoxAddressMunicipalities));
+
+            co.setPostOffices(new PostOfficeList());
+            Iterable<fi.vrk.xroad.catalog.persistence.entity.PostOffice> postOffices = postOfficeBoxAddress.getAllPostOffices();
+            co.getPostOffices().getPostOffice().addAll(convertPostOffices(postOffices));
+
+            co.setPostOfficeBoxes(new PostOfficeBoxList());
+            Iterable<fi.vrk.xroad.catalog.persistence.entity.PostOfficeBox> postOfficeBoxes = postOfficeBoxAddress.getAllPostOfficeBoxes();
+            co.getPostOfficeBoxes().getPostOfficeBox().addAll(convertPostOfficeBoxes(postOfficeBoxes));
+
+
+            converted.add(co);
+        }
+        return converted;
+    }
+
+    /**
+     * Convert entities to XML objects
+     * @param postOfficeBoxAddressAdditionalInformationList Iterable of PostOfficeBoxAddressAdditionalInformation entities
+     * @return collection of XML objects
+     */
+    private Collection<fi.vrk.xroad.xroad_catalog_lister.PostOfficeBoxAddressAdditionalInformation> convertPostOfficeBoxAddressAdditionalInformation(
+            Iterable<fi.vrk.xroad.catalog.persistence.entity.PostOfficeBoxAddressAdditionalInformation> postOfficeBoxAddressAdditionalInformationList) {
+        List<fi.vrk.xroad.xroad_catalog_lister.PostOfficeBoxAddressAdditionalInformation> converted = new ArrayList<>();
+        for (fi.vrk.xroad.catalog.persistence.entity.PostOfficeBoxAddressAdditionalInformation postOfficeBoxAddressAdditionalInformation:
+                postOfficeBoxAddressAdditionalInformationList) {
+            fi.vrk.xroad.xroad_catalog_lister.PostOfficeBoxAddressAdditionalInformation co
+                    = new fi.vrk.xroad.xroad_catalog_lister.PostOfficeBoxAddressAdditionalInformation();
+            co.setChanged(toXmlGregorianCalendar(postOfficeBoxAddressAdditionalInformation.getStatusInfo().getChanged()));
+            co.setCreated(toXmlGregorianCalendar(postOfficeBoxAddressAdditionalInformation.getStatusInfo().getCreated()));
+            co.setFetched(toXmlGregorianCalendar(postOfficeBoxAddressAdditionalInformation.getStatusInfo().getFetched()));
+            co.setRemoved(toXmlGregorianCalendar(postOfficeBoxAddressAdditionalInformation.getStatusInfo().getRemoved()));
+            co.setLanguage(postOfficeBoxAddressAdditionalInformation.getLanguage());
+            co.setValue(postOfficeBoxAddressAdditionalInformation.getValue());
+            converted.add(co);
+        }
+        return converted;
+    }
+
+    /**
+     * Convert entities to XML objects
+     * @param postOfficeBoxAddressMunicipalities Iterable of PostOfficeBoxAddressMunicipality entities
+     * @return collection of XML objects
+     */
+    private Collection<fi.vrk.xroad.xroad_catalog_lister.PostOfficeBoxAddressMunicipality> convertPostOfficeBoxAddressMunicipalities(
+            Iterable<fi.vrk.xroad.catalog.persistence.entity.PostOfficeBoxAddressMunicipality> postOfficeBoxAddressMunicipalities) {
+        List<fi.vrk.xroad.xroad_catalog_lister.PostOfficeBoxAddressMunicipality> converted = new ArrayList<>();
+        for (fi.vrk.xroad.catalog.persistence.entity.PostOfficeBoxAddressMunicipality postOfficeBoxAddressMunicipality: postOfficeBoxAddressMunicipalities) {
+            fi.vrk.xroad.xroad_catalog_lister.PostOfficeBoxAddressMunicipality co = new fi.vrk.xroad.xroad_catalog_lister.PostOfficeBoxAddressMunicipality();
+            co.setChanged(toXmlGregorianCalendar(postOfficeBoxAddressMunicipality.getStatusInfo().getChanged()));
+            co.setCreated(toXmlGregorianCalendar(postOfficeBoxAddressMunicipality.getStatusInfo().getCreated()));
+            co.setFetched(toXmlGregorianCalendar(postOfficeBoxAddressMunicipality.getStatusInfo().getFetched()));
+            co.setRemoved(toXmlGregorianCalendar(postOfficeBoxAddressMunicipality.getStatusInfo().getRemoved()));
+            co.setCode(postOfficeBoxAddressMunicipality.getCode());
+
+            co.setPostOfficeBoxAddressMunicipalityNames(new PostOfficeBoxAddressMunicipalityNameList());
+            Iterable<fi.vrk.xroad.catalog.persistence.entity.PostOfficeBoxAddressMunicipalityName> postOfficeBoxAddressMunicipalityNames
+                    = postOfficeBoxAddressMunicipality.getAllMunicipalityNames();
+            co.getPostOfficeBoxAddressMunicipalityNames().getPostOfficeBoxAddressMunicipalityName()
+                    .addAll(convertPostOfficeBoxAddressMunicipalityNames(postOfficeBoxAddressMunicipalityNames));
+
+            converted.add(co);
+        }
+        return converted;
+    }
+
+    /**
+     * Convert entities to XML objects
+     * @param postOfficeBoxAddressMunicipalityNames Iterable of PostOfficeBoxAddressMunicipalityName entities
+     * @return collection of XML objects
+     */
+    private Collection<fi.vrk.xroad.xroad_catalog_lister.PostOfficeBoxAddressMunicipalityName> convertPostOfficeBoxAddressMunicipalityNames(
+            Iterable<fi.vrk.xroad.catalog.persistence.entity.PostOfficeBoxAddressMunicipalityName> postOfficeBoxAddressMunicipalityNames) {
+        List<fi.vrk.xroad.xroad_catalog_lister.PostOfficeBoxAddressMunicipalityName> converted = new ArrayList<>();
+        for (fi.vrk.xroad.catalog.persistence.entity.PostOfficeBoxAddressMunicipalityName postOfficeBoxAddressMunicipalityName: postOfficeBoxAddressMunicipalityNames) {
+            fi.vrk.xroad.xroad_catalog_lister.PostOfficeBoxAddressMunicipalityName co = new fi.vrk.xroad.xroad_catalog_lister.PostOfficeBoxAddressMunicipalityName();
+            co.setChanged(toXmlGregorianCalendar(postOfficeBoxAddressMunicipalityName.getStatusInfo().getChanged()));
+            co.setCreated(toXmlGregorianCalendar(postOfficeBoxAddressMunicipalityName.getStatusInfo().getCreated()));
+            co.setFetched(toXmlGregorianCalendar(postOfficeBoxAddressMunicipalityName.getStatusInfo().getFetched()));
+            co.setRemoved(toXmlGregorianCalendar(postOfficeBoxAddressMunicipalityName.getStatusInfo().getRemoved()));
+            co.setLanguage(postOfficeBoxAddressMunicipalityName.getLanguage());
+            co.setValue(postOfficeBoxAddressMunicipalityName.getValue());
+            converted.add(co);
+        }
+        return converted;
+    }
+
+    /**
+     * Convert entities to XML objects
+     * @param postOffices Iterable of PostOffice entities
+     * @return collection of XML objects
+     */
+    private Collection<fi.vrk.xroad.xroad_catalog_lister.PostOffice> convertPostOffices(
+            Iterable<fi.vrk.xroad.catalog.persistence.entity.PostOffice> postOffices) {
+        List<fi.vrk.xroad.xroad_catalog_lister.PostOffice> converted = new ArrayList<>();
+        for (fi.vrk.xroad.catalog.persistence.entity.PostOffice postOffice: postOffices) {
+            fi.vrk.xroad.xroad_catalog_lister.PostOffice co = new fi.vrk.xroad.xroad_catalog_lister.PostOffice();
+            co.setChanged(toXmlGregorianCalendar(postOffice.getStatusInfo().getChanged()));
+            co.setCreated(toXmlGregorianCalendar(postOffice.getStatusInfo().getCreated()));
+            co.setFetched(toXmlGregorianCalendar(postOffice.getStatusInfo().getFetched()));
+            co.setRemoved(toXmlGregorianCalendar(postOffice.getStatusInfo().getRemoved()));
+            co.setLanguage(postOffice.getLanguage());
+            co.setValue(postOffice.getValue());
+            converted.add(co);
+        }
+        return converted;
+    }
+
+    /**
+     * Convert entities to XML objects
+     * @param postOfficeBoxes Iterable of PostOfficeBox entities
+     * @return collection of XML objects
+     */
+    private Collection<fi.vrk.xroad.xroad_catalog_lister.PostOfficeBox> convertPostOfficeBoxes(
+            Iterable<fi.vrk.xroad.catalog.persistence.entity.PostOfficeBox> postOfficeBoxes) {
+        List<fi.vrk.xroad.xroad_catalog_lister.PostOfficeBox> converted = new ArrayList<>();
+        for (fi.vrk.xroad.catalog.persistence.entity.PostOfficeBox postOfficeBox: postOfficeBoxes) {
+            fi.vrk.xroad.xroad_catalog_lister.PostOfficeBox co = new fi.vrk.xroad.xroad_catalog_lister.PostOfficeBox();
+            co.setChanged(toXmlGregorianCalendar(postOfficeBox.getStatusInfo().getChanged()));
+            co.setCreated(toXmlGregorianCalendar(postOfficeBox.getStatusInfo().getCreated()));
+            co.setFetched(toXmlGregorianCalendar(postOfficeBox.getStatusInfo().getFetched()));
+            co.setRemoved(toXmlGregorianCalendar(postOfficeBox.getStatusInfo().getRemoved()));
+            co.setLanguage(postOfficeBox.getLanguage());
+            co.setValue(postOfficeBox.getValue());
             converted.add(co);
         }
         return converted;

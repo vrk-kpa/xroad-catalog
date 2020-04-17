@@ -105,7 +105,7 @@ public class StreetAddress {
     /**
      * This collection can be used to add new items
      *
-     * @return Set of all StreetAddressMunicipality
+     * @return Set of all StreetAddressAdditionalInformation
      */
     public Set<StreetAddressAdditionalInformation> getAllAdditionalInformation() {
         return additionalInformation;

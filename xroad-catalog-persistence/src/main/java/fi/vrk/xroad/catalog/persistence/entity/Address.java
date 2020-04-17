@@ -72,4 +72,13 @@ public class Address {
     public Set<StreetAddress> getAllStreetAddresses() {
         return streetAddresses;
     }
+
+    /**
+     * This collection can be used to add new items
+     *
+     * @return Set of all postOfficeBoxAddresses
+     */
+    public Set<PostOfficeBoxAddress> getAllPostOfficeBoxAddresses() {
+        return postOfficeBoxAddresses;
+    }
 }
