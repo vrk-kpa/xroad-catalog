@@ -24,6 +24,7 @@ package fi.vrk.xroad.catalog.lister;
 
 import fi.vrk.xroad.catalog.persistence.service.CatalogService;
 import fi.vrk.xroad.xroad_catalog_lister.Member;
+import fi.vrk.xroad.xroad_catalog_lister.Organization;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,5 +58,14 @@ public class JaxbCatalogServiceImpl implements JaxbCatalogService {
         }
 
         return jaxbConverter.convertMembers(entities, false);
+    }
+
+    @Override
+    public Iterable<Organization> getOrganizations(String businessCode) {
+        log.info("get organizations with businessCode:{}", businessCode);
+        Iterable<fi.vrk.xroad.catalog.persistence.entity.Organization> entities;
+        entities = catalogService.getOrganizations(businessCode);
+
+        return jaxbConverter.convertOrganizations(entities);
     }
 }

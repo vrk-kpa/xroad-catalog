@@ -54,4 +54,13 @@ public class StreetAddressMunicipality {
     @Getter(AccessLevel.NONE) // do not create default getter, we provide the substitute
     @OneToMany(mappedBy = "streetAddressMunicipality", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private Set<StreetAddressMunicipalityName> streetAddressMunicipalityNames = new HashSet<>();
+
+    /**
+     * This collection can be used to add new items
+     *
+     * @return Set of all StreetAddressMunicipalityName
+     */
+    public Set<StreetAddressMunicipalityName> getAllMunicipalityNames() {
+        return streetAddressMunicipalityNames;
+    }
 }

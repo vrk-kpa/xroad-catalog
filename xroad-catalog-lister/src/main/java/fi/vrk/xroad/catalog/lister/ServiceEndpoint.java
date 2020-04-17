@@ -140,4 +140,14 @@ public class ServiceEndpoint {
         response.setOpenapi(openApi.getData());
         return response;
     }
+
+    @PayloadRoot(namespace = NAMESPACE_URI, localPart = "GetOrganizations")
+    @ResponsePayload
+    public GetOrganizationsResponse getOrganizations(@RequestPayload GetOrganizations request) {
+        GetOrganizationsResponse response = new GetOrganizationsResponse();
+        response.setOrganizationList(new OrganizationList());
+        Iterable<Organization> organizations = jaxbCatalogService.getOrganizations(request.getBusinessCode());
+        response.getOrganizationList().getOrganization().addAll(Lists.newArrayList(organizations));
+        return response;
+    }
 }

@@ -137,6 +137,11 @@ public class CatalogServiceImpl implements CatalogService {
     }
 
     @Override
+    public Iterable<Organization> getOrganizations(String businessCode) {
+        return organizationRepository.findAllByBusinessCode(businessCode);
+    }
+
+    @Override
     public Member getMember(String xRoadInstance, String memberClass, String memberCode) {
         return memberRepository.findActiveByNaturalKey(xRoadInstance, memberClass, memberCode);
     }

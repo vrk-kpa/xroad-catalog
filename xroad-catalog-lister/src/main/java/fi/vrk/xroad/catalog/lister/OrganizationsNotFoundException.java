@@ -20,25 +20,21 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package fi.vrk.xroad.catalog.persistence.repository;
+package fi.vrk.xroad.catalog.lister;
 
-import fi.vrk.xroad.catalog.persistence.entity.Member;
-import fi.vrk.xroad.catalog.persistence.entity.Organization;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.CrudRepository;
-import org.springframework.data.repository.query.Param;
+import org.springframework.ws.soap.server.endpoint.annotation.FaultCode;
+import org.springframework.ws.soap.server.endpoint.annotation.SoapFault;
 
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Set;
+@SoapFault(faultCode = FaultCode.SERVER)
+public class OrganizationsNotFoundException extends CatalogListerRuntimeException {
+
+    public OrganizationsNotFoundException(String message, Throwable cause) {
+        super(message, cause);
+    }
 
 
-public interface OrganizationRepository extends CrudRepository<Organization, Long> {
-
-    // uses named query Organization.findAllByBusinessCode
-    Set<Organization> findAllByBusinessCode(@Param("businessCode") String businessCode);
-
-    @Query("SELECT o FROM Organization o WHERE o.guid = :guid")
-    Organization findAnyByOrganizationGuid(@Param("guid") String guid);
+    public OrganizationsNotFoundException(String s) {
+        super(s);
+    }
 
 }

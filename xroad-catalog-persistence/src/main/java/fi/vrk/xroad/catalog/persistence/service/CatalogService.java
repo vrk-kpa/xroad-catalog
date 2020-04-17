@@ -67,6 +67,12 @@ public interface CatalogService {
     Iterable<Member> getAllMembers(LocalDateTime changedAfter);
 
     /**
+     * @param businessCode Only interested in organizations with this businessCode value
+     * @return Iterable of Organization entities
+     */
+    Iterable<Organization> getOrganizations(String businessCode);
+
+    /**
      * Returns full Member object
      * @param xRoadInstance name of the instance
      * @param memberClass member class

@@ -29,6 +29,7 @@ import fi.vrk.xroad.catalog.persistence.entity.Wsdl;
 import fi.vrk.xroad.xroad_catalog_lister.*;
 import org.springframework.stereotype.Component;
 
+import javax.persistence.Column;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
@@ -187,6 +188,353 @@ public class JaxbConverter {
             }
             return xc;
         }
+    }
+
+
+
+
+    /**
+     * Convert entities to XML objects
+     * @param organizations Iterable of Organization entities
+     * @return Collection of Organizations (JAXB generated)
+     */
+    public Collection<Organization> convertOrganizations(
+            Iterable<fi.vrk.xroad.catalog.persistence.entity.Organization> organizations)  {
+        List<Organization> converted = new ArrayList<>();
+        for (fi.vrk.xroad.catalog.persistence.entity.Organization organization: organizations) {
+            Organization co = new Organization();
+            co.setChanged(toXmlGregorianCalendar(organization.getStatusInfo().getChanged()));
+            co.setCreated(toXmlGregorianCalendar(organization.getStatusInfo().getCreated()));
+            co.setFetched(toXmlGregorianCalendar(organization.getStatusInfo().getFetched()));
+            co.setRemoved(toXmlGregorianCalendar(organization.getStatusInfo().getRemoved()));
+            co.setBusinessCode(organization.getBusinessCode());
+            co.setOrganizationType(organization.getOrganizationType());
+            co.setGuid(organization.getGuid());
+            co.setPublishingStatus(organization.getPublishingStatus());
+
+            co.setOrganizationNames(new OrganizationNameList());
+            Iterable<fi.vrk.xroad.catalog.persistence.entity.OrganizationName> organizationNames = organization.getAllOrganizationNames();
+            co.getOrganizationNames().getOrganizationName().addAll(convertOrganizationNames(organizationNames));
+
+            co.setOrganizationDescriptions(new OrganizationDescriptionList());
+            Iterable<fi.vrk.xroad.catalog.persistence.entity.OrganizationDescription> organizationDescriptions
+                    = organization.getAllOrganizationDescriptions();
+            co.getOrganizationDescriptions().getOrganizationDescription().addAll(convertOrganizationDescriptions(organizationDescriptions));
+
+            co.setEmails(new EmailList());
+            Iterable<fi.vrk.xroad.catalog.persistence.entity.Email> emails = organization.getAllEmails();
+            co.getEmails().getEmail().addAll(convertEmails(emails));
+
+            co.setPhoneNumbers(new PhoneNumberList());
+            Iterable<fi.vrk.xroad.catalog.persistence.entity.PhoneNumber> phoneNumbers = organization.getAllPhoneNumbers();
+            co.getPhoneNumbers().getPhoneNumber().addAll(convertPhoneNumbers(phoneNumbers));
+
+            co.setWebPages(new WebPageList());
+            Iterable<fi.vrk.xroad.catalog.persistence.entity.WebPage> webPages = organization.getAllWebPages();
+            co.getWebPages().getWebPage().addAll(convertWebPages(webPages));
+
+            co.setAddresses(new AddressList());
+            Iterable<fi.vrk.xroad.catalog.persistence.entity.Address> addresses = organization.getAllAddresses();
+            co.getAddresses().getAddress().addAll(convertAddresses(addresses));
+
+            converted.add(co);
+        }
+        return converted;
+    }
+
+    /**
+     * Convert entities to XML objects
+     * @param organizationNames Iterable of OrganizationName entities
+     * @return collection of XML objects
+     */
+    private Collection<fi.vrk.xroad.xroad_catalog_lister.OrganizationName> convertOrganizationNames(
+            Iterable<fi.vrk.xroad.catalog.persistence.entity.OrganizationName> organizationNames) {
+        List<fi.vrk.xroad.xroad_catalog_lister.OrganizationName> converted = new ArrayList<>();
+        for (fi.vrk.xroad.catalog.persistence.entity.OrganizationName organizationName: organizationNames) {
+            fi.vrk.xroad.xroad_catalog_lister.OrganizationName co = new fi.vrk.xroad.xroad_catalog_lister.OrganizationName();
+            co.setChanged(toXmlGregorianCalendar(organizationName.getStatusInfo().getChanged()));
+            co.setCreated(toXmlGregorianCalendar(organizationName.getStatusInfo().getCreated()));
+            co.setFetched(toXmlGregorianCalendar(organizationName.getStatusInfo().getFetched()));
+            co.setRemoved(toXmlGregorianCalendar(organizationName.getStatusInfo().getRemoved()));
+            co.setLanguage(organizationName.getLanguage());
+            co.setType(organizationName.getType());
+            co.setValue(organizationName.getValue());
+            converted.add(co);
+        }
+        return converted;
+    }
+
+    /**
+     * Convert entities to XML objects
+     * @param organizationDescriptions Iterable of OrganizationDescription entities
+     * @return collection of XML objects
+     */
+    private Collection<fi.vrk.xroad.xroad_catalog_lister.OrganizationDescription> convertOrganizationDescriptions(
+            Iterable<fi.vrk.xroad.catalog.persistence.entity.OrganizationDescription> organizationDescriptions) {
+        List<fi.vrk.xroad.xroad_catalog_lister.OrganizationDescription> converted = new ArrayList<>();
+        for (fi.vrk.xroad.catalog.persistence.entity.OrganizationDescription organizationDescription: organizationDescriptions) {
+            fi.vrk.xroad.xroad_catalog_lister.OrganizationDescription co = new fi.vrk.xroad.xroad_catalog_lister.OrganizationDescription();
+            co.setChanged(toXmlGregorianCalendar(organizationDescription.getStatusInfo().getChanged()));
+            co.setCreated(toXmlGregorianCalendar(organizationDescription.getStatusInfo().getCreated()));
+            co.setFetched(toXmlGregorianCalendar(organizationDescription.getStatusInfo().getFetched()));
+            co.setRemoved(toXmlGregorianCalendar(organizationDescription.getStatusInfo().getRemoved()));
+            co.setLanguage(organizationDescription.getLanguage());
+            co.setType(organizationDescription.getType());
+            co.setValue(organizationDescription.getValue());
+            converted.add(co);
+        }
+        return converted;
+    }
+
+    /**
+     * Convert entities to XML objects
+     * @param emails Iterable of Email entities
+     * @return collection of XML objects
+     */
+    private Collection<fi.vrk.xroad.xroad_catalog_lister.Email> convertEmails(
+            Iterable<fi.vrk.xroad.catalog.persistence.entity.Email> emails) {
+        List<fi.vrk.xroad.xroad_catalog_lister.Email> converted = new ArrayList<>();
+        for (fi.vrk.xroad.catalog.persistence.entity.Email email: emails) {
+            fi.vrk.xroad.xroad_catalog_lister.Email co = new fi.vrk.xroad.xroad_catalog_lister.Email();
+            co.setChanged(toXmlGregorianCalendar(email.getStatusInfo().getChanged()));
+            co.setCreated(toXmlGregorianCalendar(email.getStatusInfo().getCreated()));
+            co.setFetched(toXmlGregorianCalendar(email.getStatusInfo().getFetched()));
+            co.setRemoved(toXmlGregorianCalendar(email.getStatusInfo().getRemoved()));
+            co.setLanguage(email.getLanguage());
+            co.setDescription(email.getDescription());
+            co.setValue(email.getValue());
+            converted.add(co);
+        }
+        return converted;
+    }
+
+    /**
+     * Convert entities to XML objects
+     * @param phoneNumbers Iterable of PhoneNumber entities
+     * @return collection of XML objects
+     */
+    private Collection<fi.vrk.xroad.xroad_catalog_lister.PhoneNumber> convertPhoneNumbers(
+            Iterable<fi.vrk.xroad.catalog.persistence.entity.PhoneNumber> phoneNumbers) {
+        List<fi.vrk.xroad.xroad_catalog_lister.PhoneNumber> converted = new ArrayList<>();
+        for (fi.vrk.xroad.catalog.persistence.entity.PhoneNumber phoneNumber: phoneNumbers) {
+            fi.vrk.xroad.xroad_catalog_lister.PhoneNumber co = new fi.vrk.xroad.xroad_catalog_lister.PhoneNumber();
+            co.setChanged(toXmlGregorianCalendar(phoneNumber.getStatusInfo().getChanged()));
+            co.setCreated(toXmlGregorianCalendar(phoneNumber.getStatusInfo().getCreated()));
+            co.setFetched(toXmlGregorianCalendar(phoneNumber.getStatusInfo().getFetched()));
+            co.setRemoved(toXmlGregorianCalendar(phoneNumber.getStatusInfo().getRemoved()));
+            co.setLanguage(phoneNumber.getLanguage());
+            co.setAdditionalInformation(phoneNumber.getAdditionalInformation());
+            co.setChargeDescription(phoneNumber.getChargeDescription());
+            co.setNumber(phoneNumber.getNumber());
+            co.setIsFinnishServiceNumber(phoneNumber.getIsFinnishServiceNumber());
+            co.setPrefixNumber(phoneNumber.getPrefixNumber());
+            co.setServiceChargeType(phoneNumber.getServiceChargeType());
+            converted.add(co);
+        }
+        return converted;
+    }
+
+    /**
+     * Convert entities to XML objects
+     * @param webPages Iterable of WebPage entities
+     * @return collection of XML objects
+     */
+    private Collection<fi.vrk.xroad.xroad_catalog_lister.WebPage> convertWebPages(
+            Iterable<fi.vrk.xroad.catalog.persistence.entity.WebPage> webPages) {
+        List<fi.vrk.xroad.xroad_catalog_lister.WebPage> converted = new ArrayList<>();
+        for (fi.vrk.xroad.catalog.persistence.entity.WebPage webPage: webPages) {
+            fi.vrk.xroad.xroad_catalog_lister.WebPage co = new fi.vrk.xroad.xroad_catalog_lister.WebPage();
+            co.setChanged(toXmlGregorianCalendar(webPage.getStatusInfo().getChanged()));
+            co.setCreated(toXmlGregorianCalendar(webPage.getStatusInfo().getCreated()));
+            co.setFetched(toXmlGregorianCalendar(webPage.getStatusInfo().getFetched()));
+            co.setRemoved(toXmlGregorianCalendar(webPage.getStatusInfo().getRemoved()));
+            co.setLanguage(webPage.getLanguage());
+            co.setUrl(webPage.getUrl());
+            co.setValue(webPage.getValue());
+            converted.add(co);
+        }
+        return converted;
+    }
+
+    /**
+     * Convert entities to XML objects
+     * @param addresses Iterable of Address entities
+     * @return collection of XML objects
+     */
+    private Collection<fi.vrk.xroad.xroad_catalog_lister.Address> convertAddresses(
+            Iterable<fi.vrk.xroad.catalog.persistence.entity.Address> addresses) {
+        List<fi.vrk.xroad.xroad_catalog_lister.Address> converted = new ArrayList<>();
+        for (fi.vrk.xroad.catalog.persistence.entity.Address address: addresses) {
+            fi.vrk.xroad.xroad_catalog_lister.Address co = new fi.vrk.xroad.xroad_catalog_lister.Address();
+            co.setChanged(toXmlGregorianCalendar(address.getStatusInfo().getChanged()));
+            co.setCreated(toXmlGregorianCalendar(address.getStatusInfo().getCreated()));
+            co.setFetched(toXmlGregorianCalendar(address.getStatusInfo().getFetched()));
+            co.setRemoved(toXmlGregorianCalendar(address.getStatusInfo().getRemoved()));
+            co.setCountry(address.getCountry());
+            co.setSubType(address.getSubType());
+            co.setType(address.getType());
+
+            co.setStreetAddresses(new StreetAddressList());
+            Iterable<fi.vrk.xroad.catalog.persistence.entity.StreetAddress> streetAddresses = address.getAllStreetAddresses();
+            co.getStreetAddresses().getStreetAddress().addAll(convertStreetAddresses(streetAddresses));
+
+
+            converted.add(co);
+        }
+        return converted;
+    }
+
+    /**
+     * Convert entities to XML objects
+     * @param streetAddresses Iterable of StreetAddress entities
+     * @return collection of XML objects
+     */
+    private Collection<fi.vrk.xroad.xroad_catalog_lister.StreetAddress> convertStreetAddresses(
+            Iterable<fi.vrk.xroad.catalog.persistence.entity.StreetAddress> streetAddresses) {
+        List<fi.vrk.xroad.xroad_catalog_lister.StreetAddress> converted = new ArrayList<>();
+        for (fi.vrk.xroad.catalog.persistence.entity.StreetAddress streetAddress: streetAddresses) {
+            fi.vrk.xroad.xroad_catalog_lister.StreetAddress co = new fi.vrk.xroad.xroad_catalog_lister.StreetAddress();
+            co.setChanged(toXmlGregorianCalendar(streetAddress.getStatusInfo().getChanged()));
+            co.setCreated(toXmlGregorianCalendar(streetAddress.getStatusInfo().getCreated()));
+            co.setFetched(toXmlGregorianCalendar(streetAddress.getStatusInfo().getFetched()));
+            co.setRemoved(toXmlGregorianCalendar(streetAddress.getStatusInfo().getRemoved()));
+            co.setPostalCode(streetAddress.getPostalCode());
+            co.setLatitude(streetAddress.getLatitude());
+            co.setLongitude(streetAddress.getLongitude());
+            co.setCoordinateState(streetAddress.getCoordinateState());
+
+            co.setStreets(new StreetList());
+            Iterable<fi.vrk.xroad.catalog.persistence.entity.Street> streets = streetAddress.getAllStreets();
+            co.getStreets().getStreet().addAll(convertStreets(streets));
+
+            co.setPostOffices(new StreetAddressPostOfficeList());
+            Iterable<fi.vrk.xroad.catalog.persistence.entity.StreetAddressPostOffice> streetAddressPostOffices = streetAddress.getAllPostOffices();
+            co.getPostOffices().getStreetAddressPostOffice().addAll(convertStreetAddressPostOffices(streetAddressPostOffices));
+
+            co.setMunicipalities(new StreetAddressMunicipalityList());
+            Iterable<fi.vrk.xroad.catalog.persistence.entity.StreetAddressMunicipality> streetAddressMunicipalities = streetAddress.getAllMunicipalities();
+            co.getMunicipalities().getStreetAddressMunicipality().addAll(convertStreetAddressMunicipalities(streetAddressMunicipalities));
+
+            co.setAdditionalInformation(new StreetAddressAdditionalInformationList());
+            Iterable<fi.vrk.xroad.catalog.persistence.entity.StreetAddressAdditionalInformation> streetAddressAdditionalInformation
+                    = streetAddress.getAllAdditionalInformation();
+            co.getAdditionalInformation().getStreetAddressAdditionalInformation()
+                    .addAll(convertStreetAddressAdditionalInformation(streetAddressAdditionalInformation));
+
+            converted.add(co);
+        }
+        return converted;
+    }
+
+    /**
+     * Convert entities to XML objects
+     * @param streets Iterable of Streets entities
+     * @return collection of XML objects
+     */
+    private Collection<fi.vrk.xroad.xroad_catalog_lister.Street> convertStreets(
+            Iterable<fi.vrk.xroad.catalog.persistence.entity.Street> streets) {
+        List<fi.vrk.xroad.xroad_catalog_lister.Street> converted = new ArrayList<>();
+        for (fi.vrk.xroad.catalog.persistence.entity.Street street: streets) {
+            fi.vrk.xroad.xroad_catalog_lister.Street co = new fi.vrk.xroad.xroad_catalog_lister.Street();
+            co.setChanged(toXmlGregorianCalendar(street.getStatusInfo().getChanged()));
+            co.setCreated(toXmlGregorianCalendar(street.getStatusInfo().getCreated()));
+            co.setFetched(toXmlGregorianCalendar(street.getStatusInfo().getFetched()));
+            co.setRemoved(toXmlGregorianCalendar(street.getStatusInfo().getRemoved()));
+            co.setLanguage(street.getLanguage());
+            co.setValue(street.getValue());
+            converted.add(co);
+        }
+        return converted;
+    }
+
+    /**
+     * Convert entities to XML objects
+     * @param streetAddressPostOffices Iterable of StreetAddressPostOffice entities
+     * @return collection of XML objects
+     */
+    private Collection<fi.vrk.xroad.xroad_catalog_lister.StreetAddressPostOffice> convertStreetAddressPostOffices(
+            Iterable<fi.vrk.xroad.catalog.persistence.entity.StreetAddressPostOffice> streetAddressPostOffices) {
+        List<fi.vrk.xroad.xroad_catalog_lister.StreetAddressPostOffice> converted = new ArrayList<>();
+        for (fi.vrk.xroad.catalog.persistence.entity.StreetAddressPostOffice streetAddressPostOffice: streetAddressPostOffices) {
+            fi.vrk.xroad.xroad_catalog_lister.StreetAddressPostOffice co = new fi.vrk.xroad.xroad_catalog_lister.StreetAddressPostOffice();
+            co.setChanged(toXmlGregorianCalendar(streetAddressPostOffice.getStatusInfo().getChanged()));
+            co.setCreated(toXmlGregorianCalendar(streetAddressPostOffice.getStatusInfo().getCreated()));
+            co.setFetched(toXmlGregorianCalendar(streetAddressPostOffice.getStatusInfo().getFetched()));
+            co.setRemoved(toXmlGregorianCalendar(streetAddressPostOffice.getStatusInfo().getRemoved()));
+            co.setLanguage(streetAddressPostOffice.getLanguage());
+            co.setValue(streetAddressPostOffice.getValue());
+            converted.add(co);
+        }
+        return converted;
+    }
+
+    /**
+     * Convert entities to XML objects
+     * @param streetAddressMunicipalities Iterable of StreetAddressMunicipality entities
+     * @return collection of XML objects
+     */
+    private Collection<fi.vrk.xroad.xroad_catalog_lister.StreetAddressMunicipality> convertStreetAddressMunicipalities(
+            Iterable<fi.vrk.xroad.catalog.persistence.entity.StreetAddressMunicipality> streetAddressMunicipalities) {
+        List<fi.vrk.xroad.xroad_catalog_lister.StreetAddressMunicipality> converted = new ArrayList<>();
+        for (fi.vrk.xroad.catalog.persistence.entity.StreetAddressMunicipality streetAddressMunicipality: streetAddressMunicipalities) {
+            fi.vrk.xroad.xroad_catalog_lister.StreetAddressMunicipality co = new fi.vrk.xroad.xroad_catalog_lister.StreetAddressMunicipality();
+            co.setChanged(toXmlGregorianCalendar(streetAddressMunicipality.getStatusInfo().getChanged()));
+            co.setCreated(toXmlGregorianCalendar(streetAddressMunicipality.getStatusInfo().getCreated()));
+            co.setFetched(toXmlGregorianCalendar(streetAddressMunicipality.getStatusInfo().getFetched()));
+            co.setRemoved(toXmlGregorianCalendar(streetAddressMunicipality.getStatusInfo().getRemoved()));
+            co.setCode(streetAddressMunicipality.getCode());
+
+            co.setStreetAddressMunicipalityNames(new StreetAddressMunicipalityNameList());
+            Iterable<fi.vrk.xroad.catalog.persistence.entity.StreetAddressMunicipalityName> streetAddressMunicipalityNames
+                    = streetAddressMunicipality.getAllMunicipalityNames();
+            co.getStreetAddressMunicipalityNames().getStreetAddressMunicipalityName()
+                    .addAll(convertStreetAddressMunicipalityNames(streetAddressMunicipalityNames));
+
+            converted.add(co);
+        }
+        return converted;
+    }
+
+    /**
+     * Convert entities to XML objects
+     * @param streetAddressMunicipalityNames Iterable of StreetAddressMunicipalityName entities
+     * @return collection of XML objects
+     */
+    private Collection<fi.vrk.xroad.xroad_catalog_lister.StreetAddressMunicipalityName> convertStreetAddressMunicipalityNames(
+            Iterable<fi.vrk.xroad.catalog.persistence.entity.StreetAddressMunicipalityName> streetAddressMunicipalityNames) {
+        List<fi.vrk.xroad.xroad_catalog_lister.StreetAddressMunicipalityName> converted = new ArrayList<>();
+        for (fi.vrk.xroad.catalog.persistence.entity.StreetAddressMunicipalityName streetAddressMunicipalityName: streetAddressMunicipalityNames) {
+            fi.vrk.xroad.xroad_catalog_lister.StreetAddressMunicipalityName co = new fi.vrk.xroad.xroad_catalog_lister.StreetAddressMunicipalityName();
+            co.setChanged(toXmlGregorianCalendar(streetAddressMunicipalityName.getStatusInfo().getChanged()));
+            co.setCreated(toXmlGregorianCalendar(streetAddressMunicipalityName.getStatusInfo().getCreated()));
+            co.setFetched(toXmlGregorianCalendar(streetAddressMunicipalityName.getStatusInfo().getFetched()));
+            co.setRemoved(toXmlGregorianCalendar(streetAddressMunicipalityName.getStatusInfo().getRemoved()));
+            co.setLanguage(streetAddressMunicipalityName.getLanguage());
+            co.setValue(streetAddressMunicipalityName.getValue());
+            converted.add(co);
+        }
+        return converted;
+    }
+
+    /**
+     * Convert entities to XML objects
+     * @param streetAddressAdditionalInformationList Iterable of StreetAddressAdditionalInformation entities
+     * @return collection of XML objects
+     */
+    private Collection<fi.vrk.xroad.xroad_catalog_lister.StreetAddressAdditionalInformation> convertStreetAddressAdditionalInformation(
+            Iterable<fi.vrk.xroad.catalog.persistence.entity.StreetAddressAdditionalInformation> streetAddressAdditionalInformationList) {
+        List<fi.vrk.xroad.xroad_catalog_lister.StreetAddressAdditionalInformation> converted = new ArrayList<>();
+        for (fi.vrk.xroad.catalog.persistence.entity.StreetAddressAdditionalInformation streetAddressAdditionalInformation: streetAddressAdditionalInformationList) {
+            fi.vrk.xroad.xroad_catalog_lister.StreetAddressAdditionalInformation co = new fi.vrk.xroad.xroad_catalog_lister.StreetAddressAdditionalInformation();
+            co.setChanged(toXmlGregorianCalendar(streetAddressAdditionalInformation.getStatusInfo().getChanged()));
+            co.setCreated(toXmlGregorianCalendar(streetAddressAdditionalInformation.getStatusInfo().getCreated()));
+            co.setFetched(toXmlGregorianCalendar(streetAddressAdditionalInformation.getStatusInfo().getFetched()));
+            co.setRemoved(toXmlGregorianCalendar(streetAddressAdditionalInformation.getStatusInfo().getRemoved()));
+            co.setLanguage(streetAddressAdditionalInformation.getLanguage());
+            co.setValue(streetAddressAdditionalInformation.getValue());
+            converted.add(co);
+        }
+        return converted;
     }
 
 

@@ -63,4 +63,13 @@ public class Address {
     @Getter(AccessLevel.NONE) // do not create default getter, we provide the substitute
     @OneToMany(mappedBy = "address", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private Set<PostOfficeBoxAddress> postOfficeBoxAddresses = new HashSet<>();
+
+    /**
+     * This collection can be used to add new items
+     *
+     * @return Set of all streetAddresses
+     */
+    public Set<StreetAddress> getAllStreetAddresses() {
+        return streetAddresses;
+    }
 }

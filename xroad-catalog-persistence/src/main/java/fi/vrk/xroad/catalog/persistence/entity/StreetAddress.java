@@ -74,4 +74,40 @@ public class StreetAddress {
     @Getter(AccessLevel.NONE) // do not create default getter, we provide the substitute
     @OneToMany(mappedBy = "streetAddress", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private Set<StreetAddressAdditionalInformation> additionalInformation = new HashSet<>();
+
+    /**
+     * This collection can be used to add new items
+     *
+     * @return Set of all streets
+     */
+    public Set<Street> getAllStreets() {
+        return streets;
+    }
+
+    /**
+     * This collection can be used to add new items
+     *
+     * @return Set of all postOffices
+     */
+    public Set<StreetAddressPostOffice> getAllPostOffices() {
+        return postOffices;
+    }
+
+    /**
+     * This collection can be used to add new items
+     *
+     * @return Set of all StreetAddressMunicipality
+     */
+    public Set<StreetAddressMunicipality> getAllMunicipalities() {
+        return municipalities;
+    }
+
+    /**
+     * This collection can be used to add new items
+     *
+     * @return Set of all StreetAddressMunicipality
+     */
+    public Set<StreetAddressAdditionalInformation> getAllAdditionalInformation() {
+        return additionalInformation;
+    }
 }
