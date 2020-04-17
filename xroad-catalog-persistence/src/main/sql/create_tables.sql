@@ -132,6 +132,7 @@ CREATE TABLE organization (
     organization_type TEXT NOT NULL,
     publishing_status TEXT NOT NULL,
     business_code TEXT NOT NULL,
+    guid TEXT UNIQUE NOT NULL,
     created TIMESTAMP WITH TIME ZONE NOT NULL,
     changed TIMESTAMP WITH TIME ZONE NOT NULL,
     fetched TIMESTAMP WITH TIME ZONE NOT NULL,
@@ -408,14 +409,14 @@ CREATE TABLE street_address_municipality_name (
     removed TIMESTAMP WITH TIME ZONE
 );
 
-CREATE SEQUENCE post_office_box_address_municipality_name_id_seq
+CREATE SEQUENCE street_address_municipality_name_id_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
     NO MAXVALUE
     CACHE 1;
 
-ALTER SEQUENCE post_office_box_address_municipality_name_id_seq OWNED BY post_office_box_address_municipality_name.id;
+ALTER SEQUENCE street_address_municipality_name_id_seq OWNED BY street_address_municipality_name.id;
 
 CREATE TABLE post_office_box_address_municipality_name (
     id BIGSERIAL PRIMARY KEY NOT NULL,
@@ -522,6 +523,7 @@ CREATE UNIQUE INDEX idx_openapi_external_id ON open_api USING btree (external_id
 CREATE UNIQUE INDEX idx_member_natural_keys ON member(member_code, member_class, x_road_instance);
 CREATE UNIQUE INDEX idx_service_unique_fields ON service(subsystem_id, service_code, service_version);
 CREATE UNIQUE INDEX idx_subsystem_unique_fields ON subsystem(member_id, subsystem_code);
+CREATE UNIQUE INDEX idx_organization_guid ON organization USING btree (guid);
 
 CREATE INDEX idx_wsdl_changed ON wsdl(changed);
 CREATE INDEX idx_openapi_changed ON open_api(changed);

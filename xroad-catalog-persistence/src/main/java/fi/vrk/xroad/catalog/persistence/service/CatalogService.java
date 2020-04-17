@@ -144,132 +144,133 @@ public interface CatalogService {
      * Saves given organization data. The organization can either be a new one, or an update to an existing one.
      * Updates "changed" field based on whether data is different compared to last time.
      * @return saved organization
-     * @param newValue the actual organization
+     * @param organization the actual organization
      */
-    Organization saveOrganization(Organization newValue);
+    Organization saveOrganization(Organization organization);
 
     /**
      * Saves given organizationName data.
-     * @param newValue the organizationName
+     * @param organizationName the organizationName
      */
-    void saveOrganizationName(OrganizationName newValue);
+    void saveOrganizationName(OrganizationName organizationName);
 
     /**
      * Saves given organizationDescription data.
-     * @param newValue the organizationDescription
+     * @param organizationDescription the organizationDescription
      */
-    void saveOrganizationDescription(OrganizationDescription newValue);
+    void saveOrganizationDescription(OrganizationDescription organizationDescription);
 
     /**
      * Saves given email data.
-     * @param newValue the actual email
+     * @param email the actual email
      */
-    void saveEmail(Email newValue);
+    void saveEmail(Email email);
 
     /**
      * Saves given phoneNumber data.
-     * @param newValue the actual phoneNumber
+     * @param phoneNumber the actual phoneNumber
      */
-    void savePhoneNumber(PhoneNumber newValue);
+    void savePhoneNumber(PhoneNumber phoneNumber);
 
     /**
      * Saves given webPage data.
-     * @param newValue the actual webPage
+     * @param webPage the actual webPage
      */
-    void saveWebPage(WebPage newValue);
+    void saveWebPage(WebPage webPage);
 
     /**
      * Saves given address data.
      * @return saved Address
-     * @param newValue the actual address
+     * @param address the actual address
      */
-    Address saveAddress(Address newValue);
+    Address saveAddress(Address address);
 
     /**
      * Saves given StreetAddress data.
      * @return saved StreetAddress
-     * @param newValue the actual StreetAddress
+     * @param streetAddress the actual StreetAddress
      */
-    StreetAddress saveStreetAddress(StreetAddress newValue);
+    StreetAddress saveStreetAddress(StreetAddress streetAddress);
 
     /**
      * Saves given PostOfficeBoxAddress data.
      * @return saved PostOfficeBoxAddress
-     * @param newValue the actual PostOfficeBoxAddress
+     * @param postOfficeBoxAddress the actual PostOfficeBoxAddress
      */
-    PostOfficeBoxAddress savePostOfficeBoxAddress(PostOfficeBoxAddress newValue);
+    PostOfficeBoxAddress savePostOfficeBoxAddress(PostOfficeBoxAddress postOfficeBoxAddress);
 
     /**
      * Saves given StreetAddressMunicipality data.
      * @return saved StreetAddressMunicipality
-     * @param newValue the actual StreetAddressMunicipality
+     * @param streetAddressMunicipality the actual StreetAddressMunicipality
      */
-    StreetAddressMunicipality saveStreetAddressMunicipality(StreetAddressMunicipality newValue);
+    StreetAddressMunicipality saveStreetAddressMunicipality(StreetAddressMunicipality streetAddressMunicipality);
 
     /**
      * Saves given PostOfficeBoxAddressMunicipality data.
      * @return saved PostOfficeBoxAddressMunicipality
-     * @param newValue the actual PostOfficeBoxAddressMunicipality
+     * @param postOfficeBoxAddressMunicipality the actual PostOfficeBoxAddressMunicipality
      */
-    PostOfficeBoxAddressMunicipality savePostOfficeBoxAddressMunicipality(PostOfficeBoxAddressMunicipality newValue);
+    PostOfficeBoxAddressMunicipality savePostOfficeBoxAddressMunicipality(PostOfficeBoxAddressMunicipality postOfficeBoxAddressMunicipality);
 
 
     /**
      * Saves given StreetAddressMunicipalityName data.
      * @return saved StreetAddressMunicipalityName
-     * @param newValue the actual StreetAddressMunicipalityName
+     * @param streetAddressMunicipalityName the actual StreetAddressMunicipalityName
      */
-    StreetAddressMunicipalityName saveStreetAddressMunicipalityName(StreetAddressMunicipalityName newValue);
+    StreetAddressMunicipalityName saveStreetAddressMunicipalityName(StreetAddressMunicipalityName streetAddressMunicipalityName);
 
     /**
      * Saves given PostOfficeBoxAddressMunicipalityName data.
      * @return saved PostOfficeBoxAddressMunicipalityName
-     * @param newValue the actual PostOfficeBoxAddressMunicipalityName
+     * @param postOfficeBoxAddressMunicipalityName the actual PostOfficeBoxAddressMunicipalityName
      */
     PostOfficeBoxAddressMunicipalityName savePostOfficeBoxAddressMunicipalityName(
-            PostOfficeBoxAddressMunicipalityName newValue);
+            PostOfficeBoxAddressMunicipalityName postOfficeBoxAddressMunicipalityName);
 
     /**
      * Saves given StreetAddressAdditionalInformation data.
      * @return saved StreetAddressAdditionalInformation
-     * @param newValue the actual StreetAddressAdditionalInformation
+     * @param streetAddressAdditionalInformation the actual StreetAddressAdditionalInformation
      */
-    StreetAddressAdditionalInformation saveStreetAddressAdditionalInformation(StreetAddressAdditionalInformation newValue);
+    StreetAddressAdditionalInformation saveStreetAddressAdditionalInformation(
+            StreetAddressAdditionalInformation streetAddressAdditionalInformation);
 
     /**
      * Saves given PostOfficeBoxAddressAdditionalInformation data.
      * @return saved PostOfficeBoxAddressAdditionalInformation
-     * @param newValue the actual PostOfficeBoxAddressAdditionalInformation
+     * @param postOfficeBoxAddressAdditionalInformation the actual PostOfficeBoxAddressAdditionalInformation
      */
-    PostOfficeBoxAddressAdditionalInformation savePostOfficeBoxStreetAddressAdditionalInformation(
-            PostOfficeBoxAddressAdditionalInformation newValue);
+    PostOfficeBoxAddressAdditionalInformation savePostOfficeBoxAddressAdditionalInformation(
+            PostOfficeBoxAddressAdditionalInformation postOfficeBoxAddressAdditionalInformation);
 
     /**
      * Saves given StreetAddressPostOffice data.
      * @return saved StreetAddressPostOffice
-     * @param newValue the actual StreetAddressPostOffice
+     * @param streetAddressPostOffice the actual StreetAddressPostOffice
      */
-    StreetAddressPostOffice saveStreetAddressPostOffice(StreetAddressPostOffice newValue);
+    StreetAddressPostOffice saveStreetAddressPostOffice(StreetAddressPostOffice streetAddressPostOffice);
 
     /**
      * Saves given PostOffice data.
      * @return saved PostOffice
-     * @param newValue the actual PostOffice
+     * @param postOffice the actual PostOffice
      */
-    PostOffice savePostOffice(PostOffice newValue);
+    PostOffice savePostOffice(PostOffice postOffice);
 
     /**
      * Saves given PostOfficeBox data.
      * @return saved PostOfficeBox
-     * @param newValue the actual PostOfficeBox
+     * @param postOfficeBox the actual PostOfficeBox
      */
-    PostOfficeBox savePostOfficeBox(PostOfficeBox newValue);
+    PostOfficeBox savePostOfficeBox(PostOfficeBox postOfficeBox);
 
     /**
      * Saves given Street data.
      * @return saved Street
-     * @param newValue the actual Street
+     * @param street the actual Street
      */
-    Street saveStreet(Street newValue);
+    Street saveStreet(Street street);
 
 }

@@ -28,6 +28,7 @@ import fi.vrk.xroad.catalog.persistence.entity.*;
 import fi.vrk.xroad.catalog.persistence.service.CatalogService;
 import lombok.extern.slf4j.Slf4j;
 import org.json.JSONArray;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -97,157 +98,185 @@ public class FetchOrganizationsActor extends XRoadCatalogActor {
                     .optJSONObject(i).optJSONArray("phoneNumbers"));
 
             Organization savedOrganization = catalogService.saveOrganization(organization);
-            log.info("Saved organization successfully");
 
             organizationNames.forEach(organizationName -> {
                 organizationName.setOrganization(savedOrganization);
                 catalogService.saveOrganizationName(organizationName);
-                log.info("Saved organizationName successfully");
             });
 
             organizationDescriptions.forEach(organizationDescription -> {
                 organizationDescription.setOrganization(savedOrganization);
                 catalogService.saveOrganizationDescription(organizationDescription);
-                log.info("Saved organizationDescription successfully");
             });
 
             emails.forEach(email -> {
                 email.setOrganization(savedOrganization);
                 catalogService.saveEmail(email);
-                log.info("Saved email successfully");
             });
 
             phoneNumbers.forEach(phone -> {
                 phone.setOrganization(savedOrganization);
                 catalogService.savePhoneNumber(phone);
-                log.info("Saved phoneNumber successfully");
             });
 
             webPages.forEach(webPage -> {
                 webPage.setOrganization(savedOrganization);
                 catalogService.saveWebPage(webPage);
-                log.info("Saved webPage successfully");
             });
 
-/*            addresses.forEach(address -> {
+            addresses.forEach(address -> {
                 address.setOrganization(savedOrganization);
                 Address savedAddress = catalogService.saveAddress(address);
-
-                for (int j = 0; j < addressesListJson.length(); j++) {
-
-                    // save StreetAddress
-                    JSONObject streetAddressJson = addressesListJson.optJSONObject(j).optJSONObject("streetAddress");
-                    StreetAddress streetAddress = OrganizationUtil.createStreetAddress(streetAddressJson);
-                    streetAddress.setAddress(savedAddress);
-                    StreetAddress savedStreetAddress = catalogService.saveStreetAddress(streetAddress);
-
-                    // save StreetAddressMunicipality
-                    JSONObject streetAddressMunicipalityJson = streetAddressJson.optJSONObject("municipality");
-                    StreetAddressMunicipality streetAddressMunicipality = OrganizationUtil
-                            .createStreetAddressMunicipality(streetAddressMunicipalityJson);
-                    streetAddressMunicipality.setStreetAddress(savedStreetAddress);
-                    StreetAddressMunicipality savedStreetAddressMunicipality = catalogService
-                            .saveStreetAddressMunicipality(streetAddressMunicipality);
-
-                    // save StreetAddressMunicipalityName
-                    JSONArray streetAddressMunicipalityNamesJson = streetAddressJson.optJSONObject("municipality")
-                            .optJSONArray("name");
-                    List<StreetAddressMunicipalityName> streetAddressMunicipalityNames = OrganizationUtil
-                            .createStreetAddressMunicipalityNames(streetAddressMunicipalityNamesJson);
-                    streetAddressMunicipalityNames.forEach(municipalityName -> {
-                        municipalityName.setStreetAddressMunicipality(savedStreetAddressMunicipality);
-                        catalogService.saveStreetAddressMunicipalityName(municipalityName);
-                    });
-
-                    // save StreetAddressAdditionalInformation
-                    JSONArray streetAddressAdditionaInformationJsonArray = streetAddressJson
-                            .optJSONArray("additionalInformation");
-                    List<StreetAddressAdditionalInformation> streetAddressAdditionalInformationList = OrganizationUtil
-                            .createStreetAddressAdditionalInformation(streetAddressAdditionaInformationJsonArray);
-                    streetAddressAdditionalInformationList.forEach(additionalInfo -> {
-                        additionalInfo.setStreetAddress(savedStreetAddress);
-                        catalogService.saveStreetAddressAdditionalInformation(additionalInfo);
-                    });
-
-                    // save PostOffice
-                    JSONArray streetAddressPostOfficeJsonArray = streetAddressJson
-                            .optJSONArray("postOffice");
-                    List<StreetAddressPostOffice> streetAddressPostOfficeList = OrganizationUtil
-                            .createStreetAddressPostOffices(streetAddressPostOfficeJsonArray);
-                    streetAddressPostOfficeList.forEach(postOffice -> {
-                        postOffice.setStreetAddress(savedStreetAddress);
-                        catalogService.saveStreetAddressPostOffice(postOffice);
-                    });
-
-                    // save Street
-                    JSONArray streetJsonArray = streetAddressJson.optJSONArray("street");
-                    List<Street> streetList = OrganizationUtil.createStreets(streetJsonArray);
-                    streetList.forEach(street -> {
-                        street.setStreetAddress(savedStreetAddress);
-                        catalogService.saveStreet(street);
-                    });
-
-                    // save PostOfficeBoxAddress
-                    JSONObject postOfficeBoxAddressJson = addressesListJson.optJSONObject(j)
-                            .optJSONObject("postOfficeBoxStreetAddress");
-                    PostOfficeBoxAddress postOfficeBoxAddress = OrganizationUtil.createPostOfficeBoxAddress(postOfficeBoxAddressJson);
-                    postOfficeBoxAddress.setAddress(savedAddress);
-                    PostOfficeBoxAddress savedPostOfficeBoxAddress = catalogService
-                            .savePostOfficeBoxAddress(postOfficeBoxAddress);
-
-                    // save PostOfficeBoxAddressAdditionalInformation
-                    JSONArray postOfficeBoxAddressAdditionalInformationJsonArray = postOfficeBoxAddressJson
-                            .optJSONArray("additionalInformation");
-                    List<PostOfficeBoxAddressAdditionalInformation> postOfficeBoxAddressAdditionalInformationList
-                            = OrganizationUtil.createPostOfficeBoxAddressAdditionalInformation(
-                                    postOfficeBoxAddressAdditionalInformationJsonArray);
-                    postOfficeBoxAddressAdditionalInformationList.forEach(additionalInfo -> {
-                        additionalInfo.setPostOfficeBoxAddress(savedPostOfficeBoxAddress);
-                        catalogService.savePostOfficeBoxStreetAddressAdditionalInformation(additionalInfo);
-                    });
-
-                    // save PostOffice
-                    JSONArray postOfficeJsonArray = postOfficeBoxAddressJson.optJSONArray("postOffice");
-                    List<PostOffice> postOfficeList = OrganizationUtil.createPostOffice(postOfficeJsonArray);
-                    postOfficeList.forEach(postOffice -> {
-                        postOffice.setPostOfficeBoxAddress(savedPostOfficeBoxAddress);
-                        catalogService.savePostOffice(postOffice);
-                    });
-
-                    // save PostOfficeBoxAddressMunicipality
-                    JSONObject postOfficeBoxAddressMunicipalityJson = postOfficeBoxAddressJson.optJSONObject("municipality");
-                    PostOfficeBoxAddressMunicipality postOfficeBoxAddressMunicipality = OrganizationUtil
-                            .createPostOfficeBoxAddressMunicipality(postOfficeBoxAddressMunicipalityJson);
-                    postOfficeBoxAddressMunicipality.setPostOfficeBoxAddress(savedPostOfficeBoxAddress);
-                    PostOfficeBoxAddressMunicipality savedPostOfficeBoxAddressMunicipality = catalogService
-                            .savePostOfficeBoxAddressMunicipality(postOfficeBoxAddressMunicipality);
-
-                    // save PostOfficeBoxAddressMunicipalityName
-                    JSONArray postOfficeBoxAddressMunicipalityNamesJson = postOfficeBoxAddressJson
-                            .optJSONObject("municipality").optJSONArray("name");
-                    List<PostOfficeBoxAddressMunicipalityName> postOfficeBoxAddressMunicipalityNames =
-                            OrganizationUtil.createPostOfficeBoxAddressMunicipalityNames(
-                                    postOfficeBoxAddressMunicipalityNamesJson);
-                    postOfficeBoxAddressMunicipalityNames.forEach(municipalityName -> {
-                        municipalityName.setPostOfficeBoxAddressMunicipality(savedPostOfficeBoxAddressMunicipality);
-                        catalogService.savePostOfficeBoxAddressMunicipalityName(municipalityName);
-                    });
-
-                    // save PostOfficeBox
-                    JSONArray postOfficeBoxJsonArray = postOfficeBoxAddressJson
-                            .optJSONArray("postOfficeBox");
-                    List<PostOfficeBox> postOfficeBoxList = OrganizationUtil
-                            .createPostOfficeBoxes(postOfficeBoxJsonArray);
-                    postOfficeBoxList.forEach(postOfficeBox -> {
-                        postOfficeBox.setPostOfficeBoxAddress(savedPostOfficeBoxAddress);
-                        catalogService.savePostOfficeBox(postOfficeBox);
-                    });
-
-                }
-                log.info("Saved address successfully");
-            });*/
-
+                saveAddressDetails(addressesListJson, savedAddress);
+            });
         }
+    }
+
+    private void saveAddressDetails(JSONArray addressesListJson, Address savedAddress) {
+        for (int j = 0; j < addressesListJson.length(); j++) {
+
+            // save StreetAddress
+            if (addressesListJson.optJSONObject(j).optJSONObject("streetAddress") != null) {
+                JSONObject streetAddressJson = addressesListJson.optJSONObject(j)
+                        .optJSONObject("streetAddress");
+                saveStreetAddress(streetAddressJson, savedAddress);
+            }
+
+            // save PostOfficeBoxAddress
+            if (addressesListJson.optJSONObject(j).optJSONObject("postOfficeBoxStreetAddress") != null) {
+                JSONObject postOfficeBoxAddressJson = addressesListJson.optJSONObject(j)
+                        .optJSONObject("postOfficeBoxStreetAddress");
+                savePostOfficeBoxAddress(postOfficeBoxAddressJson, savedAddress);
+            }
+        }
+    }
+
+    private void saveStreetAddress(JSONObject streetAddressJson, Address savedAddress) {
+        // save StreetAddress
+        StreetAddress streetAddress = OrganizationUtil.createStreetAddress(streetAddressJson);
+        streetAddress.setAddress(savedAddress);
+        StreetAddress savedStreetAddress = catalogService.saveStreetAddress(streetAddress);
+
+        // save StreetAddressMunicipality
+        if (streetAddressJson.optJSONObject("municipality") != null) {
+            JSONObject streetAddressMunicipalityJson = streetAddressJson.optJSONObject("municipality");
+            StreetAddressMunicipality streetAddressMunicipality = OrganizationUtil
+                    .createStreetAddressMunicipality(streetAddressMunicipalityJson);
+            streetAddressMunicipality.setStreetAddress(savedStreetAddress);
+            StreetAddressMunicipality savedStreetAddressMunicipality = catalogService
+                    .saveStreetAddressMunicipality(streetAddressMunicipality);
+
+            // save StreetAddressMunicipalityName
+            if (streetAddressJson.optJSONObject("municipality")
+                    .optJSONArray("name") != null) {
+                JSONArray streetAddressMunicipalityNamesJson = streetAddressJson.optJSONObject("municipality")
+                        .optJSONArray("name");
+                List<StreetAddressMunicipalityName> streetAddressMunicipalityNames = OrganizationUtil
+                        .createStreetAddressMunicipalityNames(streetAddressMunicipalityNamesJson);
+                streetAddressMunicipalityNames.forEach(municipalityName -> {
+                    municipalityName.setStreetAddressMunicipality(savedStreetAddressMunicipality);
+                    catalogService.saveStreetAddressMunicipalityName(municipalityName);
+                });
+            }
+        }
+
+        // save StreetAddressAdditionalInformation
+        if (streetAddressJson.optJSONArray("additionalInformation") != null) {
+            JSONArray streetAddressAdditionaInformationJsonArray = streetAddressJson
+                    .optJSONArray("additionalInformation");
+            List<StreetAddressAdditionalInformation> streetAddressAdditionalInformationList = OrganizationUtil
+                    .createStreetAddressAdditionalInformation(streetAddressAdditionaInformationJsonArray);
+            streetAddressAdditionalInformationList.forEach(additionalInfo -> {
+                additionalInfo.setStreetAddress(savedStreetAddress);
+                catalogService.saveStreetAddressAdditionalInformation(additionalInfo);
+            });
+        }
+
+        // save PostOffice
+        if (streetAddressJson.optJSONArray("postOffice") != null) {
+            JSONArray streetAddressPostOfficeJsonArray = streetAddressJson
+                    .optJSONArray("postOffice");
+            List<StreetAddressPostOffice> streetAddressPostOfficeList = OrganizationUtil
+                    .createStreetAddressPostOffices(streetAddressPostOfficeJsonArray);
+            streetAddressPostOfficeList.forEach(postOffice -> {
+                postOffice.setStreetAddress(savedStreetAddress);
+                catalogService.saveStreetAddressPostOffice(postOffice);
+            });
+        }
+
+        // save Street
+        if (streetAddressJson.optJSONArray("street") != null) {
+            JSONArray streetJsonArray = streetAddressJson.optJSONArray("street");
+            List<Street> streetList = OrganizationUtil.createStreets(streetJsonArray);
+            streetList.forEach(street -> {
+                street.setStreetAddress(savedStreetAddress);
+                catalogService.saveStreet(street);
+            });
+        }
+    }
+
+    private void savePostOfficeBoxAddress(JSONObject postOfficeBoxAddressJson, Address savedAddress) {
+        // save PostOfficeBoxAddress
+        PostOfficeBoxAddress postOfficeBoxAddress = OrganizationUtil.createPostOfficeBoxAddress(postOfficeBoxAddressJson);
+        postOfficeBoxAddress.setAddress(savedAddress);
+        PostOfficeBoxAddress savedPostOfficeBoxAddress = catalogService.savePostOfficeBoxAddress(postOfficeBoxAddress);
+
+        // save PostOfficeBoxAddressAdditionalInformation
+        if (postOfficeBoxAddressJson.optJSONArray("additionalInformation") != null) {
+            JSONArray postOfficeBoxAddressAdditionalInformationJsonArray = postOfficeBoxAddressJson
+                    .optJSONArray("additionalInformation");
+            List<PostOfficeBoxAddressAdditionalInformation> postOfficeBoxAddressAdditionalInformationList
+                    = OrganizationUtil.createPostOfficeBoxAddressAdditionalInformation(
+                    postOfficeBoxAddressAdditionalInformationJsonArray);
+            postOfficeBoxAddressAdditionalInformationList.forEach(additionalInfo -> {
+                additionalInfo.setPostOfficeBoxAddress(savedPostOfficeBoxAddress);
+                catalogService.savePostOfficeBoxAddressAdditionalInformation(additionalInfo);
+            });
+        }
+
+        // save PostOffice
+        if (postOfficeBoxAddressJson.optJSONArray("postOffice") != null) {
+            JSONArray postOfficeJsonArray = postOfficeBoxAddressJson.optJSONArray("postOffice");
+            List<PostOffice> postOfficeList = OrganizationUtil.createPostOffice(postOfficeJsonArray);
+            postOfficeList.forEach(postOffice -> {
+                postOffice.setPostOfficeBoxAddress(savedPostOfficeBoxAddress);
+                catalogService.savePostOffice(postOffice);
+            });
+        }
+
+        // save PostOfficeBoxAddressMunicipality
+        if (postOfficeBoxAddressJson.optJSONObject("municipality") != null) {
+            JSONObject postOfficeBoxAddressMunicipalityJson = postOfficeBoxAddressJson.optJSONObject("municipality");
+            PostOfficeBoxAddressMunicipality postOfficeBoxAddressMunicipality = OrganizationUtil
+                    .createPostOfficeBoxAddressMunicipality(postOfficeBoxAddressMunicipalityJson);
+            postOfficeBoxAddressMunicipality.setPostOfficeBoxAddress(savedPostOfficeBoxAddress);
+            PostOfficeBoxAddressMunicipality savedPostOfficeBoxAddressMunicipality = catalogService
+                    .savePostOfficeBoxAddressMunicipality(postOfficeBoxAddressMunicipality);
+
+            // save PostOfficeBoxAddressMunicipalityName
+            if (postOfficeBoxAddressJson.optJSONObject("municipality").optJSONArray("name") != null) {
+                JSONArray postOfficeBoxAddressMunicipalityNamesJson = postOfficeBoxAddressJson.optJSONObject("municipality")
+                        .optJSONArray("name");
+                List<PostOfficeBoxAddressMunicipalityName> postOfficeBoxAddressMunicipalityNames = OrganizationUtil
+                        .createPostOfficeBoxAddressMunicipalityNames(postOfficeBoxAddressMunicipalityNamesJson);
+                postOfficeBoxAddressMunicipalityNames.forEach(municipalityName -> {
+                    municipalityName.setPostOfficeBoxAddressMunicipality(savedPostOfficeBoxAddressMunicipality);
+                    catalogService.savePostOfficeBoxAddressMunicipalityName(municipalityName);
+                });
+            }
+        }
+
+        // save PostOfficeBox
+        if (postOfficeBoxAddressJson.optJSONArray("postOfficeBox") != null) {
+            JSONArray postOfficeBoxJsonArray = postOfficeBoxAddressJson.optJSONArray("postOfficeBox");
+            List<PostOfficeBox> postOfficeBoxList = OrganizationUtil
+                    .createPostOfficeBoxes(postOfficeBoxJsonArray);
+            postOfficeBoxList.forEach(postOfficeBox -> {
+                postOfficeBox.setPostOfficeBoxAddress(savedPostOfficeBoxAddress);
+                catalogService.savePostOfficeBox(postOfficeBox);
+            });
+        }
+
     }
 
 }

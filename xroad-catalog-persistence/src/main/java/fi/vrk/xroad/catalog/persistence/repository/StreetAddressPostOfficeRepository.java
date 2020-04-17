@@ -26,8 +26,9 @@ import fi.vrk.xroad.catalog.persistence.entity.StreetAddressPostOffice;
 import org.springframework.data.repository.CrudRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface StreetAddressPostOfficeRepository extends CrudRepository<StreetAddressPostOffice, Long> {
 
-    List<StreetAddressPostOffice> findAnyByStreetAddressId(Long streetAddressId);
+    Optional<List<StreetAddressPostOffice>> findAnyByStreetAddressId(Long streetAddressId);
 }

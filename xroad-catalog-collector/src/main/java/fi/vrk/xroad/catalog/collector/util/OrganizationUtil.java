@@ -90,6 +90,7 @@ public class OrganizationUtil {
 
     public static Organization createOrganization(JSONObject jsonObject) {
         return Organization.builder().businessCode(jsonObject.optString("businessCode"))
+                .guid(jsonObject.optString("id"))
                 .organizationType(jsonObject.optString("organizationType"))
                 .publishingStatus(jsonObject.optString("publishingStatus"))
                 .build();

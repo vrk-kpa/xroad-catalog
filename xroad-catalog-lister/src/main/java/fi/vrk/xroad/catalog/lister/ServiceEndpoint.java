@@ -140,19 +140,4 @@ public class ServiceEndpoint {
         response.setOpenapi(openApi.getData());
         return response;
     }
-
-
-/*    @PayloadRoot(namespace = NAMESPACE_URI, localPart = "GetOpenAPI")
-    @ResponsePayload
-    public GetOpenAPIResponse getOrganizationDetails(@RequestPayload GetOpenAPI request) {
-        GetOpenAPIResponse response = new GetOpenAPIResponse();
-        OpenApi openApi = catalogService.getOpenApi(request.getExternalId());
-        if (openApi == null) {
-            throw new OpenApiNotFoundException("OpenApi with external id " + request.getExternalId()
-                    + " not found");
-        }
-        response.setOpenapi(openApi.getData());
-        return response;
-    }*/
-
 }

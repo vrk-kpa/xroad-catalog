@@ -115,6 +115,8 @@ public class CatalogServiceImpl implements CatalogService {
     @Autowired
     StreetRepository streetRepository;
 
+    private int orgCount = 0;
+
     @Override
     public Iterable<Member> getActiveMembers() {
         return memberRepository.findAllActive();
@@ -379,206 +381,240 @@ public class CatalogServiceImpl implements CatalogService {
     }
 
     @Override
-    public Organization saveOrganization(Organization newValue) {
-        Optional<Organization> foundValue = Optional.ofNullable(organizationRepository
-                .findByBusinessCode(newValue.getBusinessCode()));
-        if (foundValue.isPresent()) {
-            Organization oldValue = foundValue.get();
-            StatusInfo statusInfo = oldValue.getStatusInfo();
+    public Organization saveOrganization(Organization organization) {
+        Optional<Organization> foundOrganization = Optional.ofNullable(organizationRepository
+                .findAnyByOrganizationGuid(organization.getGuid()));
+        if (foundOrganization.isPresent()) {
+            Organization oldOrganization = foundOrganization.get();
+            StatusInfo statusInfo = oldOrganization.getStatusInfo();
             statusInfo.setFetched(LocalDateTime.now());
-            if (!oldValue.equals(newValue)) {
+            if (!oldOrganization.equals(organization)) {
                 statusInfo.setChanged(LocalDateTime.now());
             }
-            newValue.setStatusInfo(statusInfo);
+            organization.setStatusInfo(statusInfo);
+            organization.setId(oldOrganization.getId());
         } else {
             StatusInfo statusInfo = new StatusInfo();
             statusInfo.setCreated(LocalDateTime.now());
             statusInfo.setChanged(LocalDateTime.now());
             statusInfo.setFetched(LocalDateTime.now());
-            newValue.setStatusInfo(statusInfo);
+            organization.setStatusInfo(statusInfo);
         }
-        return organizationRepository.save(newValue);
+        return organizationRepository.save(organization);
     }
 
     @Override
-    public void saveOrganizationName(OrganizationName newValue) {
+    public void saveOrganizationName(OrganizationName organizationName) {
         Optional<List<OrganizationName>> foundList = organizationNameRepository
-                .findAnyByOrganizationId(newValue.getOrganization().getId());
+                .findAnyByOrganizationId(organizationName.getOrganization().getId());
         if (foundList.isPresent() && !foundList.get().isEmpty()) {
-            foundList.get().forEach(oldValue -> {
-                StatusInfo statusInfo = oldValue.getStatusInfo();
+            foundList.get().forEach(oldOrganizationName -> {
+                StatusInfo statusInfo = oldOrganizationName.getStatusInfo();
                 statusInfo.setFetched(LocalDateTime.now());
-                if (!oldValue.equals(newValue)) {
+                if (!oldOrganizationName.equals(organizationName)) {
                     statusInfo.setChanged(LocalDateTime.now());
                 }
-                newValue.setStatusInfo(statusInfo);
+                organizationName.setStatusInfo(statusInfo);
+                organizationName.setId(oldOrganizationName.getId());
             });
         } else {
             StatusInfo statusInfo = new StatusInfo();
             statusInfo.setCreated(LocalDateTime.now());
             statusInfo.setChanged(LocalDateTime.now());
             statusInfo.setFetched(LocalDateTime.now());
-            newValue.setStatusInfo(statusInfo);
+            organizationName.setStatusInfo(statusInfo);
         }
-        organizationNameRepository.save(newValue);
+        organizationNameRepository.save(organizationName);
     }
 
     @Override
-    public void saveOrganizationDescription(OrganizationDescription newValue) {
+    public void saveOrganizationDescription(OrganizationDescription organizationDescription) {
         Optional<List<OrganizationDescription>> foundList = organizationDescriptionRepository
-                .findAnyByOrganizationId(newValue.getOrganization().getId());
+                .findAnyByOrganizationId(organizationDescription.getOrganization().getId());
         if (foundList.isPresent() && !foundList.get().isEmpty()) {
-            foundList.get().forEach(oldValue -> {
-                StatusInfo statusInfo = oldValue.getStatusInfo();
+            foundList.get().forEach(oldOrganizationDescription -> {
+                StatusInfo statusInfo = oldOrganizationDescription.getStatusInfo();
                 statusInfo.setFetched(LocalDateTime.now());
-                if (!oldValue.equals(newValue)) {
+                if (!oldOrganizationDescription.equals(organizationDescription)) {
                     statusInfo.setChanged(LocalDateTime.now());
                 }
-                newValue.setStatusInfo(statusInfo);
+                organizationDescription.setStatusInfo(statusInfo);
+                organizationDescription.setId(oldOrganizationDescription.getId());
             });
         } else {
             StatusInfo statusInfo = new StatusInfo();
             statusInfo.setCreated(LocalDateTime.now());
             statusInfo.setChanged(LocalDateTime.now());
             statusInfo.setFetched(LocalDateTime.now());
-            newValue.setStatusInfo(statusInfo);
+            organizationDescription.setStatusInfo(statusInfo);
         }
-        organizationDescriptionRepository.save(newValue);
+        organizationDescriptionRepository.save(organizationDescription);
     }
 
     @Override
-    public void saveEmail(Email newValue) {
+    public void saveEmail(Email email) {
         Optional<List<Email>> foundList = emailRepository
-                .findAnyByOrganizationId(newValue.getOrganization().getId());
+                .findAnyByOrganizationId(email.getOrganization().getId());
         if (foundList.isPresent() && !foundList.get().isEmpty()) {
-            foundList.get().forEach(oldValue -> {
-                StatusInfo statusInfo = oldValue.getStatusInfo();
+            foundList.get().forEach(oldEmail -> {
+                StatusInfo statusInfo = oldEmail.getStatusInfo();
                 statusInfo.setFetched(LocalDateTime.now());
-                if (!oldValue.equals(newValue)) {
+                if (!oldEmail.equals(email)) {
                     statusInfo.setChanged(LocalDateTime.now());
                 }
-                newValue.setStatusInfo(statusInfo);
+                email.setStatusInfo(statusInfo);
+                email.setId(oldEmail.getId());
             });
         } else {
             StatusInfo statusInfo = new StatusInfo();
             statusInfo.setCreated(LocalDateTime.now());
             statusInfo.setChanged(LocalDateTime.now());
             statusInfo.setFetched(LocalDateTime.now());
-            newValue.setStatusInfo(statusInfo);
+            email.setStatusInfo(statusInfo);
         }
-        emailRepository.save(newValue);
+        emailRepository.save(email);
     }
 
     @Override
-    public void savePhoneNumber(PhoneNumber newValue) {
+    public void savePhoneNumber(PhoneNumber phoneNumber) {
         Optional<List<PhoneNumber>> foundList = phoneNumberRepository
-                .findAnyByOrganizationId(newValue.getOrganization().getId());
+                .findAnyByOrganizationId(phoneNumber.getOrganization().getId());
         if (foundList.isPresent() && !foundList.get().isEmpty()) {
-            foundList.get().forEach(oldValue -> {
-                StatusInfo statusInfo = oldValue.getStatusInfo();
+            foundList.get().forEach(oldPhoneNumber -> {
+                StatusInfo statusInfo = oldPhoneNumber.getStatusInfo();
                 statusInfo.setFetched(LocalDateTime.now());
-                if (!oldValue.equals(newValue)) {
+                if (!oldPhoneNumber.equals(phoneNumber)) {
                     statusInfo.setChanged(LocalDateTime.now());
                 }
-                newValue.setStatusInfo(statusInfo);
+                phoneNumber.setStatusInfo(statusInfo);
+                phoneNumber.setId(oldPhoneNumber.getId());
             });
         } else {
             StatusInfo statusInfo = new StatusInfo();
             statusInfo.setCreated(LocalDateTime.now());
             statusInfo.setChanged(LocalDateTime.now());
             statusInfo.setFetched(LocalDateTime.now());
-            newValue.setStatusInfo(statusInfo);
+            phoneNumber.setStatusInfo(statusInfo);
         }
-        phoneNumberRepository.save(newValue);
+        phoneNumberRepository.save(phoneNumber);
     }
 
     @Override
-    public void saveWebPage(WebPage newValue) {
+    public void saveWebPage(WebPage webPage) {
         Optional<List<WebPage>> foundList = webpageRepository
-                .findAnyByOrganizationId(newValue.getOrganization().getId());
+                .findAnyByOrganizationId(webPage.getOrganization().getId());
         if (foundList.isPresent() && !foundList.get().isEmpty()) {
-            foundList.get().forEach(oldValue -> {
-                StatusInfo statusInfo = oldValue.getStatusInfo();
+            foundList.get().forEach(oldWebPage -> {
+                StatusInfo statusInfo = oldWebPage.getStatusInfo();
                 statusInfo.setFetched(LocalDateTime.now());
-                if (!oldValue.equals(newValue)) {
+                if (!oldWebPage.equals(webPage)) {
                     statusInfo.setChanged(LocalDateTime.now());
                 }
-                newValue.setStatusInfo(statusInfo);
+                webPage.setStatusInfo(statusInfo);
+                webPage.setId(oldWebPage.getId());
             });
         } else {
             StatusInfo statusInfo = new StatusInfo();
             statusInfo.setCreated(LocalDateTime.now());
             statusInfo.setChanged(LocalDateTime.now());
             statusInfo.setFetched(LocalDateTime.now());
-            newValue.setStatusInfo(statusInfo);
+            webPage.setStatusInfo(statusInfo);
         }
-        webpageRepository.save(newValue);
+        webpageRepository.save(webPage);
     }
 
     @Override
-    public Address saveAddress(Address newValue) {
-        List<Address> foundList = addressRepository
-                .findAnyByOrganizationId(newValue.getOrganization().getId());
-        if (!foundList.isEmpty()) {
-            foundList.forEach(oldValue -> {
-                StatusInfo statusInfo = oldValue.getStatusInfo();
+    public Address saveAddress(Address address) {
+        Optional<List<Address>> foundList = addressRepository
+                .findAnyByOrganizationId(address.getOrganization().getId());
+        if (foundList.isPresent() && !foundList.get().isEmpty()) {
+            foundList.get().forEach(oldAddress -> {
+                StatusInfo statusInfo = oldAddress.getStatusInfo();
                 statusInfo.setFetched(LocalDateTime.now());
-                if (!oldValue.equals(newValue)) {
+                if (!oldAddress.equals(address)) {
                     statusInfo.setChanged(LocalDateTime.now());
                 }
-                newValue.setStatusInfo(statusInfo);
+                address.setStatusInfo(statusInfo);
+                address.setId(oldAddress.getId());
             });
+        } else {
+            StatusInfo statusInfo = new StatusInfo();
+            statusInfo.setCreated(LocalDateTime.now());
+            statusInfo.setChanged(LocalDateTime.now());
+            statusInfo.setFetched(LocalDateTime.now());
+            address.setStatusInfo(statusInfo);
         }
-        return addressRepository.save(newValue);
+        return addressRepository.save(address);
     }
 
     @Override
-    public StreetAddress saveStreetAddress(StreetAddress newValue) {
-        Optional<StreetAddress> foundValue = Optional.ofNullable(streetAddressRepository
-                .findByAddressId(newValue.getAddress().getId()));
-        if (foundValue.isPresent()) {
-            StreetAddress oldValue = foundValue.get();
-            StatusInfo statusInfo = oldValue.getStatusInfo();
+    public StreetAddress saveStreetAddress(StreetAddress streetAddress) {
+        Optional<StreetAddress> foundStreetAddress = Optional.ofNullable(streetAddressRepository
+                .findByAddressId(streetAddress.getAddress().getId()));
+        if (foundStreetAddress.isPresent()) {
+            StreetAddress oldStreetAddress = foundStreetAddress.get();
+            StatusInfo statusInfo = oldStreetAddress.getStatusInfo();
             statusInfo.setFetched(LocalDateTime.now());
-            if (!oldValue.equals(newValue)) {
+            if (!oldStreetAddress.equals(streetAddress)) {
                 statusInfo.setChanged(LocalDateTime.now());
             }
-            newValue.setStatusInfo(statusInfo);
+            streetAddress.setStatusInfo(statusInfo);
+            streetAddress.setId(oldStreetAddress.getId());
+        } else {
+            StatusInfo statusInfo = new StatusInfo();
+            statusInfo.setCreated(LocalDateTime.now());
+            statusInfo.setChanged(LocalDateTime.now());
+            statusInfo.setFetched(LocalDateTime.now());
+            streetAddress.setStatusInfo(statusInfo);
         }
-        return streetAddressRepository.save(newValue);
+        return streetAddressRepository.save(streetAddress);
     }
 
     @Override
-    public PostOfficeBoxAddress savePostOfficeBoxAddress(PostOfficeBoxAddress newValue) {
-        Optional<PostOfficeBoxAddress> foundValue = Optional.ofNullable(postOfficeBoxAddressRepository
-                .findByAddressId(newValue.getAddress().getId()));
-        if (foundValue.isPresent()) {
-            PostOfficeBoxAddress oldValue = foundValue.get();
-            StatusInfo statusInfo = oldValue.getStatusInfo();
+    public PostOfficeBoxAddress savePostOfficeBoxAddress(PostOfficeBoxAddress postOfficeBoxAddress) {
+        Optional<PostOfficeBoxAddress> foundPostOfficeBoxAddress = Optional.ofNullable(postOfficeBoxAddressRepository
+                .findByAddressId(postOfficeBoxAddress.getAddress().getId()));
+        if (foundPostOfficeBoxAddress.isPresent()) {
+            PostOfficeBoxAddress oldPostOfficeBoxAddress = foundPostOfficeBoxAddress.get();
+            StatusInfo statusInfo = oldPostOfficeBoxAddress.getStatusInfo();
             statusInfo.setFetched(LocalDateTime.now());
-            if (!oldValue.equals(newValue)) {
+            if (!oldPostOfficeBoxAddress.equals(postOfficeBoxAddress)) {
                 statusInfo.setChanged(LocalDateTime.now());
             }
-            newValue.setStatusInfo(statusInfo);
+            postOfficeBoxAddress.setStatusInfo(statusInfo);
+            postOfficeBoxAddress.setId(oldPostOfficeBoxAddress.getId());
+        } else {
+            StatusInfo statusInfo = new StatusInfo();
+            statusInfo.setCreated(LocalDateTime.now());
+            statusInfo.setChanged(LocalDateTime.now());
+            statusInfo.setFetched(LocalDateTime.now());
+            postOfficeBoxAddress.setStatusInfo(statusInfo);
         }
-        return postOfficeBoxAddressRepository.save(newValue);
+        return postOfficeBoxAddressRepository.save(postOfficeBoxAddress);
     }
 
     @Override
-    public StreetAddressMunicipality saveStreetAddressMunicipality(StreetAddressMunicipality newValue) {
-        Optional<StreetAddressMunicipality> foundValue =
+    public StreetAddressMunicipality saveStreetAddressMunicipality(StreetAddressMunicipality streetAddressMunicipality) {
+        Optional<StreetAddressMunicipality> foundStreetAddressMunicipality =
                 Optional.ofNullable(streetAddressMunicipalityRepository
-                        .findByStreetAddressId(newValue.getStreetAddress().getId()));
-        if (foundValue.isPresent()) {
-            StreetAddressMunicipality oldValue = foundValue.get();
-            StatusInfo statusInfo = oldValue.getStatusInfo();
+                        .findByStreetAddressId(streetAddressMunicipality.getStreetAddress().getId()));
+        if (foundStreetAddressMunicipality.isPresent()) {
+            StreetAddressMunicipality oldStreetAddressMunicipality = foundStreetAddressMunicipality.get();
+            StatusInfo statusInfo = oldStreetAddressMunicipality.getStatusInfo();
             statusInfo.setFetched(LocalDateTime.now());
-            if (!oldValue.equals(newValue)) {
+            if (!oldStreetAddressMunicipality.equals(streetAddressMunicipality)) {
                 statusInfo.setChanged(LocalDateTime.now());
             }
-            newValue.setStatusInfo(statusInfo);
+            streetAddressMunicipality.setStatusInfo(statusInfo);
+            streetAddressMunicipality.setId(oldStreetAddressMunicipality.getId());
+        } else {
+            StatusInfo statusInfo = new StatusInfo();
+            statusInfo.setCreated(LocalDateTime.now());
+            statusInfo.setChanged(LocalDateTime.now());
+            statusInfo.setFetched(LocalDateTime.now());
+            streetAddressMunicipality.setStatusInfo(statusInfo);
         }
-        return streetAddressMunicipalityRepository.save(newValue);
+        return streetAddressMunicipalityRepository.save(streetAddressMunicipality);
     }
 
     @Override
@@ -599,141 +635,201 @@ public class CatalogServiceImpl implements CatalogService {
     }
 
     @Override
-    public StreetAddressMunicipalityName saveStreetAddressMunicipalityName(StreetAddressMunicipalityName newValue) {
-        List<StreetAddressMunicipalityName> foundList = streetAddressMunicipalityNameRepository
-                .findAnyByStreetAddressMunicipalityId(newValue.getStreetAddressMunicipality().getId());
-        if (!foundList.isEmpty()) {
-            foundList.forEach(oldValue -> {
-                StatusInfo statusInfo = oldValue.getStatusInfo();
+    public StreetAddressMunicipalityName saveStreetAddressMunicipalityName(
+            StreetAddressMunicipalityName streetAddressMunicipalityName) {
+        Optional<List<StreetAddressMunicipalityName>> foundList = streetAddressMunicipalityNameRepository
+                .findAnyByStreetAddressMunicipalityId(streetAddressMunicipalityName.getStreetAddressMunicipality().getId());
+        if (foundList.isPresent() && !foundList.get().isEmpty()) {
+            foundList.get().forEach(oldStreetAddressMunicipalityName -> {
+                StatusInfo statusInfo = oldStreetAddressMunicipalityName.getStatusInfo();
                 statusInfo.setFetched(LocalDateTime.now());
-                if (!oldValue.equals(newValue)) {
+                if (!oldStreetAddressMunicipalityName.equals(streetAddressMunicipalityName)) {
                     statusInfo.setChanged(LocalDateTime.now());
                 }
-                newValue.setStatusInfo(statusInfo);
+                streetAddressMunicipalityName.setStatusInfo(statusInfo);
+                streetAddressMunicipalityName.setId(oldStreetAddressMunicipalityName.getId());
             });
+        } else {
+            StatusInfo statusInfo = new StatusInfo();
+            statusInfo.setCreated(LocalDateTime.now());
+            statusInfo.setChanged(LocalDateTime.now());
+            statusInfo.setFetched(LocalDateTime.now());
+            streetAddressMunicipalityName.setStatusInfo(statusInfo);
         }
-        return streetAddressMunicipalityNameRepository.save(newValue);
+        return streetAddressMunicipalityNameRepository.save(streetAddressMunicipalityName);
     }
 
     @Override
-    public PostOfficeBoxAddressMunicipalityName savePostOfficeBoxAddressMunicipalityName(PostOfficeBoxAddressMunicipalityName newValue) {
-        List<PostOfficeBoxAddressMunicipalityName> foundList = postOfficeBoxAddressMunicipalityNameRepository
-                .findAnyByPostOfficeBoxAddressMunicipalityId(newValue.getPostOfficeBoxAddressMunicipality().getId());
-        if (!foundList.isEmpty()) {
-            foundList.forEach(oldValue -> {
-                StatusInfo statusInfo = oldValue.getStatusInfo();
+    public PostOfficeBoxAddressMunicipalityName savePostOfficeBoxAddressMunicipalityName(
+            PostOfficeBoxAddressMunicipalityName postOfficeBoxAddressMunicipalityName) {
+        Optional<List<PostOfficeBoxAddressMunicipalityName>> foundList =
+                postOfficeBoxAddressMunicipalityNameRepository
+                .findAnyByPostOfficeBoxAddressMunicipalityId(postOfficeBoxAddressMunicipalityName.getPostOfficeBoxAddressMunicipality().getId());
+        if (foundList.isPresent() && !foundList.get().isEmpty()) {
+            foundList.get().forEach(oldPostOfficeBoxAddressMunicipalityName -> {
+                StatusInfo statusInfo = oldPostOfficeBoxAddressMunicipalityName.getStatusInfo();
                 statusInfo.setFetched(LocalDateTime.now());
-                if (!oldValue.equals(newValue)) {
+                if (!oldPostOfficeBoxAddressMunicipalityName.equals(postOfficeBoxAddressMunicipalityName)) {
                     statusInfo.setChanged(LocalDateTime.now());
                 }
-                newValue.setStatusInfo(statusInfo);
+                postOfficeBoxAddressMunicipalityName.setStatusInfo(statusInfo);
+                postOfficeBoxAddressMunicipalityName.setId(oldPostOfficeBoxAddressMunicipalityName.getId());
             });
+        } else {
+            StatusInfo statusInfo = new StatusInfo();
+            statusInfo.setCreated(LocalDateTime.now());
+            statusInfo.setChanged(LocalDateTime.now());
+            statusInfo.setFetched(LocalDateTime.now());
+            postOfficeBoxAddressMunicipalityName.setStatusInfo(statusInfo);
         }
-        return postOfficeBoxAddressMunicipalityNameRepository.save(newValue);
+        return postOfficeBoxAddressMunicipalityNameRepository.save(postOfficeBoxAddressMunicipalityName);
     }
 
     @Override
-    public StreetAddressAdditionalInformation saveStreetAddressAdditionalInformation(StreetAddressAdditionalInformation newValue) {
-        List<StreetAddressAdditionalInformation> foundList = streetAddressAdditionalInformationRepository
-                .findAnyByStreetAddressId(newValue.getStreetAddress().getId());
-        if (!foundList.isEmpty()) {
-            foundList.forEach(oldValue -> {
-                StatusInfo statusInfo = oldValue.getStatusInfo();
+    public StreetAddressAdditionalInformation saveStreetAddressAdditionalInformation(
+            StreetAddressAdditionalInformation streetAddressAdditionalInformation) {
+        Optional<List<StreetAddressAdditionalInformation>> foundList = streetAddressAdditionalInformationRepository
+                .findAnyByStreetAddressId(streetAddressAdditionalInformation.getStreetAddress().getId());
+        if (foundList.isPresent() && !foundList.get().isEmpty()) {
+            foundList.get().forEach(oldStreetAddressAdditionalInformation -> {
+                StatusInfo statusInfo = oldStreetAddressAdditionalInformation.getStatusInfo();
                 statusInfo.setFetched(LocalDateTime.now());
-                if (!oldValue.equals(newValue)) {
+                if (!oldStreetAddressAdditionalInformation.equals(streetAddressAdditionalInformation)) {
                     statusInfo.setChanged(LocalDateTime.now());
                 }
-                newValue.setStatusInfo(statusInfo);
+                streetAddressAdditionalInformation.setStatusInfo(statusInfo);
+                streetAddressAdditionalInformation.setId(oldStreetAddressAdditionalInformation.getId());
             });
+        } else {
+            StatusInfo statusInfo = new StatusInfo();
+            statusInfo.setCreated(LocalDateTime.now());
+            statusInfo.setChanged(LocalDateTime.now());
+            statusInfo.setFetched(LocalDateTime.now());
+            streetAddressAdditionalInformation.setStatusInfo(statusInfo);
         }
-        return streetAddressAdditionalInformationRepository.save(newValue);
+        return streetAddressAdditionalInformationRepository.save(streetAddressAdditionalInformation);
     }
 
     @Override
-    public PostOfficeBoxAddressAdditionalInformation savePostOfficeBoxStreetAddressAdditionalInformation(
-            PostOfficeBoxAddressAdditionalInformation newValue) {
-        List<PostOfficeBoxAddressAdditionalInformation> foundList =
+    public PostOfficeBoxAddressAdditionalInformation savePostOfficeBoxAddressAdditionalInformation(
+            PostOfficeBoxAddressAdditionalInformation postOfficeBoxAddressAdditionalInformation) {
+        Optional<List<PostOfficeBoxAddressAdditionalInformation>> foundList =
                 postOfficeBoxAddressAdditionalInformationRepository
-                        .findAnyByPostOfficeBoxAddressId(newValue.getPostOfficeBoxAddress().getId());
-        if (!foundList.isEmpty()) {
-            foundList.forEach(oldValue -> {
-                StatusInfo statusInfo = oldValue.getStatusInfo();
+                        .findAnyByPostOfficeBoxAddressId(postOfficeBoxAddressAdditionalInformation.getPostOfficeBoxAddress().getId());
+        if (foundList.isPresent() && !foundList.get().isEmpty()) {
+            foundList.get().forEach(oldPostOfficeBoxAddressAdditionalInformation -> {
+                StatusInfo statusInfo = oldPostOfficeBoxAddressAdditionalInformation.getStatusInfo();
                 statusInfo.setFetched(LocalDateTime.now());
-                if (!oldValue.equals(newValue)) {
+                if (!oldPostOfficeBoxAddressAdditionalInformation.equals(postOfficeBoxAddressAdditionalInformation)) {
                     statusInfo.setChanged(LocalDateTime.now());
                 }
-                newValue.setStatusInfo(statusInfo);
+                postOfficeBoxAddressAdditionalInformation.setStatusInfo(statusInfo);
+                postOfficeBoxAddressAdditionalInformation.setId(oldPostOfficeBoxAddressAdditionalInformation.getId());
             });
+        } else {
+            StatusInfo statusInfo = new StatusInfo();
+            statusInfo.setCreated(LocalDateTime.now());
+            statusInfo.setChanged(LocalDateTime.now());
+            statusInfo.setFetched(LocalDateTime.now());
+            postOfficeBoxAddressAdditionalInformation.setStatusInfo(statusInfo);
         }
-        return postOfficeBoxAddressAdditionalInformationRepository.save(newValue);
+        return postOfficeBoxAddressAdditionalInformationRepository.save(postOfficeBoxAddressAdditionalInformation);
     }
 
     @Override
-    public StreetAddressPostOffice saveStreetAddressPostOffice(StreetAddressPostOffice newValue) {
-        List<StreetAddressPostOffice> foundList = streetAddressPostOfficeRepository
-                .findAnyByStreetAddressId(newValue.getStreetAddress().getId());
-        if (!foundList.isEmpty()) {
-            foundList.forEach(oldValue -> {
-                StatusInfo statusInfo = oldValue.getStatusInfo();
+    public StreetAddressPostOffice saveStreetAddressPostOffice(StreetAddressPostOffice streetAddressPostOffice) {
+        Optional<List<StreetAddressPostOffice>> foundList = streetAddressPostOfficeRepository
+                .findAnyByStreetAddressId(streetAddressPostOffice.getStreetAddress().getId());
+        if (foundList.isPresent() && !foundList.get().isEmpty()) {
+            foundList.get().forEach(oldStreetAddressPostOffice -> {
+                StatusInfo statusInfo = oldStreetAddressPostOffice.getStatusInfo();
                 statusInfo.setFetched(LocalDateTime.now());
-                if (!oldValue.equals(newValue)) {
+                if (!oldStreetAddressPostOffice.equals(streetAddressPostOffice)) {
                     statusInfo.setChanged(LocalDateTime.now());
                 }
-                newValue.setStatusInfo(statusInfo);
+                streetAddressPostOffice.setStatusInfo(statusInfo);
+                streetAddressPostOffice.setId(oldStreetAddressPostOffice.getId());
             });
+        } else {
+            StatusInfo statusInfo = new StatusInfo();
+            statusInfo.setCreated(LocalDateTime.now());
+            statusInfo.setChanged(LocalDateTime.now());
+            statusInfo.setFetched(LocalDateTime.now());
+            streetAddressPostOffice.setStatusInfo(statusInfo);
         }
-        return streetAddressPostOfficeRepository.save(newValue);
+        return streetAddressPostOfficeRepository.save(streetAddressPostOffice);
     }
 
     @Override
-    public PostOffice savePostOffice(PostOffice newValue) {
-        List<PostOffice> foundList = postOfficeRepository
-                .findAnyByPostOfficeBoxAddressId(newValue.getPostOfficeBoxAddress().getId());
-        if (!foundList.isEmpty()) {
-            foundList.forEach(oldValue -> {
-                StatusInfo statusInfo = oldValue.getStatusInfo();
+    public PostOffice savePostOffice(PostOffice postOffice) {
+        Optional<List<PostOffice>> foundList = postOfficeRepository
+                .findAnyByPostOfficeBoxAddressId(postOffice.getPostOfficeBoxAddress().getId());
+        if (foundList.isPresent() && !foundList.get().isEmpty()) {
+            foundList.get().forEach(oldPostOffice -> {
+                StatusInfo statusInfo = oldPostOffice.getStatusInfo();
                 statusInfo.setFetched(LocalDateTime.now());
-                if (!oldValue.equals(newValue)) {
+                if (!oldPostOffice.equals(postOffice)) {
                     statusInfo.setChanged(LocalDateTime.now());
                 }
-                newValue.setStatusInfo(statusInfo);
+                postOffice.setStatusInfo(statusInfo);
+                postOffice.setId(oldPostOffice.getId());
             });
+        } else {
+            StatusInfo statusInfo = new StatusInfo();
+            statusInfo.setCreated(LocalDateTime.now());
+            statusInfo.setChanged(LocalDateTime.now());
+            statusInfo.setFetched(LocalDateTime.now());
+            postOffice.setStatusInfo(statusInfo);
         }
-        return postOfficeRepository.save(newValue);
+        return postOfficeRepository.save(postOffice);
     }
 
     @Override
-    public PostOfficeBox savePostOfficeBox(PostOfficeBox newValue) {
-        List<PostOfficeBox> foundList = postOfficeBoxRepository
-                .findAnyByPostOfficeBoxAddressId(newValue.getPostOfficeBoxAddress().getId());
-        if (!foundList.isEmpty()) {
-            foundList.forEach(oldValue -> {
-                StatusInfo statusInfo = oldValue.getStatusInfo();
+    public PostOfficeBox savePostOfficeBox(PostOfficeBox postOfficeBox) {
+        Optional<List<PostOfficeBox>> foundList = postOfficeBoxRepository
+                .findAnyByPostOfficeBoxAddressId(postOfficeBox.getPostOfficeBoxAddress().getId());
+        if (foundList.isPresent() && !foundList.get().isEmpty()) {
+            foundList.get().forEach(oldPostOfficeBox -> {
+                StatusInfo statusInfo = oldPostOfficeBox.getStatusInfo();
                 statusInfo.setFetched(LocalDateTime.now());
-                if (!oldValue.equals(newValue)) {
+                if (!oldPostOfficeBox.equals(postOfficeBox)) {
                     statusInfo.setChanged(LocalDateTime.now());
                 }
-                newValue.setStatusInfo(statusInfo);
+                postOfficeBox.setStatusInfo(statusInfo);
+                postOfficeBox.setId(oldPostOfficeBox.getId());
             });
+        } else {
+            StatusInfo statusInfo = new StatusInfo();
+            statusInfo.setCreated(LocalDateTime.now());
+            statusInfo.setChanged(LocalDateTime.now());
+            statusInfo.setFetched(LocalDateTime.now());
+            postOfficeBox.setStatusInfo(statusInfo);
         }
-        return postOfficeBoxRepository.save(newValue);
+        return postOfficeBoxRepository.save(postOfficeBox);
     }
 
     @Override
-    public Street saveStreet(Street newValue) {
-        List<Street> foundList = streetRepository
-                .findAnyByStreetAddressId(newValue.getStreetAddress().getId());
-        if (!foundList.isEmpty()) {
-            foundList.forEach(oldValue -> {
-                StatusInfo statusInfo = oldValue.getStatusInfo();
+    public Street saveStreet(Street street) {
+        Optional<List<Street>> foundList = streetRepository
+                .findAnyByStreetAddressId(street.getStreetAddress().getId());
+        if (foundList.isPresent() && !foundList.get().isEmpty()) {
+            foundList.get().forEach(oldStreet -> {
+                StatusInfo statusInfo = oldStreet.getStatusInfo();
                 statusInfo.setFetched(LocalDateTime.now());
-                if (!oldValue.equals(newValue)) {
+                if (!oldStreet.equals(street)) {
                     statusInfo.setChanged(LocalDateTime.now());
                 }
-                newValue.setStatusInfo(statusInfo);
+                street.setStatusInfo(statusInfo);
+                street.setId(oldStreet.getId());
             });
+        } else {
+            StatusInfo statusInfo = new StatusInfo();
+            statusInfo.setCreated(LocalDateTime.now());
+            statusInfo.setChanged(LocalDateTime.now());
+            statusInfo.setFetched(LocalDateTime.now());
+            street.setStatusInfo(statusInfo);
         }
-        return streetRepository.save(newValue);
+        return streetRepository.save(street);
     }
 
 }

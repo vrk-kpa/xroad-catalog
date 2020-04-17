@@ -27,10 +27,15 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 
+import java.util.List;
+
 
 public interface OrganizationRepository extends CrudRepository<Organization, Long> {
 
     @Query("SELECT o FROM Organization o WHERE o.businessCode = :businessCode")
-    Organization findByBusinessCode(@Param("businessCode") String businessCode);
+    List<Organization> findByBusinessCode(@Param("businessCode") String businessCode);
+
+    @Query("SELECT o FROM Organization o WHERE o.guid = :guid")
+    Organization findAnyByOrganizationGuid(@Param("guid") String guid);
 
 }

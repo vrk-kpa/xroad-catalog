@@ -26,9 +26,10 @@ import fi.vrk.xroad.catalog.persistence.entity.StreetAddressMunicipalityName;
 import org.springframework.data.repository.CrudRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface StreetAddressMunicipalityNameRepository extends CrudRepository<StreetAddressMunicipalityName, Long> {
 
-    List<StreetAddressMunicipalityName> findAnyByStreetAddressMunicipalityId(Long streetAddressMunicipalityId);
+    Optional<List<StreetAddressMunicipalityName>> findAnyByStreetAddressMunicipalityId(Long streetAddressMunicipalityId);
 
 }

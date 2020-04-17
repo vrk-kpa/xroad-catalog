@@ -26,8 +26,9 @@ import fi.vrk.xroad.catalog.persistence.entity.PostOffice;
 import org.springframework.data.repository.CrudRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface PostOfficeRepository extends CrudRepository<PostOffice, Long> {
 
-    List<PostOffice> findAnyByPostOfficeBoxAddressId(Long postOfficeBoxAddressId);
+    Optional<List<PostOffice>> findAnyByPostOfficeBoxAddressId(Long postOfficeBoxAddressId);
 }
