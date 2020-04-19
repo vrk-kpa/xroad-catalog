@@ -103,6 +103,13 @@ public interface CatalogService {
     Service getService(String serviceCode, String subsystemCode);
 
     /**
+     * Returns the full Organization object.
+     * @return Organization, if any, null if not found
+     * @throws RuntimeException if multiple matches found.
+     */
+    Organization getOrganization(String guid);
+
+    /**
      * Stores given members and subsystems. This should be the full dataset of both items
      * - items not included in the parameters are marked as removed, if the existed previously.
      *

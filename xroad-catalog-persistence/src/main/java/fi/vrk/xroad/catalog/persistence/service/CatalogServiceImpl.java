@@ -176,6 +176,11 @@ public class CatalogServiceImpl implements CatalogService {
     }
 
     @Override
+    public Organization getOrganization(String guid) {
+        return organizationRepository.findAnyByOrganizationGuid(guid);
+    }
+
+    @Override
     public void saveAllMembersAndSubsystems(Collection<Member> members) {
         LocalDateTime now = LocalDateTime.now();
         // process members
