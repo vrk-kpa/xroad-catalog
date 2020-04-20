@@ -1,5 +1,16 @@
 # Collector for X-Road Clients in System
 
+## Introduction to X-Road Catalog Collector
+
+The purpose of this piece of software is to collect members, subsystems and services from the X-Road instance and store them to the PostgreSQL database. 
+
+The software is implemented using concurrent Akka actors: 
+* FetchWsdlActor - fetches WSDL descriptions of SOAP services from the X-Road instance and stores them to the db
+* FetchOpenApiActor - fetches OpenAPI descriptions of Rest services from the XRoad instance and stores them to the db
+* ListClientsActor - fetches a list of clients from the XRoad instance and stores them to the db
+* ListMethodsActor - fetches a list of services from the XRoad instance and stores them to the db
+
+
 ## Build
 
 
