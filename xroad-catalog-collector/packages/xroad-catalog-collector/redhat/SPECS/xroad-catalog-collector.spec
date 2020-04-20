@@ -71,8 +71,8 @@ systemctl start postgresql
 
 #Check if database was already initialized
 if sudo -u postgres psql -lqt |cut -d \| -f 1 | grep -qw xroad_catalog ; then
-     echo "Database already exists, creating only non-existing tables"
-     sudo -u postgres psql --file=/usr/share/xroad/sql/create_tables.sql
+    echo "Database already exists, creating only non-existing tables"
+    sudo -u postgres psql --file=/usr/share/xroad/sql/create_tables.sql
 else
     echo "Initializing database and creating tables"
     sudo -u postgres psql --file=/usr/share/xroad/sql/init_database.sql
