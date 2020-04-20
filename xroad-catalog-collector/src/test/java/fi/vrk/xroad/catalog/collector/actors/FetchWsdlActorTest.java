@@ -26,7 +26,7 @@ import fi.vrk.xroad.catalog.collector.configuration.DevelopmentConfiguration;
 import fi.vrk.xroad.catalog.collector.extension.SpringExtension;
 import fi.vrk.xroad.catalog.collector.wsimport.XRoadObjectType;
 import fi.vrk.xroad.catalog.collector.wsimport.XRoadServiceIdentifierType;
-import fi.vrk.xroad.catalog.persistence.service.CatalogService;
+import fi.vrk.xroad.catalog.persistence.CatalogService;
 
 import akka.actor.ActorRef;
 import akka.actor.ActorSystem;

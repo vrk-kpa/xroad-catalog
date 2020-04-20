@@ -23,8 +23,8 @@
 package fi.vrk.xroad.catalog.lister;
 
 import com.google.common.collect.Iterables;
-import fi.vrk.xroad.catalog.persistence.service.CatalogService;
-import fi.vrk.xroad.catalog.persistence.service.CatalogServiceImpl;
+import fi.vrk.xroad.catalog.persistence.CatalogService;
+import fi.vrk.xroad.catalog.persistence.CatalogServiceImpl;
 import fi.vrk.xroad.catalog.persistence.entity.Member;
 import fi.vrk.xroad.catalog.persistence.entity.Service;
 import fi.vrk.xroad.catalog.persistence.entity.Subsystem;

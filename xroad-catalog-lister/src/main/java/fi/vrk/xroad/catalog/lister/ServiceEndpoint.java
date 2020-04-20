@@ -23,7 +23,7 @@
 package fi.vrk.xroad.catalog.lister;
 
 import com.google.common.collect.Lists;
-import fi.vrk.xroad.catalog.persistence.service.CatalogService;
+import fi.vrk.xroad.catalog.persistence.CatalogService;
 import fi.vrk.xroad.catalog.persistence.entity.OpenApi;
 import fi.vrk.xroad.catalog.persistence.entity.Wsdl;
 import fi.vrk.xroad.catalog.persistence.entity.Service;

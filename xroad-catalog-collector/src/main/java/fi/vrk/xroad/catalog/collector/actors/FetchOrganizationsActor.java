@@ -25,7 +25,7 @@ package fi.vrk.xroad.catalog.collector.actors;
 import fi.vrk.xroad.catalog.collector.util.OrganizationUtil;
 import fi.vrk.xroad.catalog.collector.wsimport.ClientList;
 import fi.vrk.xroad.catalog.persistence.entity.*;
-import fi.vrk.xroad.catalog.persistence.service.CatalogService;
+import fi.vrk.xroad.catalog.persistence.CatalogService;
 import lombok.extern.slf4j.Slf4j;
 import org.json.JSONArray;
 import org.json.JSONObject;

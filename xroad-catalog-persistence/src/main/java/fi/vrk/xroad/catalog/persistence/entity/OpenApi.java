@@ -37,8 +37,8 @@ import java.util.UUID;
 public class OpenApi {
     @Id
     @Column(nullable = false)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "OPENAPI_GEN")
-    @SequenceGenerator(name = "OPENAPI_GEN", sequenceName = "OPENAPI_ID_SEQ", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "OPEN_API_GEN")
+    @SequenceGenerator(name = "OPEN_API_GEN", sequenceName = "OPEN_API_ID_SEQ", allocationSize = 1)
     private long id;
     @ManyToOne
     @JoinColumn(name = "SERVICE_ID")

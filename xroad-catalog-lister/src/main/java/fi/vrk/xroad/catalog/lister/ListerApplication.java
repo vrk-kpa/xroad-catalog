@@ -22,7 +22,7 @@
  */
 package fi.vrk.xroad.catalog.lister;
 
-import fi.vrk.xroad.catalog.persistence.service.CatalogService;
+import fi.vrk.xroad.catalog.persistence.CatalogService;
 import org.springframework.boot.SpringApplication;
 import org.springframework.context.annotation.ComponentScan;
 

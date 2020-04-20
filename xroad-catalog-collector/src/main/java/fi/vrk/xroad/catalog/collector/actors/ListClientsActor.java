@@ -28,7 +28,7 @@ import fi.vrk.xroad.catalog.collector.util.ClientListUtil;
 import fi.vrk.xroad.catalog.collector.wsimport.ClientList;
 import fi.vrk.xroad.catalog.collector.wsimport.ClientType;
 import fi.vrk.xroad.catalog.collector.wsimport.XRoadObjectType;
-import fi.vrk.xroad.catalog.persistence.service.CatalogService;
+import fi.vrk.xroad.catalog.persistence.CatalogService;
 import fi.vrk.xroad.catalog.persistence.entity.Member;
 import fi.vrk.xroad.catalog.persistence.entity.MemberId;
 import fi.vrk.xroad.catalog.persistence.entity.Subsystem;

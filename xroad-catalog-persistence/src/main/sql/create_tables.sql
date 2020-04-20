@@ -9,7 +9,7 @@ SET standard_conforming_strings = on;
 SET check_function_bodies = false;
 SET client_min_messages = warning;
 
-CREATE TABLE member (
+CREATE TABLE IF NOT EXISTS member (
     id BIGSERIAL PRIMARY KEY NOT NULL,
     x_road_instance TEXT NOT NULL,
     member_class TEXT NOT NULL,
@@ -21,7 +21,7 @@ CREATE TABLE member (
     removed TIMESTAMP WITH TIME ZONE
 );
 
-CREATE SEQUENCE member_id_seq
+CREATE SEQUENCE IF NOT EXISTS member_id_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
@@ -30,7 +30,7 @@ CREATE SEQUENCE member_id_seq
 
 ALTER SEQUENCE member_id_seq OWNED BY member.id;
 
-CREATE TABLE subsystem (
+CREATE TABLE IF NOT EXISTS subsystem (
     id BIGSERIAL PRIMARY KEY NOT NULL,
     member_id BIGSERIAL NOT NULL REFERENCES member(id),
     subsystem_code TEXT NOT NULL,
@@ -40,7 +40,7 @@ CREATE TABLE subsystem (
     removed TIMESTAMP WITH TIME ZONE
 );
 
-CREATE SEQUENCE subsystem_id_seq
+CREATE SEQUENCE IF NOT EXISTS subsystem_id_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
@@ -49,7 +49,7 @@ CREATE SEQUENCE subsystem_id_seq
 
 ALTER SEQUENCE subsystem_id_seq OWNED BY subsystem.id;
 
-CREATE TABLE service (
+CREATE TABLE IF NOT EXISTS service (
     id BIGSERIAL PRIMARY KEY NOT NULL,
     subsystem_id BIGSERIAL NOT NULL REFERENCES subsystem(id),
     service_code TEXT NOT NULL,
@@ -60,7 +60,7 @@ CREATE TABLE service (
     removed TIMESTAMP WITH TIME ZONE
 );
 
-CREATE SEQUENCE service_id_seq
+CREATE SEQUENCE IF NOT EXISTS service_id_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
@@ -69,7 +69,7 @@ CREATE SEQUENCE service_id_seq
 
 ALTER SEQUENCE service_id_seq OWNED BY service.id;
 
-CREATE TABLE wsdl (
+CREATE TABLE IF NOT EXISTS wsdl (
     id BIGSERIAL PRIMARY KEY NOT NULL,
     service_id BIGSERIAL NOT NULL REFERENCES service(id),
     data TEXT NOT NULL,
@@ -80,7 +80,7 @@ CREATE TABLE wsdl (
     removed TIMESTAMP WITH TIME ZONE
 );
 
-CREATE SEQUENCE wsdl_id_seq
+CREATE SEQUENCE IF NOT EXISTS wsdl_id_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
@@ -89,7 +89,7 @@ CREATE SEQUENCE wsdl_id_seq
 
 ALTER SEQUENCE wsdl_id_seq OWNED BY wsdl.id;
 
-CREATE SEQUENCE wsdl_external_id_seq
+CREATE SEQUENCE IF NOT EXISTS wsdl_external_id_seq
 START WITH 1
 INCREMENT BY 1
 NO MINVALUE
@@ -98,7 +98,7 @@ CACHE 1;
 
 ALTER SEQUENCE wsdl_external_id_seq OWNED BY wsdl.external_id;
 
-CREATE TABLE open_api (
+CREATE TABLE IF NOT EXISTS open_api (
     id BIGSERIAL PRIMARY KEY NOT NULL,
     service_id BIGSERIAL NOT NULL REFERENCES service(id),
     data TEXT NOT NULL,
@@ -109,25 +109,25 @@ CREATE TABLE open_api (
     removed TIMESTAMP WITH TIME ZONE
 );
 
-CREATE SEQUENCE openapi_id_seq
+CREATE SEQUENCE IF NOT EXISTS open_api_id_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
     NO MAXVALUE
     CACHE 1;
 
-ALTER SEQUENCE openapi_id_seq OWNED BY open_api.id;
+ALTER SEQUENCE open_api_id_seq OWNED BY open_api.id;
 
-CREATE SEQUENCE openapi_external_id_seq
+CREATE SEQUENCE IF NOT EXISTS open_api_external_id_seq
 START WITH 1
 INCREMENT BY 1
 NO MINVALUE
 NO MAXVALUE
 CACHE 1;
 
-ALTER SEQUENCE openapi_external_id_seq OWNED BY open_api.external_id;
+ALTER SEQUENCE open_api_external_id_seq OWNED BY open_api.external_id;
 
-CREATE TABLE organization (
+CREATE TABLE IF NOT EXISTS organization (
     id BIGSERIAL PRIMARY KEY NOT NULL,
     organization_type TEXT NOT NULL,
     publishing_status TEXT NOT NULL,
@@ -139,7 +139,7 @@ CREATE TABLE organization (
     removed TIMESTAMP WITH TIME ZONE
 );
 
-CREATE SEQUENCE organization_id_seq
+CREATE SEQUENCE IF NOT EXISTS organization_id_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
@@ -148,7 +148,7 @@ CREATE SEQUENCE organization_id_seq
 
 ALTER SEQUENCE organization_id_seq OWNED BY organization.id;
 
-CREATE TABLE organization_name (
+CREATE TABLE IF NOT EXISTS organization_name (
     id BIGSERIAL PRIMARY KEY NOT NULL,
     organization_id BIGSERIAL NOT NULL REFERENCES organization(id),
     language TEXT NOT NULL,
@@ -160,7 +160,7 @@ CREATE TABLE organization_name (
     removed TIMESTAMP WITH TIME ZONE
 );
 
-CREATE SEQUENCE organization_name_id_seq
+CREATE SEQUENCE IF NOT EXISTS organization_name_id_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
@@ -169,7 +169,7 @@ CREATE SEQUENCE organization_name_id_seq
 
 ALTER SEQUENCE organization_name_id_seq OWNED BY organization_name.id;
 
-CREATE TABLE organization_description (
+CREATE TABLE IF NOT EXISTS organization_description (
     id BIGSERIAL PRIMARY KEY NOT NULL,
     organization_id BIGSERIAL NOT NULL REFERENCES organization(id),
     language TEXT NOT NULL,
@@ -181,7 +181,7 @@ CREATE TABLE organization_description (
     removed TIMESTAMP WITH TIME ZONE
 );
 
-CREATE SEQUENCE organization_description_id_seq
+CREATE SEQUENCE IF NOT EXISTS organization_description_id_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
@@ -190,7 +190,7 @@ CREATE SEQUENCE organization_description_id_seq
 
 ALTER SEQUENCE organization_description_id_seq OWNED BY organization_description.id;
 
-CREATE TABLE email (
+CREATE TABLE IF NOT EXISTS email (
     id BIGSERIAL PRIMARY KEY NOT NULL,
     organization_id BIGSERIAL NOT NULL REFERENCES organization(id),
     language TEXT NOT NULL,
@@ -202,7 +202,7 @@ CREATE TABLE email (
     removed TIMESTAMP WITH TIME ZONE
 );
 
-CREATE SEQUENCE email_id_seq
+CREATE SEQUENCE IF NOT EXISTS email_id_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
@@ -211,7 +211,7 @@ CREATE SEQUENCE email_id_seq
 
 ALTER SEQUENCE email_id_seq OWNED BY email.id;
 
-CREATE TABLE phone_number (
+CREATE TABLE IF NOT EXISTS phone_number (
     id BIGSERIAL PRIMARY KEY NOT NULL,
     organization_id BIGSERIAL NOT NULL REFERENCES organization(id),
     language TEXT NOT NULL,
@@ -227,7 +227,7 @@ CREATE TABLE phone_number (
     removed TIMESTAMP WITH TIME ZONE
 );
 
-CREATE SEQUENCE phone_number_id_seq
+CREATE SEQUENCE IF NOT EXISTS phone_number_id_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
@@ -236,7 +236,7 @@ CREATE SEQUENCE phone_number_id_seq
 
 ALTER SEQUENCE phone_number_id_seq OWNED BY phone_number.id;
 
-CREATE TABLE web_page (
+CREATE TABLE IF NOT EXISTS web_page (
     id BIGSERIAL PRIMARY KEY NOT NULL,
     organization_id BIGSERIAL NOT NULL REFERENCES organization(id),
     language TEXT NOT NULL,
@@ -248,7 +248,7 @@ CREATE TABLE web_page (
     removed TIMESTAMP WITH TIME ZONE
 );
 
-CREATE SEQUENCE web_page_id_seq
+CREATE SEQUENCE IF NOT EXISTS web_page_id_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
@@ -257,7 +257,7 @@ CREATE SEQUENCE web_page_id_seq
 
 ALTER SEQUENCE web_page_id_seq OWNED BY web_page.id;
 
-CREATE TABLE address (
+CREATE TABLE IF NOT EXISTS address (
     id BIGSERIAL PRIMARY KEY NOT NULL,
     organization_id BIGSERIAL NOT NULL REFERENCES organization(id),
     country TEXT NOT NULL,
@@ -269,7 +269,7 @@ CREATE TABLE address (
     removed TIMESTAMP WITH TIME ZONE
 );
 
-CREATE SEQUENCE address_id_seq
+CREATE SEQUENCE IF NOT EXISTS address_id_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
@@ -278,7 +278,7 @@ CREATE SEQUENCE address_id_seq
 
 ALTER SEQUENCE address_id_seq OWNED BY address.id;
 
-CREATE TABLE street_address (
+CREATE TABLE IF NOT EXISTS street_address (
     id BIGSERIAL PRIMARY KEY NOT NULL,
     address_id BIGSERIAL NOT NULL REFERENCES address(id),
     street_number TEXT NOT NULL,
@@ -292,7 +292,7 @@ CREATE TABLE street_address (
     removed TIMESTAMP WITH TIME ZONE
 );
 
-CREATE SEQUENCE street_address_id_seq
+CREATE SEQUENCE IF NOT EXISTS street_address_id_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
@@ -301,7 +301,7 @@ CREATE SEQUENCE street_address_id_seq
 
 ALTER SEQUENCE street_address_id_seq OWNED BY street_address.id;
 
-CREATE TABLE post_office_box_address (
+CREATE TABLE IF NOT EXISTS post_office_box_address (
     id BIGSERIAL PRIMARY KEY NOT NULL,
     address_id BIGSERIAL NOT NULL REFERENCES address(id),
     postal_code TEXT NOT NULL,
@@ -311,7 +311,7 @@ CREATE TABLE post_office_box_address (
     removed TIMESTAMP WITH TIME ZONE
 );
 
-CREATE SEQUENCE post_office_box_address_id_seq
+CREATE SEQUENCE IF NOT EXISTS post_office_box_address_id_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
@@ -320,7 +320,7 @@ CREATE SEQUENCE post_office_box_address_id_seq
 
 ALTER SEQUENCE post_office_box_address_id_seq OWNED BY post_office_box_address.id;
 
-CREATE TABLE street (
+CREATE TABLE IF NOT EXISTS street (
     id BIGSERIAL PRIMARY KEY NOT NULL,
     street_address_id BIGSERIAL NOT NULL REFERENCES street_address(id),
     language TEXT NOT NULL,
@@ -331,7 +331,7 @@ CREATE TABLE street (
     removed TIMESTAMP WITH TIME ZONE
 );
 
-CREATE SEQUENCE street_id_seq
+CREATE SEQUENCE IF NOT EXISTS street_id_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
@@ -340,7 +340,7 @@ CREATE SEQUENCE street_id_seq
 
 ALTER SEQUENCE street_id_seq OWNED BY street.id;
 
-CREATE TABLE street_address_post_office (
+CREATE TABLE IF NOT EXISTS street_address_post_office (
     id BIGSERIAL PRIMARY KEY NOT NULL,
     street_address_id BIGSERIAL NOT NULL REFERENCES street_address(id),
     language TEXT NOT NULL,
@@ -351,7 +351,7 @@ CREATE TABLE street_address_post_office (
     removed TIMESTAMP WITH TIME ZONE
 );
 
-CREATE SEQUENCE street_address_post_office_id_seq
+CREATE SEQUENCE IF NOT EXISTS street_address_post_office_id_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
@@ -360,7 +360,7 @@ CREATE SEQUENCE street_address_post_office_id_seq
 
 ALTER SEQUENCE street_address_post_office_id_seq OWNED BY street_address_post_office.id;
 
-CREATE TABLE street_address_municipality (
+CREATE TABLE IF NOT EXISTS street_address_municipality (
     id BIGSERIAL PRIMARY KEY NOT NULL,
     street_address_id BIGSERIAL NOT NULL REFERENCES street_address(id),
     code TEXT NOT NULL,
@@ -370,7 +370,7 @@ CREATE TABLE street_address_municipality (
     removed TIMESTAMP WITH TIME ZONE
 );
 
-CREATE SEQUENCE street_address_municipality_id_seq
+CREATE SEQUENCE IF NOT EXISTS street_address_municipality_id_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
@@ -379,7 +379,7 @@ CREATE SEQUENCE street_address_municipality_id_seq
 
 ALTER SEQUENCE street_address_municipality_id_seq OWNED BY street_address_municipality.id;
 
-CREATE TABLE post_office_box_address_municipality (
+CREATE TABLE IF NOT EXISTS post_office_box_address_municipality (
     id BIGSERIAL PRIMARY KEY NOT NULL,
     post_office_box_address_id BIGSERIAL NOT NULL REFERENCES post_office_box_address(id),
     code TEXT NOT NULL,
@@ -389,7 +389,7 @@ CREATE TABLE post_office_box_address_municipality (
     removed TIMESTAMP WITH TIME ZONE
 );
 
-CREATE SEQUENCE post_office_box_address_municipality_id_seq
+CREATE SEQUENCE IF NOT EXISTS post_office_box_address_municipality_id_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
@@ -398,7 +398,7 @@ CREATE SEQUENCE post_office_box_address_municipality_id_seq
 
 ALTER SEQUENCE post_office_box_address_municipality_id_seq OWNED BY post_office_box_address_municipality.id;
 
-CREATE TABLE street_address_municipality_name (
+CREATE TABLE IF NOT EXISTS street_address_municipality_name (
     id BIGSERIAL PRIMARY KEY NOT NULL,
     street_address_municipality_id BIGSERIAL NOT NULL REFERENCES street_address_municipality(id),
     language TEXT NOT NULL,
@@ -409,7 +409,7 @@ CREATE TABLE street_address_municipality_name (
     removed TIMESTAMP WITH TIME ZONE
 );
 
-CREATE SEQUENCE street_address_municipality_name_id_seq
+CREATE SEQUENCE IF NOT EXISTS street_address_municipality_name_id_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
@@ -418,7 +418,7 @@ CREATE SEQUENCE street_address_municipality_name_id_seq
 
 ALTER SEQUENCE street_address_municipality_name_id_seq OWNED BY street_address_municipality_name.id;
 
-CREATE TABLE post_office_box_address_municipality_name (
+CREATE TABLE IF NOT EXISTS post_office_box_address_municipality_name (
     id BIGSERIAL PRIMARY KEY NOT NULL,
     post_office_box_address_municipality_id BIGSERIAL NOT NULL REFERENCES post_office_box_address_municipality(id),
     language TEXT NOT NULL,
@@ -429,7 +429,7 @@ CREATE TABLE post_office_box_address_municipality_name (
     removed TIMESTAMP WITH TIME ZONE
 );
 
-CREATE SEQUENCE post_office_box_address_municipality_name_id_seq
+CREATE SEQUENCE IF NOT EXISTS post_office_box_address_municipality_name_id_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
@@ -438,7 +438,7 @@ CREATE SEQUENCE post_office_box_address_municipality_name_id_seq
 
 ALTER SEQUENCE post_office_box_address_municipality_name_id_seq OWNED BY post_office_box_address_municipality_name.id;
 
-CREATE TABLE street_address_additional_information (
+CREATE TABLE IF NOT EXISTS street_address_additional_information (
     id BIGSERIAL PRIMARY KEY NOT NULL,
     street_address_id BIGSERIAL NOT NULL REFERENCES street_address(id),
     language TEXT NOT NULL,
@@ -449,7 +449,7 @@ CREATE TABLE street_address_additional_information (
     removed TIMESTAMP WITH TIME ZONE
 );
 
-CREATE SEQUENCE street_address_additional_information_id_seq
+CREATE SEQUENCE IF NOT EXISTS street_address_additional_information_id_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
@@ -458,7 +458,7 @@ CREATE SEQUENCE street_address_additional_information_id_seq
 
 ALTER SEQUENCE street_address_additional_information_id_seq OWNED BY street_address_additional_information.id;
 
-CREATE TABLE post_office_box (
+CREATE TABLE IF NOT EXISTS post_office_box (
     id BIGSERIAL PRIMARY KEY NOT NULL,
     post_office_box_address_id BIGSERIAL NOT NULL REFERENCES post_office_box_address(id),
     language TEXT NOT NULL,
@@ -469,7 +469,7 @@ CREATE TABLE post_office_box (
     removed TIMESTAMP WITH TIME ZONE
 );
 
-CREATE SEQUENCE post_office_box_id_seq
+CREATE SEQUENCE IF NOT EXISTS post_office_box_id_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
@@ -478,7 +478,7 @@ CREATE SEQUENCE post_office_box_id_seq
 
 ALTER SEQUENCE post_office_box_id_seq OWNED BY post_office_box.id;
 
-CREATE TABLE post_office (
+CREATE TABLE IF NOT EXISTS post_office (
     id BIGSERIAL PRIMARY KEY NOT NULL,
     post_office_box_address_id BIGSERIAL NOT NULL REFERENCES post_office_box_address(id),
     language TEXT NOT NULL,
@@ -489,7 +489,7 @@ CREATE TABLE post_office (
     removed TIMESTAMP WITH TIME ZONE
 );
 
-CREATE SEQUENCE post_office_id_seq
+CREATE SEQUENCE IF NOT EXISTS post_office_id_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
@@ -498,7 +498,7 @@ CREATE SEQUENCE post_office_id_seq
 
 ALTER SEQUENCE post_office_id_seq OWNED BY post_office.id;
 
-CREATE TABLE post_office_box_address_additional_information (
+CREATE TABLE IF NOT EXISTS post_office_box_address_additional_information (
     id BIGSERIAL PRIMARY KEY NOT NULL,
     post_office_box_address_id BIGSERIAL NOT NULL REFERENCES post_office_box_address(id),
     language TEXT NOT NULL,
@@ -509,7 +509,7 @@ CREATE TABLE post_office_box_address_additional_information (
     removed TIMESTAMP WITH TIME ZONE
 );
 
-CREATE SEQUENCE post_office_box_address_additional_information_id_seq
+CREATE SEQUENCE IF NOT EXISTS post_office_box_address_additional_information_id_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
@@ -518,45 +518,45 @@ CREATE SEQUENCE post_office_box_address_additional_information_id_seq
 
 ALTER SEQUENCE post_office_box_address_additional_information_id_seq OWNED BY post_office_box_address_additional_information.id;
 
-CREATE UNIQUE INDEX idx_wsdl_external_id ON wsdl USING btree (external_id);
-CREATE UNIQUE INDEX idx_openapi_external_id ON open_api USING btree (external_id);
-CREATE UNIQUE INDEX idx_member_natural_keys ON member(member_code, member_class, x_road_instance);
-CREATE UNIQUE INDEX idx_service_unique_fields ON service(subsystem_id, service_code, service_version);
-CREATE UNIQUE INDEX idx_subsystem_unique_fields ON subsystem(member_id, subsystem_code);
-CREATE UNIQUE INDEX idx_organization_guid ON organization USING btree (guid);
+CREATE UNIQUE INDEX IF NOT EXISTS idx_wsdl_external_id ON wsdl USING btree (external_id);
+CREATE UNIQUE INDEX IF NOT EXISTS idx_open_api_external_id ON open_api USING btree (external_id);
+CREATE UNIQUE INDEX IF NOT EXISTS idx_member_natural_keys ON member(member_code, member_class, x_road_instance);
+CREATE UNIQUE INDEX IF NOT EXISTS idx_service_unique_fields ON service(subsystem_id, service_code, service_version);
+CREATE UNIQUE INDEX IF NOT EXISTS idx_subsystem_unique_fields ON subsystem(member_id, subsystem_code);
+CREATE UNIQUE INDEX IF NOT EXISTS idx_organization_guid ON organization USING btree (guid);
 
-CREATE INDEX idx_wsdl_changed ON wsdl(changed);
-CREATE INDEX idx_openapi_changed ON open_api(changed);
-CREATE INDEX idx_service_changed ON service(changed);
-CREATE INDEX idx_subsystem_changed ON subsystem(changed);
-CREATE INDEX idx_member_changed ON member(changed);
-CREATE INDEX idx_organization_changed ON organization(changed);
-CREATE INDEX idx_address_changed ON address(changed);
-CREATE INDEX idx_email_changed ON email(changed);
-CREATE INDEX idx_street_address_municipality_changed ON street_address_municipality(changed);
-CREATE INDEX idx_street_address_municipality_name_changed ON street_address_municipality_name(changed);
-CREATE INDEX idx_post_office_box_address_municipality_changed ON post_office_box_address_municipality(changed);
-CREATE INDEX idx_post_office_box_address_municipality_name_changed ON post_office_box_address_municipality_name(changed);
-CREATE INDEX idx_organization_description_changed ON organization_description(changed);
-CREATE INDEX idx_organization_name_changed ON organization_name(changed);
-CREATE INDEX idx_phone_number_changed ON phone_number(changed);
-CREATE INDEX idx_post_office_changed ON post_office(changed);
-CREATE INDEX idx_post_office_box_changed ON post_office_box(changed);
-CREATE INDEX idx_post_office_box_address_changed ON post_office_box_address(changed);
-CREATE INDEX idx_post_office_box_address_additional_information_changed ON post_office_box_address_additional_information(changed);
-CREATE INDEX idx_street_changed ON street(changed);
-CREATE INDEX idx_street_address_changed ON street_address(changed);
-CREATE INDEX idx_street_address_additional_information_changed ON street_address_additional_information(changed);
-CREATE INDEX idx_street_address_post_office_changed ON street_address_post_office(changed);
-CREATE INDEX idx_webpage_changed ON web_page(changed);
-CREATE INDEX idx_wsdl_service_id ON wsdl(service_id);
-CREATE INDEX idx_openapi_service_id ON open_api(service_id);
-CREATE INDEX idx_organization_description_organization_id ON organization_description(organization_id);
-CREATE INDEX idx_organization_name_organization_id ON organization_name(organization_id);
-CREATE INDEX idx_email_organization_id ON email(organization_id);
-CREATE INDEX idx_address_organization_id ON address(organization_id);
-CREATE INDEX idx_phone_number_organization_id ON phone_number(organization_id);
-CREATE INDEX idx_webpage_organization_id ON web_page(organization_id);
+CREATE INDEX IF NOT EXISTS idx_wsdl_changed ON wsdl(changed);
+CREATE INDEX IF NOT EXISTS idx_open_api_changed ON open_api(changed);
+CREATE INDEX IF NOT EXISTS idx_service_changed ON service(changed);
+CREATE INDEX IF NOT EXISTS idx_subsystem_changed ON subsystem(changed);
+CREATE INDEX IF NOT EXISTS idx_member_changed ON member(changed);
+CREATE INDEX IF NOT EXISTS idx_organization_changed ON organization(changed);
+CREATE INDEX IF NOT EXISTS idx_address_changed ON address(changed);
+CREATE INDEX IF NOT EXISTS idx_email_changed ON email(changed);
+CREATE INDEX IF NOT EXISTS idx_street_address_municipality_changed ON street_address_municipality(changed);
+CREATE INDEX IF NOT EXISTS idx_street_address_municipality_name_changed ON street_address_municipality_name(changed);
+CREATE INDEX IF NOT EXISTS idx_post_office_box_address_municipality_changed ON post_office_box_address_municipality(changed);
+CREATE INDEX IF NOT EXISTS idx_post_office_box_address_municipality_name_changed ON post_office_box_address_municipality_name(changed);
+CREATE INDEX IF NOT EXISTS idx_organization_description_changed ON organization_description(changed);
+CREATE INDEX IF NOT EXISTS idx_organization_name_changed ON organization_name(changed);
+CREATE INDEX IF NOT EXISTS idx_phone_number_changed ON phone_number(changed);
+CREATE INDEX IF NOT EXISTS idx_post_office_changed ON post_office(changed);
+CREATE INDEX IF NOT EXISTS idx_post_office_box_changed ON post_office_box(changed);
+CREATE INDEX IF NOT EXISTS idx_post_office_box_address_changed ON post_office_box_address(changed);
+CREATE INDEX IF NOT EXISTS idx_post_office_box_address_additional_information_changed ON post_office_box_address_additional_information(changed);
+CREATE INDEX IF NOT EXISTS idx_street_changed ON street(changed);
+CREATE INDEX IF NOT EXISTS idx_street_address_changed ON street_address(changed);
+CREATE INDEX IF NOT EXISTS idx_street_address_additional_information_changed ON street_address_additional_information(changed);
+CREATE INDEX IF NOT EXISTS idx_street_address_post_office_changed ON street_address_post_office(changed);
+CREATE INDEX IF NOT EXISTS idx_webpage_changed ON web_page(changed);
+CREATE INDEX IF NOT EXISTS idx_wsdl_service_id ON wsdl(service_id);
+CREATE INDEX IF NOT EXISTS idx_open_api_service_id ON open_api(service_id);
+CREATE INDEX IF NOT EXISTS idx_organization_description_organization_id ON organization_description(organization_id);
+CREATE INDEX IF NOT EXISTS idx_organization_name_organization_id ON organization_name(organization_id);
+CREATE INDEX IF NOT EXISTS idx_email_organization_id ON email(organization_id);
+CREATE INDEX IF NOT EXISTS idx_address_organization_id ON address(organization_id);
+CREATE INDEX IF NOT EXISTS idx_phone_number_organization_id ON phone_number(organization_id);
+CREATE INDEX IF NOT EXISTS idx_webpage_organization_id ON web_page(organization_id);
 
 ALTER TABLE member OWNER TO xroad_catalog;
 ALTER TABLE service OWNER TO xroad_catalog;

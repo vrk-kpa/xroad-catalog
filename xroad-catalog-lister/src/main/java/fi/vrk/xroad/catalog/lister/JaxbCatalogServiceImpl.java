@@ -23,7 +23,7 @@
 package fi.vrk.xroad.catalog.lister;
 
 import fi.vrk.xroad.catalog.persistence.entity.*;
-import fi.vrk.xroad.catalog.persistence.service.CatalogService;
+import fi.vrk.xroad.catalog.persistence.CatalogService;
 import fi.vrk.xroad.xroad_catalog_lister.ChangedValue;
 import fi.vrk.xroad.xroad_catalog_lister.Member;
 import fi.vrk.xroad.xroad_catalog_lister.Organization;
