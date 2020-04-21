@@ -30,6 +30,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
@@ -46,6 +47,9 @@ import java.util.List;
 @Slf4j
 public class FetchOrganizationsActor extends XRoadCatalogActor {
 
+    @Value("${xroad-fetch-organizations-host}")
+    private String fetchOrganizationsHost;
+
     @Autowired
     protected CatalogService catalogService;
 
@@ -57,16 +61,15 @@ public class FetchOrganizationsActor extends XRoadCatalogActor {
     @Override
     protected boolean handleMessage(Object message) throws NoSuchAlgorithmException, KeyStoreException, KeyManagementException {
         if (message instanceof ClientList) {
-            String organizationListUrl = "https://api.palvelutietovaranto.suomi.fi";
 
-            log.info("Fetching organizations from {}", organizationListUrl);
+            log.info("Fetching organizations from {}", fetchOrganizationsHost);
 
-            List<String> organizationIds = OrganizationUtil.getOrganizationIdsList(organizationListUrl);
+            List<String> organizationIds = OrganizationUtil.getOrganizationIdsList(fetchOrganizationsHost);
             int numberOfOrganizations = organizationIds.size();
 
-            log.info("Fetched {} organization GUIDs from {}", numberOfOrganizations, organizationListUrl);
+            log.info("Fetched {} organization GUIDs from {}", numberOfOrganizations, fetchOrganizationsHost);
 
-            List<JSONArray> organizationData = OrganizationUtil.getOrganizationData(organizationIds, organizationListUrl);
+            List<JSONArray> organizationData = OrganizationUtil.getOrganizationData(organizationIds, fetchOrganizationsHost);
 
             for (int i = 0; i < organizationData.size(); i++) {
                 log.info("Saving {}. batch of {} organizations out of total {}",
