@@ -46,16 +46,12 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class OrganizationUtil {
 
-    private static final int MAXIMUM_IDS_IN_ORGANIZATION_REQUEST = 100;
-
     private OrganizationUtil() {
 
     }
 
-    public static List<String> getOrganizationIdsList(String host)
+    public static List<String> getOrganizationIdsList(String url)
             throws KeyStoreException, NoSuchAlgorithmException, KeyManagementException {
-        final String url = new StringBuilder().append(host)
-                .append("/api").append("/v11").append("/Organization").toString();
         String response = getResponseBody(url);
         JSONObject json = new JSONObject(response);
         JSONArray itemList = json.optJSONArray("itemList");
@@ -68,7 +64,7 @@ public class OrganizationUtil {
         return idsList;
     }
 
-    public static List<JSONArray> getOrganizationData(List<String> idsList, String host) {
+    public static List<JSONArray> getOrganizationData(List<String> idsList, String host, Integer maxPerRequest) {
         List<JSONArray> fullList = new ArrayList<>();
         AtomicInteger elementCount = new AtomicInteger();
         List<String> guidsList = new ArrayList<>();
@@ -76,7 +72,7 @@ public class OrganizationUtil {
         idsList.forEach(id -> {
             guidsList.add(id);
             elementCount.getAndIncrement();
-            if (elementCount.get() % MAXIMUM_IDS_IN_ORGANIZATION_REQUEST == 0) {
+            if (elementCount.get() % maxPerRequest == 0) {
                 fullList.add(getDataByIds(guidsList, host));
                 guidsList.clear();
             }
@@ -271,7 +267,7 @@ public class OrganizationUtil {
         return phoneNumbers;
     }
 
-    private static JSONArray getDataByIds(List<String> guids, String host) {
+    private static JSONArray getDataByIds(List<String> guids, String url) {
         String requestGuids = "";
         for (int i = 0; i < guids.size(); i++) {
             requestGuids += guids.get(i);
@@ -280,13 +276,12 @@ public class OrganizationUtil {
             }
         }
 
-        final String url = new StringBuilder().append(host)
-                .append("/api").append("/v11").append("/Organization")
+        final String listOrganizationsUrl = new StringBuilder().append(url)
                 .append("/list?guids=").append(requestGuids).toString();
 
         String ret = null;
         try {
-            ret = getResponseBody(url);
+            ret = getResponseBody(listOrganizationsUrl);
         } catch (KeyStoreException e) {
             e.printStackTrace();
         } catch (NoSuchAlgorithmException e) {

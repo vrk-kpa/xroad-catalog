@@ -47,8 +47,11 @@ import java.util.List;
 @Slf4j
 public class FetchOrganizationsActor extends XRoadCatalogActor {
 
-    @Value("${xroad-fetch-organizations-host}")
-    private String fetchOrganizationsHost;
+    @Value("${xroad-catalog.fetch-organizations-url}")
+    private String fetchOrganizationsUrl;
+
+    @Value("${xroad-catalog.max-organizations-per-request}")
+    private Integer maxOrganizationsPerRequest;
 
     @Autowired
     protected CatalogService catalogService;
@@ -62,14 +65,14 @@ public class FetchOrganizationsActor extends XRoadCatalogActor {
     protected boolean handleMessage(Object message) throws NoSuchAlgorithmException, KeyStoreException, KeyManagementException {
         if (message instanceof ClientList) {
 
-            log.info("Fetching organizations from {}", fetchOrganizationsHost);
+            log.info("Fetching organizations from {}", fetchOrganizationsUrl);
 
-            List<String> organizationIds = OrganizationUtil.getOrganizationIdsList(fetchOrganizationsHost);
+            List<String> organizationIds = OrganizationUtil.getOrganizationIdsList(fetchOrganizationsUrl);
             int numberOfOrganizations = organizationIds.size();
 
-            log.info("Fetched {} organization GUIDs from {}", numberOfOrganizations, fetchOrganizationsHost);
+            log.info("Fetched {} organization GUIDs from {}", numberOfOrganizations, fetchOrganizationsUrl);
 
-            List<JSONArray> organizationData = OrganizationUtil.getOrganizationData(organizationIds, fetchOrganizationsHost);
+            List<JSONArray> organizationData = OrganizationUtil.getOrganizationData(organizationIds, fetchOrganizationsUrl, maxOrganizationsPerRequest);
 
             for (int i = 0; i < organizationData.size(); i++) {
                 log.info("Saving {}. batch of {} organizations out of total {}",
