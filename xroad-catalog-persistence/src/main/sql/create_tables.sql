@@ -90,11 +90,11 @@ CREATE SEQUENCE IF NOT EXISTS wsdl_id_seq
 ALTER SEQUENCE wsdl_id_seq OWNED BY wsdl.id;
 
 CREATE SEQUENCE IF NOT EXISTS wsdl_external_id_seq
-START WITH 1
-INCREMENT BY 1
-NO MINVALUE
-NO MAXVALUE
-CACHE 1;
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
 
 ALTER SEQUENCE wsdl_external_id_seq OWNED BY wsdl.external_id;
 
@@ -119,11 +119,11 @@ CREATE SEQUENCE IF NOT EXISTS open_api_id_seq
 ALTER SEQUENCE open_api_id_seq OWNED BY open_api.id;
 
 CREATE SEQUENCE IF NOT EXISTS open_api_external_id_seq
-START WITH 1
-INCREMENT BY 1
-NO MINVALUE
-NO MAXVALUE
-CACHE 1;
+  START WITH 1
+  INCREMENT BY 1
+  NO MINVALUE
+  NO MAXVALUE
+  CACHE 1;
 
 ALTER SEQUENCE open_api_external_id_seq OWNED BY open_api.external_id;
 
