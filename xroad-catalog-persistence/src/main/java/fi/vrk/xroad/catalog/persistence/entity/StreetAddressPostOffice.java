@@ -20,16 +20,35 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package fi.vrk.xroad.catalog.persistence;
+package fi.vrk.xroad.catalog.persistence.entity;
 
-import fi.vrk.xroad.catalog.persistence.entity.OpenApi;
-import org.springframework.data.repository.CrudRepository;
+import lombok.*;
 
-import java.util.List;
+import javax.persistence.*;
 
-public interface OpenApiRepository extends CrudRepository<OpenApi, Long> {
-    /**
-     * Returns also removed items
-     */
-    List<OpenApi> findAnyByExternalId(String externalId);
+@Entity
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@ToString(exclude = {"streetAddress"})
+@EqualsAndHashCode(exclude = {"id","streetAddress","statusInfo"})
+@Builder
+public class StreetAddressPostOffice {
+
+    @Id
+    @Column(nullable = false)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "STREET_ADDRESS_POST_OFFICE_GEN")
+    @SequenceGenerator(name = "STREET_ADDRESS_POST_OFFICE_GEN", sequenceName = "STREET_ADDRESS_POST_OFFICE_ID_SEQ", allocationSize = 1)
+    private long id;
+    @Column(nullable = false)
+    private String language;
+    @Column(nullable = false)
+    private String value;
+    @Builder.Default
+    @Embedded
+    private StatusInfo statusInfo = new StatusInfo();
+    @ManyToOne
+    @JoinColumn(name = "STREET_ADDRESS_ID")
+    private StreetAddress streetAddress;
 }

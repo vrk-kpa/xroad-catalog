@@ -28,13 +28,17 @@ import akka.actor.Terminated;
 import akka.actor.UntypedActor;
 import lombok.extern.slf4j.Slf4j;
 
+import java.security.KeyManagementException;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+
 /**
  * Base class for all actors in the system.
  */
 @Slf4j
 public abstract class XRoadCatalogActor extends UntypedActor {
 
-    protected abstract boolean handleMessage(Object message);
+    protected abstract boolean handleMessage(Object message) throws NoSuchAlgorithmException, KeyStoreException, KeyManagementException;
 
     @Override
     public void onReceive(Object message) throws Exception {

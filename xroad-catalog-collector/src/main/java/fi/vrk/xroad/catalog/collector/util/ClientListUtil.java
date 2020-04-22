@@ -26,9 +26,10 @@ import fi.vrk.xroad.catalog.collector.wsimport.ClientList;
 import fi.vrk.xroad.catalog.collector.wsimport.ClientType;
 import fi.vrk.xroad.catalog.collector.wsimport.XRoadClientIdentifierType;
 import fi.vrk.xroad.catalog.collector.wsimport.XRoadObjectType;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.web.client.RestTemplate;
 
 /**
@@ -70,5 +71,7 @@ public class ClientListUtil {
 
         return clientList;
     }
+
+
 
 }

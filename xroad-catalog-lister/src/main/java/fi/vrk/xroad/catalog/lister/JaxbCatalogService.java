@@ -22,7 +22,9 @@
  */
 package fi.vrk.xroad.catalog.lister;
 
+import fi.vrk.xroad.xroad_catalog_lister.ChangedValue;
 import fi.vrk.xroad.xroad_catalog_lister.Member;
+import fi.vrk.xroad.xroad_catalog_lister.Organization;
 
 import javax.xml.datatype.XMLGregorianCalendar;
 
@@ -43,4 +45,20 @@ public interface JaxbCatalogService {
      * @return Iterable of JAXB generated Members
      */
     Iterable<Member> getAllMembers(XMLGregorianCalendar changedAfter);
+
+    /**
+     * Returns all organizations
+     *
+     * All subitems of organization are always returned
+     *
+     * @return Iterable of JAXB generated Organizations
+     */
+    Iterable<Organization> getOrganizations(String businessCode);
+
+    /**
+     * Returns whether some values of Organization have changed
+     *
+     * @return Iterable of JAXB generated ChangedValues
+     */
+    Iterable<ChangedValue> getChangedValues(String guid, XMLGregorianCalendar changedAfter);
 }

@@ -20,23 +20,16 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package fi.vrk.xroad.catalog.persistence;
+package fi.vrk.xroad.catalog.persistence.repository;
 
-import fi.vrk.xroad.catalog.persistence.entity.Subsystem;
-import org.springframework.data.jpa.repository.Query;
+import fi.vrk.xroad.catalog.persistence.entity.PostOfficeBoxAddressMunicipalityName;
 import org.springframework.data.repository.CrudRepository;
-import org.springframework.data.repository.query.Param;
 
-public interface SubsystemRepository extends CrudRepository<Subsystem, Long> {
+import java.util.List;
+import java.util.Optional;
 
-    @Query("SELECT s FROM Subsystem s WHERE s.subsystemCode = :subsystemCode "
-            + "AND s.member.xRoadInstance = :xRoadInstance "
-            + "AND s.member.memberClass = :memberClass "
-            + "AND s.member.memberCode = :memberCode "
-            + "AND s.statusInfo.removed IS NULL")
-    Subsystem findActiveByNaturalKey(@Param("xRoadInstance") String xRoadInstance,
-                                     @Param("memberClass") String memberClass,
-                                     @Param("memberCode") String memberCode,
-                                     @Param("subsystemCode") String subsystemCode);
+public interface PostOfficeBoxAddressMunicipalityNameRepository extends CrudRepository<PostOfficeBoxAddressMunicipalityName, Long> {
+
+    Optional<List<PostOfficeBoxAddressMunicipalityName>> findAnyByPostOfficeBoxAddressMunicipalityId(Long postOfficeBoxAddressMunicipalityId);
+
 }
-

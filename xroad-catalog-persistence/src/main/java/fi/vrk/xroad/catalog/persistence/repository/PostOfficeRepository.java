@@ -20,16 +20,15 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package fi.vrk.xroad.catalog.persistence;
+package fi.vrk.xroad.catalog.persistence.repository;
 
-import fi.vrk.xroad.catalog.persistence.entity.Wsdl;
+import fi.vrk.xroad.catalog.persistence.entity.PostOffice;
 import org.springframework.data.repository.CrudRepository;
 
 import java.util.List;
+import java.util.Optional;
 
-public interface WsdlRepository extends CrudRepository<Wsdl, Long> {
-    /**
-     * Returns also removed items
-     */
-    List<Wsdl> findAnyByExternalId(String externalId);
+public interface PostOfficeRepository extends CrudRepository<PostOffice, Long> {
+
+    Optional<List<PostOffice>> findAnyByPostOfficeBoxAddressId(Long postOfficeBoxAddressId);
 }

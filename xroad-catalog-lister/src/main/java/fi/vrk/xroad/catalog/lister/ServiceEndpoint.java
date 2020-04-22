@@ -141,4 +141,24 @@ public class ServiceEndpoint {
         return response;
     }
 
+    @PayloadRoot(namespace = NAMESPACE_URI, localPart = "GetOrganizations")
+    @ResponsePayload
+    public GetOrganizationsResponse getOrganizations(@RequestPayload GetOrganizations request) {
+        GetOrganizationsResponse response = new GetOrganizationsResponse();
+        response.setOrganizationList(new OrganizationList());
+        Iterable<Organization> organizations = jaxbCatalogService.getOrganizations(request.getBusinessCode());
+        response.getOrganizationList().getOrganization().addAll(Lists.newArrayList(organizations));
+        return response;
+    }
+
+    @PayloadRoot(namespace = NAMESPACE_URI, localPart = "HasOrganizationChanged")
+    @ResponsePayload
+    public HasOrganizationChangedResponse hasOrganizationChanged(@RequestPayload HasOrganizationChanged request) {
+        HasOrganizationChangedResponse response = new HasOrganizationChangedResponse();
+        response.setChangedValueList(new ChangedValueList());
+        Iterable<ChangedValue> changedValues = jaxbCatalogService.getChangedValues(request.getGuid(), request.getChangedAfter());
+        response.getChangedValueList().getChangedValue().addAll(Lists.newArrayList(changedValues));
+        response.setChanged(!response.getChangedValueList().getChangedValue().isEmpty());
+        return response;
+    }
 }

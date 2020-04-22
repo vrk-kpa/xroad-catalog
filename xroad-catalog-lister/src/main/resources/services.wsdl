@@ -210,6 +210,407 @@ http://x-road.eu/xsd/identifiers ">
                 </xs:complexType>
             </xs:element>
 
+            <xs:element name="GetOrganizations">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="businessCode" type="xs:string"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+
+            <xs:element name="GetOrganizationsResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="organizationList" type="tns:OrganizationList"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+
+            <xs:complexType name="OrganizationList">
+                <xs:sequence>
+                    <xs:element maxOccurs="unbounded" minOccurs="0" name="organization" type="tns:Organization"/>
+                </xs:sequence>
+            </xs:complexType>
+
+            <xs:complexType name="Organization">
+                <xs:sequence>
+                    <xs:element name="organizationType" type="xs:string"/>
+                    <xs:element name="publishingStatus" type="xs:string"/>
+                    <xs:element name="businessCode" type="xs:string"/>
+                    <xs:element name="guid" type="xs:string"/>
+                    <xs:element name="organizationNames" type="tns:OrganizationNameList"/>
+                    <xs:element name="organizationDescriptions" type="tns:OrganizationDescriptionList"/>
+                    <xs:element name="emails" type="tns:EmailList"/>
+                    <xs:element name="phoneNumbers" type="tns:PhoneNumberList"/>
+                    <xs:element name="webPages" type="tns:WebPageList"/>
+                    <xs:element name="addresses" type="tns:AddressList"/>
+                    <xs:element name="created" type="xs:dateTime"/>
+                    <xs:element name="changed" type="xs:dateTime"/>
+                    <xs:element name="fetched" type="xs:dateTime"/>
+                    <xs:element name="removed" type="xs:dateTime"/>
+                </xs:sequence>
+            </xs:complexType>
+
+            <xs:complexType name="OrganizationNameList">
+                <xs:sequence>
+                    <xs:element maxOccurs="unbounded" minOccurs="0" name="organizationName" type="tns:OrganizationName"/>
+                </xs:sequence>
+            </xs:complexType>
+
+            <xs:complexType name="OrganizationName">
+                <xs:sequence>
+                    <xs:element name="language" type="xs:string"/>
+                    <xs:element name="type" type="xs:string"/>
+                    <xs:element name="value" type="xs:string"/>
+                    <xs:element name="created" type="xs:dateTime"/>
+                    <xs:element name="changed" type="xs:dateTime"/>
+                    <xs:element name="fetched" type="xs:dateTime"/>
+                    <xs:element name="removed" type="xs:dateTime"/>
+                </xs:sequence>
+            </xs:complexType>
+
+            <xs:complexType name="OrganizationDescriptionList">
+                <xs:sequence>
+                    <xs:element maxOccurs="unbounded" minOccurs="0" name="organizationDescription" type="tns:OrganizationDescription"/>
+                </xs:sequence>
+            </xs:complexType>
+
+            <xs:complexType name="OrganizationDescription">
+                <xs:sequence>
+                    <xs:element name="language" type="xs:string"/>
+                    <xs:element name="type" type="xs:string"/>
+                    <xs:element name="value" type="xs:string"/>
+                    <xs:element name="created" type="xs:dateTime"/>
+                    <xs:element name="changed" type="xs:dateTime"/>
+                    <xs:element name="fetched" type="xs:dateTime"/>
+                    <xs:element name="removed" type="xs:dateTime"/>
+                </xs:sequence>
+            </xs:complexType>
+
+            <xs:complexType name="EmailList">
+                <xs:sequence>
+                    <xs:element maxOccurs="unbounded" minOccurs="0" name="email" type="tns:Email"/>
+                </xs:sequence>
+            </xs:complexType>
+
+            <xs:complexType name="Email">
+                <xs:sequence>
+                    <xs:element name="language" type="xs:string"/>
+                    <xs:element name="description" type="xs:string"/>
+                    <xs:element name="value" type="xs:string"/>
+                    <xs:element name="created" type="xs:dateTime"/>
+                    <xs:element name="changed" type="xs:dateTime"/>
+                    <xs:element name="fetched" type="xs:dateTime"/>
+                    <xs:element name="removed" type="xs:dateTime"/>
+                </xs:sequence>
+            </xs:complexType>
+
+            <xs:complexType name="PhoneNumberList">
+                <xs:sequence>
+                    <xs:element maxOccurs="unbounded" minOccurs="0" name="phoneNumber" type="tns:PhoneNumber"/>
+                </xs:sequence>
+            </xs:complexType>
+
+            <xs:complexType name="PhoneNumber">
+                <xs:sequence>
+                    <xs:element name="language" type="xs:string"/>
+                    <xs:element name="additionalInformation" type="xs:string"/>
+                    <xs:element name="serviceChargeType" type="xs:string"/>
+                    <xs:element name="chargeDescription" type="xs:string"/>
+                    <xs:element name="prefixNumber" type="xs:string"/>
+                    <xs:element name="number" type="xs:string"/>
+                    <xs:element name="isFinnishServiceNumber" type="xs:boolean"/>
+                    <xs:element name="created" type="xs:dateTime"/>
+                    <xs:element name="changed" type="xs:dateTime"/>
+                    <xs:element name="fetched" type="xs:dateTime"/>
+                    <xs:element name="removed" type="xs:dateTime"/>
+                </xs:sequence>
+            </xs:complexType>
+
+            <xs:complexType name="WebPageList">
+                <xs:sequence>
+                    <xs:element maxOccurs="unbounded" minOccurs="0" name="webPage" type="tns:WebPage"/>
+                </xs:sequence>
+            </xs:complexType>
+
+            <xs:complexType name="WebPage">
+                <xs:sequence>
+                    <xs:element name="language" type="xs:string"/>
+                    <xs:element name="url" type="xs:string"/>
+                    <xs:element name="value" type="xs:string"/>
+                    <xs:element name="created" type="xs:dateTime"/>
+                    <xs:element name="changed" type="xs:dateTime"/>
+                    <xs:element name="fetched" type="xs:dateTime"/>
+                    <xs:element name="removed" type="xs:dateTime"/>
+                </xs:sequence>
+            </xs:complexType>
+
+            <xs:complexType name="AddressList">
+                <xs:sequence>
+                    <xs:element maxOccurs="unbounded" minOccurs="0" name="address" type="tns:Address"/>
+                </xs:sequence>
+            </xs:complexType>
+
+            <xs:complexType name="Address">
+                <xs:sequence>
+                    <xs:element name="country" type="xs:string"/>
+                    <xs:element name="type" type="xs:string"/>
+                    <xs:element name="subType" type="xs:string"/>
+                    <xs:element name="streetAddresses" type="tns:StreetAddressList"/>
+                    <xs:element name="postOfficeBoxAddresses" type="tns:PostOfficeBoxAddressList"/>
+                    <xs:element name="created" type="xs:dateTime"/>
+                    <xs:element name="changed" type="xs:dateTime"/>
+                    <xs:element name="fetched" type="xs:dateTime"/>
+                    <xs:element name="removed" type="xs:dateTime"/>
+                </xs:sequence>
+            </xs:complexType>
+
+            <xs:complexType name="StreetAddressList">
+                <xs:sequence>
+                    <xs:element maxOccurs="unbounded" minOccurs="0" name="streetAddress" type="tns:StreetAddress"/>
+                </xs:sequence>
+            </xs:complexType>
+
+            <xs:complexType name="StreetAddress">
+                <xs:sequence>
+                    <xs:element name="address" type="xs:string"/>
+                    <xs:element name="streetNumber" type="xs:string"/>
+                    <xs:element name="postalCode" type="xs:string"/>
+                    <xs:element name="latitude" type="xs:string"/>
+                    <xs:element name="longitude" type="xs:string"/>
+                    <xs:element name="coordinateState" type="xs:string"/>
+                    <xs:element name="streets" type="tns:StreetList"/>
+                    <xs:element name="postOffices" type="tns:StreetAddressPostOfficeList"/>
+                    <xs:element name="municipalities" type="tns:StreetAddressMunicipalityList"/>
+                    <xs:element name="additionalInformation" type="tns:StreetAddressAdditionalInformationList"/>
+                    <xs:element name="created" type="xs:dateTime"/>
+                    <xs:element name="changed" type="xs:dateTime"/>
+                    <xs:element name="fetched" type="xs:dateTime"/>
+                    <xs:element name="removed" type="xs:dateTime"/>
+                </xs:sequence>
+            </xs:complexType>
+
+            <xs:complexType name="StreetList">
+                <xs:sequence>
+                    <xs:element maxOccurs="unbounded" minOccurs="0" name="street" type="tns:Street"/>
+                </xs:sequence>
+            </xs:complexType>
+
+            <xs:complexType name="Street">
+                <xs:sequence>
+                    <xs:element name="language" type="xs:string"/>
+                    <xs:element name="value" type="xs:string"/>
+                    <xs:element name="created" type="xs:dateTime"/>
+                    <xs:element name="changed" type="xs:dateTime"/>
+                    <xs:element name="fetched" type="xs:dateTime"/>
+                    <xs:element name="removed" type="xs:dateTime"/>
+                </xs:sequence>
+            </xs:complexType>
+
+            <xs:complexType name="StreetAddressPostOfficeList">
+                <xs:sequence>
+                    <xs:element maxOccurs="unbounded" minOccurs="0" name="streetAddressPostOffice" type="tns:StreetAddressPostOffice"/>
+                </xs:sequence>
+            </xs:complexType>
+
+            <xs:complexType name="StreetAddressPostOffice">
+                <xs:sequence>
+                    <xs:element name="language" type="xs:string"/>
+                    <xs:element name="value" type="xs:string"/>
+                    <xs:element name="created" type="xs:dateTime"/>
+                    <xs:element name="changed" type="xs:dateTime"/>
+                    <xs:element name="fetched" type="xs:dateTime"/>
+                    <xs:element name="removed" type="xs:dateTime"/>
+                </xs:sequence>
+            </xs:complexType>
+
+            <xs:complexType name="StreetAddressAdditionalInformationList">
+                <xs:sequence>
+                    <xs:element maxOccurs="unbounded" minOccurs="0" name="streetAddressAdditionalInformation" type="tns:StreetAddressAdditionalInformation"/>
+                </xs:sequence>
+            </xs:complexType>
+
+            <xs:complexType name="StreetAddressAdditionalInformation">
+                <xs:sequence>
+                    <xs:element name="language" type="xs:string"/>
+                    <xs:element name="value" type="xs:string"/>
+                    <xs:element name="created" type="xs:dateTime"/>
+                    <xs:element name="changed" type="xs:dateTime"/>
+                    <xs:element name="fetched" type="xs:dateTime"/>
+                    <xs:element name="removed" type="xs:dateTime"/>
+                </xs:sequence>
+            </xs:complexType>
+
+            <xs:complexType name="StreetAddressMunicipalityList">
+                <xs:sequence>
+                    <xs:element maxOccurs="unbounded" minOccurs="0" name="streetAddressMunicipality" type="tns:StreetAddressMunicipality"/>
+                </xs:sequence>
+            </xs:complexType>
+
+            <xs:complexType name="StreetAddressMunicipality">
+                <xs:sequence>
+                    <xs:element name="code" type="xs:string"/>
+                    <xs:element name="streetAddressMunicipalityNames" type="tns:StreetAddressMunicipalityNameList"/>
+                    <xs:element name="created" type="xs:dateTime"/>
+                    <xs:element name="changed" type="xs:dateTime"/>
+                    <xs:element name="fetched" type="xs:dateTime"/>
+                    <xs:element name="removed" type="xs:dateTime"/>
+                </xs:sequence>
+            </xs:complexType>
+
+            <xs:complexType name="StreetAddressMunicipalityNameList">
+                <xs:sequence>
+                    <xs:element maxOccurs="unbounded" minOccurs="0" name="streetAddressMunicipalityName" type="tns:StreetAddressMunicipalityName"/>
+                </xs:sequence>
+            </xs:complexType>
+
+            <xs:complexType name="StreetAddressMunicipalityName">
+                <xs:sequence>
+                    <xs:element name="language" type="xs:string"/>
+                    <xs:element name="value" type="xs:string"/>
+                    <xs:element name="created" type="xs:dateTime"/>
+                    <xs:element name="changed" type="xs:dateTime"/>
+                    <xs:element name="fetched" type="xs:dateTime"/>
+                    <xs:element name="removed" type="xs:dateTime"/>
+                </xs:sequence>
+            </xs:complexType>
+
+            <xs:complexType name="PostOfficeBoxAddressList">
+                <xs:sequence>
+                    <xs:element maxOccurs="unbounded" minOccurs="0" name="postOfficeBoxAddress" type="tns:PostOfficeBoxAddress"/>
+                </xs:sequence>
+            </xs:complexType>
+
+            <xs:complexType name="PostOfficeBoxAddress">
+                <xs:sequence>
+                    <xs:element name="address" type="xs:string"/>
+                    <xs:element name="postalCode" type="xs:string"/>
+                    <xs:element name="postOfficeBoxAddressMunicipalities" type="tns:PostOfficeBoxAddressMunicipalityList"/>
+                    <xs:element name="additionalInformation" type="tns:PostOfficeBoxAddressAdditionalInformationList"/>
+                    <xs:element name="postOffices" type="tns:PostOfficeList"/>
+                    <xs:element name="postOfficeBoxes" type="tns:PostOfficeBoxList"/>
+                    <xs:element name="created" type="xs:dateTime"/>
+                    <xs:element name="changed" type="xs:dateTime"/>
+                    <xs:element name="fetched" type="xs:dateTime"/>
+                    <xs:element name="removed" type="xs:dateTime"/>
+                </xs:sequence>
+            </xs:complexType>
+
+            <xs:complexType name="PostOfficeBoxAddressMunicipalityList">
+                <xs:sequence>
+                    <xs:element maxOccurs="unbounded" minOccurs="0" name="postOfficeBoxAddressMunicipality" type="tns:PostOfficeBoxAddressMunicipality"/>
+                </xs:sequence>
+            </xs:complexType>
+
+            <xs:complexType name="PostOfficeBoxAddressMunicipality">
+                <xs:sequence>
+                    <xs:element name="code" type="xs:string"/>
+                    <xs:element name="postOfficeBoxAddressMunicipalityNames" type="tns:PostOfficeBoxAddressMunicipalityNameList"/>
+                    <xs:element name="created" type="xs:dateTime"/>
+                    <xs:element name="changed" type="xs:dateTime"/>
+                    <xs:element name="fetched" type="xs:dateTime"/>
+                    <xs:element name="removed" type="xs:dateTime"/>
+                </xs:sequence>
+            </xs:complexType>
+
+            <xs:complexType name="PostOfficeBoxAddressMunicipalityNameList">
+                <xs:sequence>
+                    <xs:element maxOccurs="unbounded" minOccurs="0" name="postOfficeBoxAddressMunicipalityName" type="tns:PostOfficeBoxAddressMunicipalityName"/>
+                </xs:sequence>
+            </xs:complexType>
+
+            <xs:complexType name="PostOfficeBoxAddressMunicipalityName">
+                <xs:sequence>
+                    <xs:element name="language" type="xs:string"/>
+                    <xs:element name="value" type="xs:string"/>
+                    <xs:element name="created" type="xs:dateTime"/>
+                    <xs:element name="changed" type="xs:dateTime"/>
+                    <xs:element name="fetched" type="xs:dateTime"/>
+                    <xs:element name="removed" type="xs:dateTime"/>
+                </xs:sequence>
+            </xs:complexType>
+
+            <xs:complexType name="PostOfficeBoxAddressAdditionalInformationList">
+                <xs:sequence>
+                    <xs:element maxOccurs="unbounded" minOccurs="0" name="postOfficeBoxAddressAdditionalInformation" type="tns:PostOfficeBoxAddressAdditionalInformation"/>
+                </xs:sequence>
+            </xs:complexType>
+
+            <xs:complexType name="PostOfficeBoxAddressAdditionalInformation">
+                <xs:sequence>
+                    <xs:element name="language" type="xs:string"/>
+                    <xs:element name="value" type="xs:string"/>
+                    <xs:element name="created" type="xs:dateTime"/>
+                    <xs:element name="changed" type="xs:dateTime"/>
+                    <xs:element name="fetched" type="xs:dateTime"/>
+                    <xs:element name="removed" type="xs:dateTime"/>
+                </xs:sequence>
+            </xs:complexType>
+
+            <xs:complexType name="PostOfficeList">
+                <xs:sequence>
+                    <xs:element maxOccurs="unbounded" minOccurs="0" name="postOffice" type="tns:PostOffice"/>
+                </xs:sequence>
+            </xs:complexType>
+
+            <xs:complexType name="PostOffice">
+                <xs:sequence>
+                    <xs:element name="language" type="xs:string"/>
+                    <xs:element name="value" type="xs:string"/>
+                    <xs:element name="created" type="xs:dateTime"/>
+                    <xs:element name="changed" type="xs:dateTime"/>
+                    <xs:element name="fetched" type="xs:dateTime"/>
+                    <xs:element name="removed" type="xs:dateTime"/>
+                </xs:sequence>
+            </xs:complexType>
+
+            <xs:complexType name="PostOfficeBoxList">
+                <xs:sequence>
+                    <xs:element maxOccurs="unbounded" minOccurs="0" name="postOfficeBox" type="tns:PostOfficeBox"/>
+                </xs:sequence>
+            </xs:complexType>
+
+            <xs:complexType name="PostOfficeBox">
+                <xs:sequence>
+                    <xs:element name="language" type="xs:string"/>
+                    <xs:element name="value" type="xs:string"/>
+                    <xs:element name="created" type="xs:dateTime"/>
+                    <xs:element name="changed" type="xs:dateTime"/>
+                    <xs:element name="fetched" type="xs:dateTime"/>
+                    <xs:element name="removed" type="xs:dateTime"/>
+                </xs:sequence>
+            </xs:complexType>
+
+            <xs:element name="HasOrganizationChanged">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="guid" type="xs:string"/>
+                        <xs:element name="changedAfter" type="xs:dateTime"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+
+            <xs:element name="HasOrganizationChangedResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="changed" type="xs:boolean"/>
+                        <xs:element name="changedValueList" type="tns:ChangedValueList"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+
+            <xs:complexType name="ChangedValueList">
+                <xs:sequence>
+                    <xs:element maxOccurs="unbounded" minOccurs="0" name="changedValue" type="tns:ChangedValue"/>
+                </xs:sequence>
+            </xs:complexType>
+
+            <xs:complexType name="ChangedValue">
+                <xs:sequence>
+                    <xs:element name="name" type="xs:string"/>
+                </xs:sequence>
+            </xs:complexType>
+
             <xs:complexType name="MemberList">
                 <xs:sequence>
                     <xs:element maxOccurs="unbounded" minOccurs="0" name="member" type="tns:Member"/>
@@ -348,6 +749,22 @@ http://x-road.eu/xsd/identifiers ">
         <wsdl:part element="tns:IsProvider" name="body">
         </wsdl:part>
     </wsdl:message>
+    <wsdl:message name="GetOrganizationsResponse">
+        <wsdl:part element="tns:GetOrganizationsResponse" name="body">
+        </wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="GetOrganizations">
+        <wsdl:part element="tns:GetOrganizations" name="body">
+        </wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="HasOrganizationChangedResponse">
+        <wsdl:part element="tns:HasOrganizationChangedResponse" name="body">
+        </wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="HasOrganizationChanged">
+        <wsdl:part element="tns:HasOrganizationChanged" name="body">
+        </wsdl:part>
+    </wsdl:message>
     <wsdl:portType name="ServicesPort">
         <wsdl:operation name="ListMembers">
             <wsdl:input message="tns:ListMembers" name="ListMembers">
@@ -383,6 +800,18 @@ http://x-road.eu/xsd/identifiers ">
             <wsdl:input message="tns:IsProvider" name="IsProvider">
             </wsdl:input>
             <wsdl:output message="tns:IsProviderResponse" name="IsProviderResponse">
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="GetOrganizations">
+            <wsdl:input message="tns:GetOrganizations" name="GetOrganizations">
+            </wsdl:input>
+            <wsdl:output message="tns:GetOrganizationsResponse" name="GetOrganizationsResponse">
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="HasOrganizationChanged">
+            <wsdl:input message="tns:HasOrganizationChanged" name="HasOrganizationChanged">
+            </wsdl:input>
+            <wsdl:output message="tns:HasOrganizationChangedResponse" name="HasOrganizationChangedResponse">
             </wsdl:output>
         </wsdl:operation>
     </wsdl:portType>
@@ -511,6 +940,50 @@ http://x-road.eu/xsd/identifiers ">
                 <soap:header message="tns:requestheader" part="protocolVersion" use="literal"/>
             </wsdl:input>
             <wsdl:output name="IsProviderResponse">
+                <soap:body parts="body" use="literal"/>
+                <soap:header message="tns:requestheader" part="client" use="literal"/>
+                <soap:header message="tns:requestheader" part="service" use="literal"/>
+                <soap:header message="tns:requestheader" part="userId" use="literal"/>
+                <soap:header message="tns:requestheader" part="id" use="literal"/>
+                <soap:header message="tns:requestheader" part="issue" use="literal"/>
+                <soap:header message="tns:requestheader" part="protocolVersion" use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="GetOrganizations">
+            <soap:operation soapAction=""/>
+            <id:version>v1</id:version>
+            <wsdl:input name="GetOrganizations">
+                <soap:body parts="body" use="literal"/>
+                <soap:header message="tns:requestheader" part="client" use="literal"/>
+                <soap:header message="tns:requestheader" part="service" use="literal"/>
+                <soap:header message="tns:requestheader" part="userId" use="literal"/>
+                <soap:header message="tns:requestheader" part="id" use="literal"/>
+                <soap:header message="tns:requestheader" part="issue" use="literal"/>
+                <soap:header message="tns:requestheader" part="protocolVersion" use="literal"/>
+            </wsdl:input>
+            <wsdl:output name="GetOrganizationsResponse">
+                <soap:body parts="body" use="literal"/>
+                <soap:header message="tns:requestheader" part="client" use="literal"/>
+                <soap:header message="tns:requestheader" part="service" use="literal"/>
+                <soap:header message="tns:requestheader" part="userId" use="literal"/>
+                <soap:header message="tns:requestheader" part="id" use="literal"/>
+                <soap:header message="tns:requestheader" part="issue" use="literal"/>
+                <soap:header message="tns:requestheader" part="protocolVersion" use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="HasOrganizationChanged">
+            <soap:operation soapAction=""/>
+            <id:version>v1</id:version>
+            <wsdl:input name="HasOrganizationChanged">
+                <soap:body parts="body" use="literal"/>
+                <soap:header message="tns:requestheader" part="client" use="literal"/>
+                <soap:header message="tns:requestheader" part="service" use="literal"/>
+                <soap:header message="tns:requestheader" part="userId" use="literal"/>
+                <soap:header message="tns:requestheader" part="id" use="literal"/>
+                <soap:header message="tns:requestheader" part="issue" use="literal"/>
+                <soap:header message="tns:requestheader" part="protocolVersion" use="literal"/>
+            </wsdl:input>
+            <wsdl:output name="HasOrganizationChangedResponse">
                 <soap:body parts="body" use="literal"/>
                 <soap:header message="tns:requestheader" part="client" use="literal"/>
                 <soap:header message="tns:requestheader" part="service" use="literal"/>
