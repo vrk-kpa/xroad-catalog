@@ -147,6 +147,10 @@ public class ServiceEndpoint {
         GetOrganizationsResponse response = new GetOrganizationsResponse();
         response.setOrganizationList(new OrganizationList());
         Iterable<Organization> organizations = jaxbCatalogService.getOrganizations(request.getBusinessCode());
+        if (!organizations.iterator().hasNext()) {
+            throw new OrganizationsNotFoundException("Organizations with businessCode " + request.getBusinessCode()
+                    + " not found");
+        }
         response.getOrganizationList().getOrganization().addAll(Lists.newArrayList(organizations));
         return response;
     }

@@ -34,10 +34,7 @@ import org.springframework.stereotype.Component;
 
 import javax.xml.datatype.XMLGregorianCalendar;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * XML interface for lister
@@ -78,10 +75,13 @@ public class JaxbCatalogServiceImpl implements JaxbCatalogService {
 
     @Override
     public Iterable<ChangedValue> getChangedValues(String guid, XMLGregorianCalendar changedAfter) {
-        log.info("get changed values for oganization with guid {} and changedAfter {}", guid, changedAfter);
-        fi.vrk.xroad.catalog.persistence.entity.Organization organization = catalogService.getOrganization(guid);
-
-        return getAllChangedValuesForOrganization(organization, jaxbConverter.toLocalDateTime(changedAfter));
+        log.info("get changed values for organization with guid {} and changedAfter {}", guid, changedAfter);
+        Optional<fi.vrk.xroad.catalog.persistence.entity.Organization> organization = catalogService.getOrganization(guid);
+        if (organization.isPresent()) {
+            return getAllChangedValuesForOrganization(organization.get(), jaxbConverter.toLocalDateTime(changedAfter));
+        } else {
+            throw new OrganizationsNotFoundException("Organization with guid " + guid + " not found");
+        }
     }
 
     private Iterable<ChangedValue> getAllChangedValuesForOrganization(fi.vrk.xroad.catalog.persistence.entity.Organization organization,

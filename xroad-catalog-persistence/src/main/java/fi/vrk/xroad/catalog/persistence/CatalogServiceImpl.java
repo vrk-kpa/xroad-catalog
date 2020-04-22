@@ -177,7 +177,7 @@ public class CatalogServiceImpl implements CatalogService {
     }
 
     @Override
-    public Organization getOrganization(String guid) {
+    public Optional<Organization> getOrganization(String guid) {
         return organizationRepository.findAnyByOrganizationGuid(guid);
     }
 
@@ -393,8 +393,8 @@ public class CatalogServiceImpl implements CatalogService {
 
     @Override
     public Organization saveOrganization(Organization organization) {
-        Optional<Organization> foundOrganization = Optional.ofNullable(organizationRepository
-                .findAnyByOrganizationGuid(organization.getGuid()));
+        Optional<Organization> foundOrganization = organizationRepository
+                .findAnyByOrganizationGuid(organization.getGuid());
         if (foundOrganization.isPresent()) {
             Organization oldOrganization = foundOrganization.get();
             StatusInfo statusInfo = oldOrganization.getStatusInfo();

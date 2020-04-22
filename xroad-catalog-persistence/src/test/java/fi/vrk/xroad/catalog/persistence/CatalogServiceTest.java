@@ -37,10 +37,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
 import java.util.stream.StreamSupport;
 
 import static org.junit.Assert.assertEquals;
@@ -104,6 +101,112 @@ public class CatalogServiceTest {
         assertEquals(8, openApi.getService().getSubsystem().getId());
     }
 
+    @Test
+    public void testGetOrganizations() {
+        Iterable<Organization> organizations = catalogService.getOrganizations("0123456-9");
+        assertEquals(1, Iterables.size(organizations));
+        assertEquals(1, organizations.iterator().next().getAllOrganizationNames().size());
+        assertEquals(1, organizations.iterator().next().getAllOrganizationDescriptions().size());
+        assertEquals(1, organizations.iterator().next().getAllEmails().size());
+        assertEquals(1, organizations.iterator().next().getAllPhoneNumbers().size());
+        assertEquals(1, organizations.iterator().next().getAllWebPages().size());
+        assertEquals(1, organizations.iterator().next().getAllAddresses().size());
+        assertEquals(1, organizations.iterator().next().getAllAddresses().iterator().next()
+                .getAllStreetAddresses().size());
+        assertEquals(1, organizations.iterator().next().getAllAddresses().iterator().next()
+                .getAllPostOfficeBoxAddresses().size());
+        assertEquals("0123456-9", organizations.iterator().next().getBusinessCode());
+        assertEquals("abcdef123456", organizations.iterator().next().getGuid());
+        assertEquals("Published", organizations.iterator().next().getPublishingStatus());
+        assertEquals("Municipality", organizations.iterator().next().getOrganizationType());
+        assertEquals("Vaasan kaupunki", organizations.iterator().next().getAllOrganizationNames().iterator().next().getValue());
+        assertEquals("Vaasa on yli 67 000 asukkaan voimakkaasti kasvava kaupunki",
+                organizations.iterator().next().getAllOrganizationDescriptions().iterator().next().getValue());
+        assertEquals("vaasa@vaasa.fi", organizations.iterator().next().getAllEmails().iterator().next().getValue());
+        assertEquals("62249111", organizations.iterator().next().getAllPhoneNumbers().iterator().next().getNumber());
+        assertEquals("https://www.vaasa.fi/", organizations.iterator().next().getAllWebPages().iterator().next().getUrl());
+        assertEquals("Street", organizations.iterator().next().getAllAddresses().iterator().next().getSubType());
+        assertEquals("64200", organizations.iterator().next().getAllAddresses().iterator().next()
+                .getAllStreetAddresses().iterator().next().getPostalCode());
+        assertEquals("Motellikuja", organizations.iterator().next().getAllAddresses().iterator().next()
+                .getAllStreetAddresses().iterator().next().getAllStreets().iterator().next().getValue());
+        assertEquals("64200", organizations.iterator().next().getAllAddresses().iterator().next()
+                .getAllPostOfficeBoxAddresses().iterator().next().getPostalCode());
+        assertEquals("NIVALA", organizations.iterator().next().getAllAddresses().iterator().next()
+                .getAllPostOfficeBoxAddresses().iterator().next().getAllPostOffices().iterator().next().getValue());
+        assertEquals("NIVALA", organizations.iterator().next().getAllAddresses().iterator().next()
+                .getAllPostOfficeBoxAddresses().iterator().next().getAllPostOfficeBoxes().iterator().next().getValue());
+        assertEquals("Kaupungintalo/kaupunginjohtaja", organizations.iterator().next().getAllAddresses().iterator().next()
+                .getAllPostOfficeBoxAddresses().iterator().next().getAllAdditionalInformation().iterator().next().getValue());
+        assertEquals("545", organizations.iterator().next().getAllAddresses().iterator().next()
+                .getAllPostOfficeBoxAddresses().iterator().next().getAllMunicipalities().iterator().next().getCode());
+        assertEquals("Nivala", organizations.iterator().next().getAllAddresses().iterator().next()
+                .getAllPostOfficeBoxAddresses().iterator().next().getAllMunicipalities().iterator().next()
+                .getAllMunicipalityNames().iterator().next().getValue());
+    }
+
+    @Test
+    public void testGetOrganization() {
+        Optional<Organization> organization = catalogService.getOrganization("abcdef123456");
+        assertEquals(true, organization.isPresent());
+        assertEquals(1, organization.get().getAllOrganizationNames().size());
+        assertEquals(1, organization.get().getAllOrganizationDescriptions().size());
+        assertEquals(1, organization.get().getAllEmails().size());
+        assertEquals(1, organization.get().getAllPhoneNumbers().size());
+        assertEquals(1, organization.get().getAllWebPages().size());
+        assertEquals(1, organization.get().getAllAddresses().size());
+        assertEquals(1, organization.get().getAllAddresses().iterator().next()
+                .getAllStreetAddresses().size());
+        assertEquals(1, organization.get().getAllAddresses().iterator().next()
+                .getAllPostOfficeBoxAddresses().size());
+        assertEquals("0123456-9", organization.get().getBusinessCode());
+        assertEquals("abcdef123456", organization.get().getGuid());
+        assertEquals("Published", organization.get().getPublishingStatus());
+        assertEquals("Municipality", organization.get().getOrganizationType());
+        assertEquals("Vaasan kaupunki", organization.get().getAllOrganizationNames().iterator().next().getValue());
+        assertEquals("Vaasa on yli 67 000 asukkaan voimakkaasti kasvava kaupunki",
+                organization.get().getAllOrganizationDescriptions().iterator().next().getValue());
+        assertEquals("vaasa@vaasa.fi", organization.get().getAllEmails().iterator().next().getValue());
+        assertEquals("62249111", organization.get().getAllPhoneNumbers().iterator().next().getNumber());
+        assertEquals("https://www.vaasa.fi/", organization.get().getAllWebPages().iterator().next().getUrl());
+        assertEquals("Street", organization.get().getAllAddresses().iterator().next().getSubType());
+        assertEquals("64200", organization.get().getAllAddresses().iterator().next()
+                .getAllStreetAddresses().iterator().next().getPostalCode());
+        assertEquals("Motellikuja", organization.get().getAllAddresses().iterator().next()
+                .getAllStreetAddresses().iterator().next().getAllStreets().iterator().next().getValue());
+        assertEquals("64200", organization.get().getAllAddresses().iterator().next()
+                .getAllPostOfficeBoxAddresses().iterator().next().getPostalCode());
+        assertEquals("NIVALA", organization.get().getAllAddresses().iterator().next()
+                .getAllPostOfficeBoxAddresses().iterator().next().getAllPostOffices().iterator().next().getValue());
+        assertEquals("NIVALA", organization.get().getAllAddresses().iterator().next()
+                .getAllPostOfficeBoxAddresses().iterator().next().getAllPostOfficeBoxes().iterator().next().getValue());
+        assertEquals("Kaupungintalo/kaupunginjohtaja", organization.get().getAllAddresses().iterator().next()
+                .getAllPostOfficeBoxAddresses().iterator().next().getAllAdditionalInformation().iterator().next().getValue());
+        assertEquals("545", organization.get().getAllAddresses().iterator().next()
+                .getAllPostOfficeBoxAddresses().iterator().next().getAllMunicipalities().iterator().next().getCode());
+        assertEquals("Nivala", organization.get().getAllAddresses().iterator().next()
+                .getAllPostOfficeBoxAddresses().iterator().next().getAllMunicipalities().iterator().next()
+                .getAllMunicipalityNames().iterator().next().getValue());
+    }
+
+    @Test
+    public void testSaveOrganization() {
+        Organization organization = Organization.builder()
+                .organizationType("Municipality")
+                .businessCode("123456789-0")
+                .guid("abcdef123456789")
+                .publishingStatus("Published").build();
+        Organization savedOrganization = catalogService.saveOrganization(organization);
+        assertNotNull(savedOrganization);
+        assertNotNull(savedOrganization.getId());
+        assertEquals("abcdef123456789", savedOrganization.getGuid());
+        assertEquals("123456789-0", savedOrganization.getBusinessCode());
+        assertNotNull(savedOrganization.getStatusInfo().getCreated());
+        assertNotNull(savedOrganization.getStatusInfo().getChanged());
+        assertNotNull(savedOrganization.getStatusInfo().getFetched());
+        assertNull(savedOrganization.getStatusInfo().getRemoved());
+    }
+    
     @Test
     public void testEntityTreesFetchedCorrectly() throws InterruptedException {
         assertEntityTreeFetchedCorrectly(catalogService.getAllMembers());

@@ -86,7 +86,7 @@ public class ListClientsActor extends XRoadCatalogActor {
 
         if (START_COLLECTING.equals(message)) {
 
-            String listClientsUrl = host + "/listClients";
+/*            String listClientsUrl = host + "/listClients";
 
             log.info("Getting client list from {}", listClientsUrl);
             ClientList clientList = ClientListUtil.clientListFromResponse(listClientsUrl);
@@ -119,8 +119,8 @@ public class ListClientsActor extends XRoadCatalogActor {
                 }
             }
 
-            log.info("all clients (" + (counter - 1) + ") sent to actor");
-
+            log.info("all clients (" + (counter - 1) + ") sent to actor");*/
+ClientList clientList = new ClientList();
             fetchOrganizationsPoolRef.tell(clientList, getSelf());
 
             return true;
