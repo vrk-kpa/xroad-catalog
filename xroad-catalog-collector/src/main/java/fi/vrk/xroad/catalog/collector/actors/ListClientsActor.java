@@ -86,12 +86,11 @@ public class ListClientsActor extends XRoadCatalogActor {
 
         if (START_COLLECTING.equals(message)) {
 
-/*            String listClientsUrl = host + "/listClients";
+            String listClientsUrl = host + "/listClients";
 
             log.info("Getting client list from {}", listClientsUrl);
             ClientList clientList = ClientListUtil.clientListFromResponse(listClientsUrl);
-
-
+            
             int counter = 1;
             HashMap<MemberId, Member> m = new HashMap();
 
@@ -119,8 +118,8 @@ public class ListClientsActor extends XRoadCatalogActor {
                 }
             }
 
-            log.info("all clients (" + (counter - 1) + ") sent to actor");*/
-ClientList clientList = new ClientList();
+            log.info("all clients (" + (counter - 1) + ") sent to actor");
+
             fetchOrganizationsPoolRef.tell(clientList, getSelf());
 
             return true;

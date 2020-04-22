@@ -56,7 +56,7 @@ public class AddressRepositoryTest {
         assertEquals("Street", addresses.get().get(0).getSubType());
         assertEquals("Postal", addresses.get().get(0).getType());
         assertEquals(1, addresses.get().get(0).getAllStreetAddresses().size());
-        assertEquals(0, addresses.get().get(0).getAllPostOfficeBoxAddresses().size());
+        assertEquals(1, addresses.get().get(0).getAllPostOfficeBoxAddresses().size());
     }
 
 }

@@ -62,7 +62,7 @@ public class OrganizationRepositoryTest {
         assertEquals(1, organizations.iterator().next().getAllWebPages().size());
         assertEquals(1, organizations.iterator().next().getAllAddresses().size());
         assertEquals(1, organizations.iterator().next().getAllAddresses().iterator().next().getAllStreetAddresses().size());
-        assertEquals(0, organizations.iterator().next().getAllAddresses().iterator().next().getAllPostOfficeBoxAddresses().size());
+        assertEquals(1, organizations.iterator().next().getAllAddresses().iterator().next().getAllPostOfficeBoxAddresses().size());
     }
 
     @Test
@@ -81,7 +81,7 @@ public class OrganizationRepositoryTest {
         assertEquals(1, organization.get().getAllWebPages().size());
         assertEquals(1, organization.get().getAllAddresses().size());
         assertEquals(1, organization.get().getAllAddresses().iterator().next().getAllStreetAddresses().size());
-        assertEquals(0, organization.get().getAllAddresses().iterator().next().getAllPostOfficeBoxAddresses().size());
+        assertEquals(1, organization.get().getAllAddresses().iterator().next().getAllPostOfficeBoxAddresses().size());
     }
 
 }

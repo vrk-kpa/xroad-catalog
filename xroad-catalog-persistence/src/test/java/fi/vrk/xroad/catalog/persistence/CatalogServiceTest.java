@@ -206,7 +206,125 @@ public class CatalogServiceTest {
         assertNotNull(savedOrganization.getStatusInfo().getFetched());
         assertNull(savedOrganization.getStatusInfo().getRemoved());
     }
-    
+
+    @Test
+    public void testSaveOrganizationName() {
+        Optional<Organization> organization = catalogService.getOrganization("abcdef123456");
+        assertEquals(true, organization.isPresent());
+        assertEquals(1, organization.get().getAllOrganizationNames().size());
+        OrganizationName organizationName = OrganizationName.builder()
+                .language("EN").type("Name").value("Vaasa town").organization(organization.get()).build();
+        catalogService.saveOrganizationName(organizationName);
+        Optional<Organization> foundOrganization = catalogService.getOrganization("abcdef123456");
+        assertEquals(1, foundOrganization.get().getAllOrganizationNames().size());
+        assertEquals("EN", foundOrganization.get().getAllOrganizationNames().iterator().next().getLanguage());
+        assertEquals("Vaasa town", foundOrganization.get().getAllOrganizationNames().iterator().next().getValue());
+        assertNotNull(foundOrganization.get().getAllOrganizationNames().iterator().next().getStatusInfo().getCreated());
+        assertNotNull(foundOrganization.get().getAllOrganizationNames().iterator().next().getStatusInfo().getChanged());
+        assertNotNull(foundOrganization.get().getAllOrganizationNames().iterator().next().getStatusInfo().getFetched());
+        assertNull(foundOrganization.get().getAllOrganizationNames().iterator().next().getStatusInfo().getRemoved());
+    }
+
+    @Test
+    public void testSaveOrganizationDescription() {
+        Optional<Organization> organization = catalogService.getOrganization("abcdef123456");
+        assertEquals(true, organization.isPresent());
+        assertEquals(1, organization.get().getAllOrganizationNames().size());
+        OrganizationDescription organizationDescription = OrganizationDescription.builder()
+                .language("EN").type("Description").value("Vaasa is a small town").organization(organization.get()).build();
+        catalogService.saveOrganizationDescription(organizationDescription);
+        Optional<Organization> foundOrganization = catalogService.getOrganization("abcdef123456");
+        assertEquals(1, foundOrganization.get().getAllOrganizationDescriptions().size());
+        assertEquals("EN", foundOrganization.get().getAllOrganizationDescriptions().iterator().next().getLanguage());
+        assertEquals("Vaasa is a small town", foundOrganization.get().getAllOrganizationDescriptions().iterator().next().getValue());
+        assertNotNull(foundOrganization.get().getAllOrganizationDescriptions().iterator().next().getStatusInfo().getCreated());
+        assertNotNull(foundOrganization.get().getAllOrganizationDescriptions().iterator().next().getStatusInfo().getChanged());
+        assertNotNull(foundOrganization.get().getAllOrganizationDescriptions().iterator().next().getStatusInfo().getFetched());
+        assertNull(foundOrganization.get().getAllOrganizationDescriptions().iterator().next().getStatusInfo().getRemoved());
+    }
+
+    @Test
+    public void testSaveEmail() {
+        Optional<Organization> organization = catalogService.getOrganization("abcdef123456");
+        assertEquals(true, organization.isPresent());
+        assertEquals(1, organization.get().getAllOrganizationNames().size());
+        Email email = Email.builder()
+                .language("EN").description("Description").value("info@vaasa.fi").organization(organization.get()).build();
+        catalogService.saveEmail(email);
+        Optional<Organization> foundOrganization = catalogService.getOrganization("abcdef123456");
+        assertEquals(1, foundOrganization.get().getAllEmails().size());
+        assertEquals("EN", foundOrganization.get().getAllEmails().iterator().next().getLanguage());
+        assertEquals("info@vaasa.fi", foundOrganization.get().getAllEmails().iterator().next().getValue());
+        assertNotNull(foundOrganization.get().getAllEmails().iterator().next().getStatusInfo().getCreated());
+        assertNotNull(foundOrganization.get().getAllEmails().iterator().next().getStatusInfo().getChanged());
+        assertNotNull(foundOrganization.get().getAllEmails().iterator().next().getStatusInfo().getFetched());
+        assertNull(foundOrganization.get().getAllEmails().iterator().next().getStatusInfo().getRemoved());
+    }
+
+    @Test
+    public void testSavePhoneNumber() {
+        Optional<Organization> organization = catalogService.getOrganization("abcdef123456");
+        assertEquals(true, organization.isPresent());
+        assertEquals(1, organization.get().getAllOrganizationNames().size());
+        PhoneNumber phoneNumber = PhoneNumber.builder()
+                .additionalInformation("additionalInformation")
+                .organization(organization.get())
+                .number("123456789")
+                .isFinnishServiceNumber(true)
+                .prefixNumber("+358")
+                .language("fi")
+                .chargeDescription("Chargeable")
+                .serviceChargeType("charge").build();
+        catalogService.savePhoneNumber(phoneNumber);
+        Optional<Organization> foundOrganization = catalogService.getOrganization("abcdef123456");
+        assertEquals(1, foundOrganization.get().getAllPhoneNumbers().size());
+        assertEquals("123456789", foundOrganization.get().getAllPhoneNumbers().iterator().next().getNumber());
+        assertEquals(true, foundOrganization.get().getAllPhoneNumbers().iterator().next().getIsFinnishServiceNumber());
+        assertNotNull(foundOrganization.get().getAllPhoneNumbers().iterator().next().getStatusInfo().getCreated());
+        assertNotNull(foundOrganization.get().getAllPhoneNumbers().iterator().next().getStatusInfo().getChanged());
+        assertNotNull(foundOrganization.get().getAllPhoneNumbers().iterator().next().getStatusInfo().getFetched());
+        assertNull(foundOrganization.get().getAllPhoneNumbers().iterator().next().getStatusInfo().getRemoved());
+    }
+
+    @Test
+    public void testSaveWebPage() {
+        Optional<Organization> organization = catalogService.getOrganization("abcdef123456");
+        assertEquals(true, organization.isPresent());
+        assertEquals(1, organization.get().getAllOrganizationNames().size());
+        WebPage webPage = WebPage.builder()
+                .language("EN").url("http://www.google.com").value("Google").organization(organization.get()).build();
+        catalogService.saveWebPage(webPage);
+        Optional<Organization> foundOrganization = catalogService.getOrganization("abcdef123456");
+        assertEquals(1, foundOrganization.get().getAllWebPages().size());
+        assertEquals("EN", foundOrganization.get().getAllWebPages().iterator().next().getLanguage());
+        assertEquals("http://www.google.com", foundOrganization.get().getAllWebPages().iterator().next().getUrl());
+        assertEquals("Google", foundOrganization.get().getAllWebPages().iterator().next().getValue());
+        assertNotNull(foundOrganization.get().getAllWebPages().iterator().next().getStatusInfo().getCreated());
+        assertNotNull(foundOrganization.get().getAllWebPages().iterator().next().getStatusInfo().getChanged());
+        assertNotNull(foundOrganization.get().getAllWebPages().iterator().next().getStatusInfo().getFetched());
+        assertNull(foundOrganization.get().getAllWebPages().iterator().next().getStatusInfo().getRemoved());
+    }
+
+    @Test
+    public void testSaveAddress() {
+        Optional<Organization> organization = catalogService.getOrganization("abcdef123456");
+        assertEquals(true, organization.isPresent());
+        assertEquals(1, organization.get().getAllOrganizationNames().size());
+        Address address = Address.builder()
+                .country("UK").organization(organization.get()).type("Postal").subType("Street").build();
+        catalogService.saveAddress(address);
+        Optional<Organization> foundOrganization = catalogService.getOrganization("abcdef123456");
+        assertEquals(1, foundOrganization.get().getAllAddresses().size());
+        assertEquals("UK", foundOrganization.get().getAllAddresses().iterator().next().getCountry());
+        assertEquals("Postal", foundOrganization.get().getAllAddresses().iterator().next().getType());
+        assertEquals("Street", foundOrganization.get().getAllAddresses().iterator().next().getSubType());
+        assertNotNull(foundOrganization.get().getAllAddresses().iterator().next().getStatusInfo().getCreated());
+        assertNotNull(foundOrganization.get().getAllAddresses().iterator().next().getStatusInfo().getChanged());
+        assertNotNull(foundOrganization.get().getAllAddresses().iterator().next().getStatusInfo().getFetched());
+        assertNull(foundOrganization.get().getAllAddresses().iterator().next().getStatusInfo().getRemoved());
+    }
+
+
     @Test
     public void testEntityTreesFetchedCorrectly() throws InterruptedException {
         assertEntityTreeFetchedCorrectly(catalogService.getAllMembers());
