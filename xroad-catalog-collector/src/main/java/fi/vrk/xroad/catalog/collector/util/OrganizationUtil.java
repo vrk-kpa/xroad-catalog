@@ -50,13 +50,14 @@ public class OrganizationUtil {
 
     }
 
-    public static List<String> getOrganizationIdsList(String url)
+    public static List<String> getOrganizationIdsList(String url, Integer fetchOrganizationsLimit)
             throws KeyStoreException, NoSuchAlgorithmException, KeyManagementException {
         String response = getResponseBody(url);
         JSONObject json = new JSONObject(response);
         JSONArray itemList = json.optJSONArray("itemList");
         List<String> idsList = new ArrayList<>();
-        for (int i = 0; i < itemList.length(); i++) {
+        int totalFetchAmount = itemList.length() > fetchOrganizationsLimit ? fetchOrganizationsLimit : itemList.length();
+        for (int i = 0; i < totalFetchAmount; i++) {
             String id = itemList.optJSONObject(i).optString("id");
             idsList.add(id);
         }

@@ -79,11 +79,13 @@ public class ListMethodsActor extends XRoadCatalogActor {
     // supervisor-created pool of list methods actors
     private ActorRef fetchWsdlPoolRef;
     private ActorRef fetchOpenApiPoolRef;
+    private ActorRef fetchOrganizationsPoolRef;
     private XRoadClient xroadClient;
 
-    public ListMethodsActor(ActorRef fetchWsdlPoolRef, ActorRef fetchOpenApiPoolRef) {
+    public ListMethodsActor(ActorRef fetchWsdlPoolRef, ActorRef fetchOpenApiPoolRef, ActorRef fetchOrganizationsPoolRef) {
         this.fetchWsdlPoolRef = fetchWsdlPoolRef;
         this.fetchOpenApiPoolRef = fetchOpenApiPoolRef;
+        this.fetchOrganizationsPoolRef = fetchOrganizationsPoolRef;
     }
 
     @Override
@@ -139,6 +141,8 @@ public class ListMethodsActor extends XRoadCatalogActor {
                 log.info("{} Sending service {} to new MethodActor ", COUNTER, service.getServiceCode());
                 fetchOpenApiPoolRef.tell(service, getSender());
             }
+
+            fetchOrganizationsPoolRef.tell(clientType, getSelf());
 
             return true;
 

@@ -79,8 +79,6 @@ public class ListClientsActorTest extends TestKit {
 
     private InternalActorRef listMethodsPoolRef;
 
-    private InternalActorRef listOrganizationsPoolRef;
-
     @InjectMocks
     protected ListClientsActor listClientsActor;
 
@@ -112,11 +110,9 @@ public class ListClientsActorTest extends TestKit {
     @Before
     public void setup() throws Exception {
         listMethodsPoolRef = PowerMockito.mock(InternalActorRef.class);
-        listOrganizationsPoolRef = PowerMockito.mock(InternalActorRef.class);
 
-        final Props clientsProps = Props.create(ListClientsActor.class, listMethodsPoolRef, listOrganizationsPoolRef);
+        final Props clientsProps = Props.create(ListClientsActor.class, listMethodsPoolRef);
         final TestActorRef<ListClientsActor> clientsRef = TestActorRef.apply(clientsProps, _system);
-
 
         listClientsActor = clientsRef.underlyingActor();
 

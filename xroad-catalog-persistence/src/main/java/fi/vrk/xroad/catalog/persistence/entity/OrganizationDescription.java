@@ -45,7 +45,7 @@ public class OrganizationDescription {
     private String language;
     @Column(nullable = false)
     private String type;
-    @Column(nullable = false)
+    @Column(nullable = false, length = 10000)
     private String value;
     @Builder.Default
     @Embedded

@@ -29,7 +29,6 @@ import fi.vrk.xroad.catalog.collector.extension.SpringExtension;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import scala.concurrent.duration.Duration;
@@ -112,14 +111,15 @@ public class Supervisor extends XRoadCatalogActor {
                         .withSupervisorStrategy(new OneForOneStrategy(-1,
                                 Duration.Inf(),
                                 (Throwable t) -> restart()))
-                        .props(springExtension.props("listMethodsActor", fetchWsdlPoolRouter, fetchOpenApiPoolRouter)),
+                        .props(springExtension.props("listMethodsActor", fetchWsdlPoolRouter, fetchOpenApiPoolRouter,
+                                fetchOrganizationsPoolRouter)),
                 LIST_METHODS_ACTOR_ROUTER);
 
         listClientsPoolRouter = getContext().actorOf(new SmallestMailboxPool(1)
                         .withSupervisorStrategy(new OneForOneStrategy(-1,
                                 Duration.Inf(),
                                 (Throwable t) -> restart()))
-                .props(springExtension.props("listClientsActor", listMethodsPoolRouter, fetchOrganizationsPoolRouter)),
+                .props(springExtension.props("listClientsActor", listMethodsPoolRouter)),
                 LIST_CLIENTS_ACTOR_ROUTER);
 
         super.preStart();
