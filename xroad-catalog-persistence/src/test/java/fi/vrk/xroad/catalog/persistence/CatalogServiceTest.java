@@ -189,6 +189,13 @@ public class CatalogServiceTest {
                 .getAllMunicipalityNames().iterator().next().getValue());
     }
 
+    private void verifySavedStatusInfo(StatusInfo statusInfo) {
+        assertNotNull(statusInfo.getCreated());
+        assertNotNull(statusInfo.getChanged());
+        assertNotNull(statusInfo.getFetched());
+        assertNull(statusInfo.getRemoved());
+    }
+
     @Test
     public void testSaveOrganization() {
         Organization organization = Organization.builder()
@@ -201,10 +208,7 @@ public class CatalogServiceTest {
         assertNotNull(savedOrganization.getId());
         assertEquals("abcdef123456789", savedOrganization.getGuid());
         assertEquals("123456789-0", savedOrganization.getBusinessCode());
-        assertNotNull(savedOrganization.getStatusInfo().getCreated());
-        assertNotNull(savedOrganization.getStatusInfo().getChanged());
-        assertNotNull(savedOrganization.getStatusInfo().getFetched());
-        assertNull(savedOrganization.getStatusInfo().getRemoved());
+        verifySavedStatusInfo(savedOrganization.getStatusInfo());
     }
 
     @Test
@@ -219,10 +223,7 @@ public class CatalogServiceTest {
         assertEquals(1, foundOrganization.get().getAllOrganizationNames().size());
         assertEquals("EN", foundOrganization.get().getAllOrganizationNames().iterator().next().getLanguage());
         assertEquals("Vaasa town", foundOrganization.get().getAllOrganizationNames().iterator().next().getValue());
-        assertNotNull(foundOrganization.get().getAllOrganizationNames().iterator().next().getStatusInfo().getCreated());
-        assertNotNull(foundOrganization.get().getAllOrganizationNames().iterator().next().getStatusInfo().getChanged());
-        assertNotNull(foundOrganization.get().getAllOrganizationNames().iterator().next().getStatusInfo().getFetched());
-        assertNull(foundOrganization.get().getAllOrganizationNames().iterator().next().getStatusInfo().getRemoved());
+        verifySavedStatusInfo(foundOrganization.get().getAllOrganizationNames().iterator().next().getStatusInfo());
     }
 
     @Test
@@ -237,10 +238,7 @@ public class CatalogServiceTest {
         assertEquals(1, foundOrganization.get().getAllOrganizationDescriptions().size());
         assertEquals("EN", foundOrganization.get().getAllOrganizationDescriptions().iterator().next().getLanguage());
         assertEquals("Vaasa is a small town", foundOrganization.get().getAllOrganizationDescriptions().iterator().next().getValue());
-        assertNotNull(foundOrganization.get().getAllOrganizationDescriptions().iterator().next().getStatusInfo().getCreated());
-        assertNotNull(foundOrganization.get().getAllOrganizationDescriptions().iterator().next().getStatusInfo().getChanged());
-        assertNotNull(foundOrganization.get().getAllOrganizationDescriptions().iterator().next().getStatusInfo().getFetched());
-        assertNull(foundOrganization.get().getAllOrganizationDescriptions().iterator().next().getStatusInfo().getRemoved());
+        verifySavedStatusInfo(foundOrganization.get().getAllOrganizationDescriptions().iterator().next().getStatusInfo());
     }
 
     @Test
@@ -255,10 +253,7 @@ public class CatalogServiceTest {
         assertEquals(1, foundOrganization.get().getAllEmails().size());
         assertEquals("EN", foundOrganization.get().getAllEmails().iterator().next().getLanguage());
         assertEquals("info@vaasa.fi", foundOrganization.get().getAllEmails().iterator().next().getValue());
-        assertNotNull(foundOrganization.get().getAllEmails().iterator().next().getStatusInfo().getCreated());
-        assertNotNull(foundOrganization.get().getAllEmails().iterator().next().getStatusInfo().getChanged());
-        assertNotNull(foundOrganization.get().getAllEmails().iterator().next().getStatusInfo().getFetched());
-        assertNull(foundOrganization.get().getAllEmails().iterator().next().getStatusInfo().getRemoved());
+        verifySavedStatusInfo(foundOrganization.get().getAllEmails().iterator().next().getStatusInfo());
     }
 
     @Test
@@ -280,10 +275,7 @@ public class CatalogServiceTest {
         assertEquals(1, foundOrganization.get().getAllPhoneNumbers().size());
         assertEquals("123456789", foundOrganization.get().getAllPhoneNumbers().iterator().next().getNumber());
         assertEquals(true, foundOrganization.get().getAllPhoneNumbers().iterator().next().getIsFinnishServiceNumber());
-        assertNotNull(foundOrganization.get().getAllPhoneNumbers().iterator().next().getStatusInfo().getCreated());
-        assertNotNull(foundOrganization.get().getAllPhoneNumbers().iterator().next().getStatusInfo().getChanged());
-        assertNotNull(foundOrganization.get().getAllPhoneNumbers().iterator().next().getStatusInfo().getFetched());
-        assertNull(foundOrganization.get().getAllPhoneNumbers().iterator().next().getStatusInfo().getRemoved());
+        verifySavedStatusInfo(foundOrganization.get().getAllPhoneNumbers().iterator().next().getStatusInfo());
     }
 
     @Test
@@ -299,10 +291,7 @@ public class CatalogServiceTest {
         assertEquals("EN", foundOrganization.get().getAllWebPages().iterator().next().getLanguage());
         assertEquals("http://www.google.com", foundOrganization.get().getAllWebPages().iterator().next().getUrl());
         assertEquals("Google", foundOrganization.get().getAllWebPages().iterator().next().getValue());
-        assertNotNull(foundOrganization.get().getAllWebPages().iterator().next().getStatusInfo().getCreated());
-        assertNotNull(foundOrganization.get().getAllWebPages().iterator().next().getStatusInfo().getChanged());
-        assertNotNull(foundOrganization.get().getAllWebPages().iterator().next().getStatusInfo().getFetched());
-        assertNull(foundOrganization.get().getAllWebPages().iterator().next().getStatusInfo().getRemoved());
+        verifySavedStatusInfo(foundOrganization.get().getAllWebPages().iterator().next().getStatusInfo());
     }
 
     @Test
@@ -312,18 +301,208 @@ public class CatalogServiceTest {
         assertEquals(1, organization.get().getAllOrganizationNames().size());
         Address address = Address.builder()
                 .country("UK").organization(organization.get()).type("Postal").subType("Street").build();
-        catalogService.saveAddress(address);
-        Optional<Organization> foundOrganization = catalogService.getOrganization("abcdef123456");
-        assertEquals(1, foundOrganization.get().getAllAddresses().size());
-        assertEquals("UK", foundOrganization.get().getAllAddresses().iterator().next().getCountry());
-        assertEquals("Postal", foundOrganization.get().getAllAddresses().iterator().next().getType());
-        assertEquals("Street", foundOrganization.get().getAllAddresses().iterator().next().getSubType());
-        assertNotNull(foundOrganization.get().getAllAddresses().iterator().next().getStatusInfo().getCreated());
-        assertNotNull(foundOrganization.get().getAllAddresses().iterator().next().getStatusInfo().getChanged());
-        assertNotNull(foundOrganization.get().getAllAddresses().iterator().next().getStatusInfo().getFetched());
-        assertNull(foundOrganization.get().getAllAddresses().iterator().next().getStatusInfo().getRemoved());
+        Address savedAddress = catalogService.saveAddress(address);
+        assertNotNull(savedAddress);
+        assertEquals("UK", savedAddress.getCountry());
+        assertEquals("Postal", savedAddress.getType());
+        assertEquals("Street", savedAddress.getSubType());
+        verifySavedStatusInfo(savedAddress.getStatusInfo());
     }
 
+    @Test
+    public void testSaveStreetAddress() {
+        Optional<Organization> organization = catalogService.getOrganization("abcdef123456");
+        assertEquals(true, organization.isPresent());
+        assertEquals(1, organization.get().getAllAddresses().size());
+        StreetAddress streetAddress = StreetAddress.builder()
+                .postalCode("12345").longitude("23").latitude("59").coordinateState("Ok")
+                .streetNumber("100").address(organization.get().getAllAddresses().iterator().next()).build();
+        StreetAddress savedStreetAddress = catalogService.saveStreetAddress(streetAddress);
+        assertNotNull(savedStreetAddress);
+        assertEquals("12345", savedStreetAddress.getPostalCode());
+        assertEquals("23", savedStreetAddress.getLongitude());
+        assertEquals("59", savedStreetAddress.getLatitude());
+        assertEquals("100", savedStreetAddress.getStreetNumber());
+        verifySavedStatusInfo(savedStreetAddress.getStatusInfo());
+    }
+
+    @Test
+    public void testSaveStreet() {
+        Optional<Organization> organization = catalogService.getOrganization("abcdef123456");
+        assertEquals(true, organization.isPresent());
+        assertEquals(1, organization.get().getAllAddresses().size());
+        assertEquals(1, organization.get().getAllAddresses().iterator().next().getAllStreetAddresses().size());
+        Street street = Street.builder()
+                .streetAddress(organization.get().getAllAddresses().iterator().next().getAllStreetAddresses().iterator().next())
+                .language("EN").value("Oxford street").build();
+        Street savedStreet = catalogService.saveStreet(street);
+        assertNotNull(savedStreet);
+        assertEquals("EN", savedStreet.getLanguage());
+        assertEquals("Oxford street", savedStreet.getValue());
+        verifySavedStatusInfo(savedStreet.getStatusInfo());
+    }
+
+    @Test
+    public void testSaveStreetAddressPostOffice() {
+        Optional<Organization> organization = catalogService.getOrganization("abcdef123456");
+        assertEquals(true, organization.isPresent());
+        assertEquals(1, organization.get().getAllAddresses().size());
+        assertEquals(1, organization.get().getAllAddresses().iterator().next().getAllStreetAddresses().size());
+        StreetAddressPostOffice streetAddressPostOffice = StreetAddressPostOffice.builder()
+                .streetAddress(organization.get().getAllAddresses().iterator().next().getAllStreetAddresses().iterator().next())
+                .language("EN").value("London Post").build();
+        StreetAddressPostOffice savedStreetAddressPostOffice = catalogService.saveStreetAddressPostOffice(streetAddressPostOffice);
+        assertNotNull(savedStreetAddressPostOffice);
+        assertEquals("EN", savedStreetAddressPostOffice.getLanguage());
+        assertEquals("London Post", savedStreetAddressPostOffice.getValue());
+        verifySavedStatusInfo(savedStreetAddressPostOffice.getStatusInfo());
+    }
+
+    @Test
+    public void testSaveStreetAddressAdditionalInformation() {
+        Optional<Organization> organization = catalogService.getOrganization("abcdef123456");
+        assertEquals(true, organization.isPresent());
+        assertEquals(1, organization.get().getAllAddresses().size());
+        assertEquals(1, organization.get().getAllAddresses().iterator().next().getAllStreetAddresses().size());
+        StreetAddressAdditionalInformation addressAdditionalInformation = StreetAddressAdditionalInformation.builder()
+                .streetAddress(organization.get().getAllAddresses().iterator().next().getAllStreetAddresses().iterator().next())
+                .language("EN").value("Some additional information").build();
+        StreetAddressAdditionalInformation savedStreetAddressAdditionalInformation =
+                catalogService.saveStreetAddressAdditionalInformation(addressAdditionalInformation);
+        assertNotNull(savedStreetAddressAdditionalInformation);
+        assertEquals("EN", savedStreetAddressAdditionalInformation.getLanguage());
+        assertEquals("Some additional information", savedStreetAddressAdditionalInformation.getValue());
+        verifySavedStatusInfo(savedStreetAddressAdditionalInformation.getStatusInfo());
+    }
+
+    @Test
+    public void testSaveStreetAddressMunicipality() {
+        Optional<Organization> organization = catalogService.getOrganization("abcdef123456");
+        assertEquals(true, organization.isPresent());
+        assertEquals(1, organization.get().getAllAddresses().size());
+        assertEquals(1, organization.get().getAllAddresses().iterator().next().getAllStreetAddresses().size());
+        StreetAddressMunicipality streetAddressMunicipality = StreetAddressMunicipality.builder()
+                .streetAddress(organization.get().getAllAddresses().iterator().next().getAllStreetAddresses().iterator().next())
+                .code("999").build();
+        StreetAddressMunicipality savedStreetAddressMunicipality = catalogService.saveStreetAddressMunicipality(streetAddressMunicipality);
+        assertNotNull(savedStreetAddressMunicipality);
+        assertEquals("999", savedStreetAddressMunicipality.getCode());
+        verifySavedStatusInfo(savedStreetAddressMunicipality.getStatusInfo());
+    }
+
+    @Test
+    public void testSaveStreetAddressMunicipalityName() {
+        Optional<Organization> organization = catalogService.getOrganization("abcdef123456");
+        assertEquals(true, organization.isPresent());
+        assertEquals(1, organization.get().getAllAddresses().size());
+        assertEquals(1, organization.get().getAllAddresses().iterator().next().getAllStreetAddresses().size());
+        StreetAddressMunicipalityName streetAddressMunicipalityName = StreetAddressMunicipalityName.builder()
+                .streetAddressMunicipality(organization.get().getAllAddresses().iterator().next().getAllStreetAddresses()
+                        .iterator().next().getAllMunicipalities().iterator().next())
+                .language("EN").value("Municipality name").build();
+        StreetAddressMunicipalityName savedStreetAddressMunicipalityName =
+                catalogService.saveStreetAddressMunicipalityName(streetAddressMunicipalityName);
+        assertNotNull(savedStreetAddressMunicipalityName);
+        assertEquals("EN", savedStreetAddressMunicipalityName.getLanguage());
+        assertEquals("Municipality name", savedStreetAddressMunicipalityName.getValue());
+        verifySavedStatusInfo(savedStreetAddressMunicipalityName.getStatusInfo());
+    }
+
+    @Test
+    public void testSavePostOfficeBoxAddress() {
+        Optional<Organization> organization = catalogService.getOrganization("abcdef123456");
+        assertEquals(true, organization.isPresent());
+        assertEquals(1, organization.get().getAllAddresses().size());
+        PostOfficeBoxAddress postOfficeBoxAddress = PostOfficeBoxAddress.builder()
+                .postalCode("9876").address(organization.get().getAllAddresses().iterator().next()).build();
+        PostOfficeBoxAddress savedPostOfficeBoxAddress = catalogService.savePostOfficeBoxAddress(postOfficeBoxAddress);
+        assertNotNull(savedPostOfficeBoxAddress);
+        assertEquals("9876", savedPostOfficeBoxAddress.getPostalCode());
+        verifySavedStatusInfo(savedPostOfficeBoxAddress.getStatusInfo());
+    }
+
+    @Test
+    public void testSavePostOffice() {
+        Optional<Organization> organization = catalogService.getOrganization("abcdef123456");
+        assertEquals(true, organization.isPresent());
+        assertEquals(1, organization.get().getAllAddresses().size());
+        assertEquals(1, organization.get().getAllAddresses().iterator().next().getAllPostOfficeBoxAddresses().size());
+        PostOffice postOffice = PostOffice.builder()
+                .postOfficeBoxAddress(organization.get().getAllAddresses().iterator().next().getAllPostOfficeBoxAddresses().iterator().next())
+                .language("EN").value("London post office").build();
+        PostOffice savedPostOffice = catalogService.savePostOffice(postOffice);
+        assertNotNull(savedPostOffice);
+        assertEquals("EN", savedPostOffice.getLanguage());
+        assertEquals("London post office", savedPostOffice.getValue());
+        verifySavedStatusInfo(savedPostOffice.getStatusInfo());
+    }
+
+    @Test
+    public void testSavePostOfficeBox() {
+        Optional<Organization> organization = catalogService.getOrganization("abcdef123456");
+        assertEquals(true, organization.isPresent());
+        assertEquals(1, organization.get().getAllAddresses().size());
+        assertEquals(1, organization.get().getAllAddresses().iterator().next().getAllPostOfficeBoxAddresses().size());
+        PostOfficeBox postOfficeBox = PostOfficeBox.builder()
+                .postOfficeBoxAddress(organization.get().getAllAddresses().iterator().next().getAllPostOfficeBoxAddresses().iterator().next())
+                .language("EN").value("London PO box").build();
+        PostOfficeBox savedPostOfficeBox = catalogService.savePostOfficeBox(postOfficeBox);
+        assertNotNull(savedPostOfficeBox);
+        assertEquals("EN", savedPostOfficeBox.getLanguage());
+        assertEquals("London PO box", savedPostOfficeBox.getValue());
+        verifySavedStatusInfo(savedPostOfficeBox.getStatusInfo());
+    }
+
+    @Test
+    public void testSavePostOfficeBoxAddressAdditionalInformation() {
+        Optional<Organization> organization = catalogService.getOrganization("abcdef123456");
+        assertEquals(true, organization.isPresent());
+        assertEquals(1, organization.get().getAllAddresses().size());
+        assertEquals(1, organization.get().getAllAddresses().iterator().next().getAllPostOfficeBoxAddresses().size());
+        PostOfficeBoxAddressAdditionalInformation addressAdditionalInformation = PostOfficeBoxAddressAdditionalInformation.builder()
+                .postOfficeBoxAddress(organization.get().getAllAddresses().iterator().next().getAllPostOfficeBoxAddresses().iterator().next())
+                .language("EN").value("Additional information").build();
+        PostOfficeBoxAddressAdditionalInformation savedAdditionalInformation =
+                catalogService.savePostOfficeBoxAddressAdditionalInformation(addressAdditionalInformation);
+        assertNotNull(savedAdditionalInformation);
+        assertEquals("EN", savedAdditionalInformation.getLanguage());
+        assertEquals("Additional information", savedAdditionalInformation.getValue());
+        verifySavedStatusInfo(savedAdditionalInformation.getStatusInfo());
+    }
+
+    @Test
+    public void testSavePostOfficeBoxAddressMunicipality() {
+        Optional<Organization> organization = catalogService.getOrganization("abcdef123456");
+        assertEquals(true, organization.isPresent());
+        assertEquals(1, organization.get().getAllAddresses().size());
+        assertEquals(1, organization.get().getAllAddresses().iterator().next().getAllStreetAddresses().size());
+        PostOfficeBoxAddressMunicipality postOfficeBoxAddressMunicipality = PostOfficeBoxAddressMunicipality.builder()
+                .postOfficeBoxAddress(organization.get().getAllAddresses().iterator().next().getAllPostOfficeBoxAddresses().iterator().next())
+                .code("222").build();
+        PostOfficeBoxAddressMunicipality savedPostOfficeBoxAddressMunicipality =
+                catalogService.savePostOfficeBoxAddressMunicipality(postOfficeBoxAddressMunicipality);
+        assertNotNull(savedPostOfficeBoxAddressMunicipality);
+        assertEquals("222", savedPostOfficeBoxAddressMunicipality.getCode());
+        verifySavedStatusInfo(savedPostOfficeBoxAddressMunicipality.getStatusInfo());
+    }
+
+    @Test
+    public void testSavePostOfficeBoxMunicipalityName() {
+        Optional<Organization> organization = catalogService.getOrganization("abcdef123456");
+        assertEquals(true, organization.isPresent());
+        assertEquals(1, organization.get().getAllAddresses().size());
+        assertEquals(1, organization.get().getAllAddresses().iterator().next().getAllPostOfficeBoxAddresses().size());
+        PostOfficeBoxAddressMunicipalityName postOfficeBoxAddressMunicipalityName = PostOfficeBoxAddressMunicipalityName.builder()
+                .postOfficeBoxAddressMunicipality(organization.get().getAllAddresses().iterator().next().getAllPostOfficeBoxAddresses()
+                        .iterator().next().getAllMunicipalities().iterator().next())
+                .language("EN").value("Name of the municipality").build();
+        PostOfficeBoxAddressMunicipalityName savedPostOfficeBoxMunicipalityName =
+                catalogService.savePostOfficeBoxAddressMunicipalityName(postOfficeBoxAddressMunicipalityName);
+        assertNotNull(savedPostOfficeBoxMunicipalityName);
+        assertEquals("EN", savedPostOfficeBoxMunicipalityName.getLanguage());
+        assertEquals("Name of the municipality", savedPostOfficeBoxMunicipalityName.getValue());
+        verifySavedStatusInfo(savedPostOfficeBoxMunicipalityName.getStatusInfo());
+    }
 
     @Test
     public void testEntityTreesFetchedCorrectly() throws InterruptedException {

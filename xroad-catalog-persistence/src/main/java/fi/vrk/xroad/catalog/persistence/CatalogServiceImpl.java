@@ -629,20 +629,27 @@ public class CatalogServiceImpl implements CatalogService {
     }
 
     @Override
-    public PostOfficeBoxAddressMunicipality savePostOfficeBoxAddressMunicipality(PostOfficeBoxAddressMunicipality newValue) {
-        Optional<PostOfficeBoxAddressMunicipality> foundValue =
+    public PostOfficeBoxAddressMunicipality savePostOfficeBoxAddressMunicipality(PostOfficeBoxAddressMunicipality postOfficeBoxAddressMunicipality) {
+        Optional<PostOfficeBoxAddressMunicipality> foundPostOfficeBoxAddressMunicipality =
                 Optional.ofNullable(postOfficeBoxAddressMunicipalityRepository
-                        .findByPostOfficeBoxAddressId(newValue.getPostOfficeBoxAddress().getId()));
-        if (foundValue.isPresent()) {
-            PostOfficeBoxAddressMunicipality oldValue = foundValue.get();
-            StatusInfo statusInfo = oldValue.getStatusInfo();
+                        .findByPostOfficeBoxAddressId(postOfficeBoxAddressMunicipality.getPostOfficeBoxAddress().getId()));
+        if (foundPostOfficeBoxAddressMunicipality.isPresent()) {
+            PostOfficeBoxAddressMunicipality oldPostOfficeBoxAddressMunicipality = foundPostOfficeBoxAddressMunicipality.get();
+            StatusInfo statusInfo = oldPostOfficeBoxAddressMunicipality.getStatusInfo();
             statusInfo.setFetched(LocalDateTime.now());
-            if (!oldValue.equals(newValue)) {
+            if (!oldPostOfficeBoxAddressMunicipality.equals(postOfficeBoxAddressMunicipality)) {
                 statusInfo.setChanged(LocalDateTime.now());
             }
-            newValue.setStatusInfo(statusInfo);
+            postOfficeBoxAddressMunicipality.setStatusInfo(statusInfo);
+            postOfficeBoxAddressMunicipality.setId(oldPostOfficeBoxAddressMunicipality.getId());
+        } else {
+            StatusInfo statusInfo = new StatusInfo();
+            statusInfo.setCreated(LocalDateTime.now());
+            statusInfo.setChanged(LocalDateTime.now());
+            statusInfo.setFetched(LocalDateTime.now());
+            postOfficeBoxAddressMunicipality.setStatusInfo(statusInfo);
         }
-        return postOfficeBoxAddressMunicipalityRepository.save(newValue);
+        return postOfficeBoxAddressMunicipalityRepository.save(postOfficeBoxAddressMunicipality);
     }
 
     @Override

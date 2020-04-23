@@ -90,7 +90,7 @@ public class ListClientsActor extends XRoadCatalogActor {
 
             log.info("Getting client list from {}", listClientsUrl);
             ClientList clientList = ClientListUtil.clientListFromResponse(listClientsUrl);
-            
+
             int counter = 1;
             HashMap<MemberId, Member> m = new HashMap();
 
