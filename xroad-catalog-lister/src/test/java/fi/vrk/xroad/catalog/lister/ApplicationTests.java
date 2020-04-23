@@ -35,6 +35,17 @@ import org.springframework.util.ClassUtils;
 import org.springframework.ws.client.core.WebServiceTemplate;
 import org.springframework.ws.soap.client.SoapFaultClientException;
 
+import javax.xml.datatype.DatatypeConfigurationException;
+import javax.xml.datatype.DatatypeFactory;
+import javax.xml.datatype.XMLGregorianCalendar;
+
+import java.time.LocalDateTime;
+import java.time.Month;
+import java.time.ZoneId;
+import java.util.GregorianCalendar;
+import java.util.HashSet;
+import java.util.Set;
+
 import static org.junit.Assert.*;
 
 /**
@@ -242,6 +253,131 @@ public class ApplicationTests {
 		}
 		assertTrue(thrown);
 		assertEquals(exceptionMessage, "Member with xRoadInstance \"dev-cs\", memberClass \"PUB\" and memberCode \"123\" not found");
+	}
+
+	@Test
+	public void testGetOrganizations() {
+		GetOrganizations request = new GetOrganizations();
+		request.setBusinessCode("0123456-9");
+		GetOrganizationsResponse result = (GetOrganizationsResponse)new WebServiceTemplate(marshaller).marshalSendAndReceive(
+				"http://localhost:" + port + "/ws/GetOrganizations/", request);
+		assertNotNull(result);
+		assertEquals("OrganizationList size", 1, result.getOrganizationList().getOrganization().size());
+		assertEquals("Organization businessCode", "0123456-9", result.getOrganizationList().getOrganization().get(0).getBusinessCode());
+		assertEquals("Organization guid", "abcdef123456", result.getOrganizationList().getOrganization().get(0).getGuid());
+		assertEquals("Organization street address latitude", "6939589.246", result.getOrganizationList()
+				.getOrganization().get(0).getAddresses().getAddress().get(0).getStreetAddresses().getStreetAddress().get(0).getLatitude());
+		assertEquals("Organization street address longitude", "208229.722", result.getOrganizationList()
+				.getOrganization().get(0).getAddresses().getAddress().get(0).getStreetAddresses().getStreetAddress().get(0).getLongitude());
+		assertEquals("Organization e-mail address", "vaasa@vaasa.fi", result.getOrganizationList()
+				.getOrganization().get(0).getEmails().getEmail().get(0).getValue());
+		assertEquals("Organization web page", "https://www.vaasa.fi/", result.getOrganizationList()
+				.getOrganization().get(0).getWebPages().getWebPage().get(0).getUrl());
+	}
+
+	@Test
+	public void testGetOrganizationsException() {
+		boolean thrown = false;
+		String exceptionMessage = null;
+		try {
+			GetOrganizations request = new GetOrganizations();
+			request.setBusinessCode("0123456-1");
+			GetOrganizationsResponse result = (GetOrganizationsResponse)new WebServiceTemplate(marshaller).marshalSendAndReceive(
+					"http://localhost:" + port + "/ws/GetOrganizations/", request);
+		} catch (SoapFaultClientException e) {
+			thrown = true;
+			exceptionMessage = e.getMessage();
+		}
+		assertTrue(thrown);
+		assertEquals(exceptionMessage, "Organizations with businessCode 0123456-1 not found");
+	}
+
+	@Test
+	public void testHasOrganizationChangedValueList() {
+		HasOrganizationChanged request = new HasOrganizationChanged();
+		request.setGuid("abcdef123456");
+		LocalDateTime changedAfter = LocalDateTime.of(2015, Month.JULY, 29, 19, 30, 40);
+		GregorianCalendar cal = GregorianCalendar.from(changedAfter.atZone(ZoneId.systemDefault()));
+		XMLGregorianCalendar xc = null;
+		try {
+			xc = DatatypeFactory.newInstance().newXMLGregorianCalendar(cal);
+		} catch (DatatypeConfigurationException e) {
+			e.printStackTrace();
+		}
+		request.setChangedAfter(xc);
+		HasOrganizationChangedResponse result = (HasOrganizationChangedResponse)new WebServiceTemplate(marshaller).marshalSendAndReceive(
+				"http://localhost:" + port + "/ws/HasOrganizationChanged/", request);
+		assertNotNull(result);
+		assertEquals("Organization changed", true, result.isChanged());
+		assertEquals("Organization changedValueList size", 19, result.getChangedValueList().getChangedValue().size());
+	}
+
+	@Test
+	public void testHasOrganizationChangedSingleValue() {
+		HasOrganizationChanged request = new HasOrganizationChanged();
+		request.setGuid("abcdef123456");
+		LocalDateTime changedAfter = LocalDateTime.of(2019, Month.JULY, 29, 19, 30, 40);
+		GregorianCalendar cal = GregorianCalendar.from(changedAfter.atZone(ZoneId.systemDefault()));
+		XMLGregorianCalendar xc = null;
+		try {
+			xc = DatatypeFactory.newInstance().newXMLGregorianCalendar(cal);
+		} catch (DatatypeConfigurationException e) {
+			e.printStackTrace();
+		}
+		request.setChangedAfter(xc);
+		HasOrganizationChangedResponse result = (HasOrganizationChangedResponse)new WebServiceTemplate(marshaller).marshalSendAndReceive(
+				"http://localhost:" + port + "/ws/HasOrganizationChanged/", request);
+		assertNotNull(result);
+		assertEquals("Organization changed", true, result.isChanged());
+		assertEquals("Organization changedValueList size", 1, result.getChangedValueList().getChangedValue().size());
+		assertEquals("Organization changed value", "Email", result.getChangedValueList().getChangedValue().get(0).getName());
+	}
+
+	@Test
+	public void testHasOrganizationChangedFalse() {
+		HasOrganizationChanged request = new HasOrganizationChanged();
+		request.setGuid("abcdef123456");
+		LocalDateTime changedAfter = LocalDateTime.of(2020, Month.JANUARY, 1, 0, 0, 0);
+		GregorianCalendar cal = GregorianCalendar.from(changedAfter.atZone(ZoneId.systemDefault()));
+		XMLGregorianCalendar xc = null;
+		try {
+			xc = DatatypeFactory.newInstance().newXMLGregorianCalendar(cal);
+		} catch (DatatypeConfigurationException e) {
+			e.printStackTrace();
+		}
+		request.setChangedAfter(xc);
+		HasOrganizationChangedResponse result = (HasOrganizationChangedResponse)new WebServiceTemplate(marshaller).marshalSendAndReceive(
+				"http://localhost:" + port + "/ws/HasOrganizationChanged/", request);
+		assertNotNull(result);
+		assertEquals("Organization changed", false, result.isChanged());
+		assertEquals("Organization changedValueList size", 0, result.getChangedValueList().getChangedValue().size());
+	}
+
+	@Test
+	public void testHasOrganizationChangedException() {
+		boolean thrown = false;
+		String exceptionMessage = null;
+		try {
+			HasOrganizationChanged request = new HasOrganizationChanged();
+			request.setGuid("a123456");
+			LocalDateTime changedAfter = LocalDateTime.of(2015, Month.JULY, 29, 19, 30, 40);
+			GregorianCalendar cal = GregorianCalendar.from(changedAfter.atZone(ZoneId.systemDefault()));
+			XMLGregorianCalendar xc = null;
+			try {
+				xc = DatatypeFactory.newInstance().newXMLGregorianCalendar(cal);
+			} catch (DatatypeConfigurationException e) {
+				e.printStackTrace();
+			}
+			request.setChangedAfter(xc);
+			HasOrganizationChangedResponse result = (HasOrganizationChangedResponse)new WebServiceTemplate(marshaller).marshalSendAndReceive(
+					"http://localhost:" + port + "/ws/HasOrganizationChanged/", request);
+		} catch (SoapFaultClientException e) {
+			thrown = true;
+			exceptionMessage = e.getMessage();
+		}
+		assertTrue(thrown);
+		assertEquals(exceptionMessage, "Organization with guid a123456 not found");
+
 	}
 
 

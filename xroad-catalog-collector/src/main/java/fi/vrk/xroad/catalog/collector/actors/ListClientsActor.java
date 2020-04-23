@@ -68,11 +68,9 @@ public class ListClientsActor extends XRoadCatalogActor {
 
     // supervisor-created pool of list clients actors
     protected ActorRef listMethodsPoolRef;
-    private ActorRef fetchOrganizationsPoolRef;
 
-    public ListClientsActor(ActorRef listMethodsPoolRef, ActorRef fetchOrganizationsPoolRef) {
+    public ListClientsActor(ActorRef listMethodsPoolRef) {
         this.listMethodsPoolRef = listMethodsPoolRef;
-        this.fetchOrganizationsPoolRef = fetchOrganizationsPoolRef;
     }
 
     @Override
@@ -90,7 +88,6 @@ public class ListClientsActor extends XRoadCatalogActor {
 
             log.info("Getting client list from {}", listClientsUrl);
             ClientList clientList = ClientListUtil.clientListFromResponse(listClientsUrl);
-
 
             int counter = 1;
             HashMap<MemberId, Member> m = new HashMap();
@@ -120,8 +117,6 @@ public class ListClientsActor extends XRoadCatalogActor {
             }
 
             log.info("all clients (" + (counter - 1) + ") sent to actor");
-
-            fetchOrganizationsPoolRef.tell(clientList, getSelf());
 
             return true;
         } else {

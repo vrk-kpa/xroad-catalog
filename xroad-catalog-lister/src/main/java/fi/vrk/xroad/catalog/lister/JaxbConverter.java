@@ -211,28 +211,40 @@ public class JaxbConverter {
 
             co.setOrganizationNames(new OrganizationNameList());
             Iterable<fi.vrk.xroad.catalog.persistence.entity.OrganizationName> organizationNames = organization.getAllOrganizationNames();
-            co.getOrganizationNames().getOrganizationName().addAll(convertOrganizationNames(organizationNames));
+            if (organizationNames != null) {
+                co.getOrganizationNames().getOrganizationName().addAll(convertOrganizationNames(organizationNames));
+            }
 
             co.setOrganizationDescriptions(new OrganizationDescriptionList());
             Iterable<fi.vrk.xroad.catalog.persistence.entity.OrganizationDescription> organizationDescriptions
                     = organization.getAllOrganizationDescriptions();
-            co.getOrganizationDescriptions().getOrganizationDescription().addAll(convertOrganizationDescriptions(organizationDescriptions));
+            if (organizationDescriptions != null) {
+                co.getOrganizationDescriptions().getOrganizationDescription().addAll(convertOrganizationDescriptions(organizationDescriptions));
+            }
 
             co.setEmails(new EmailList());
             Iterable<fi.vrk.xroad.catalog.persistence.entity.Email> emails = organization.getAllEmails();
-            co.getEmails().getEmail().addAll(convertEmails(emails));
+            if (emails != null) {
+                co.getEmails().getEmail().addAll(convertEmails(emails));
+            }
 
             co.setPhoneNumbers(new PhoneNumberList());
             Iterable<fi.vrk.xroad.catalog.persistence.entity.PhoneNumber> phoneNumbers = organization.getAllPhoneNumbers();
-            co.getPhoneNumbers().getPhoneNumber().addAll(convertPhoneNumbers(phoneNumbers));
+            if (phoneNumbers != null) {
+                co.getPhoneNumbers().getPhoneNumber().addAll(convertPhoneNumbers(phoneNumbers));
+            }
 
             co.setWebPages(new WebPageList());
             Iterable<fi.vrk.xroad.catalog.persistence.entity.WebPage> webPages = organization.getAllWebPages();
-            co.getWebPages().getWebPage().addAll(convertWebPages(webPages));
+            if (webPages != null) {
+                co.getWebPages().getWebPage().addAll(convertWebPages(webPages));
+            }
 
             co.setAddresses(new AddressList());
             Iterable<fi.vrk.xroad.catalog.persistence.entity.Address> addresses = organization.getAllAddresses();
-            co.getAddresses().getAddress().addAll(convertAddresses(addresses));
+            if (addresses != null) {
+                co.getAddresses().getAddress().addAll(convertAddresses(addresses));
+            }
 
             converted.add(co);
         }
@@ -373,12 +385,16 @@ public class JaxbConverter {
 
             co.setStreetAddresses(new StreetAddressList());
             Iterable<fi.vrk.xroad.catalog.persistence.entity.StreetAddress> streetAddresses = address.getAllStreetAddresses();
-            co.getStreetAddresses().getStreetAddress().addAll(convertStreetAddresses(streetAddresses));
+            if (streetAddresses != null) {
+                co.getStreetAddresses().getStreetAddress().addAll(convertStreetAddresses(streetAddresses));
+            }
 
             co.setPostOfficeBoxAddresses(new PostOfficeBoxAddressList());
             Iterable<fi.vrk.xroad.catalog.persistence.entity.PostOfficeBoxAddress> postOfficeBoxAddresses
                     = address.getAllPostOfficeBoxAddresses();
-            co.getPostOfficeBoxAddresses().getPostOfficeBoxAddress().addAll(convertPostOfficeBoxAddresses(postOfficeBoxAddresses));
+            if (postOfficeBoxAddresses != null) {
+                co.getPostOfficeBoxAddresses().getPostOfficeBoxAddress().addAll(convertPostOfficeBoxAddresses(postOfficeBoxAddresses));
+            }
 
             converted.add(co);
         }
@@ -406,21 +422,29 @@ public class JaxbConverter {
 
             co.setStreets(new StreetList());
             Iterable<fi.vrk.xroad.catalog.persistence.entity.Street> streets = streetAddress.getAllStreets();
-            co.getStreets().getStreet().addAll(convertStreets(streets));
+            if (streets != null) {
+                co.getStreets().getStreet().addAll(convertStreets(streets));
+            }
 
             co.setPostOffices(new StreetAddressPostOfficeList());
             Iterable<fi.vrk.xroad.catalog.persistence.entity.StreetAddressPostOffice> streetAddressPostOffices = streetAddress.getAllPostOffices();
-            co.getPostOffices().getStreetAddressPostOffice().addAll(convertStreetAddressPostOffices(streetAddressPostOffices));
+            if (streetAddressPostOffices != null) {
+                co.getPostOffices().getStreetAddressPostOffice().addAll(convertStreetAddressPostOffices(streetAddressPostOffices));
+            }
 
             co.setMunicipalities(new StreetAddressMunicipalityList());
             Iterable<fi.vrk.xroad.catalog.persistence.entity.StreetAddressMunicipality> streetAddressMunicipalities = streetAddress.getAllMunicipalities();
-            co.getMunicipalities().getStreetAddressMunicipality().addAll(convertStreetAddressMunicipalities(streetAddressMunicipalities));
+            if (streetAddressMunicipalities != null) {
+                co.getMunicipalities().getStreetAddressMunicipality().addAll(convertStreetAddressMunicipalities(streetAddressMunicipalities));
+            }
 
             co.setAdditionalInformation(new StreetAddressAdditionalInformationList());
             Iterable<fi.vrk.xroad.catalog.persistence.entity.StreetAddressAdditionalInformation> streetAddressAdditionalInformation
                     = streetAddress.getAllAdditionalInformation();
-            co.getAdditionalInformation().getStreetAddressAdditionalInformation()
-                    .addAll(convertStreetAddressAdditionalInformation(streetAddressAdditionalInformation));
+            if (streetAddressAdditionalInformation != null) {
+                co.getAdditionalInformation().getStreetAddressAdditionalInformation()
+                        .addAll(convertStreetAddressAdditionalInformation(streetAddressAdditionalInformation));
+            }
 
             converted.add(co);
         }
@@ -488,8 +512,10 @@ public class JaxbConverter {
             co.setStreetAddressMunicipalityNames(new StreetAddressMunicipalityNameList());
             Iterable<fi.vrk.xroad.catalog.persistence.entity.StreetAddressMunicipalityName> streetAddressMunicipalityNames
                     = streetAddressMunicipality.getAllMunicipalityNames();
-            co.getStreetAddressMunicipalityNames().getStreetAddressMunicipalityName()
-                    .addAll(convertStreetAddressMunicipalityNames(streetAddressMunicipalityNames));
+            if (streetAddressMunicipalityNames != null) {
+                co.getStreetAddressMunicipalityNames().getStreetAddressMunicipalityName()
+                        .addAll(convertStreetAddressMunicipalityNames(streetAddressMunicipalityNames));
+            }
 
             converted.add(co);
         }
@@ -558,23 +584,30 @@ public class JaxbConverter {
             co.setAdditionalInformation(new PostOfficeBoxAddressAdditionalInformationList());
             Iterable<fi.vrk.xroad.catalog.persistence.entity.PostOfficeBoxAddressAdditionalInformation> postOfficeBoxAddressAdditionalInformation
                     = postOfficeBoxAddress.getAllAdditionalInformation();
-            co.getAdditionalInformation().getPostOfficeBoxAddressAdditionalInformation()
-                    .addAll(convertPostOfficeBoxAddressAdditionalInformation(postOfficeBoxAddressAdditionalInformation));
+            if (postOfficeBoxAddressAdditionalInformation != null) {
+                co.getAdditionalInformation().getPostOfficeBoxAddressAdditionalInformation()
+                        .addAll(convertPostOfficeBoxAddressAdditionalInformation(postOfficeBoxAddressAdditionalInformation));
+            }
 
             co.setPostOfficeBoxAddressMunicipalities(new PostOfficeBoxAddressMunicipalityList());
             Iterable<fi.vrk.xroad.catalog.persistence.entity.PostOfficeBoxAddressMunicipality> postOfficeBoxAddressMunicipalities
                     = postOfficeBoxAddress.getAllMunicipalities();
-            co.getPostOfficeBoxAddressMunicipalities().getPostOfficeBoxAddressMunicipality()
-                    .addAll(convertPostOfficeBoxAddressMunicipalities(postOfficeBoxAddressMunicipalities));
+            if (postOfficeBoxAddressMunicipalities != null) {
+                co.getPostOfficeBoxAddressMunicipalities().getPostOfficeBoxAddressMunicipality()
+                        .addAll(convertPostOfficeBoxAddressMunicipalities(postOfficeBoxAddressMunicipalities));
+            }
 
             co.setPostOffices(new PostOfficeList());
             Iterable<fi.vrk.xroad.catalog.persistence.entity.PostOffice> postOffices = postOfficeBoxAddress.getAllPostOffices();
-            co.getPostOffices().getPostOffice().addAll(convertPostOffices(postOffices));
+            if (postOffices != null) {
+                co.getPostOffices().getPostOffice().addAll(convertPostOffices(postOffices));
+            }
 
             co.setPostOfficeBoxes(new PostOfficeBoxList());
             Iterable<fi.vrk.xroad.catalog.persistence.entity.PostOfficeBox> postOfficeBoxes = postOfficeBoxAddress.getAllPostOfficeBoxes();
-            co.getPostOfficeBoxes().getPostOfficeBox().addAll(convertPostOfficeBoxes(postOfficeBoxes));
-
+            if (postOfficeBoxes != null) {
+                co.getPostOfficeBoxes().getPostOfficeBox().addAll(convertPostOfficeBoxes(postOfficeBoxes));
+            }
 
             converted.add(co);
         }
@@ -623,8 +656,10 @@ public class JaxbConverter {
             co.setPostOfficeBoxAddressMunicipalityNames(new PostOfficeBoxAddressMunicipalityNameList());
             Iterable<fi.vrk.xroad.catalog.persistence.entity.PostOfficeBoxAddressMunicipalityName> postOfficeBoxAddressMunicipalityNames
                     = postOfficeBoxAddressMunicipality.getAllMunicipalityNames();
-            co.getPostOfficeBoxAddressMunicipalityNames().getPostOfficeBoxAddressMunicipalityName()
-                    .addAll(convertPostOfficeBoxAddressMunicipalityNames(postOfficeBoxAddressMunicipalityNames));
+            if (postOfficeBoxAddressMunicipalityNames != null) {
+                co.getPostOfficeBoxAddressMunicipalityNames().getPostOfficeBoxAddressMunicipalityName()
+                        .addAll(convertPostOfficeBoxAddressMunicipalityNames(postOfficeBoxAddressMunicipalityNames));
+            }
 
             converted.add(co);
         }

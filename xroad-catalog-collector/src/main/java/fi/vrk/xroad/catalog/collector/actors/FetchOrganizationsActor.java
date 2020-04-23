@@ -24,6 +24,7 @@ package fi.vrk.xroad.catalog.collector.actors;
 
 import fi.vrk.xroad.catalog.collector.util.OrganizationUtil;
 import fi.vrk.xroad.catalog.collector.wsimport.ClientList;
+import fi.vrk.xroad.catalog.collector.wsimport.ClientType;
 import fi.vrk.xroad.catalog.persistence.entity.*;
 import fi.vrk.xroad.catalog.persistence.CatalogService;
 import lombok.extern.slf4j.Slf4j;
@@ -53,6 +54,9 @@ public class FetchOrganizationsActor extends XRoadCatalogActor {
     @Value("${xroad-catalog.max-organizations-per-request}")
     private Integer maxOrganizationsPerRequest;
 
+    @Value("${xroad-catalog.fetch-organizations-limit}")
+    private Integer fetchOrganizationsLimit;
+
     @Autowired
     protected CatalogService catalogService;
 
@@ -63,11 +67,11 @@ public class FetchOrganizationsActor extends XRoadCatalogActor {
 
     @Override
     protected boolean handleMessage(Object message) throws NoSuchAlgorithmException, KeyStoreException, KeyManagementException {
-        if (message instanceof ClientList) {
+        if (message instanceof ClientType) {
 
             log.info("Fetching organizations from {}", fetchOrganizationsUrl);
 
-            List<String> organizationIds = OrganizationUtil.getOrganizationIdsList(fetchOrganizationsUrl);
+            List<String> organizationIds = OrganizationUtil.getOrganizationIdsList(fetchOrganizationsUrl, fetchOrganizationsLimit);
             int numberOfOrganizations = organizationIds.size();
 
             log.info("Fetched {} organization GUIDs from {}", numberOfOrganizations, fetchOrganizationsUrl);

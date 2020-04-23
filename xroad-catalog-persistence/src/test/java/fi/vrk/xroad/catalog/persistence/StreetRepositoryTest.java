@@ -20,26 +20,42 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package fi.vrk.xroad.catalog.persistence.repository;
+package fi.vrk.xroad.catalog.persistence;
 
-import fi.vrk.xroad.catalog.persistence.entity.Member;
-import fi.vrk.xroad.catalog.persistence.entity.Organization;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.CrudRepository;
-import org.springframework.data.repository.query.Param;
+import fi.vrk.xroad.catalog.persistence.entity.Street;
+import fi.vrk.xroad.catalog.persistence.repository.StreetRepository;
+import lombok.extern.slf4j.Slf4j;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
+import static org.junit.Assert.*;
 
-public interface OrganizationRepository extends CrudRepository<Organization, Long> {
+@RunWith(SpringRunner.class)
+@SpringBootTest(classes = Application.class)
+@Transactional
+@Slf4j
+public class StreetRepositoryTest {
 
-    // uses named query Organization.findAllByBusinessCode
-    Set<Organization> findAllByBusinessCode(@Param("businessCode") String businessCode);
+    @Autowired
+    StreetRepository streetRepository;
 
-    @Query("SELECT o FROM Organization o WHERE o.guid = :guid")
-    Optional<Organization> findAnyByOrganizationGuid(@Param("guid") String guid);
+    @Test
+    public void testFindAnyByStreetAddressId() {
+        Optional<List<Street>> street = streetRepository.findAnyByStreetAddressId(1L);
+        assertEquals(true, street.isPresent());
+        assertEquals(1, street.get().size());
+        assertNotNull(street.get().get(0).getStatusInfo());
+        assertEquals("fi", street.get().get(0).getLanguage());
+        assertEquals("Motellikuja", street.get().get(0).getValue());
+    }
 
 }
+
+
