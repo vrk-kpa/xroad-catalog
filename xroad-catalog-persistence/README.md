@@ -5,7 +5,13 @@ Persistence library for xroad-catalog
 
 The purpose of this piece of software is to persist and read persisted data. Used by the Collector and Lister
 
-![X-Road Persistence overview](db.png)
+1. A diagram of members and related subsystems and services
+
+![Member diagram](db_member.png)
+
+2. A diagram of organizations and related details
+
+![Organization diagram](db_organization.png)
 
 ## Create database
 ```sh

@@ -13,6 +13,8 @@ The main endpoints this software provides:
 * IsSoapService - endpoint for requesting whether a given service is a SOAP service
 * IsRestService - endpoint for requesting whether a given service is a REST service
 * IsProvider - endpoint for requesting whether a given member is a provider
+* GetOrganizations - endpoint for requesting organization details
+* HasOrganizationChanged - endpoint for requesting whether given organization has some of its details changed
 
 ## Build
 ```sh
@@ -895,6 +897,314 @@ Response
 </SOAP-ENV:Envelope>
 ```
 
+### 7. GetOrganizations
+Request
+
+curl -k -d @GetOrganizationsRequest.xml --header "Content-Type: text/xml" -X POST http://localhost:8080/ws/GetOrganizations
+
+```xml
+<soapenv:Envelope
+        xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
+        xmlns:xro="http://x-road.eu/xsd/xroad.xsd"
+        xmlns:iden="http://x-road.eu/xsd/identifiers"
+        xmlns:xrcl="http://xroad.vrk.fi/xroad-catalog-lister">
+   <soapenv:Header>
+      <xro:protocolVersion>4.x</xro:protocolVersion>
+      <xro:id>ID11234</xro:id>
+      <xro:userId>EE1234567890</xro:userId>
+      <xro:client iden:objectType="MEMBER">
+         <iden:xRoadInstance>FI</iden:xRoadInstance>
+         <iden:memberClass>GOV</iden:memberClass>
+         <iden:memberCode>1710128-9</iden:memberCode>
+      </xro:client>
+      <xro:service iden:objectType="SERVICE">
+         <iden:xRoadInstance>FI</iden:xRoadInstance>
+         <iden:memberClass>GOV</iden:memberClass>
+         <iden:memberCode>1710128-9</iden:memberCode>
+         <iden:subsystemCode>SS1</iden:subsystemCode>
+         <iden:serviceCode>ListMembers</iden:serviceCode>
+         <iden:serviceVersion>v1</iden:serviceVersion>
+      </xro:service>
+   </soapenv:Header>
+   <soapenv:Body>
+      <xrcl:GetOrganizations>
+         <xrcl:businessCode>0181367-9</xrcl:businessCode>
+      </xrcl:GetOrganizations>
+   </soapenv:Body>
+</soapenv:Envelope>
+
+
+```
+
+Response
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/">
+   <SOAP-ENV:Header>
+      <xro:protocolVersion xmlns:xro="http://x-road.eu/xsd/xroad.xsd">4.x</xro:protocolVersion>
+      <xro:id xmlns:xro="http://x-road.eu/xsd/xroad.xsd">ID11234</xro:id>
+      <xro:userId xmlns:xro="http://x-road.eu/xsd/xroad.xsd">EE1234567890</xro:userId>
+      <xro:client xmlns:xro="http://x-road.eu/xsd/xroad.xsd" xmlns:iden="http://x-road.eu/xsd/identifiers" iden:objectType="MEMBER">
+         <iden:xRoadInstance>FI</iden:xRoadInstance>
+         <iden:memberClass>GOV</iden:memberClass>
+         <iden:memberCode>1710128-9</iden:memberCode>
+      </xro:client>
+      <xro:service xmlns:xro="http://x-road.eu/xsd/xroad.xsd" xmlns:iden="http://x-road.eu/xsd/identifiers" iden:objectType="SERVICE">
+         <iden:xRoadInstance>FI</iden:xRoadInstance>
+         <iden:memberClass>GOV</iden:memberClass>
+         <iden:memberCode>1710128-9</iden:memberCode>
+         <iden:subsystemCode>SS1</iden:subsystemCode>
+         <iden:serviceCode>ListMembers</iden:serviceCode>
+         <iden:serviceVersion>v1</iden:serviceVersion>
+      </xro:service>
+   </SOAP-ENV:Header>
+   <SOAP-ENV:Body>
+      <ns2:GetOrganizationsResponse xmlns:ns2="http://xroad.vrk.fi/xroad-catalog-lister">
+         <ns2:organizationList>
+            <ns2:organization>
+               <ns2:organizationType>Municipality</ns2:organizationType>
+               <ns2:publishingStatus>Published</ns2:publishingStatus>
+               <ns2:businessCode>0181367-9</ns2:businessCode>
+               <ns2:guid>e6b33f11-bb47-496e-98c5-6a736dae6014</ns2:guid>
+               <ns2:organizationNames>
+                  <ns2:organizationName>
+                     <ns2:language>fi</ns2:language>
+                     <ns2:type>Name</ns2:type>
+                     <ns2:value>Närpiön kaupunki</ns2:value>
+                     <ns2:created>2020-04-24T07:44:38.523+03:00</ns2:created>
+                     <ns2:changed>2020-04-24T10:48:50.301+03:00</ns2:changed>
+                     <ns2:fetched>2020-04-24T10:48:50.301+03:00</ns2:fetched>
+                  </ns2:organizationName>
+               </ns2:organizationNames>
+               <ns2:organizationDescriptions>
+                  <ns2:organizationDescription>
+                     <ns2:language>fi</ns2:language>
+                     <ns2:type>Description</ns2:type>
+                     <ns2:value />
+                     <ns2:created>2020-04-24T07:44:38.562+03:00</ns2:created>
+                     <ns2:changed>2020-04-24T10:48:50.307+03:00</ns2:changed>
+                     <ns2:fetched>2020-04-24T10:48:50.307+03:00</ns2:fetched>
+                  </ns2:organizationDescription>
+               </ns2:organizationDescriptions>
+               <ns2:emails>
+                  <ns2:email>
+                     <ns2:language>fi</ns2:language>
+                     <ns2:description>Asiakaspalvelu</ns2:description>
+                     <ns2:value>staden@narpes.fi</ns2:value>
+                     <ns2:created>2020-04-24T07:44:38.584+03:00</ns2:created>
+                     <ns2:changed>2020-04-24T10:48:50.314+03:00</ns2:changed>
+                     <ns2:fetched>2020-04-24T10:48:50.314+03:00</ns2:fetched>
+                  </ns2:email>
+               </ns2:emails>
+               <ns2:phoneNumbers>
+                  <ns2:phoneNumber>
+                     <ns2:language>fi</ns2:language>
+                     <ns2:additionalInformation>Puhelinvaihde</ns2:additionalInformation>
+                     <ns2:serviceChargeType>Chargeable</ns2:serviceChargeType>
+                     <ns2:chargeDescription />
+                     <ns2:prefixNumber>+358</ns2:prefixNumber>
+                     <ns2:number>62249111</ns2:number>
+                     <ns2:isFinnishServiceNumber>false</ns2:isFinnishServiceNumber>
+                     <ns2:created>2020-04-24T07:44:38.606+03:00</ns2:created>
+                     <ns2:changed>2020-04-24T10:48:50.320+03:00</ns2:changed>
+                     <ns2:fetched>2020-04-24T10:48:50.320+03:00</ns2:fetched>
+                  </ns2:phoneNumber>
+               </ns2:phoneNumbers>
+               <ns2:webPages>
+                  <ns2:webPage>
+                     <ns2:language>fi</ns2:language>
+                     <ns2:url>https://www.narpes.fi/fi</ns2:url>
+                     <ns2:value>Närpiön Kaupunki</ns2:value>
+                     <ns2:created>2020-04-24T07:44:38.630+03:00</ns2:created>
+                     <ns2:changed>2020-04-24T10:48:50.326+03:00</ns2:changed>
+                     <ns2:fetched>2020-04-24T10:48:50.326+03:00</ns2:fetched>
+                  </ns2:webPage>
+               </ns2:webPages>
+               <ns2:addresses>
+                  <ns2:address>
+                     <ns2:country>FI</ns2:country>
+                     <ns2:type>Postal</ns2:type>
+                     <ns2:subType>Street</ns2:subType>
+                     <ns2:streetAddresses>
+                        <ns2:streetAddress>
+                           <ns2:postalCode>64200</ns2:postalCode>
+                           <ns2:latitude>6939589.246</ns2:latitude>
+                           <ns2:longitude>208229.722</ns2:longitude>
+                           <ns2:coordinateState>Ok</ns2:coordinateState>
+                           <ns2:streets>
+                              <ns2:street>
+                                 <ns2:language>sms</ns2:language>
+                                 <ns2:value>Kirkkotie</ns2:value>
+                                 <ns2:created>2020-04-24T07:44:38.813+03:00</ns2:created>
+                                 <ns2:changed>2020-04-24T10:48:50.633+03:00</ns2:changed>
+                                 <ns2:fetched>2020-04-24T10:48:50.633+03:00</ns2:fetched>
+                              </ns2:street>
+                           </ns2:streets>
+                           <ns2:postOffices>
+                              <ns2:streetAddressPostOffice>
+                                 <ns2:language>fi</ns2:language>
+                                 <ns2:value>NÄRPIÖ</ns2:value>
+                                 <ns2:created>2020-04-24T07:44:38.725+03:00</ns2:created>
+                                 <ns2:changed>2020-04-24T10:48:50.607+03:00</ns2:changed>
+                                 <ns2:fetched>2020-04-24T10:48:50.607+03:00</ns2:fetched>
+                              </ns2:streetAddressPostOffice>
+                           </ns2:postOffices>
+                           <ns2:municipalities>
+                              <ns2:streetAddressMunicipality>
+                                 <ns2:code>545</ns2:code>
+                                 <ns2:streetAddressMunicipalityNames>
+                                    <ns2:streetAddressMunicipalityName>
+                                       <ns2:language>fi</ns2:language>
+                                       <ns2:value>Närpiö</ns2:value>
+                                       <ns2:created>2020-04-24T07:44:38.678+03:00</ns2:created>
+                                       <ns2:changed>2020-04-24T10:48:50.579+03:00</ns2:changed>
+                                       <ns2:fetched>2020-04-24T10:48:50.579+03:00</ns2:fetched>
+                                    </ns2:streetAddressMunicipalityName>
+                                 </ns2:streetAddressMunicipalityNames>
+                                 <ns2:created>2020-04-24T07:44:38.669+03:00</ns2:created>
+                                 <ns2:changed>2020-04-24T07:44:38.669+03:00</ns2:changed>
+                                 <ns2:fetched>2020-04-24T10:48:50.568+03:00</ns2:fetched>
+                              </ns2:streetAddressMunicipality>
+                           </ns2:municipalities>
+                           <ns2:additionalInformation>
+                              <ns2:streetAddressAdditionalInformation>
+                                 <ns2:language>fi</ns2:language>
+                                 <ns2:value />
+                                 <ns2:created>2020-04-24T07:44:38.956+03:00</ns2:created>
+                                 <ns2:changed>2020-04-24T07:44:38.956+03:00</ns2:changed>
+                                 <ns2:fetched>2020-04-24T10:48:50.584+03:00</ns2:fetched>
+                              </ns2:streetAddressAdditionalInformation>
+                           </ns2:additionalInformation>
+                           <ns2:created>2020-04-24T07:44:38.661+03:00</ns2:created>
+                           <ns2:changed>2020-04-24T07:44:38.661+03:00</ns2:changed>
+                           <ns2:fetched>2020-04-24T10:48:50.565+03:00</ns2:fetched>
+                        </ns2:streetAddress>
+                     </ns2:streetAddresses>
+                     <ns2:postOfficeBoxAddresses />
+                     <ns2:created>2020-04-24T07:44:38.652+03:00</ns2:created>
+                     <ns2:changed>2020-04-24T10:48:50.497+03:00</ns2:changed>
+                     <ns2:fetched>2020-04-24T10:48:50.497+03:00</ns2:fetched>
+                  </ns2:address>
+               </ns2:addresses>
+               <ns2:created>2020-04-24T07:44:38.502+03:00</ns2:created>
+               <ns2:changed>2020-04-24T07:44:38.502+03:00</ns2:changed>
+               <ns2:fetched>2020-04-24T10:48:50.289+03:00</ns2:fetched>
+            </ns2:organization>
+         </ns2:organizationList>
+      </ns2:GetOrganizationsResponse>
+   </SOAP-ENV:Body>
+</SOAP-ENV:Envelope>
+```
+
+### 8. HasOrganizationChanged
+Request
+
+curl -k -d @HasOrganizationChangedRequest.xml --header "Content-Type: text/xml" -X POST http://localhost:8080/ws/HasOrganizationChanged
+
+```xml
+<soapenv:Envelope
+        xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
+        xmlns:xro="http://x-road.eu/xsd/xroad.xsd"
+        xmlns:iden="http://x-road.eu/xsd/identifiers"
+        xmlns:xrcl="http://xroad.vrk.fi/xroad-catalog-lister">
+   <soapenv:Header>
+      <xro:protocolVersion>4.x</xro:protocolVersion>
+      <xro:id>ID11234</xro:id>
+      <xro:userId>EE1234567890</xro:userId>
+      <xro:client iden:objectType="MEMBER">
+         <iden:xRoadInstance>FI</iden:xRoadInstance>
+         <iden:memberClass>GOV</iden:memberClass>
+         <iden:memberCode>1710128-9</iden:memberCode>
+      </xro:client>
+      <xro:service iden:objectType="SERVICE">
+         <iden:xRoadInstance>FI</iden:xRoadInstance>
+         <iden:memberClass>GOV</iden:memberClass>
+         <iden:memberCode>1710128-9</iden:memberCode>
+         <iden:subsystemCode>SS1</iden:subsystemCode>
+         <iden:serviceCode>ListMembers</iden:serviceCode>
+         <iden:serviceVersion>v1</iden:serviceVersion>
+      </xro:service>
+   </soapenv:Header>
+   <soapenv:Body>
+      <xrcl:HasOrganizationChanged>
+         <xrcl:guid>e6b33f11-bb47-496e-98c5-6a736dae6014</xrcl:guid>
+         <xrcl:changedAfter>2011-01-01</xrcl:changedAfter>
+      </xrcl:HasOrganizationChanged>
+   </soapenv:Body>
+</soapenv:Envelope>
+
+```
+
+Response
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/">
+   <SOAP-ENV:Header>
+      <xro:protocolVersion xmlns:xro="http://x-road.eu/xsd/xroad.xsd">4.x</xro:protocolVersion>
+      <xro:id xmlns:xro="http://x-road.eu/xsd/xroad.xsd">ID11234</xro:id>
+      <xro:userId xmlns:xro="http://x-road.eu/xsd/xroad.xsd">EE1234567890</xro:userId>
+      <xro:client xmlns:xro="http://x-road.eu/xsd/xroad.xsd" xmlns:iden="http://x-road.eu/xsd/identifiers" iden:objectType="MEMBER">
+         <iden:xRoadInstance>FI</iden:xRoadInstance>
+         <iden:memberClass>GOV</iden:memberClass>
+         <iden:memberCode>1710128-9</iden:memberCode>
+      </xro:client>
+      <xro:service xmlns:xro="http://x-road.eu/xsd/xroad.xsd" xmlns:iden="http://x-road.eu/xsd/identifiers" iden:objectType="SERVICE">
+         <iden:xRoadInstance>FI</iden:xRoadInstance>
+         <iden:memberClass>GOV</iden:memberClass>
+         <iden:memberCode>1710128-9</iden:memberCode>
+         <iden:subsystemCode>SS1</iden:subsystemCode>
+         <iden:serviceCode>ListMembers</iden:serviceCode>
+         <iden:serviceVersion>v1</iden:serviceVersion>
+      </xro:service>
+   </SOAP-ENV:Header>
+   <SOAP-ENV:Body>
+      <ns2:HasOrganizationChangedResponse xmlns:ns2="http://xroad.vrk.fi/xroad-catalog-lister">
+         <ns2:changed>true</ns2:changed>
+         <ns2:changedValueList>
+            <ns2:changedValue>
+               <ns2:name>Organization</ns2:name>
+            </ns2:changedValue>
+            <ns2:changedValue>
+               <ns2:name>OrganizationName</ns2:name>
+            </ns2:changedValue>
+            <ns2:changedValue>
+               <ns2:name>OrganizationDescription</ns2:name>
+            </ns2:changedValue>
+            <ns2:changedValue>
+               <ns2:name>Email</ns2:name>
+            </ns2:changedValue>
+            <ns2:changedValue>
+               <ns2:name>PhoneNumber</ns2:name>
+            </ns2:changedValue>
+            <ns2:changedValue>
+               <ns2:name>WebPage</ns2:name>
+            </ns2:changedValue>
+            <ns2:changedValue>
+               <ns2:name>Address</ns2:name>
+            </ns2:changedValue>
+            <ns2:changedValue>
+               <ns2:name>StreetAddress</ns2:name>
+            </ns2:changedValue>
+            <ns2:changedValue>
+               <ns2:name>Street</ns2:name>
+            </ns2:changedValue>
+            <ns2:changedValue>
+               <ns2:name>StreetAddress PostOffice</ns2:name>
+            </ns2:changedValue>
+            <ns2:changedValue>
+               <ns2:name>StreetAddress Municipality</ns2:name>
+            </ns2:changedValue>
+            <ns2:changedValue>
+               <ns2:name>StreetAddress Municipality Name</ns2:name>
+            </ns2:changedValue>
+            <ns2:changedValue>
+               <ns2:name>StreetAddress AdditionalInformation</ns2:name>
+            </ns2:changedValue>
+         </ns2:changedValueList>
+      </ns2:HasOrganizationChangedResponse>
+   </SOAP-ENV:Body>
+</SOAP-ENV:Envelope>
+```
 
 ## Build RPM Packages on Non-RedHat Platform
  
