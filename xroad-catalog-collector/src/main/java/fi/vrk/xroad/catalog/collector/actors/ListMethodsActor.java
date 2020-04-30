@@ -142,7 +142,10 @@ public class ListMethodsActor extends XRoadCatalogActor {
                 fetchOpenApiPoolRef.tell(service, getSender());
             }
 
-            fetchOrganizationsPoolRef.tell(clientType, getSelf());
+            // Do this only once as there is no need to perform this per each customer
+            if (COUNTER.get() < 2) {
+                fetchOrganizationsPoolRef.tell(clientType, getSelf());
+            }
 
             return true;
 
