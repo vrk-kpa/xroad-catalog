@@ -80,12 +80,17 @@ public class ListMethodsActor extends XRoadCatalogActor {
     private ActorRef fetchWsdlPoolRef;
     private ActorRef fetchOpenApiPoolRef;
     private ActorRef fetchOrganizationsPoolRef;
+    private ActorRef fetchCompaniesPoolRef;
     private XRoadClient xroadClient;
 
-    public ListMethodsActor(ActorRef fetchWsdlPoolRef, ActorRef fetchOpenApiPoolRef, ActorRef fetchOrganizationsPoolRef) {
+    public ListMethodsActor(ActorRef fetchWsdlPoolRef,
+                            ActorRef fetchOpenApiPoolRef,
+                            ActorRef fetchOrganizationsPoolRef,
+                            ActorRef fetchCompaniesPoolRef) {
         this.fetchWsdlPoolRef = fetchWsdlPoolRef;
         this.fetchOpenApiPoolRef = fetchOpenApiPoolRef;
         this.fetchOrganizationsPoolRef = fetchOrganizationsPoolRef;
+        this.fetchCompaniesPoolRef = fetchCompaniesPoolRef;
     }
 
     @Override
@@ -142,7 +147,10 @@ public class ListMethodsActor extends XRoadCatalogActor {
                 fetchOpenApiPoolRef.tell(service, getSender());
             }
 
-            fetchOrganizationsPoolRef.tell(clientType, getSelf());
+            if (COUNTER.get() < 2) {
+                fetchOrganizationsPoolRef.tell(clientType, getSelf());
+                fetchCompaniesPoolRef.tell(clientType, getSelf());
+            }
 
             return true;
 

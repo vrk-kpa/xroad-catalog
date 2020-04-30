@@ -50,6 +50,22 @@ public class OrganizationUtil {
 
     }
 
+    public static String getCompany(String url, String businessCode) {
+        final String fetchCompaniesUrl = new StringBuilder().append(url)
+                .append("/").append(businessCode).toString();
+        String ret = null;
+        try {
+            ret = getResponseBody(fetchCompaniesUrl);
+        } catch (KeyStoreException e) {
+            e.printStackTrace();
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        } catch (KeyManagementException e) {
+            e.printStackTrace();
+        }
+        return ret;
+    }
+
     public static List<String> getOrganizationIdsList(String url, Integer fetchOrganizationsLimit)
             throws KeyStoreException, NoSuchAlgorithmException, KeyManagementException {
         String response = getResponseBody(url);
