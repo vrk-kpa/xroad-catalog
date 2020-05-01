@@ -22,10 +22,12 @@
  */package fi.vrk.xroad.catalog.persistence.repository;
 
 import fi.vrk.xroad.catalog.persistence.entity.BusinessName;
+import org.springframework.data.repository.CrudRepository;
+
 import java.util.List;
 import java.util.Optional;
 
-public interface BusinessNameRepository {
+public interface BusinessNameRepository extends CrudRepository<BusinessName, Long> {
 
     Optional<List<BusinessName>> findAnyByCompanyId(Long companyId);
 

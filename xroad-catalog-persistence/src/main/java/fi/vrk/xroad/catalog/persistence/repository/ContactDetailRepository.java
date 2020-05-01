@@ -23,10 +23,12 @@
 package fi.vrk.xroad.catalog.persistence.repository;
 
 import fi.vrk.xroad.catalog.persistence.entity.ContactDetail;
+import org.springframework.data.repository.CrudRepository;
+
 import java.util.List;
 import java.util.Optional;
 
-public interface ContactDetailRepository {
+public interface ContactDetailRepository extends CrudRepository<ContactDetail, Long> {
 
     Optional<List<ContactDetail>> findAnyByCompanyId(Long companyId);
 

@@ -23,10 +23,12 @@
 package fi.vrk.xroad.catalog.persistence.repository;
 
 import fi.vrk.xroad.catalog.persistence.entity.Liquidation;
+import org.springframework.data.repository.CrudRepository;
+
 import java.util.List;
 import java.util.Optional;
 
-public interface LiquidationRepository {
+public interface LiquidationRepository extends CrudRepository<Liquidation, Long> {
 
     Optional<List<Liquidation>> findAnyByCompanyId(Long companyId);
 

@@ -23,11 +23,12 @@
 package fi.vrk.xroad.catalog.persistence.repository;
 
 import fi.vrk.xroad.catalog.persistence.entity.CompanyForm;
+import org.springframework.data.repository.CrudRepository;
+
 import java.util.List;
 import java.util.Optional;
 
-public interface CompanyFormRepository {
-
+public interface CompanyFormRepository extends CrudRepository<CompanyForm, Long> {
     Optional<List<CompanyForm>> findAnyByCompanyId(Long companyId);
 
 }

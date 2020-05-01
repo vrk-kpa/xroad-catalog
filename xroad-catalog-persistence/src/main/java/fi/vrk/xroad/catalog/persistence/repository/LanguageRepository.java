@@ -23,10 +23,12 @@
 package fi.vrk.xroad.catalog.persistence.repository;
 
 import fi.vrk.xroad.catalog.persistence.entity.Language;
+import org.springframework.data.repository.CrudRepository;
+
 import java.util.List;
 import java.util.Optional;
 
-public interface LanguageRepository {
+public interface LanguageRepository extends CrudRepository<Language, Long> {
 
     Optional<List<Language>> findAnyByCompanyId(Long companyId);
 

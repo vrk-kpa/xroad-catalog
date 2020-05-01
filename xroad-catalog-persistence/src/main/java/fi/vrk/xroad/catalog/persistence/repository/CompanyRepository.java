@@ -23,11 +23,12 @@
 package fi.vrk.xroad.catalog.persistence.repository;
 
 import fi.vrk.xroad.catalog.persistence.entity.Company;
+import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 
 import java.util.Set;
 
-public interface CompanyRepository {
+public interface CompanyRepository extends CrudRepository<Company, Long> {
 
     // uses named query Company.findAllByBusinessId
     Set<Company> findAllByBusinessId(@Param("businessId") String businessId);

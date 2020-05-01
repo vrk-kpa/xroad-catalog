@@ -23,10 +23,12 @@
 package fi.vrk.xroad.catalog.persistence.repository;
 
 import fi.vrk.xroad.catalog.persistence.entity.RegisteredOffice;
+import org.springframework.data.repository.CrudRepository;
+
 import java.util.List;
 import java.util.Optional;
 
-public interface RegisteredOfficeRepository {
+public interface RegisteredOfficeRepository extends CrudRepository<RegisteredOffice, Long> {
 
     Optional<List<RegisteredOffice>> findAnyByCompanyId(Long companyId);
 

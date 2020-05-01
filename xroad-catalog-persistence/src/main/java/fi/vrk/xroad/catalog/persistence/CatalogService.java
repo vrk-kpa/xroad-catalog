@@ -74,6 +74,12 @@ public interface CatalogService {
     Iterable<Organization> getOrganizations(String businessCode);
 
     /**
+     * @param businessId Only interested in companies with this businessId value
+     * @return Iterable of Company entities
+     */
+    Iterable<Company> getCompanies(String businessId);
+
+    /**
      * Returns full Member object
      * @param xRoadInstance name of the instance
      * @param memberClass member class
@@ -285,5 +291,79 @@ public interface CatalogService {
      * @param street the actual Street
      */
     Street saveStreet(Street street);
+
+    /**
+     * Saves given company data. The company can either be a new one, or an update to an existing one.
+     * Updates "changed" field based on whether data is different compared to last time.
+     * @return saved company
+     * @param company the actual company
+     */
+    Company saveCompany(Company company);
+
+    /**
+     * Saves given BusinessName data.
+     * @param businessName the BusinessName
+     */
+    void saveBusinessName(BusinessName businessName);
+
+    /**
+     * Saves given BusinessAuxiliaryName data.
+     * @param businessAuxiliaryName the BusinessAuxiliaryName
+     */
+    void saveBusinessAuxiliaryName(BusinessAuxiliaryName businessAuxiliaryName);
+
+    /**
+     * Saves given BusinessAddress data.
+     * @param businessAddress the BusinessAddress
+     */
+    void saveBusinessAddress(BusinessAddress businessAddress);
+
+    /**
+     * Saves given BusinessIdChange data.
+     * @param businessIdChange the BusinessIdChange
+     */
+    void saveBusinessIdChange(BusinessIdChange businessIdChange);
+
+    /**
+     * Saves given BusinessLine data.
+     * @param businessLine the BusinessLine
+     */
+    void saveBusinessLine(BusinessLine businessLine);
+
+    /**
+     * Saves given CompanyForm data.
+     * @param companyForm the CompanyForm
+     */
+    void saveCompanyForm(CompanyForm companyForm);
+
+    /**
+     * Saves given ContactDetail data.
+     * @param contactDetail the ContactDetail
+     */
+    void saveContactDetail(ContactDetail contactDetail);
+
+    /**
+     * Saves given Language data.
+     * @param language the Language
+     */
+    void saveLanguage(Language language);
+
+    /**
+     * Saves given Liquidation data.
+     * @param liquidation the Liquidation
+     */
+    void saveLiquidation(Liquidation liquidation);
+
+    /**
+     * Saves given RegisteredEntry data.
+     * @param registeredEntry the RegisteredEntry
+     */
+    void saveRegisteredEntry(RegisteredEntry registeredEntry);
+
+    /**
+     * Saves given RegisteredOffice data.
+     * @param registeredOffice the RegisteredOffice
+     */
+    void saveRegisteredOffice(RegisteredOffice registeredOffice);
 
 }
