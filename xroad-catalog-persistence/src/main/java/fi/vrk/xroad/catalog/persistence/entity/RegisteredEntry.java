@@ -42,8 +42,6 @@ public class RegisteredEntry {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "REGISTERED_ENTRY_GEN")
     @SequenceGenerator(name = "REGISTERED_ENTRY_GEN", sequenceName = "REGISTERED_ENTRY_ID_SEQ", allocationSize = 1)
     private long id;
-    @Column
-    private long source;
     @Column(nullable = false)
     private String description;
     @Column(nullable = false)

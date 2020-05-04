@@ -45,7 +45,7 @@ public class BusinessAuxiliaryName {
     @Column
     private long source;
     @Column(nullable = false)
-    private long order;
+    private long ordering;
     @Column(nullable = false)
     private long version;
     @Column(nullable = false)
