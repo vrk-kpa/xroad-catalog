@@ -143,9 +143,9 @@ public class ListMethodsActor extends XRoadCatalogActor {
             }
 
             // Do this only once as there is no need to perform this per each customer
-            if (COUNTER.get() < 2) {
+            //if (COUNTER.get() < 2) {
                 fetchOrganizationsPoolRef.tell(clientType, getSelf());
-            }
+            //}
 
             return true;
 
