@@ -55,6 +55,8 @@ public class ListMethodsActor extends XRoadCatalogActor {
 
     private static AtomicInteger COUNTER = new AtomicInteger(0);
 
+    private static boolean organizationsFetched = false;
+
     @Value("${xroad-catalog.security-server-host}")
     private String xroadSecurityServerHost;
 
@@ -147,9 +149,11 @@ public class ListMethodsActor extends XRoadCatalogActor {
                 fetchOpenApiPoolRef.tell(service, getSender());
             }
 
-            if (COUNTER.get() < 2) {
+            // Do this only once as there is no need to perform this per each customer
+            if (!organizationsFetched) {
                 fetchOrganizationsPoolRef.tell(clientType, getSelf());
                 fetchCompaniesPoolRef.tell(clientType, getSelf());
+                organizationsFetched = true;
             }
 
             return true;

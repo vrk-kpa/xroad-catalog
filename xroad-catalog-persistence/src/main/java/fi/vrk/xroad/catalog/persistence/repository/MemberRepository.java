@@ -45,6 +45,9 @@ public interface MemberRepository extends CrudRepository<Member, Long> {
     @Query("SELECT m FROM Member m WHERE m.statusInfo.removed IS NULL")
     Set<Member> findAllActive();
 
+    @Query("SELECT m FROM Member m WHERE m.memberClass = :memberClass")
+    Set<Member> findAllByClass(@Param("memberClass") String memberClass);
+
     // uses named query Member.findAllChangedSince
     Set<Member> findAllChangedSince(@Param("since") LocalDateTime since);
 

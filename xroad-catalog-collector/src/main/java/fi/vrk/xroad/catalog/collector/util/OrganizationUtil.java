@@ -40,7 +40,9 @@ import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -290,7 +292,7 @@ public class OrganizationUtil {
                 .companyForm(jsonObject.optString("companyForm"))
                 .detailsUri(jsonObject.optString("detailsUri"))
                 .name(jsonObject.optString("name"))
-                .registrationDate(LocalDateTime.now())
+                .registrationDate(parseDateFromString(jsonObject.optString("registrationDate")))
                 .build();
     }
 
@@ -307,8 +309,8 @@ public class OrganizationUtil {
                     .type(jsonArray.optJSONObject(i).optLong("type"))
                     .version(jsonArray.optJSONObject(i).optLong("version"))
                     .street(jsonArray.optJSONObject(i).optString("street"))
-                    .registrationDate(LocalDateTime.now())
-                    .endDate(LocalDateTime.now())
+                    .registrationDate(parseDateFromString(jsonArray.optJSONObject(i).optString("registrationDate")))
+                    .endDate(parseDateFromString(jsonArray.optJSONObject(i).optString("endDate")))
                     .build());
         }
         return businessAddresses;
@@ -323,8 +325,8 @@ public class OrganizationUtil {
                     .ordering(jsonArray.optJSONObject(i).optLong("order"))
                     .source(jsonArray.optJSONObject(i).optLong("source"))
                     .version(jsonArray.optJSONObject(i).optLong("version"))
-                    .registrationDate(LocalDateTime.now())
-                    .endDate(LocalDateTime.now())
+                    .registrationDate(parseDateFromString(jsonArray.optJSONObject(i).optString("registrationDate")))
+                    .endDate(parseDateFromString(jsonArray.optJSONObject(i).optString("endDate")))
                     .build());
         }
         return businessAuxiliaryNames;
@@ -356,8 +358,8 @@ public class OrganizationUtil {
                     .ordering(jsonArray.optJSONObject(i).optLong("order"))
                     .source(jsonArray.optJSONObject(i).optLong("source"))
                     .version(jsonArray.optJSONObject(i).optLong("version"))
-                    .registrationDate(LocalDateTime.now())
-                    .endDate(LocalDateTime.now())
+                    .registrationDate(parseDateFromString(jsonArray.optJSONObject(i).optString("registrationDate")))
+                    .endDate(parseDateFromString(jsonArray.optJSONObject(i).optString("endDate")))
                     .build());
         }
         return businessLines;
@@ -372,8 +374,8 @@ public class OrganizationUtil {
                     .ordering(jsonArray.optJSONObject(i).optLong("order"))
                     .source(jsonArray.optJSONObject(i).optLong("source"))
                     .version(jsonArray.optJSONObject(i).optLong("version"))
-                    .registrationDate(LocalDateTime.now())
-                    .endDate(LocalDateTime.now())
+                    .registrationDate(parseDateFromString(jsonArray.optJSONObject(i).optString("registrationDate")))
+                    .endDate(parseDateFromString(jsonArray.optJSONObject(i).optString("endDate")))
                     .build());
         }
         return businessNames;
@@ -388,8 +390,8 @@ public class OrganizationUtil {
                     .source(jsonArray.optJSONObject(i).optLong("source"))
                     .type(jsonArray.optJSONObject(i).optLong("type"))
                     .version(jsonArray.optJSONObject(i).optLong("version"))
-                    .registrationDate(LocalDateTime.now())
-                    .endDate(LocalDateTime.now())
+                    .registrationDate(parseDateFromString(jsonArray.optJSONObject(i).optString("registrationDate")))
+                    .endDate(parseDateFromString(jsonArray.optJSONObject(i).optString("endDate")))
                     .build());
         }
         return companyForms;
@@ -404,8 +406,8 @@ public class OrganizationUtil {
                     .source(jsonArray.optJSONObject(i).optLong("source"))
                     .language(jsonArray.optJSONObject(i).optString("language"))
                     .value(jsonArray.optJSONObject(i).optString("value"))
-                    .registrationDate(LocalDateTime.now())
-                    .endDate(LocalDateTime.now())
+                    .registrationDate(parseDateFromString(jsonArray.optJSONObject(i).optString("registrationDate")))
+                    .endDate(parseDateFromString(jsonArray.optJSONObject(i).optString("endDate")))
                     .build());
         }
         return contactDetails;
@@ -419,8 +421,8 @@ public class OrganizationUtil {
                     .source(jsonArray.optJSONObject(i).optLong("source"))
                     .language(jsonArray.optJSONObject(i).optString("language"))
                     .name(jsonArray.optJSONObject(i).optString("name"))
-                    .registrationDate(LocalDateTime.now())
-                    .endDate(LocalDateTime.now())
+                    .registrationDate(parseDateFromString(jsonArray.optJSONObject(i).optString("registrationDate")))
+                    .endDate(parseDateFromString(jsonArray.optJSONObject(i).optString("endDate")))
                     .build());
         }
         return languages;
@@ -451,8 +453,8 @@ public class OrganizationUtil {
                     .register(jsonArray.optJSONObject(i).optLong("register"))
                     .status(jsonArray.optJSONObject(i).optLong("status"))
                     .authority(jsonArray.optJSONObject(i).optLong("authority"))
-                    .registrationDate(LocalDateTime.now())
-                    .endDate(LocalDateTime.now())
+                    .registrationDate(parseDateFromString(jsonArray.optJSONObject(i).optString("registrationDate")))
+                    .endDate(parseDateFromString(jsonArray.optJSONObject(i).optString("endDate")))
                     .build());
         }
         return registeredEntries;
@@ -467,10 +469,17 @@ public class OrganizationUtil {
                     .name(jsonArray.optJSONObject(i).optString("name"))
                     .ordering(jsonArray.optJSONObject(i).optLong("order"))
                     .version(jsonArray.optJSONObject(i).optLong("version"))
-                    .registrationDate(LocalDateTime.now())
+                    .registrationDate(parseDateFromString(jsonArray.optJSONObject(i).optString("registrationDate")))
                     .build());
         }
         return registeredOffices;
+    }
+
+    private static LocalDateTime parseDateFromString(String dateValue) {
+        if (dateValue != null && !dateValue.isEmpty()) {
+            return LocalDate.parse(dateValue).atStartOfDay();
+        }
+        return null;
     }
 
     private static JSONArray getDataByIds(List<String> guids, String url) {

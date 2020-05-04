@@ -36,6 +36,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 
 /**
@@ -61,14 +62,18 @@ public class FetchCompaniesActor extends XRoadCatalogActor {
     protected boolean handleMessage(Object message) {
         if (message instanceof ClientType) {
 
-            log.info("Fetching companies from {}", fetchCompaniesUrl);
+            Iterable<Member> commercialMembers = catalogService.getAllByClass("COM");
+            AtomicInteger memberCount = new AtomicInteger();
+            commercialMembers.forEach(commercialMember -> {
+                memberCount.getAndIncrement();
+                log.info("Fetching data for company with businessCode {}", commercialMember.getMemberCode());
+                String businessCode = commercialMember.getMemberCode();
+                JSONObject companyJson = OrganizationUtil.getCompany(fetchCompaniesUrl, businessCode);
+                JSONArray dataJson = companyJson.optJSONArray("results");
+                saveData(dataJson);
+            });
 
-            ((ClientType) message).getId().setMemberCode("1710128-9"); // remove this line
-
-            String businessCode = ((ClientType) message).getId().getMemberCode();
-            JSONObject companyJson = OrganizationUtil.getCompany(fetchCompaniesUrl, businessCode);
-            JSONArray dataJson = companyJson.optJSONArray("results");
-            saveData(dataJson);
+            log.info("Successfully saved data for {} commercial members", memberCount.get());
 
             return true;
         } else {

@@ -46,6 +46,13 @@ public interface CatalogService {
     Iterable<Member> getActiveMembers();
 
     /**
+     * Gets all members by their class
+     * Fetches all data from graph member->subsystem->service.
+     * Does NOT fetch wsdl.
+     */
+    Iterable<Member> getAllByClass(String memberCode);
+
+    /**
      * Same as {@link #getActiveMembers()} except that returns also
      * removed items
      */
