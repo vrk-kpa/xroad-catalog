@@ -24,6 +24,7 @@ package fi.vrk.xroad.catalog.collector.actors;
 
 import fi.vrk.xroad.catalog.collector.util.OrganizationUtil;
 import fi.vrk.xroad.catalog.collector.wsimport.ClientType;
+import fi.vrk.xroad.catalog.collector.wsimport.XRoadClientIdentifierType;
 import fi.vrk.xroad.catalog.persistence.CatalogService;
 import fi.vrk.xroad.catalog.persistence.entity.*;
 import lombok.extern.slf4j.Slf4j;
@@ -36,7 +37,6 @@ import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
 
 
 /**
@@ -46,6 +46,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 @Scope("prototype")
 @Slf4j
 public class FetchCompaniesActor extends XRoadCatalogActor {
+
+    private static final String COMMERCIAL_MEMBER_CLASS = "com";
 
     @Value("${xroad-catalog.fetch-companies-url}")
     private String fetchCompaniesUrl;
@@ -61,19 +63,16 @@ public class FetchCompaniesActor extends XRoadCatalogActor {
     @Override
     protected boolean handleMessage(Object message) {
         if (message instanceof ClientType) {
-
-            Iterable<Member> commercialMembers = catalogService.getAllByClass("COM");
-            AtomicInteger memberCount = new AtomicInteger();
-            commercialMembers.forEach(commercialMember -> {
-                memberCount.getAndIncrement();
-                log.info("Fetching data for company with businessCode {}", commercialMember.getMemberCode());
-                String businessCode = commercialMember.getMemberCode();
+            ClientType clientType = (ClientType) message;
+            XRoadClientIdentifierType client = clientType.getId();
+            if (client.getMemberClass().equalsIgnoreCase(COMMERCIAL_MEMBER_CLASS)) {
+                log.info("Fetching data for company with businessCode {}", client.getMemberCode());
+                String businessCode = clientType.getId().getMemberCode();
                 JSONObject companyJson = OrganizationUtil.getCompany(fetchCompaniesUrl, businessCode);
                 JSONArray dataJson = companyJson.optJSONArray("results");
                 saveData(dataJson);
-            });
-
-            log.info("Successfully saved data for {} commercial members", memberCount.get());
+                log.info("Successfully saved data for company with businessCode {}", client.getMemberCode());
+            }
 
             return true;
         } else {

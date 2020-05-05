@@ -157,11 +157,6 @@ public class CatalogServiceImpl implements CatalogService {
     }
 
     @Override
-    public Iterable<Member> getAllByClass(String memberClass) {
-        return memberRepository.findAllByClass(memberClass);
-    }
-
-    @Override
     public Iterable<Member> getAllMembers() {
         return memberRepository.findAll();
     }

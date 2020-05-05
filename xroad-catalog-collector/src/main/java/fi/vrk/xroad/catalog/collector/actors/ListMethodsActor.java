@@ -40,7 +40,6 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import java.net.URL;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -84,6 +83,9 @@ public class ListMethodsActor extends XRoadCatalogActor {
 
     @Value("${xroad-catalog.fetch-companies-time-before-hour}")
     private Integer fetchCompaniesTimeBeforeHour;
+
+    @Value("${xroad-catalog.fetch-companies-run-unlimited}")
+    private Boolean fetchCompaniesUnlimited;
 
     @Autowired
     protected CatalogService catalogService;
@@ -159,18 +161,17 @@ public class ListMethodsActor extends XRoadCatalogActor {
                 fetchOpenApiPoolRef.tell(service, getSender());
             }
 
-            // Do this only once as there is no need to perform this per each customer
+            // Fetch organizations only once, not for each client
             if (!organizationsFetched) {
                 fetchOrganizationsPoolRef.tell(clientType, getSelf());
-
-                // Fetch companies only on certain time
-                if (MethodListUtil.shouldFetchCompanies(fetchCompaniesWeekDay,
-                                                        fetchCompaniesTimeAfterHour,
-                                                        fetchCompaniesTimeBeforeHour)) {
-                    fetchCompaniesPoolRef.tell(clientType, getSelf());
-                }
-
                 organizationsFetched = true;
+            }
+
+            // Fetch companies only during a limited period if not unlimited
+            if (fetchCompaniesUnlimited || MethodListUtil.shouldFetchCompanies(fetchCompaniesWeekDay,
+                    fetchCompaniesTimeAfterHour,
+                    fetchCompaniesTimeBeforeHour)) {
+                fetchCompaniesPoolRef.tell(clientType, getSelf());
             }
 
             return true;
