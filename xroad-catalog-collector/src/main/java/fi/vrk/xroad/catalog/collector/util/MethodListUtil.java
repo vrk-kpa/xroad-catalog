@@ -23,14 +23,13 @@
 package fi.vrk.xroad.catalog.collector.util;
 
 import fi.vrk.xroad.catalog.collector.wsimport.*;
-import fi.vrk.xroad.catalog.persistence.entity.Service;
-import fi.vrk.xroad.catalog.persistence.entity.Subsystem;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.web.client.RestTemplate;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -44,6 +43,12 @@ public class MethodListUtil {
         // Private empty constructor
     }
 
+    public static Boolean shouldFetchCompanies(int fetchWeekDay, int fetchHourAfter, int fetchHourBefore) {
+        LocalDateTime today = LocalDateTime.now();
+        LocalDateTime fetchTimeFrom = LocalDate.now().atTime(fetchHourAfter, 0).plusDays(fetchWeekDay - today.getDayOfWeek().getValue());
+        LocalDateTime fetchTimeTo = LocalDate.now().atTime(fetchHourBefore, 0).plusDays(fetchWeekDay - today.getDayOfWeek().getValue());
+        return (today.isAfter(fetchTimeFrom) && today.isBefore(fetchTimeTo));
+    }
 
     public static List<XRoadServiceIdentifierType> methodListFromResponse(ClientType clientType, String host) {
         final String url = new StringBuilder().append(host).append("/r1/")
