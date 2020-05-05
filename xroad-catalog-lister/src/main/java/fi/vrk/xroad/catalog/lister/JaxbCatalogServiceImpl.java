@@ -91,9 +91,7 @@ public class JaxbCatalogServiceImpl implements JaxbCatalogService {
         Iterable<fi.vrk.xroad.catalog.persistence.entity.Company> companies = catalogService.getCompanies(businessId);
         List<ChangedValue> changedValueList = new ArrayList<>();
         if (companies.iterator().hasNext()) {
-            companies.forEach(company -> {
-                changedValueList.addAll(getAllChangedValuesForCompany(company, jaxbConverter.toLocalDateTime(changedAfter)));
-            });
+            companies.forEach(company -> changedValueList.addAll(getAllChangedValuesForCompany(company, jaxbConverter.toLocalDateTime(changedAfter))));
             return changedValueList;
         } else {
             throw new CompaniesNotFoundException("company with businessId " + businessId + " not found");
@@ -285,6 +283,90 @@ public class JaxbCatalogServiceImpl implements JaxbCatalogService {
     private Collection<ChangedValue> getAllChangedValuesForCompany(fi.vrk.xroad.catalog.persistence.entity.Company company,
                                                                       LocalDateTime since) {
         List<ChangedValue> changedValueList = new ArrayList<>();
+        Set<BusinessAddress> businessAddresses = company.getAllBusinessAddresses();
+        Set<BusinessAuxiliaryName> businessAuxiliaryNames = company.getAllBusinessAuxiliaryNames();
+        Set<BusinessIdChange> businessIdChanges = company.getAllBusinessIdChanges();
+        Set<BusinessLine> businessLines = company.getAllBusinessLines();
+        Set<BusinessName> businessNames = company.getAllBusinessNames();
+        Set<CompanyForm> companyForms = company.getAllCompanyForms();
+        Set<ContactDetail> contactDetails = company.getAllContactDetails();
+        Set<Language> languages = company.getAllLanguages();
+        Set<Liquidation> liquidations = company.getAllLiquidations();
+        Set<RegisteredEntry> registeredEntries = company.getAllRegisteredEntries();
+        Set<RegisteredOffice> registeredOffices = company.getAllRegisteredOffices();
+
+        if (company.getStatusInfo().getChanged().isAfter(since)) {
+            ChangedValue changedValue = new ChangedValue();
+            changedValue.setName("Company");
+            changedValueList.add(changedValue);
+        }
+
+        if (businessAddresses.stream().anyMatch(obj -> obj.getStatusInfo().getChanged().isAfter(since))) {
+            ChangedValue changedValue = new ChangedValue();
+            changedValue.setName("BusinessAddress");
+            changedValueList.add(changedValue);
+        }
+
+        if (businessAuxiliaryNames.stream().anyMatch(obj -> obj.getStatusInfo().getChanged().isAfter(since))) {
+            ChangedValue changedValue = new ChangedValue();
+            changedValue.setName("BusinessAuxiliaryName");
+            changedValueList.add(changedValue);
+        }
+
+        if (businessIdChanges.stream().anyMatch(obj -> obj.getStatusInfo().getChanged().isAfter(since))) {
+            ChangedValue changedValue = new ChangedValue();
+            changedValue.setName("BusinessIdChange");
+            changedValueList.add(changedValue);
+        }
+
+        if (businessLines.stream().anyMatch(obj -> obj.getStatusInfo().getChanged().isAfter(since))) {
+            ChangedValue changedValue = new ChangedValue();
+            changedValue.setName("BusinessLine");
+            changedValueList.add(changedValue);
+        }
+
+        if (businessNames.stream().anyMatch(obj -> obj.getStatusInfo().getChanged().isAfter(since))) {
+            ChangedValue changedValue = new ChangedValue();
+            changedValue.setName("BusinessName");
+            changedValueList.add(changedValue);
+        }
+
+        if (companyForms.stream().anyMatch(obj -> obj.getStatusInfo().getChanged().isAfter(since))) {
+            ChangedValue changedValue = new ChangedValue();
+            changedValue.setName("CompanyForm");
+            changedValueList.add(changedValue);
+        }
+
+        if (contactDetails.stream().anyMatch(obj -> obj.getStatusInfo().getChanged().isAfter(since))) {
+            ChangedValue changedValue = new ChangedValue();
+            changedValue.setName("ContactDetail");
+            changedValueList.add(changedValue);
+        }
+
+        if (languages.stream().anyMatch(obj -> obj.getStatusInfo().getChanged().isAfter(since))) {
+            ChangedValue changedValue = new ChangedValue();
+            changedValue.setName("Language");
+            changedValueList.add(changedValue);
+        }
+
+        if (liquidations.stream().anyMatch(obj -> obj.getStatusInfo().getChanged().isAfter(since))) {
+            ChangedValue changedValue = new ChangedValue();
+            changedValue.setName("Liquidation");
+            changedValueList.add(changedValue);
+        }
+
+        if (registeredEntries.stream().anyMatch(obj -> obj.getStatusInfo().getChanged().isAfter(since))) {
+            ChangedValue changedValue = new ChangedValue();
+            changedValue.setName("RegisteredEntry");
+            changedValueList.add(changedValue);
+        }
+
+        if (registeredOffices.stream().anyMatch(obj -> obj.getStatusInfo().getChanged().isAfter(since))) {
+            ChangedValue changedValue = new ChangedValue();
+            changedValue.setName("RegisteredOffice");
+            changedValueList.add(changedValue);
+        }
+
         return changedValueList;
     }
 }
