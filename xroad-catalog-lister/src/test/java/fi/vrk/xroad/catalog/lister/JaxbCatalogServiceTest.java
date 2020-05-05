@@ -120,7 +120,7 @@ public class JaxbCatalogServiceTest {
         XMLGregorianCalendar changedAfter20141231 = jaxbConverter.toXmlGregorianCalendar(
                 LocalDateTime.of(2014, 12, 31, 0, 0)
         );
-        Iterable<ChangedValue> changedValues = service.getChangedValues("abc123456789", changedAfter20141231);
+        Iterable<ChangedValue> changedValues = service.getChangedOrganizationValues("abc123456789", changedAfter20141231);
         assertEquals(19, Iterables.size(changedValues));
     }
 
@@ -129,7 +129,7 @@ public class JaxbCatalogServiceTest {
         XMLGregorianCalendar changedAfter20151231 = jaxbConverter.toXmlGregorianCalendar(
                 LocalDateTime.of(2015, 12, 31, 0, 0)
         );
-        Iterable<ChangedValue> changedValues = service.getChangedValues("abc123456789", changedAfter20151231);
+        Iterable<ChangedValue> changedValues = service.getChangedOrganizationValues("abc123456789", changedAfter20151231);
         assertEquals(1, Iterables.size(changedValues));
         assertEquals("Email", changedValues.iterator().next().getName());
     }
@@ -139,7 +139,7 @@ public class JaxbCatalogServiceTest {
         XMLGregorianCalendar changedAfter20160101 = jaxbConverter.toXmlGregorianCalendar(
                 LocalDateTime.of(2016, 1, 1, 0, 0)
         );
-        Iterable<ChangedValue> changedValues = service.getChangedValues("abc123456789", changedAfter20160101);
+        Iterable<ChangedValue> changedValues = service.getChangedOrganizationValues("abc123456789", changedAfter20160101);
         assertEquals(0, Iterables.size(changedValues));
     }
 

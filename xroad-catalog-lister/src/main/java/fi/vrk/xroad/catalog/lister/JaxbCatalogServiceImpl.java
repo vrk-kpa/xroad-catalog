@@ -75,13 +75,28 @@ public class JaxbCatalogServiceImpl implements JaxbCatalogService {
     }
 
     @Override
-    public Iterable<ChangedValue> getChangedValues(String guid, XMLGregorianCalendar changedAfter) {
+    public Iterable<ChangedValue> getChangedOrganizationValues(String guid, XMLGregorianCalendar changedAfter) {
         log.info("get changed values for organization with guid {} and changedAfter {}", guid, changedAfter);
         Optional<fi.vrk.xroad.catalog.persistence.entity.Organization> organization = catalogService.getOrganization(guid);
         if (organization.isPresent()) {
             return getAllChangedValuesForOrganization(organization.get(), jaxbConverter.toLocalDateTime(changedAfter));
         } else {
             throw new OrganizationsNotFoundException("Organization with guid " + guid + " not found");
+        }
+    }
+
+    @Override
+    public Iterable<ChangedValue> getChangedCompanyValues(String businessId, XMLGregorianCalendar changedAfter) {
+        log.info("get changed values for company with businessId {} and changedAfter {}", businessId, changedAfter);
+        Iterable<fi.vrk.xroad.catalog.persistence.entity.Company> companies = catalogService.getCompanies(businessId);
+        List<ChangedValue> changedValueList = new ArrayList<>();
+        if (companies.iterator().hasNext()) {
+            companies.forEach(company -> {
+                changedValueList.addAll(getAllChangedValuesForCompany(company, jaxbConverter.toLocalDateTime(changedAfter)));
+            });
+            return changedValueList;
+        } else {
+            throw new CompaniesNotFoundException("company with businessId " + businessId + " not found");
         }
     }
 
@@ -264,6 +279,12 @@ public class JaxbCatalogServiceImpl implements JaxbCatalogService {
             });
         });
 
+        return changedValueList;
+    }
+
+    private Collection<ChangedValue> getAllChangedValuesForCompany(fi.vrk.xroad.catalog.persistence.entity.Company company,
+                                                                      LocalDateTime since) {
+        List<ChangedValue> changedValueList = new ArrayList<>();
         return changedValueList;
     }
 }

@@ -61,7 +61,14 @@ public interface JaxbCatalogService {
      *
      * @return Iterable of JAXB generated ChangedValues
      */
-    Iterable<ChangedValue> getChangedValues(String guid, XMLGregorianCalendar changedAfter);
+    Iterable<ChangedValue> getChangedOrganizationValues(String guid, XMLGregorianCalendar changedAfter);
+
+    /**
+     * Returns whether some values of Company have changed
+     *
+     * @return Iterable of JAXB generated ChangedValues
+     */
+    Iterable<ChangedValue> getChangedCompanyValues(String businessID, XMLGregorianCalendar changedAfter);
 
     /**
      * Returns all companies

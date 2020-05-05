@@ -599,6 +599,24 @@ http://x-road.eu/xsd/identifiers ">
                 </xs:complexType>
             </xs:element>
 
+            <xs:element name="HasCompanyChanged">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="businessId" type="xs:string"/>
+                        <xs:element name="changedAfter" type="xs:dateTime"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+
+            <xs:element name="HasCompanyChangedResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="changed" type="xs:boolean"/>
+                        <xs:element name="changedValueList" type="tns:ChangedValueList"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+
             <xs:complexType name="ChangedValueList">
                 <xs:sequence>
                     <xs:element maxOccurs="unbounded" minOccurs="0" name="changedValue" type="tns:ChangedValue"/>
@@ -1065,6 +1083,14 @@ http://x-road.eu/xsd/identifiers ">
         <wsdl:part element="tns:GetCompanies" name="body">
         </wsdl:part>
     </wsdl:message>
+    <wsdl:message name="HasCompanyChangedResponse">
+        <wsdl:part element="tns:HasCompanyChangedResponse" name="body">
+        </wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="HasCompanyChanged">
+        <wsdl:part element="tns:HasCompanyChanged" name="body">
+        </wsdl:part>
+    </wsdl:message>
     <wsdl:portType name="ServicesPort">
         <wsdl:operation name="ListMembers">
             <wsdl:input message="tns:ListMembers" name="ListMembers">
@@ -1118,6 +1144,12 @@ http://x-road.eu/xsd/identifiers ">
             <wsdl:input message="tns:GetCompanies" name="GetCompanies">
             </wsdl:input>
             <wsdl:output message="tns:GetCompaniesResponse" name="GetCompaniesResponse">
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="HasCompanyChanged">
+            <wsdl:input message="tns:HasCompanyChanged" name="HasCompanyChanged">
+            </wsdl:input>
+            <wsdl:output message="tns:HasCompanyChangedResponse" name="HasCompanyChangedResponse">
             </wsdl:output>
         </wsdl:operation>
     </wsdl:portType>
@@ -1312,6 +1344,28 @@ http://x-road.eu/xsd/identifiers ">
                 <soap:header message="tns:requestheader" part="protocolVersion" use="literal"/>
             </wsdl:input>
             <wsdl:output name="GetCompaniesResponse">
+                <soap:body parts="body" use="literal"/>
+                <soap:header message="tns:requestheader" part="client" use="literal"/>
+                <soap:header message="tns:requestheader" part="service" use="literal"/>
+                <soap:header message="tns:requestheader" part="userId" use="literal"/>
+                <soap:header message="tns:requestheader" part="id" use="literal"/>
+                <soap:header message="tns:requestheader" part="issue" use="literal"/>
+                <soap:header message="tns:requestheader" part="protocolVersion" use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="HasCompanyChanged">
+            <soap:operation soapAction=""/>
+            <id:version>v1</id:version>
+            <wsdl:input name="HasCompanyChanged">
+                <soap:body parts="body" use="literal"/>
+                <soap:header message="tns:requestheader" part="client" use="literal"/>
+                <soap:header message="tns:requestheader" part="service" use="literal"/>
+                <soap:header message="tns:requestheader" part="userId" use="literal"/>
+                <soap:header message="tns:requestheader" part="id" use="literal"/>
+                <soap:header message="tns:requestheader" part="issue" use="literal"/>
+                <soap:header message="tns:requestheader" part="protocolVersion" use="literal"/>
+            </wsdl:input>
+            <wsdl:output name="HasCompanyChangedResponse">
                 <soap:body parts="body" use="literal"/>
                 <soap:header message="tns:requestheader" part="client" use="literal"/>
                 <soap:header message="tns:requestheader" part="service" use="literal"/>

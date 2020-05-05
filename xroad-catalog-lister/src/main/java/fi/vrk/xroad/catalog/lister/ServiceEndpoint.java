@@ -160,7 +160,7 @@ public class ServiceEndpoint {
     public HasOrganizationChangedResponse hasOrganizationChanged(@RequestPayload HasOrganizationChanged request) {
         HasOrganizationChangedResponse response = new HasOrganizationChangedResponse();
         response.setChangedValueList(new ChangedValueList());
-        Iterable<ChangedValue> changedValues = jaxbCatalogService.getChangedValues(request.getGuid(), request.getChangedAfter());
+        Iterable<ChangedValue> changedValues = jaxbCatalogService.getChangedOrganizationValues(request.getGuid(), request.getChangedAfter());
         response.getChangedValueList().getChangedValue().addAll(Lists.newArrayList(changedValues));
         response.setChanged(!response.getChangedValueList().getChangedValue().isEmpty());
         return response;
@@ -177,6 +177,17 @@ public class ServiceEndpoint {
                     + " not found");
         }
         response.getCompanyList().getCompany().addAll(Lists.newArrayList(companies));
+        return response;
+    }
+
+    @PayloadRoot(namespace = NAMESPACE_URI, localPart = "HasCompanyChanged")
+    @ResponsePayload
+    public HasCompanyChangedResponse hasCompanyChanged(@RequestPayload HasCompanyChanged request) {
+        HasCompanyChangedResponse response = new HasCompanyChangedResponse();
+        response.setChangedValueList(new ChangedValueList());
+        Iterable<ChangedValue> changedValues = jaxbCatalogService.getChangedCompanyValues(request.getBusinessId(), request.getChangedAfter());
+        response.getChangedValueList().getChangedValue().addAll(Lists.newArrayList(changedValues));
+        response.setChanged(!response.getChangedValueList().getChangedValue().isEmpty());
         return response;
     }
 }
