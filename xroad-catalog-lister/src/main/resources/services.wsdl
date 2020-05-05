@@ -611,6 +611,298 @@ http://x-road.eu/xsd/identifiers ">
                 </xs:sequence>
             </xs:complexType>
 
+            <xs:element name="GetCompanies">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="businessId" type="xs:string"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+
+            <xs:element name="GetCompaniesResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="companyList" type="tns:CompanyList"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+
+            <xs:complexType name="CompanyList">
+                <xs:sequence>
+                    <xs:element maxOccurs="unbounded" minOccurs="0" name="company" type="tns:Company"/>
+                </xs:sequence>
+            </xs:complexType>
+
+            <xs:complexType name="Company">
+                <xs:sequence>
+                    <xs:element name="companyForm" type="xs:string"/>
+                    <xs:element name="detailsUri" type="xs:string"/>
+                    <xs:element name="businessId" type="xs:string"/>
+                    <xs:element name="name" type="xs:string"/>
+                    <xs:element name="registrationDate" type="xs:dateTime"/>
+                    <xs:element name="businessAddresses" type="tns:BusinessAddressList"/>
+                    <xs:element name="businessAuxiliaryNames" type="tns:BusinessAuxiliaryNameList"/>
+                    <xs:element name="businessIdChanges" type="tns:BusinessIdChangeList"/>
+                    <xs:element name="businessLines" type="tns:BusinessLineList"/>
+                    <xs:element name="businessNames" type="tns:BusinessNameList"/>
+                    <xs:element name="companyForms" type="tns:CompanyFormList"/>
+                    <xs:element name="contactDetails" type="tns:ContactDetailList"/>
+                    <xs:element name="languages" type="tns:LanguageList"/>
+                    <xs:element name="liquidations" type="tns:LiquidationList"/>
+                    <xs:element name="registeredEntries" type="tns:RegisteredEntryList"/>
+                    <xs:element name="registeredOffices" type="tns:RegisteredOfficeList"/>
+                    <xs:element name="created" type="xs:dateTime"/>
+                    <xs:element name="changed" type="xs:dateTime"/>
+                    <xs:element name="fetched" type="xs:dateTime"/>
+                    <xs:element name="removed" type="xs:dateTime"/>
+                </xs:sequence>
+            </xs:complexType>
+
+            <xs:complexType name="BusinessAddressList">
+                <xs:sequence>
+                    <xs:element maxOccurs="unbounded" minOccurs="0" name="businessAddress" type="tns:BusinessAddress"/>
+                </xs:sequence>
+            </xs:complexType>
+
+            <xs:complexType name="BusinessAddress">
+                <xs:sequence>
+                    <xs:element name="source" type="xs:long"/>
+                    <xs:element name="version" type="xs:long"/>
+                    <xs:element name="careOf" type="xs:string"/>
+                    <xs:element name="street" type="xs:string"/>
+                    <xs:element name="postCode" type="xs:string"/>
+                    <xs:element name="city" type="xs:string"/>
+                    <xs:element name="language" type="xs:string"/>
+                    <xs:element name="type" type="xs:long"/>
+                    <xs:element name="country" type="xs:string"/>
+                    <xs:element name="registrationDate" type="xs:dateTime"/>
+                    <xs:element name="endDate" type="xs:dateTime"/>
+                    <xs:element name="created" type="xs:dateTime"/>
+                    <xs:element name="changed" type="xs:dateTime"/>
+                    <xs:element name="fetched" type="xs:dateTime"/>
+                    <xs:element name="removed" type="xs:dateTime"/>
+                </xs:sequence>
+            </xs:complexType>
+
+            <xs:complexType name="BusinessAuxiliaryNameList">
+                <xs:sequence>
+                    <xs:element maxOccurs="unbounded" minOccurs="0" name="businessAuxiliaryName" type="tns:BusinessAuxiliaryName"/>
+                </xs:sequence>
+            </xs:complexType>
+
+            <xs:complexType name="BusinessAuxiliaryName">
+                <xs:sequence>
+                    <xs:element name="source" type="xs:long"/>
+                    <xs:element name="ordering" type="xs:long"/>
+                    <xs:element name="version" type="xs:long"/>
+                    <xs:element name="name" type="xs:string"/>
+                    <xs:element name="language" type="xs:string"/>
+                    <xs:element name="registrationDate" type="xs:dateTime"/>
+                    <xs:element name="endDate" type="xs:dateTime"/>
+                    <xs:element name="created" type="xs:dateTime"/>
+                    <xs:element name="changed" type="xs:dateTime"/>
+                    <xs:element name="fetched" type="xs:dateTime"/>
+                    <xs:element name="removed" type="xs:dateTime"/>
+                </xs:sequence>
+            </xs:complexType>
+
+            <xs:complexType name="BusinessIdChangeList">
+                <xs:sequence>
+                    <xs:element maxOccurs="unbounded" minOccurs="0" name="businessIdChange" type="tns:BusinessIdChange"/>
+                </xs:sequence>
+            </xs:complexType>
+
+            <xs:complexType name="BusinessIdChange">
+                <xs:sequence>
+                    <xs:element name="source" type="xs:long"/>
+                    <xs:element name="description" type="xs:string"/>
+                    <xs:element name="reason" type="xs:string"/>
+                    <xs:element name="changeDate" type="xs:string"/>
+                    <xs:element name="change" type="xs:long"/>
+                    <xs:element name="oldBusinessId" type="xs:string"/>
+                    <xs:element name="newBusinessId" type="xs:string"/>
+                    <xs:element name="language" type="xs:string"/>
+                    <xs:element name="created" type="xs:dateTime"/>
+                    <xs:element name="changed" type="xs:dateTime"/>
+                    <xs:element name="fetched" type="xs:dateTime"/>
+                    <xs:element name="removed" type="xs:dateTime"/>
+                </xs:sequence>
+            </xs:complexType>
+
+            <xs:complexType name="BusinessLineList">
+                <xs:sequence>
+                    <xs:element maxOccurs="unbounded" minOccurs="0" name="businessLine" type="tns:BusinessLine"/>
+                </xs:sequence>
+            </xs:complexType>
+
+            <xs:complexType name="BusinessLine">
+                <xs:sequence>
+                    <xs:element name="source" type="xs:long"/>
+                    <xs:element name="ordering" type="xs:long"/>
+                    <xs:element name="version" type="xs:long"/>
+                    <xs:element name="name" type="xs:string"/>
+                    <xs:element name="language" type="xs:string"/>
+                    <xs:element name="registrationDate" type="xs:dateTime"/>
+                    <xs:element name="endDate" type="xs:dateTime"/>
+                    <xs:element name="created" type="xs:dateTime"/>
+                    <xs:element name="changed" type="xs:dateTime"/>
+                    <xs:element name="fetched" type="xs:dateTime"/>
+                    <xs:element name="removed" type="xs:dateTime"/>
+                </xs:sequence>
+            </xs:complexType>
+
+            <xs:complexType name="BusinessNameList">
+                <xs:sequence>
+                    <xs:element maxOccurs="unbounded" minOccurs="0" name="businessName" type="tns:BusinessName"/>
+                </xs:sequence>
+            </xs:complexType>
+
+            <xs:complexType name="BusinessName">
+                <xs:sequence>
+                    <xs:element name="source" type="xs:long"/>
+                    <xs:element name="ordering" type="xs:long"/>
+                    <xs:element name="version" type="xs:long"/>
+                    <xs:element name="name" type="xs:string"/>
+                    <xs:element name="language" type="xs:string"/>
+                    <xs:element name="registrationDate" type="xs:dateTime"/>
+                    <xs:element name="endDate" type="xs:dateTime"/>
+                    <xs:element name="created" type="xs:dateTime"/>
+                    <xs:element name="changed" type="xs:dateTime"/>
+                    <xs:element name="fetched" type="xs:dateTime"/>
+                    <xs:element name="removed" type="xs:dateTime"/>
+                </xs:sequence>
+            </xs:complexType>
+
+            <xs:complexType name="CompanyFormList">
+                <xs:sequence>
+                    <xs:element maxOccurs="unbounded" minOccurs="0" name="companyForm" type="tns:CompanyForm"/>
+                </xs:sequence>
+            </xs:complexType>
+
+            <xs:complexType name="CompanyForm">
+                <xs:sequence>
+                    <xs:element name="source" type="xs:long"/>
+                    <xs:element name="version" type="xs:long"/>
+                    <xs:element name="name" type="xs:string"/>
+                    <xs:element name="language" type="xs:string"/>
+                    <xs:element name="type" type="xs:long"/>
+                    <xs:element name="registrationDate" type="xs:dateTime"/>
+                    <xs:element name="endDate" type="xs:dateTime"/>
+                    <xs:element name="created" type="xs:dateTime"/>
+                    <xs:element name="changed" type="xs:dateTime"/>
+                    <xs:element name="fetched" type="xs:dateTime"/>
+                    <xs:element name="removed" type="xs:dateTime"/>
+                </xs:sequence>
+            </xs:complexType>
+
+            <xs:complexType name="ContactDetailList">
+                <xs:sequence>
+                    <xs:element maxOccurs="unbounded" minOccurs="0" name="contactDetail" type="tns:ContactDetail"/>
+                </xs:sequence>
+            </xs:complexType>
+
+            <xs:complexType name="ContactDetail">
+                <xs:sequence>
+                    <xs:element name="source" type="xs:long"/>
+                    <xs:element name="version" type="xs:long"/>
+                    <xs:element name="language" type="xs:string"/>
+                    <xs:element name="value" type="xs:string"/>
+                    <xs:element name="type" type="xs:long"/>
+                    <xs:element name="registrationDate" type="xs:dateTime"/>
+                    <xs:element name="endDate" type="xs:dateTime"/>
+                    <xs:element name="created" type="xs:dateTime"/>
+                    <xs:element name="changed" type="xs:dateTime"/>
+                    <xs:element name="fetched" type="xs:dateTime"/>
+                    <xs:element name="removed" type="xs:dateTime"/>
+                </xs:sequence>
+            </xs:complexType>
+
+            <xs:complexType name="LanguageList">
+                <xs:sequence>
+                    <xs:element maxOccurs="unbounded" minOccurs="0" name="language" type="tns:Language"/>
+                </xs:sequence>
+            </xs:complexType>
+
+            <xs:complexType name="Language">
+                <xs:sequence>
+                    <xs:element name="source" type="xs:long"/>
+                    <xs:element name="version" type="xs:long"/>
+                    <xs:element name="name" type="xs:string"/>
+                    <xs:element name="language" type="xs:string"/>
+                    <xs:element name="registrationDate" type="xs:dateTime"/>
+                    <xs:element name="endDate" type="xs:dateTime"/>
+                    <xs:element name="created" type="xs:dateTime"/>
+                    <xs:element name="changed" type="xs:dateTime"/>
+                    <xs:element name="fetched" type="xs:dateTime"/>
+                    <xs:element name="removed" type="xs:dateTime"/>
+                </xs:sequence>
+            </xs:complexType>
+
+            <xs:complexType name="LiquidationList">
+                <xs:sequence>
+                    <xs:element maxOccurs="unbounded" minOccurs="0" name="liquidation" type="tns:Liquidation"/>
+                </xs:sequence>
+            </xs:complexType>
+
+            <xs:complexType name="Liquidation">
+                <xs:sequence>
+                    <xs:element name="source" type="xs:long"/>
+                    <xs:element name="version" type="xs:long"/>
+                    <xs:element name="name" type="xs:string"/>
+                    <xs:element name="language" type="xs:string"/>
+                    <xs:element name="type" type="xs:long"/>
+                    <xs:element name="registrationDate" type="xs:dateTime"/>
+                    <xs:element name="endDate" type="xs:dateTime"/>
+                    <xs:element name="created" type="xs:dateTime"/>
+                    <xs:element name="changed" type="xs:dateTime"/>
+                    <xs:element name="fetched" type="xs:dateTime"/>
+                    <xs:element name="removed" type="xs:dateTime"/>
+                </xs:sequence>
+            </xs:complexType>
+
+            <xs:complexType name="RegisteredEntryList">
+                <xs:sequence>
+                    <xs:element maxOccurs="unbounded" minOccurs="0" name="registeredEntry" type="tns:RegisteredEntry"/>
+                </xs:sequence>
+            </xs:complexType>
+
+            <xs:complexType name="RegisteredEntry">
+                <xs:sequence>
+                    <xs:element name="description" type="xs:string"/>
+                    <xs:element name="status" type="xs:long"/>
+                    <xs:element name="register" type="xs:long"/>
+                    <xs:element name="language" type="xs:string"/>
+                    <xs:element name="authority" type="xs:long"/>
+                    <xs:element name="registrationDate" type="xs:dateTime"/>
+                    <xs:element name="endDate" type="xs:dateTime"/>
+                    <xs:element name="created" type="xs:dateTime"/>
+                    <xs:element name="changed" type="xs:dateTime"/>
+                    <xs:element name="fetched" type="xs:dateTime"/>
+                    <xs:element name="removed" type="xs:dateTime"/>
+                </xs:sequence>
+            </xs:complexType>
+
+            <xs:complexType name="RegisteredOfficeList">
+                <xs:sequence>
+                    <xs:element maxOccurs="unbounded" minOccurs="0" name="registeredOffice" type="tns:RegisteredOffice"/>
+                </xs:sequence>
+            </xs:complexType>
+
+            <xs:complexType name="RegisteredOffice">
+                <xs:sequence>
+                    <xs:element name="source" type="xs:long"/>
+                    <xs:element name="ordering" type="xs:long"/>
+                    <xs:element name="version" type="xs:long"/>
+                    <xs:element name="name" type="xs:string"/>
+                    <xs:element name="language" type="xs:string"/>
+                    <xs:element name="registrationDate" type="xs:dateTime"/>
+                    <xs:element name="created" type="xs:dateTime"/>
+                    <xs:element name="changed" type="xs:dateTime"/>
+                    <xs:element name="fetched" type="xs:dateTime"/>
+                    <xs:element name="removed" type="xs:dateTime"/>
+                </xs:sequence>
+            </xs:complexType>
+
             <xs:complexType name="MemberList">
                 <xs:sequence>
                     <xs:element maxOccurs="unbounded" minOccurs="0" name="member" type="tns:Member"/>
@@ -765,6 +1057,14 @@ http://x-road.eu/xsd/identifiers ">
         <wsdl:part element="tns:HasOrganizationChanged" name="body">
         </wsdl:part>
     </wsdl:message>
+    <wsdl:message name="GetCompaniesResponse">
+        <wsdl:part element="tns:GetCompaniesResponse" name="body">
+        </wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="GetCompanies">
+        <wsdl:part element="tns:GetCompanies" name="body">
+        </wsdl:part>
+    </wsdl:message>
     <wsdl:portType name="ServicesPort">
         <wsdl:operation name="ListMembers">
             <wsdl:input message="tns:ListMembers" name="ListMembers">
@@ -812,6 +1112,12 @@ http://x-road.eu/xsd/identifiers ">
             <wsdl:input message="tns:HasOrganizationChanged" name="HasOrganizationChanged">
             </wsdl:input>
             <wsdl:output message="tns:HasOrganizationChangedResponse" name="HasOrganizationChangedResponse">
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="GetCompanies">
+            <wsdl:input message="tns:GetCompanies" name="GetCompanies">
+            </wsdl:input>
+            <wsdl:output message="tns:GetCompaniesResponse" name="GetCompaniesResponse">
             </wsdl:output>
         </wsdl:operation>
     </wsdl:portType>
@@ -984,6 +1290,28 @@ http://x-road.eu/xsd/identifiers ">
                 <soap:header message="tns:requestheader" part="protocolVersion" use="literal"/>
             </wsdl:input>
             <wsdl:output name="HasOrganizationChangedResponse">
+                <soap:body parts="body" use="literal"/>
+                <soap:header message="tns:requestheader" part="client" use="literal"/>
+                <soap:header message="tns:requestheader" part="service" use="literal"/>
+                <soap:header message="tns:requestheader" part="userId" use="literal"/>
+                <soap:header message="tns:requestheader" part="id" use="literal"/>
+                <soap:header message="tns:requestheader" part="issue" use="literal"/>
+                <soap:header message="tns:requestheader" part="protocolVersion" use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="GetCompanies">
+            <soap:operation soapAction=""/>
+            <id:version>v1</id:version>
+            <wsdl:input name="GetCompanies">
+                <soap:body parts="body" use="literal"/>
+                <soap:header message="tns:requestheader" part="client" use="literal"/>
+                <soap:header message="tns:requestheader" part="service" use="literal"/>
+                <soap:header message="tns:requestheader" part="userId" use="literal"/>
+                <soap:header message="tns:requestheader" part="id" use="literal"/>
+                <soap:header message="tns:requestheader" part="issue" use="literal"/>
+                <soap:header message="tns:requestheader" part="protocolVersion" use="literal"/>
+            </wsdl:input>
+            <wsdl:output name="GetCompaniesResponse">
                 <soap:body parts="body" use="literal"/>
                 <soap:header message="tns:requestheader" part="client" use="literal"/>
                 <soap:header message="tns:requestheader" part="service" use="literal"/>

@@ -165,4 +165,18 @@ public class ServiceEndpoint {
         response.setChanged(!response.getChangedValueList().getChangedValue().isEmpty());
         return response;
     }
+
+    @PayloadRoot(namespace = NAMESPACE_URI, localPart = "GetCompanies")
+    @ResponsePayload
+    public GetCompaniesResponse getCompanies(@RequestPayload GetCompanies request) {
+        GetCompaniesResponse response = new GetCompaniesResponse();
+        response.setCompanyList(new CompanyList());
+        Iterable<Company> companies = jaxbCatalogService.getCompanies(request.getBusinessId());
+        if (!companies.iterator().hasNext()) {
+            throw new CompaniesNotFoundException("Companies with businessId " + request.getBusinessId()
+                    + " not found");
+        }
+        response.getCompanyList().getCompany().addAll(Lists.newArrayList(companies));
+        return response;
+    }
 }

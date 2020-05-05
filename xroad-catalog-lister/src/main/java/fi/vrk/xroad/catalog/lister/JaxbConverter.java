@@ -29,7 +29,6 @@ import fi.vrk.xroad.catalog.persistence.entity.Wsdl;
 import fi.vrk.xroad.xroad_catalog_lister.*;
 import org.springframework.stereotype.Component;
 
-import javax.persistence.Column;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
@@ -729,5 +728,19 @@ public class JaxbConverter {
         return converted;
     }
 
+    /**
+     * Convert entities to XML objects
+     * @param companies Iterable of Company entities
+     * @return Collection of Companies (JAXB generated)
+     */
+    public Collection<Company> convertCompanies(
+            Iterable<fi.vrk.xroad.catalog.persistence.entity.Company> companies)  {
+        List<Company> converted = new ArrayList<>();
+        for (fi.vrk.xroad.catalog.persistence.entity.Company company: companies) {
+            Company co = new Company();
+            converted.add(co);
+        }
+        return converted;
+    }
 
 }

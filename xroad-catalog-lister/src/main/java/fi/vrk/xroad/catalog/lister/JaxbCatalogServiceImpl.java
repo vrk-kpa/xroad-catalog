@@ -27,6 +27,7 @@ import fi.vrk.xroad.catalog.persistence.CatalogService;
 import fi.vrk.xroad.xroad_catalog_lister.ChangedValue;
 import fi.vrk.xroad.xroad_catalog_lister.Member;
 import fi.vrk.xroad.xroad_catalog_lister.Organization;
+import fi.vrk.xroad.xroad_catalog_lister.Company;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -82,6 +83,15 @@ public class JaxbCatalogServiceImpl implements JaxbCatalogService {
         } else {
             throw new OrganizationsNotFoundException("Organization with guid " + guid + " not found");
         }
+    }
+
+    @Override
+    public Iterable<Company> getCompanies(String businessId) {
+        log.info("get companies with businessId:{}", businessId);
+        Iterable<fi.vrk.xroad.catalog.persistence.entity.Company> entities;
+        entities = catalogService.getCompanies(businessId);
+
+        return jaxbConverter.convertCompanies(entities);
     }
 
     private Iterable<ChangedValue> getAllChangedValuesForOrganization(fi.vrk.xroad.catalog.persistence.entity.Organization organization,

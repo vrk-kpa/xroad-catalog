@@ -23,6 +23,7 @@
 package fi.vrk.xroad.catalog.lister;
 
 import fi.vrk.xroad.xroad_catalog_lister.ChangedValue;
+import fi.vrk.xroad.xroad_catalog_lister.Company;
 import fi.vrk.xroad.xroad_catalog_lister.Member;
 import fi.vrk.xroad.xroad_catalog_lister.Organization;
 
@@ -61,4 +62,13 @@ public interface JaxbCatalogService {
      * @return Iterable of JAXB generated ChangedValues
      */
     Iterable<ChangedValue> getChangedValues(String guid, XMLGregorianCalendar changedAfter);
+
+    /**
+     * Returns all companies
+     *
+     * All subitems of company are always returned
+     *
+     * @return Iterable of JAXB generated Companies
+     */
+    Iterable<Company> getCompanies(String businessId);
 }
