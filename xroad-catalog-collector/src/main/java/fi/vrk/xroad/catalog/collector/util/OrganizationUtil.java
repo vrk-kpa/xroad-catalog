@@ -470,6 +470,7 @@ public class OrganizationUtil {
                     .ordering(jsonArray.optJSONObject(i).optLong("order"))
                     .version(jsonArray.optJSONObject(i).optLong("version"))
                     .registrationDate(parseDateFromString(jsonArray.optJSONObject(i).optString("registrationDate")))
+                    .endDate(parseDateFromString(jsonArray.optJSONObject(i).optString("endDate")))
                     .build());
         }
         return registeredOffices;

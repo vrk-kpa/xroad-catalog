@@ -914,6 +914,7 @@ http://x-road.eu/xsd/identifiers ">
                     <xs:element name="name" type="xs:string"/>
                     <xs:element name="language" type="xs:string"/>
                     <xs:element name="registrationDate" type="xs:dateTime"/>
+                    <xs:element name="endDate" type="xs:dateTime"/>
                     <xs:element name="created" type="xs:dateTime"/>
                     <xs:element name="changed" type="xs:dateTime"/>
                     <xs:element name="fetched" type="xs:dateTime"/>

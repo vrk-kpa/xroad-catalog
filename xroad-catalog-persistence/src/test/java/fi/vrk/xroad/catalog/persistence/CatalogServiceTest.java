@@ -189,11 +189,310 @@ public class CatalogServiceTest {
                 .getAllMunicipalityNames().iterator().next().getValue());
     }
 
-    private void verifySavedStatusInfo(StatusInfo statusInfo) {
-        assertNotNull(statusInfo.getCreated());
-        assertNotNull(statusInfo.getChanged());
-        assertNotNull(statusInfo.getFetched());
-        assertNull(statusInfo.getRemoved());
+    @Test
+    public void testGetCompanies() {
+        Iterable<Company> companies = catalogService.getCompanies("1710128-9");
+        assertEquals(1, Iterables.size(companies));
+        assertEquals(1, companies.iterator().next().getAllBusinessAddresses().size());
+        assertEquals(1, companies.iterator().next().getAllBusinessAuxiliaryNames().size());
+        assertEquals(1, companies.iterator().next().getAllBusinessIdChanges().size());
+        assertEquals(1, companies.iterator().next().getAllBusinessLines().size());
+        assertEquals(1, companies.iterator().next().getAllBusinessNames().size());
+        assertEquals(1, companies.iterator().next().getAllCompanyForms().size());
+        assertEquals(1, companies.iterator().next().getAllContactDetails().size());
+        assertEquals(1, companies.iterator().next().getAllLanguages().size());
+        assertEquals(1, companies.iterator().next().getAllLiquidations().size());
+        assertEquals(1, companies.iterator().next().getAllRegisteredEntries().size());
+        assertEquals(1, companies.iterator().next().getAllRegisteredOffices().size());
+        assertEquals("1710128-9", companies.iterator().next().getBusinessId());
+        assertEquals("", companies.iterator().next().getDetailsUri());
+        assertEquals("OYJ", companies.iterator().next().getCompanyForm());
+        assertEquals("Gofore Oyj", companies.iterator().next().getName());
+        assertEquals("Kalevantie 2", companies.iterator().next().getAllBusinessAddresses().iterator().next().getStreet());
+        assertEquals("Solinor", companies.iterator().next().getAllBusinessAuxiliaryNames().iterator().next().getName());
+        assertEquals("1796717-0", companies.iterator().next().getAllBusinessIdChanges().iterator().next().getOldBusinessId());
+        assertEquals("Dataprogrammering", companies.iterator().next().getAllBusinessLines().iterator().next().getName());
+        assertEquals("FI", companies.iterator().next().getAllBusinessNames().iterator().next().getLanguage());
+        assertEquals("Public limited company", companies.iterator().next().getAllCompanyForms().iterator().next().getName());
+        assertEquals("EN", companies.iterator().next().getAllContactDetails().iterator().next().getLanguage());
+        assertEquals("Finska", companies.iterator().next().getAllLanguages().iterator().next().getName());
+        assertEquals("FI", companies.iterator().next().getAllLiquidations().iterator().next().getLanguage());
+        assertEquals("Unregistered", companies.iterator().next().getAllRegisteredEntries().iterator().next().getDescription());
+        assertEquals("FI", companies.iterator().next().getAllRegisteredOffices().iterator().next().getLanguage());
+    }
+
+    @Test
+    public void testSaveCompany() {
+        Company company = Company.builder()
+                .companyForm("OYJ")
+                .businessId("123456789-1")
+                .detailsUri("123")
+                .registrationDate(LocalDateTime.of(2020, 4, 30, 0, 0 ,0))
+                .name("A company").build();
+        Company savedCompany = catalogService.saveCompany(company);
+        assertNotNull(savedCompany);
+        assertNotNull(savedCompany.getId());
+        assertEquals("123456789-1", savedCompany.getBusinessId());
+        assertEquals("123", savedCompany.getDetailsUri());
+        assertEquals("OYJ", savedCompany.getCompanyForm());
+        assertEquals("A company", savedCompany.getName());
+        assertEquals(LocalDateTime.of(2020, 4, 30, 0, 0 ,0), savedCompany.getRegistrationDate());
+        verifySavedStatusInfo(savedCompany.getStatusInfo());
+    }
+
+    @Test
+    public void testSaveBusinessName() {
+        Iterable<Company> companies = catalogService.getCompanies("1710128-9");
+        assertEquals(1, Iterables.size(companies));
+        BusinessName businessName = BusinessName.builder()
+                .name("Business name").language("EN").ordering(0).source(0).version(0)
+                .registrationDate(LocalDateTime.of(2020, 4, 30, 0, 0 ,0))
+                .endDate(null).company(companies.iterator().next()).build();
+        catalogService.saveBusinessName(businessName);
+        Iterable<Company> foundCompanies = catalogService.getCompanies("1710128-9");
+        assertEquals(1, Iterables.size(foundCompanies));
+        assertEquals(1, companies.iterator().next().getAllBusinessNames().size());
+        assertEquals("EN", companies.iterator().next().getAllBusinessNames().iterator().next().getLanguage());
+        assertEquals("Business name", companies.iterator().next().getAllBusinessNames().iterator().next().getName());
+        assertEquals(0, companies.iterator().next().getAllBusinessNames().iterator().next().getOrdering());
+        assertEquals(0, companies.iterator().next().getAllBusinessNames().iterator().next().getSource());
+        assertEquals(0, companies.iterator().next().getAllBusinessNames().iterator().next().getVersion());
+        assertEquals(LocalDateTime.of(2020, 4, 30, 0, 0 ,0),
+                companies.iterator().next().getAllBusinessNames().iterator().next().getRegistrationDate());
+        assertNull(companies.iterator().next().getAllBusinessNames().iterator().next().getEndDate());
+        verifySavedStatusInfo(companies.iterator().next().getAllBusinessNames().iterator().next().getStatusInfo());
+    }
+
+    @Test
+    public void testSaveBusinessAuxiliaryName() {
+        Iterable<Company> companies = catalogService.getCompanies("1710128-9");
+        assertEquals(1, Iterables.size(companies));
+        BusinessAuxiliaryName businessAuxiliaryName = BusinessAuxiliaryName.builder()
+                .name("Auxiliary name").language("EN").ordering(0).source(0).version(0)
+                .registrationDate(LocalDateTime.of(2020, 4, 30, 0, 0 ,0))
+                .endDate(null).company(companies.iterator().next()).build();
+        catalogService.saveBusinessAuxiliaryName(businessAuxiliaryName);
+        Iterable<Company> foundCompanies = catalogService.getCompanies("1710128-9");
+        assertEquals(1, Iterables.size(foundCompanies));
+        assertEquals(1, companies.iterator().next().getAllBusinessAuxiliaryNames().size());
+        assertEquals("EN", companies.iterator().next().getAllBusinessAuxiliaryNames().iterator().next().getLanguage());
+        assertEquals("Auxiliary name", companies.iterator().next().getAllBusinessAuxiliaryNames().iterator().next().getName());
+        assertEquals(0, companies.iterator().next().getAllBusinessAuxiliaryNames().iterator().next().getOrdering());
+        assertEquals(0, companies.iterator().next().getAllBusinessAuxiliaryNames().iterator().next().getSource());
+        assertEquals(0, companies.iterator().next().getAllBusinessAuxiliaryNames().iterator().next().getVersion());
+        assertEquals(LocalDateTime.of(2020, 4, 30, 0, 0 ,0),
+                companies.iterator().next().getAllBusinessAuxiliaryNames().iterator().next().getRegistrationDate());
+        assertNull(companies.iterator().next().getAllBusinessAuxiliaryNames().iterator().next().getEndDate());
+        verifySavedStatusInfo(companies.iterator().next().getAllBusinessAuxiliaryNames().iterator().next().getStatusInfo());
+    }
+
+    @Test
+    public void testSaveBusinessAddress() {
+        Iterable<Company> companies = catalogService.getCompanies("1710128-9");
+        assertEquals(1, Iterables.size(companies));
+        BusinessAddress businessAddress = BusinessAddress.builder().careOf("").city("Tampere").country("Finland")
+                .language("FI").postCode("30123").source(0).street("Katu 1").type(0).version(0)
+                .registrationDate(LocalDateTime.of(2020, 4, 30, 0, 0 ,0))
+                .endDate(null).company(companies.iterator().next()).build();
+        catalogService.saveBusinessAddress(businessAddress);
+        Iterable<Company> foundCompanies = catalogService.getCompanies("1710128-9");
+        assertEquals(1, Iterables.size(foundCompanies));
+        assertEquals(1, companies.iterator().next().getAllBusinessAddresses().size());
+        assertEquals("FI", companies.iterator().next().getAllBusinessAddresses().iterator().next().getLanguage());
+        assertEquals("", companies.iterator().next().getAllBusinessAddresses().iterator().next().getCareOf());
+        assertEquals("Tampere", companies.iterator().next().getAllBusinessAddresses().iterator().next().getCity());
+        assertEquals("Finland", companies.iterator().next().getAllBusinessAddresses().iterator().next().getCountry());
+        assertEquals("30123", companies.iterator().next().getAllBusinessAddresses().iterator().next().getPostCode());
+        assertEquals("Katu 1", companies.iterator().next().getAllBusinessAddresses().iterator().next().getStreet());
+        assertEquals(0, companies.iterator().next().getAllBusinessAddresses().iterator().next().getSource());
+        assertEquals(0, companies.iterator().next().getAllBusinessAddresses().iterator().next().getType());
+        assertEquals(0, companies.iterator().next().getAllBusinessAddresses().iterator().next().getVersion());
+        assertEquals(LocalDateTime.of(2020, 4, 30, 0, 0 ,0),
+                companies.iterator().next().getAllBusinessAddresses().iterator().next().getRegistrationDate());
+        assertNull(companies.iterator().next().getAllBusinessAddresses().iterator().next().getEndDate());
+    }
+
+    @Test
+    public void testSaveBusinessIdChange() {
+        Iterable<Company> companies = catalogService.getCompanies("1710128-9");
+        assertEquals(1, Iterables.size(companies));
+        BusinessIdChange businessIdChange = BusinessIdChange.builder()
+                .language("EN").change(1).description("Change description").reason("Change reason")
+                .source(0).oldBusinessId("12345").newBusinessId("67890").changeDate("2020-01-25")
+                .company(companies.iterator().next()).build();
+        catalogService.saveBusinessIdChange(businessIdChange);
+        Iterable<Company> foundCompanies = catalogService.getCompanies("1710128-9");
+        assertEquals(1, Iterables.size(foundCompanies));
+        assertEquals(1, companies.iterator().next().getAllBusinessIdChanges().size());
+        assertEquals("EN", companies.iterator().next().getAllBusinessIdChanges().iterator().next().getLanguage());
+        assertEquals(1, companies.iterator().next().getAllBusinessIdChanges().iterator().next().getChange());
+        assertEquals("Change description", companies.iterator().next().getAllBusinessIdChanges().iterator().next().getDescription());
+        assertEquals("Change reason", companies.iterator().next().getAllBusinessIdChanges().iterator().next().getReason());
+        assertEquals(0, companies.iterator().next().getAllBusinessIdChanges().iterator().next().getSource());
+        assertEquals("12345", companies.iterator().next().getAllBusinessIdChanges().iterator().next().getOldBusinessId());
+        assertEquals("67890", companies.iterator().next().getAllBusinessIdChanges().iterator().next().getNewBusinessId());
+        assertEquals("2020-01-25", companies.iterator().next().getAllBusinessIdChanges().iterator().next().getChangeDate());
+        verifySavedStatusInfo(companies.iterator().next().getAllBusinessAuxiliaryNames().iterator().next().getStatusInfo());
+    }
+
+    @Test
+    public void testSaveBusinessLine() {
+        Iterable<Company> companies = catalogService.getCompanies("1710128-9");
+        assertEquals(1, Iterables.size(companies));
+        BusinessLine businessLine = BusinessLine.builder()
+                .name("Business line").language("EN").ordering(0).source(0).version(0)
+                .registrationDate(LocalDateTime.of(2020, 4, 30, 0, 0 ,0))
+                .endDate(null).company(companies.iterator().next()).build();
+        catalogService.saveBusinessLine(businessLine);
+        Iterable<Company> foundCompanies = catalogService.getCompanies("1710128-9");
+        assertEquals(1, Iterables.size(foundCompanies));
+        assertEquals(1, companies.iterator().next().getAllBusinessLines().size());
+        assertEquals("EN", companies.iterator().next().getAllBusinessLines().iterator().next().getLanguage());
+        assertEquals("Business line", companies.iterator().next().getAllBusinessLines().iterator().next().getName());
+        assertEquals(0, companies.iterator().next().getAllBusinessLines().iterator().next().getOrdering());
+        assertEquals(0, companies.iterator().next().getAllBusinessLines().iterator().next().getSource());
+        assertEquals(0, companies.iterator().next().getAllBusinessLines().iterator().next().getVersion());
+        assertEquals(LocalDateTime.of(2020, 4, 30, 0, 0 ,0),
+                companies.iterator().next().getAllBusinessLines().iterator().next().getRegistrationDate());
+        assertNull(companies.iterator().next().getAllBusinessLines().iterator().next().getEndDate());
+        verifySavedStatusInfo(companies.iterator().next().getAllBusinessLines().iterator().next().getStatusInfo());
+    }
+
+    @Test
+    public void testSaveCompanyForm() {
+        Iterable<Company> companies = catalogService.getCompanies("1710128-9");
+        assertEquals(1, Iterables.size(companies));
+        CompanyForm companyForm = CompanyForm.builder()
+                .name("FORM").language("EN").source(0).version(0).type(1)
+                .registrationDate(LocalDateTime.of(2020, 4, 30, 0, 0 ,0))
+                .endDate(null).company(companies.iterator().next()).build();
+        catalogService.saveCompanyForm(companyForm);
+        Iterable<Company> foundCompanies = catalogService.getCompanies("1710128-9");
+        assertEquals(1, Iterables.size(foundCompanies));
+        assertEquals(1, companies.iterator().next().getAllCompanyForms().size());
+        assertEquals("EN", companies.iterator().next().getAllCompanyForms().iterator().next().getLanguage());
+        assertEquals("FORM", companies.iterator().next().getAllCompanyForms().iterator().next().getName());
+        assertEquals(0, companies.iterator().next().getAllCompanyForms().iterator().next().getSource());
+        assertEquals(0, companies.iterator().next().getAllCompanyForms().iterator().next().getVersion());
+        assertEquals(1, companies.iterator().next().getAllCompanyForms().iterator().next().getType());
+        assertEquals(LocalDateTime.of(2020, 4, 30, 0, 0 ,0),
+                companies.iterator().next().getAllCompanyForms().iterator().next().getRegistrationDate());
+        assertNull(companies.iterator().next().getAllCompanyForms().iterator().next().getEndDate());
+        verifySavedStatusInfo(companies.iterator().next().getAllCompanyForms().iterator().next().getStatusInfo());
+    }
+
+    @Test
+    public void testSaveContactDetail() {
+        Iterable<Company> companies = catalogService.getCompanies("1710128-9");
+        assertEquals(1, Iterables.size(companies));
+        ContactDetail contactDetail = ContactDetail.builder()
+                .value("VALUE").language("EN").source(0).version(0).type(1)
+                .registrationDate(LocalDateTime.of(2020, 4, 30, 0, 0 ,0))
+                .endDate(null).company(companies.iterator().next()).build();
+        catalogService.saveContactDetail(contactDetail);
+        Iterable<Company> foundCompanies = catalogService.getCompanies("1710128-9");
+        assertEquals(1, Iterables.size(foundCompanies));
+        assertEquals(1, companies.iterator().next().getAllContactDetails().size());
+        assertEquals("EN", companies.iterator().next().getAllContactDetails().iterator().next().getLanguage());
+        assertEquals("VALUE", companies.iterator().next().getAllContactDetails().iterator().next().getValue());
+        assertEquals(0, companies.iterator().next().getAllContactDetails().iterator().next().getSource());
+        assertEquals(0, companies.iterator().next().getAllContactDetails().iterator().next().getVersion());
+        assertEquals(1, companies.iterator().next().getAllContactDetails().iterator().next().getType());
+        assertEquals(LocalDateTime.of(2020, 4, 30, 0, 0 ,0),
+                companies.iterator().next().getAllContactDetails().iterator().next().getRegistrationDate());
+        assertNull(companies.iterator().next().getAllContactDetails().iterator().next().getEndDate());
+        verifySavedStatusInfo(companies.iterator().next().getAllContactDetails().iterator().next().getStatusInfo());
+    }
+
+    @Test
+    public void testSaveLanguage() {
+        Iterable<Company> companies = catalogService.getCompanies("1710128-9");
+        assertEquals(1, Iterables.size(companies));
+        Language language = Language.builder()
+                .name("Osakeyhtiö").language("FI").source(0).version(0)
+                .registrationDate(LocalDateTime.of(2020, 4, 30, 0, 0 ,0))
+                .endDate(null).company(companies.iterator().next()).build();
+        catalogService.saveLanguage(language);
+        Iterable<Company> foundCompanies = catalogService.getCompanies("1710128-9");
+        assertEquals(1, Iterables.size(foundCompanies));
+        assertEquals(1, companies.iterator().next().getAllLanguages().size());
+        assertEquals("FI", companies.iterator().next().getAllLanguages().iterator().next().getLanguage());
+        assertEquals("Osakeyhtiö", companies.iterator().next().getAllLanguages().iterator().next().getName());
+        assertEquals(0, companies.iterator().next().getAllLanguages().iterator().next().getSource());
+        assertEquals(0, companies.iterator().next().getAllLanguages().iterator().next().getVersion());
+        assertEquals(LocalDateTime.of(2020, 4, 30, 0, 0 ,0),
+                companies.iterator().next().getAllLanguages().iterator().next().getRegistrationDate());
+        assertNull(companies.iterator().next().getAllLanguages().iterator().next().getEndDate());
+        verifySavedStatusInfo(companies.iterator().next().getAllLanguages().iterator().next().getStatusInfo());
+    }
+
+    @Test
+    public void testSaveLiquidation() {
+        Iterable<Company> companies = catalogService.getCompanies("1710128-9");
+        assertEquals(1, Iterables.size(companies));
+        Liquidation liquidation = Liquidation.builder()
+                .name("Liquidation").language("EN").source(0).version(0).type(1)
+                .registrationDate(LocalDateTime.of(2020, 4, 30, 0, 0 ,0))
+                .endDate(null).company(companies.iterator().next()).build();
+        catalogService.saveLiquidation(liquidation);
+        Iterable<Company> foundCompanies = catalogService.getCompanies("1710128-9");
+        assertEquals(1, Iterables.size(foundCompanies));
+        assertEquals(1, companies.iterator().next().getAllLiquidations().size());
+        assertEquals("EN", companies.iterator().next().getAllLiquidations().iterator().next().getLanguage());
+        assertEquals("Liquidation", companies.iterator().next().getAllLiquidations().iterator().next().getName());
+        assertEquals(0, companies.iterator().next().getAllLiquidations().iterator().next().getSource());
+        assertEquals(1, companies.iterator().next().getAllLiquidations().iterator().next().getType());
+        assertEquals(0, companies.iterator().next().getAllLiquidations().iterator().next().getVersion());
+        assertEquals(LocalDateTime.of(2020, 4, 30, 0, 0 ,0),
+                companies.iterator().next().getAllLiquidations().iterator().next().getRegistrationDate());
+        assertNull(companies.iterator().next().getAllLiquidations().iterator().next().getEndDate());
+        verifySavedStatusInfo(companies.iterator().next().getAllLiquidations().iterator().next().getStatusInfo());
+    }
+
+    @Test
+    public void testSaveRegisteredEntry() {
+        Iterable<Company> companies = catalogService.getCompanies("1710128-9");
+        assertEquals(1, Iterables.size(companies));
+        RegisteredEntry registeredEntry = RegisteredEntry.builder()
+                .status(1).authority(2).register(3).description("Description")
+                .language("EN").registrationDate(LocalDateTime.of(2020, 4, 30, 0, 0 ,0))
+                .endDate(null).company(companies.iterator().next()).build();
+        catalogService.saveRegisteredEntry(registeredEntry);
+        Iterable<Company> foundCompanies = catalogService.getCompanies("1710128-9");
+        assertEquals(1, Iterables.size(foundCompanies));
+        assertEquals(1, companies.iterator().next().getAllRegisteredEntries().size());
+        assertEquals("EN", companies.iterator().next().getAllRegisteredEntries().iterator().next().getLanguage());
+        assertEquals("Description", companies.iterator().next().getAllRegisteredEntries().iterator().next().getDescription());
+        assertEquals(1, companies.iterator().next().getAllRegisteredEntries().iterator().next().getStatus());
+        assertEquals(2, companies.iterator().next().getAllRegisteredEntries().iterator().next().getAuthority());
+        assertEquals(3, companies.iterator().next().getAllRegisteredEntries().iterator().next().getRegister());
+        assertEquals(LocalDateTime.of(2020, 4, 30, 0, 0 ,0),
+                companies.iterator().next().getAllRegisteredEntries().iterator().next().getRegistrationDate());
+        assertNull(companies.iterator().next().getAllRegisteredEntries().iterator().next().getEndDate());
+        verifySavedStatusInfo(companies.iterator().next().getAllRegisteredEntries().iterator().next().getStatusInfo());
+    }
+
+    @Test
+    public void testSaveRegisteredOffice() {
+        Iterable<Company> companies = catalogService.getCompanies("1710128-9");
+        assertEquals(1, Iterables.size(companies));
+        RegisteredOffice registeredOffice = RegisteredOffice.builder().source(0).ordering(0)
+                .name("Registered Office").version(0).language("EN")
+                .registrationDate(LocalDateTime.of(2020, 4, 30, 0, 0 ,0))
+                .endDate(null).company(companies.iterator().next()).build();
+        catalogService.saveRegisteredOffice(registeredOffice);
+        Iterable<Company> foundCompanies = catalogService.getCompanies("1710128-9");
+        assertEquals(1, Iterables.size(foundCompanies));
+        assertEquals(1, companies.iterator().next().getAllRegisteredOffices().size());
+        assertEquals("EN", companies.iterator().next().getAllRegisteredOffices().iterator().next().getLanguage());
+        assertEquals("Registered Office", companies.iterator().next().getAllRegisteredOffices().iterator().next().getName());
+        assertEquals(0, companies.iterator().next().getAllRegisteredOffices().iterator().next().getSource());
+        assertEquals(0, companies.iterator().next().getAllRegisteredOffices().iterator().next().getOrdering());
+        assertEquals(0, companies.iterator().next().getAllRegisteredOffices().iterator().next().getVersion());
+        assertEquals(LocalDateTime.of(2020, 4, 30, 0, 0 ,0),
+                companies.iterator().next().getAllRegisteredOffices().iterator().next().getRegistrationDate());
+        assertNull(companies.iterator().next().getAllRegisteredOffices().iterator().next().getEndDate());
+        verifySavedStatusInfo(companies.iterator().next().getAllRegisteredOffices().iterator().next().getStatusInfo());
     }
 
     @Test
@@ -1120,5 +1419,12 @@ public class CatalogServiceTest {
         } catch (Exception expected) {
             // Exception is expected }
         }
+    }
+
+    private void verifySavedStatusInfo(StatusInfo statusInfo) {
+        assertNotNull(statusInfo.getCreated());
+        assertNotNull(statusInfo.getChanged());
+        assertNotNull(statusInfo.getFetched());
+        assertNull(statusInfo.getRemoved());
     }
 }

@@ -54,6 +54,8 @@ public class RegisteredOffice {
     private String language;
     @Column(nullable = false)
     private LocalDateTime registrationDate;
+    @Column
+    private LocalDateTime endDate;
     @Builder.Default
     @Embedded
     private StatusInfo statusInfo = new StatusInfo();

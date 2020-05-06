@@ -60,13 +60,13 @@ public class CompanyRepositoryTest {
         assertEquals(1, company.iterator().next().getAllBusinessAuxiliaryNames().size());
         assertEquals(1, company.iterator().next().getAllBusinessIdChanges().size());
         assertEquals(1, company.iterator().next().getAllBusinessLines().size());
-        assertEquals(0, company.iterator().next().getAllBusinessNames().size());
+        assertEquals(1, company.iterator().next().getAllBusinessNames().size());
         assertEquals(1, company.iterator().next().getAllCompanyForms().size());
         assertEquals(1, company.iterator().next().getAllContactDetails().size());
         assertEquals(1, company.iterator().next().getAllLanguages().size());
-        assertEquals(0, company.iterator().next().getAllLiquidations().size());
+        assertEquals(1, company.iterator().next().getAllLiquidations().size());
         assertEquals(1, company.iterator().next().getAllRegisteredEntries().size());
-        assertEquals(0, company.iterator().next().getAllRegisteredOffices().size());
+        assertEquals(1, company.iterator().next().getAllRegisteredOffices().size());
         assertEquals(LocalDateTime.of(2001, 6, 11, 0, 0, 0), company.iterator().next().getRegistrationDate());
     }
 

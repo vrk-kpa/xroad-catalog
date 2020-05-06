@@ -177,6 +177,11 @@ INSERT INTO business_line(id, company_id, source, ordering, version, name, langu
 VALUES (1, 1, 2, 0, 1, 'Dataprogrammering', 'SE', '2007-12-31 00:00:00+02', NULL, '2020-05-04 11:41:24.792+03',
         '2020-05-04 11:41:24.792+03', '2020-05-04 11:41:24.792+03', NULL);
 
+INSERT INTO business_name(id, company_id, source, ordering, version, name, language, registration_date,
+    end_date, created, changed, fetched, removed)
+VALUES (1, 1, 0, 0, 0, '', 'FI', '2019-01-31 00:00:00+02', NULL,
+        '2020-05-04 11:41:24.717+03', '2020-05-04 11:41:24.717+03', '2020-05-04 11:41:24.717+03', NULL);
+
 INSERT INTO company_form(id, company_id, source, version, name, language, type, registration_date,
     end_date, created, changed, fetched, removed)
 VALUES (1, 1, 1, 1, 'Public limited company', 'EN', 0, '2017-10-19 00:00:00+03', NULL, '2020-05-04 11:41:24.792+03',
@@ -191,10 +196,20 @@ INSERT INTO language(id, company_id, source, version, name, language, registrati
 VALUES (1, 1, 0, 1, 'Finska', 'SE', '2001-06-27 00:00:00+02', NULL, '2020-05-04 11:41:24.792+03',
         '2020-05-04 11:41:24.792+03', '2020-05-04 11:41:24.792+03', NULL);
 
+INSERT INTO liquidation(id, company_id, source, version, name, language, type, registration_date,
+    end_date, created, changed, fetched, removed)
+VALUES (1, 1, 0, 0, '', 'FI', 1, '2001-06-27 00:00:00+02', NULL,
+        '2020-05-04 11:41:24.792+03', '2020-05-04 11:41:24.792+03', '2020-05-04 11:41:24.792+03', NULL);
+
 INSERT INTO registered_entry(id, company_id, description, status, register, language, authority,registration_date, end_date,
                              created, changed, fetched, removed)
 VALUES (1, 1, 'Unregistered', 2, 1, 'EN', 2, '2001-06-11 00:00:00+02', '2001-06-24 00:00:00+02', '2020-05-04 11:41:24.792+03',
         '2020-05-04 11:41:24.792+03', '2020-05-04 11:41:24.792+03', NULL);
+
+INSERT INTO registered_office(id, company_id, source, ordering, version, name, language, registration_date,
+    end_date, created, changed, fetched, removed)
+VALUES (1, 1, 0, 0, 0, '', 'FI', '2001-06-11 00:00:00+02',
+        NULL, '2020-05-04 11:41:24.792+03', '2020-05-04 11:41:24.792+03', '2020-05-04 11:41:24.792+03', NULL);
 
 INSERT INTO wsdl (id, service_id, data, external_id, created, changed, fetched,  removed)
 VALUES (1, 1, '<?xml version="1.0" standalone="no"?>

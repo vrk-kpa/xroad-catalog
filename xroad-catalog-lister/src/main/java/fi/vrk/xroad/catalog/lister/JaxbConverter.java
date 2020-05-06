@@ -1104,6 +1104,7 @@ public class JaxbConverter {
             co.setVersion(registeredOffice.getVersion());
             co.setName(registeredOffice.getName());
             co.setRegistrationDate(toXmlGregorianCalendar(registeredOffice.getRegistrationDate()));
+            co.setEndDate(toXmlGregorianCalendar(registeredOffice.getEndDate()));
             converted.add(co);
         }
         return converted;
