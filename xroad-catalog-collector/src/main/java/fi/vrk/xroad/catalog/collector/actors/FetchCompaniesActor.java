@@ -69,9 +69,8 @@ public class FetchCompaniesActor extends XRoadCatalogActor {
                 log.info("Fetching data for company with businessCode {}", client.getMemberCode());
                 String businessCode = clientType.getId().getMemberCode();
                 JSONObject companyJson = OrganizationUtil.getCompany(fetchCompaniesUrl, businessCode);
-                JSONArray dataJson = companyJson.optJSONArray("results");
-                saveData(dataJson);
-                log.info("Successfully saved data for company with businessCode {}", client.getMemberCode());
+                saveData(companyJson.optJSONArray("results"));
+                log.info("Successfully saved data for company with businessCode {}", businessCode);
             }
 
             return true;
