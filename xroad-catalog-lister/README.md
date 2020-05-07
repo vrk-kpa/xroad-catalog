@@ -13,8 +13,10 @@ The main endpoints this software provides:
 * IsSoapService - endpoint for requesting whether a given service is a SOAP service
 * IsRestService - endpoint for requesting whether a given service is a REST service
 * IsProvider - endpoint for requesting whether a given member is a provider
-* GetOrganizations - endpoint for requesting organization details
-* HasOrganizationChanged - endpoint for requesting whether given organization has some of its details changed
+* GetOrganizations - endpoint for requesting public organization details
+* HasOrganizationChanged - endpoint for requesting whether given public organization has some of its details changed
+* GetCompanies - endpoint for requesting private company details
+* HasCompanyChanged - endpoint for requesting whether given private company has some of its details changed
 
 ## Build
 ```sh
