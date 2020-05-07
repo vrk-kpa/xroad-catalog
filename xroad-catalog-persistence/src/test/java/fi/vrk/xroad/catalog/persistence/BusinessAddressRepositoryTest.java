@@ -32,7 +32,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -62,7 +62,7 @@ public class BusinessAddressRepositoryTest {
         assertEquals(0, businessAddresses.get().get(0).getSource());
         assertEquals(1, businessAddresses.get().get(0).getVersion());
         assertEquals(2, businessAddresses.get().get(0).getType());
-        assertEquals(LocalDateTime.of(2016, 7, 12, 0, 0, 0), businessAddresses.get().get(0).getRegistrationDate());
+        assertEquals(LocalDate.of(2016, 7, 12), businessAddresses.get().get(0).getRegistrationDate().toLocalDate());
         assertNull(businessAddresses.get().get(0).getEndDate());
     }
 

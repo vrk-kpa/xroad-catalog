@@ -22,9 +22,7 @@
  */
 package fi.vrk.xroad.catalog.persistence;
 
-import fi.vrk.xroad.catalog.persistence.entity.Language;
 import fi.vrk.xroad.catalog.persistence.entity.Liquidation;
-import fi.vrk.xroad.catalog.persistence.repository.LanguageRepository;
 import fi.vrk.xroad.catalog.persistence.repository.LiquidationRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
@@ -34,7 +32,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -60,7 +58,7 @@ public class LiquidationRepositoryTest {
         assertEquals(0, liquidations.get().get(0).getSource());
         assertEquals(0, liquidations.get().get(0).getVersion());
         assertEquals(1, liquidations.get().get(0).getType());
-        assertEquals(LocalDateTime.of(2001, 6, 27, 0, 0, 0), liquidations.get().get(0).getRegistrationDate());
+        assertEquals(LocalDate.of(2001, 6, 27), liquidations.get().get(0).getRegistrationDate().toLocalDate());
         assertNull(liquidations.get().get(0).getEndDate());
     }
 

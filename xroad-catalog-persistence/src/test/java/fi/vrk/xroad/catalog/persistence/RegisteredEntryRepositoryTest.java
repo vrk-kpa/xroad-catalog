@@ -32,7 +32,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -58,8 +58,8 @@ public class RegisteredEntryRepositoryTest {
         assertEquals(2, registeredEntries.get().get(0).getStatus());
         assertEquals(1, registeredEntries.get().get(0).getRegister());
         assertEquals(2, registeredEntries.get().get(0).getAuthority());
-        assertEquals(LocalDateTime.of(2001, 6, 11, 0, 0, 0), registeredEntries.get().get(0).getRegistrationDate());
-        assertEquals(LocalDateTime.of(2001, 6, 24, 0, 0, 0), registeredEntries.get().get(0).getEndDate());
+        assertEquals(LocalDate.of(2001, 6, 11), registeredEntries.get().get(0).getRegistrationDate().toLocalDate());
+        assertEquals(LocalDate.of(2001, 6, 24), registeredEntries.get().get(0).getEndDate().toLocalDate());
     }
 
 

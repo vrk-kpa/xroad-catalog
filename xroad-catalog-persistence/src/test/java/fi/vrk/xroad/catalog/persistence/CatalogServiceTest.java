@@ -36,6 +36,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.StreamSupport;
@@ -236,7 +237,7 @@ public class CatalogServiceTest {
         assertEquals("123", savedCompany.getDetailsUri());
         assertEquals("OYJ", savedCompany.getCompanyForm());
         assertEquals("A company", savedCompany.getName());
-        assertEquals(LocalDateTime.of(2020, 4, 30, 0, 0 ,0), savedCompany.getRegistrationDate());
+        assertEquals(LocalDate.of(2020, 4, 30), savedCompany.getRegistrationDate().toLocalDate());
         verifySavedStatusInfo(savedCompany.getStatusInfo());
     }
 
@@ -257,8 +258,8 @@ public class CatalogServiceTest {
         assertEquals(0, companies.iterator().next().getAllBusinessNames().iterator().next().getOrdering());
         assertEquals(0, companies.iterator().next().getAllBusinessNames().iterator().next().getSource());
         assertEquals(0, companies.iterator().next().getAllBusinessNames().iterator().next().getVersion());
-        assertEquals(LocalDateTime.of(2020, 4, 30, 0, 0 ,0),
-                companies.iterator().next().getAllBusinessNames().iterator().next().getRegistrationDate());
+        assertEquals(LocalDate.of(2020, 4, 30),
+                companies.iterator().next().getAllBusinessNames().iterator().next().getRegistrationDate().toLocalDate());
         assertNull(companies.iterator().next().getAllBusinessNames().iterator().next().getEndDate());
         verifySavedStatusInfo(companies.iterator().next().getAllBusinessNames().iterator().next().getStatusInfo());
     }
@@ -280,8 +281,8 @@ public class CatalogServiceTest {
         assertEquals(0, companies.iterator().next().getAllBusinessAuxiliaryNames().iterator().next().getOrdering());
         assertEquals(0, companies.iterator().next().getAllBusinessAuxiliaryNames().iterator().next().getSource());
         assertEquals(0, companies.iterator().next().getAllBusinessAuxiliaryNames().iterator().next().getVersion());
-        assertEquals(LocalDateTime.of(2020, 4, 30, 0, 0 ,0),
-                companies.iterator().next().getAllBusinessAuxiliaryNames().iterator().next().getRegistrationDate());
+        assertEquals(LocalDate.of(2020, 4, 30),
+                companies.iterator().next().getAllBusinessAuxiliaryNames().iterator().next().getRegistrationDate().toLocalDate());
         assertNull(companies.iterator().next().getAllBusinessAuxiliaryNames().iterator().next().getEndDate());
         verifySavedStatusInfo(companies.iterator().next().getAllBusinessAuxiliaryNames().iterator().next().getStatusInfo());
     }
@@ -307,8 +308,8 @@ public class CatalogServiceTest {
         assertEquals(0, companies.iterator().next().getAllBusinessAddresses().iterator().next().getSource());
         assertEquals(0, companies.iterator().next().getAllBusinessAddresses().iterator().next().getType());
         assertEquals(0, companies.iterator().next().getAllBusinessAddresses().iterator().next().getVersion());
-        assertEquals(LocalDateTime.of(2020, 4, 30, 0, 0 ,0),
-                companies.iterator().next().getAllBusinessAddresses().iterator().next().getRegistrationDate());
+        assertEquals(LocalDate.of(2020, 4, 30),
+                companies.iterator().next().getAllBusinessAddresses().iterator().next().getRegistrationDate().toLocalDate());
         assertNull(companies.iterator().next().getAllBusinessAddresses().iterator().next().getEndDate());
     }
 
@@ -352,8 +353,8 @@ public class CatalogServiceTest {
         assertEquals(0, companies.iterator().next().getAllBusinessLines().iterator().next().getOrdering());
         assertEquals(0, companies.iterator().next().getAllBusinessLines().iterator().next().getSource());
         assertEquals(0, companies.iterator().next().getAllBusinessLines().iterator().next().getVersion());
-        assertEquals(LocalDateTime.of(2020, 4, 30, 0, 0 ,0),
-                companies.iterator().next().getAllBusinessLines().iterator().next().getRegistrationDate());
+        assertEquals(LocalDate.of(2020, 4, 30),
+                companies.iterator().next().getAllBusinessLines().iterator().next().getRegistrationDate().toLocalDate());
         assertNull(companies.iterator().next().getAllBusinessLines().iterator().next().getEndDate());
         verifySavedStatusInfo(companies.iterator().next().getAllBusinessLines().iterator().next().getStatusInfo());
     }
@@ -375,8 +376,8 @@ public class CatalogServiceTest {
         assertEquals(0, companies.iterator().next().getAllCompanyForms().iterator().next().getSource());
         assertEquals(0, companies.iterator().next().getAllCompanyForms().iterator().next().getVersion());
         assertEquals(1, companies.iterator().next().getAllCompanyForms().iterator().next().getType());
-        assertEquals(LocalDateTime.of(2020, 4, 30, 0, 0 ,0),
-                companies.iterator().next().getAllCompanyForms().iterator().next().getRegistrationDate());
+        assertEquals(LocalDate.of(2020, 4, 30),
+                companies.iterator().next().getAllCompanyForms().iterator().next().getRegistrationDate().toLocalDate());
         assertNull(companies.iterator().next().getAllCompanyForms().iterator().next().getEndDate());
         verifySavedStatusInfo(companies.iterator().next().getAllCompanyForms().iterator().next().getStatusInfo());
     }
@@ -398,8 +399,8 @@ public class CatalogServiceTest {
         assertEquals(0, companies.iterator().next().getAllContactDetails().iterator().next().getSource());
         assertEquals(0, companies.iterator().next().getAllContactDetails().iterator().next().getVersion());
         assertEquals(1, companies.iterator().next().getAllContactDetails().iterator().next().getType());
-        assertEquals(LocalDateTime.of(2020, 4, 30, 0, 0 ,0),
-                companies.iterator().next().getAllContactDetails().iterator().next().getRegistrationDate());
+        assertEquals(LocalDate.of(2020, 4, 30),
+                companies.iterator().next().getAllContactDetails().iterator().next().getRegistrationDate().toLocalDate());
         assertNull(companies.iterator().next().getAllContactDetails().iterator().next().getEndDate());
         verifySavedStatusInfo(companies.iterator().next().getAllContactDetails().iterator().next().getStatusInfo());
     }
@@ -420,8 +421,8 @@ public class CatalogServiceTest {
         assertEquals("Osakeyhtiö", companies.iterator().next().getAllLanguages().iterator().next().getName());
         assertEquals(0, companies.iterator().next().getAllLanguages().iterator().next().getSource());
         assertEquals(0, companies.iterator().next().getAllLanguages().iterator().next().getVersion());
-        assertEquals(LocalDateTime.of(2020, 4, 30, 0, 0 ,0),
-                companies.iterator().next().getAllLanguages().iterator().next().getRegistrationDate());
+        assertEquals(LocalDate.of(2020, 4, 30),
+                companies.iterator().next().getAllLanguages().iterator().next().getRegistrationDate().toLocalDate());
         assertNull(companies.iterator().next().getAllLanguages().iterator().next().getEndDate());
         verifySavedStatusInfo(companies.iterator().next().getAllLanguages().iterator().next().getStatusInfo());
     }
@@ -443,8 +444,8 @@ public class CatalogServiceTest {
         assertEquals(0, companies.iterator().next().getAllLiquidations().iterator().next().getSource());
         assertEquals(1, companies.iterator().next().getAllLiquidations().iterator().next().getType());
         assertEquals(0, companies.iterator().next().getAllLiquidations().iterator().next().getVersion());
-        assertEquals(LocalDateTime.of(2020, 4, 30, 0, 0 ,0),
-                companies.iterator().next().getAllLiquidations().iterator().next().getRegistrationDate());
+        assertEquals(LocalDate.of(2020, 4, 30),
+                companies.iterator().next().getAllLiquidations().iterator().next().getRegistrationDate().toLocalDate());
         assertNull(companies.iterator().next().getAllLiquidations().iterator().next().getEndDate());
         verifySavedStatusInfo(companies.iterator().next().getAllLiquidations().iterator().next().getStatusInfo());
     }
@@ -466,8 +467,8 @@ public class CatalogServiceTest {
         assertEquals(1, companies.iterator().next().getAllRegisteredEntries().iterator().next().getStatus());
         assertEquals(2, companies.iterator().next().getAllRegisteredEntries().iterator().next().getAuthority());
         assertEquals(3, companies.iterator().next().getAllRegisteredEntries().iterator().next().getRegister());
-        assertEquals(LocalDateTime.of(2020, 4, 30, 0, 0 ,0),
-                companies.iterator().next().getAllRegisteredEntries().iterator().next().getRegistrationDate());
+        assertEquals(LocalDate.of(2020, 4, 30),
+                companies.iterator().next().getAllRegisteredEntries().iterator().next().getRegistrationDate().toLocalDate());
         assertNull(companies.iterator().next().getAllRegisteredEntries().iterator().next().getEndDate());
         verifySavedStatusInfo(companies.iterator().next().getAllRegisteredEntries().iterator().next().getStatusInfo());
     }
@@ -489,8 +490,8 @@ public class CatalogServiceTest {
         assertEquals(0, companies.iterator().next().getAllRegisteredOffices().iterator().next().getSource());
         assertEquals(0, companies.iterator().next().getAllRegisteredOffices().iterator().next().getOrdering());
         assertEquals(0, companies.iterator().next().getAllRegisteredOffices().iterator().next().getVersion());
-        assertEquals(LocalDateTime.of(2020, 4, 30, 0, 0 ,0),
-                companies.iterator().next().getAllRegisteredOffices().iterator().next().getRegistrationDate());
+        assertEquals(LocalDate.of(2020, 4, 30),
+                companies.iterator().next().getAllRegisteredOffices().iterator().next().getRegistrationDate().toLocalDate());
         assertNull(companies.iterator().next().getAllRegisteredOffices().iterator().next().getEndDate());
         verifySavedStatusInfo(companies.iterator().next().getAllRegisteredOffices().iterator().next().getStatusInfo());
     }
