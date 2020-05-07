@@ -22,7 +22,6 @@
  */
 package fi.vrk.xroad.catalog.persistence;
 
-import fi.vrk.xroad.catalog.persistence.CatalogService;
 import fi.vrk.xroad.catalog.persistence.entity.*;
 import fi.vrk.xroad.catalog.persistence.entity.Subsystem;
 import fi.vrk.xroad.catalog.persistence.repository.*;
@@ -116,7 +115,41 @@ public class CatalogServiceImpl implements CatalogService {
     @Autowired
     StreetRepository streetRepository;
 
-    private int orgCount = 0;
+    @Autowired
+    BusinessAddressRepository businessAddressRepository;
+
+    @Autowired
+    BusinessAuxiliaryNameRepository businessAuxiliaryNameRepository;
+
+    @Autowired
+    BusinessIdChangeRepository businessIdChangeRepository;
+
+    @Autowired
+    BusinessLineRepository businessLineRepository;
+
+    @Autowired
+    BusinessNameRepository businessNameRepository;
+
+    @Autowired
+    CompanyFormRepository companyFormRepository;
+
+    @Autowired
+    CompanyRepository companyRepository;
+
+    @Autowired
+    ContactDetailRepository contactDetailRepository;
+
+    @Autowired
+    LanguageRepository languageRepository;
+
+    @Autowired
+    LiquidationRepository liquidationRepository;
+
+    @Autowired
+    RegisteredEntryRepository registeredEntryRepository;
+
+    @Autowired
+    RegisteredOfficeRepository registeredOfficeRepository;
 
     @Override
     public Iterable<Member> getActiveMembers() {
@@ -140,6 +173,11 @@ public class CatalogServiceImpl implements CatalogService {
     @Override
     public Iterable<Organization> getOrganizations(String businessCode) {
         return organizationRepository.findAllByBusinessCode(businessCode);
+    }
+
+    @Override
+    public Iterable<Company> getCompanies(String businessId) {
+        return companyRepository.findAllByBusinessId(businessId);
     }
 
     @Override
@@ -848,6 +886,293 @@ public class CatalogServiceImpl implements CatalogService {
             street.setStatusInfo(statusInfo);
         }
         return streetRepository.save(street);
+    }
+
+    @Override
+    public Company saveCompany(Company company) {
+        Set<Company> foundCompanies = companyRepository.findAllByBusinessId(company.getBusinessId());
+        if (foundCompanies.size() > 0) {
+            foundCompanies.forEach(foundCompany -> {
+                StatusInfo statusInfo = foundCompany.getStatusInfo();
+                statusInfo.setFetched(LocalDateTime.now());
+                if (!foundCompany.equals(company)) {
+                    statusInfo.setChanged(LocalDateTime.now());
+                }
+                company.setStatusInfo(statusInfo);
+                company.setId(foundCompany.getId());
+            });
+        } else {
+            StatusInfo statusInfo = new StatusInfo();
+            statusInfo.setCreated(LocalDateTime.now());
+            statusInfo.setChanged(LocalDateTime.now());
+            statusInfo.setFetched(LocalDateTime.now());
+            company.setStatusInfo(statusInfo);
+        }
+        return companyRepository.save(company);
+    }
+
+    @Override
+    public void saveBusinessName(BusinessName businessName) {
+        Optional<List<BusinessName>> foundList = businessNameRepository
+                .findAnyByCompanyId(businessName.getCompany().getId());
+        if (foundList.isPresent() && !foundList.get().isEmpty()) {
+            foundList.get().forEach(oldBusinessName -> {
+                StatusInfo statusInfo = oldBusinessName.getStatusInfo();
+                statusInfo.setFetched(LocalDateTime.now());
+                if (!oldBusinessName.equals(businessName)) {
+                    statusInfo.setChanged(LocalDateTime.now());
+                }
+                businessName.setStatusInfo(statusInfo);
+                businessName.setId(oldBusinessName.getId());
+            });
+        } else {
+            StatusInfo statusInfo = new StatusInfo();
+            statusInfo.setCreated(LocalDateTime.now());
+            statusInfo.setChanged(LocalDateTime.now());
+            statusInfo.setFetched(LocalDateTime.now());
+            businessName.setStatusInfo(statusInfo);
+        }
+        businessNameRepository.save(businessName);
+    }
+
+    @Override
+    public void saveBusinessAuxiliaryName(BusinessAuxiliaryName businessAuxiliaryName) {
+        Optional<List<BusinessAuxiliaryName>> foundList = businessAuxiliaryNameRepository
+                .findAnyByCompanyId(businessAuxiliaryName.getCompany().getId());
+        if (foundList.isPresent() && !foundList.get().isEmpty()) {
+            foundList.get().forEach(oldBusinessAuxiliaryName -> {
+                StatusInfo statusInfo = oldBusinessAuxiliaryName.getStatusInfo();
+                statusInfo.setFetched(LocalDateTime.now());
+                if (!oldBusinessAuxiliaryName.equals(businessAuxiliaryName)) {
+                    statusInfo.setChanged(LocalDateTime.now());
+                }
+                businessAuxiliaryName.setStatusInfo(statusInfo);
+                businessAuxiliaryName.setId(oldBusinessAuxiliaryName.getId());
+            });
+        } else {
+            StatusInfo statusInfo = new StatusInfo();
+            statusInfo.setCreated(LocalDateTime.now());
+            statusInfo.setChanged(LocalDateTime.now());
+            statusInfo.setFetched(LocalDateTime.now());
+            businessAuxiliaryName.setStatusInfo(statusInfo);
+        }
+        businessAuxiliaryNameRepository.save(businessAuxiliaryName);
+    }
+
+    @Override
+    public void saveBusinessAddress(BusinessAddress businessAddress) {
+        Optional<List<BusinessAddress>> foundList = businessAddressRepository
+                .findAnyByCompanyId(businessAddress.getCompany().getId());
+        if (foundList.isPresent() && !foundList.get().isEmpty()) {
+            foundList.get().forEach(oldBusinessAddress -> {
+                StatusInfo statusInfo = oldBusinessAddress.getStatusInfo();
+                statusInfo.setFetched(LocalDateTime.now());
+                if (!oldBusinessAddress.equals(businessAddress)) {
+                    statusInfo.setChanged(LocalDateTime.now());
+                }
+                businessAddress.setStatusInfo(statusInfo);
+                businessAddress.setId(oldBusinessAddress.getId());
+            });
+        } else {
+            StatusInfo statusInfo = new StatusInfo();
+            statusInfo.setCreated(LocalDateTime.now());
+            statusInfo.setChanged(LocalDateTime.now());
+            statusInfo.setFetched(LocalDateTime.now());
+            businessAddress.setStatusInfo(statusInfo);
+        }
+        businessAddressRepository.save(businessAddress);
+    }
+
+    @Override
+    public void saveBusinessIdChange(BusinessIdChange businessIdChange) {
+        Optional<List<BusinessIdChange>> foundList = businessIdChangeRepository
+                .findAnyByCompanyId(businessIdChange.getCompany().getId());
+        if (foundList.isPresent() && !foundList.get().isEmpty()) {
+            foundList.get().forEach(oldBusinessIdChange -> {
+                StatusInfo statusInfo = oldBusinessIdChange.getStatusInfo();
+                statusInfo.setFetched(LocalDateTime.now());
+                if (!oldBusinessIdChange.equals(businessIdChange)) {
+                    statusInfo.setChanged(LocalDateTime.now());
+                }
+                businessIdChange.setStatusInfo(statusInfo);
+                businessIdChange.setId(oldBusinessIdChange.getId());
+            });
+        } else {
+            StatusInfo statusInfo = new StatusInfo();
+            statusInfo.setCreated(LocalDateTime.now());
+            statusInfo.setChanged(LocalDateTime.now());
+            statusInfo.setFetched(LocalDateTime.now());
+            businessIdChange.setStatusInfo(statusInfo);
+        }
+        businessIdChangeRepository.save(businessIdChange);
+    }
+
+    @Override
+    public void saveBusinessLine(BusinessLine businessLine) {
+        Optional<List<BusinessLine>> foundList = businessLineRepository
+                .findAnyByCompanyId(businessLine.getCompany().getId());
+        if (foundList.isPresent() && !foundList.get().isEmpty()) {
+            foundList.get().forEach(oldBusinessLine -> {
+                StatusInfo statusInfo = oldBusinessLine.getStatusInfo();
+                statusInfo.setFetched(LocalDateTime.now());
+                if (!oldBusinessLine.equals(businessLine)) {
+                    statusInfo.setChanged(LocalDateTime.now());
+                }
+                businessLine.setStatusInfo(statusInfo);
+                businessLine.setId(oldBusinessLine.getId());
+            });
+        } else {
+            StatusInfo statusInfo = new StatusInfo();
+            statusInfo.setCreated(LocalDateTime.now());
+            statusInfo.setChanged(LocalDateTime.now());
+            statusInfo.setFetched(LocalDateTime.now());
+            businessLine.setStatusInfo(statusInfo);
+        }
+        businessLineRepository.save(businessLine);
+    }
+
+    @Override
+    public void saveCompanyForm(CompanyForm companyForm) {
+        Optional<List<CompanyForm>> foundList = companyFormRepository
+                .findAnyByCompanyId(companyForm.getCompany().getId());
+        if (foundList.isPresent() && !foundList.get().isEmpty()) {
+            foundList.get().forEach(oldCompanyForm -> {
+                StatusInfo statusInfo = oldCompanyForm.getStatusInfo();
+                statusInfo.setFetched(LocalDateTime.now());
+                if (!oldCompanyForm.equals(companyForm)) {
+                    statusInfo.setChanged(LocalDateTime.now());
+                }
+                companyForm.setStatusInfo(statusInfo);
+                companyForm.setId(oldCompanyForm.getId());
+            });
+        } else {
+            StatusInfo statusInfo = new StatusInfo();
+            statusInfo.setCreated(LocalDateTime.now());
+            statusInfo.setChanged(LocalDateTime.now());
+            statusInfo.setFetched(LocalDateTime.now());
+            companyForm.setStatusInfo(statusInfo);
+        }
+        companyFormRepository.save(companyForm);
+    }
+
+    @Override
+    public void saveContactDetail(ContactDetail contactDetail) {
+        Optional<List<ContactDetail>> foundList = contactDetailRepository
+                .findAnyByCompanyId(contactDetail.getCompany().getId());
+        if (foundList.isPresent() && !foundList.get().isEmpty()) {
+            foundList.get().forEach(oldContactDetail -> {
+                StatusInfo statusInfo = oldContactDetail.getStatusInfo();
+                statusInfo.setFetched(LocalDateTime.now());
+                if (!oldContactDetail.equals(contactDetail)) {
+                    statusInfo.setChanged(LocalDateTime.now());
+                }
+                contactDetail.setStatusInfo(statusInfo);
+                contactDetail.setId(oldContactDetail.getId());
+            });
+        } else {
+            StatusInfo statusInfo = new StatusInfo();
+            statusInfo.setCreated(LocalDateTime.now());
+            statusInfo.setChanged(LocalDateTime.now());
+            statusInfo.setFetched(LocalDateTime.now());
+            contactDetail.setStatusInfo(statusInfo);
+        }
+        contactDetailRepository.save(contactDetail);
+    }
+
+    @Override
+    public void saveLanguage(Language language) {
+        Optional<List<Language>> foundList = languageRepository
+                .findAnyByCompanyId(language.getCompany().getId());
+        if (foundList.isPresent() && !foundList.get().isEmpty()) {
+            foundList.get().forEach(oldLanguage -> {
+                StatusInfo statusInfo = oldLanguage.getStatusInfo();
+                statusInfo.setFetched(LocalDateTime.now());
+                if (!oldLanguage.equals(language)) {
+                    statusInfo.setChanged(LocalDateTime.now());
+                }
+                language.setStatusInfo(statusInfo);
+                language.setId(oldLanguage.getId());
+            });
+        } else {
+            StatusInfo statusInfo = new StatusInfo();
+            statusInfo.setCreated(LocalDateTime.now());
+            statusInfo.setChanged(LocalDateTime.now());
+            statusInfo.setFetched(LocalDateTime.now());
+            language.setStatusInfo(statusInfo);
+        }
+        languageRepository.save(language);
+    }
+
+    @Override
+    public void saveLiquidation(Liquidation liquidation) {
+        Optional<List<Liquidation>> foundList = liquidationRepository
+                .findAnyByCompanyId(liquidation.getCompany().getId());
+        if (foundList.isPresent() && !foundList.get().isEmpty()) {
+            foundList.get().forEach(oldLiquidation -> {
+                StatusInfo statusInfo = oldLiquidation.getStatusInfo();
+                statusInfo.setFetched(LocalDateTime.now());
+                if (!oldLiquidation.equals(liquidation)) {
+                    statusInfo.setChanged(LocalDateTime.now());
+                }
+                liquidation.setStatusInfo(statusInfo);
+                liquidation.setId(oldLiquidation.getId());
+            });
+        } else {
+            StatusInfo statusInfo = new StatusInfo();
+            statusInfo.setCreated(LocalDateTime.now());
+            statusInfo.setChanged(LocalDateTime.now());
+            statusInfo.setFetched(LocalDateTime.now());
+            liquidation.setStatusInfo(statusInfo);
+        }
+        liquidationRepository.save(liquidation);
+    }
+
+    @Override
+    public void saveRegisteredEntry(RegisteredEntry registeredEntry) {
+        Optional<List<RegisteredEntry>> foundList = registeredEntryRepository
+                .findAnyByCompanyId(registeredEntry.getCompany().getId());
+        if (foundList.isPresent() && !foundList.get().isEmpty()) {
+            foundList.get().forEach(oldRegisteredEntry -> {
+                StatusInfo statusInfo = oldRegisteredEntry.getStatusInfo();
+                statusInfo.setFetched(LocalDateTime.now());
+                if (!oldRegisteredEntry.equals(registeredEntry)) {
+                    statusInfo.setChanged(LocalDateTime.now());
+                }
+                registeredEntry.setStatusInfo(statusInfo);
+                registeredEntry.setId(oldRegisteredEntry.getId());
+            });
+        } else {
+            StatusInfo statusInfo = new StatusInfo();
+            statusInfo.setCreated(LocalDateTime.now());
+            statusInfo.setChanged(LocalDateTime.now());
+            statusInfo.setFetched(LocalDateTime.now());
+            registeredEntry.setStatusInfo(statusInfo);
+        }
+        registeredEntryRepository.save(registeredEntry);
+    }
+
+    @Override
+    public void saveRegisteredOffice(RegisteredOffice registeredOffice) {
+        Optional<List<RegisteredOffice>> foundList = registeredOfficeRepository
+                .findAnyByCompanyId(registeredOffice.getCompany().getId());
+        if (foundList.isPresent() && !foundList.get().isEmpty()) {
+            foundList.get().forEach(oldRegisteredOffice -> {
+                StatusInfo statusInfo = oldRegisteredOffice.getStatusInfo();
+                statusInfo.setFetched(LocalDateTime.now());
+                if (!oldRegisteredOffice.equals(registeredOffice)) {
+                    statusInfo.setChanged(LocalDateTime.now());
+                }
+                registeredOffice.setStatusInfo(statusInfo);
+                registeredOffice.setId(oldRegisteredOffice.getId());
+            });
+        } else {
+            StatusInfo statusInfo = new StatusInfo();
+            statusInfo.setCreated(LocalDateTime.now());
+            statusInfo.setChanged(LocalDateTime.now());
+            statusInfo.setFetched(LocalDateTime.now());
+            registeredOffice.setStatusInfo(statusInfo);
+        }
+        registeredOfficeRepository.save(registeredOffice);
     }
 
 }

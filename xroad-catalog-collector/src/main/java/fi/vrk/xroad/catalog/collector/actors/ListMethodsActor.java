@@ -75,6 +75,18 @@ public class ListMethodsActor extends XRoadCatalogActor {
     @Value("${xroad-catalog.webservices-endpoint}")
     private String webservicesEndpoint;
 
+    @Value("${xroad-catalog.fetch-companies-on-weekday}")
+    private Integer fetchCompaniesWeekDay;
+
+    @Value("${xroad-catalog.fetch-companies-time-after-hour}")
+    private Integer fetchCompaniesTimeAfterHour;
+
+    @Value("${xroad-catalog.fetch-companies-time-before-hour}")
+    private Integer fetchCompaniesTimeBeforeHour;
+
+    @Value("${xroad-catalog.fetch-companies-run-unlimited}")
+    private Boolean fetchCompaniesUnlimited;
+
     @Autowired
     protected CatalogService catalogService;
 
@@ -82,12 +94,17 @@ public class ListMethodsActor extends XRoadCatalogActor {
     private ActorRef fetchWsdlPoolRef;
     private ActorRef fetchOpenApiPoolRef;
     private ActorRef fetchOrganizationsPoolRef;
+    private ActorRef fetchCompaniesPoolRef;
     private XRoadClient xroadClient;
 
-    public ListMethodsActor(ActorRef fetchWsdlPoolRef, ActorRef fetchOpenApiPoolRef, ActorRef fetchOrganizationsPoolRef) {
+    public ListMethodsActor(ActorRef fetchWsdlPoolRef,
+                            ActorRef fetchOpenApiPoolRef,
+                            ActorRef fetchOrganizationsPoolRef,
+                            ActorRef fetchCompaniesPoolRef) {
         this.fetchWsdlPoolRef = fetchWsdlPoolRef;
         this.fetchOpenApiPoolRef = fetchOpenApiPoolRef;
         this.fetchOrganizationsPoolRef = fetchOrganizationsPoolRef;
+        this.fetchCompaniesPoolRef = fetchCompaniesPoolRef;
     }
 
     @Override
@@ -144,10 +161,17 @@ public class ListMethodsActor extends XRoadCatalogActor {
                 fetchOpenApiPoolRef.tell(service, getSender());
             }
 
-            // Do this only once as there is no need to perform this per each customer
+            // Fetch organizations only once, not for each client
             if (!organizationsFetched) {
                 fetchOrganizationsPoolRef.tell(clientType, getSelf());
                 organizationsFetched = true;
+            }
+
+            // Fetch companies only during a limited period if not unlimited
+            if (fetchCompaniesUnlimited || MethodListUtil.shouldFetchCompanies(fetchCompaniesWeekDay,
+                    fetchCompaniesTimeAfterHour,
+                    fetchCompaniesTimeBeforeHour)) {
+                fetchCompaniesPoolRef.tell(clientType, getSelf());
             }
 
             return true;

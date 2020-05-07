@@ -87,3 +87,61 @@ VALUES (1, 1, '545', '2016-01-01 00:00:00+02', '2016-01-01 00:00:00+02', '2016-0
 
 INSERT INTO post_office_box_address_municipality_name (id, post_office_box_address_municipality_id, language, value, created, changed, fetched, removed)
 VALUES (1, 1, 'fi', 'Nivala', '2016-01-01 00:00:00+02', '2016-01-01 00:00:00+02', '2016-01-01 00:00:00+02', NULL);
+
+INSERT INTO company(id, business_id, company_form, details_uri, name, registration_date, created, changed, fetched, removed)
+VALUES (1, '1710128-9', 'OYJ', '', 'Gofore Oyj', '2001-06-11 00:00:00+02', '2020-05-04 11:41:17.484+03',
+        '2020-05-04 11:41:17.484+03', '2020-01-04 11:41:17.484+03', NULL);
+
+INSERT INTO business_address(id, company_id, source, version, care_of, street, post_code,
+                             city, language, type, country, registration_date, end_date, created, changed, fetched, removed)
+VALUES (1, 1, 0, 1, '', 'Kalevantie 2', '33100', 'TAMPERE', 'FI', 2, '', '2016-07-12 00:00:00+03', NULL,
+        '2020-05-04 11:41:17.54+03', '2020-05-04 11:41:17.54+03', '2020-05-04 11:41:17.54+03', NULL);
+
+INSERT INTO business_auxiliary_name(id, company_id, source, ordering, version, name, language, registration_date,
+                                    end_date, created, changed, fetched, removed)
+VALUES (1, 1, 1, 5, 1, 'Solinor', '', '2019-01-31 00:00:00+02', NULL, '2020-05-04 11:41:24.717+03', '2020-05-04 11:41:24.717+03',
+        '2020-05-04 11:41:24.717+03', NULL);
+
+INSERT INTO business_id_change(id, company_id, source, description, reason, change_date, change,
+                               old_business_id, new_business_id, language, created, changed, fetched, removed)
+VALUES (1, 1, 2, '', '', '2019-02-01', 44, '1796717-0', '1710128-9', '', '2020-05-04 11:41:24.717+03', '2020-05-04 11:41:24.717+03',
+        '2020-05-04 11:41:24.717+03', NULL);
+
+INSERT INTO business_line(id, company_id, source, ordering, version, name, language, registration_date,
+                          end_date, created, changed, fetched, removed)
+VALUES (1, 1, 2, 0, 1, 'Dataprogrammering', 'SE', '2007-12-31 00:00:00+02', NULL, '2020-05-04 11:41:24.792+03',
+        '2020-05-04 11:41:24.792+03', '2020-05-04 11:41:24.792+03', NULL);
+
+INSERT INTO business_name(id, company_id, source, ordering, version, name, language, registration_date,
+                          end_date, created, changed, fetched, removed)
+VALUES (1, 1, 0, 0, 0, '', 'FI', '2019-01-31 00:00:00+02', NULL,
+        '2020-05-04 11:41:24.717+03', '2020-05-04 11:41:24.717+03', '2020-05-04 11:41:24.717+03', NULL);
+
+INSERT INTO company_form(id, company_id, source, version, name, language, type, registration_date,
+                         end_date, created, changed, fetched, removed)
+VALUES (1, 1, 1, 1, 'Public limited company', 'EN', 0, '2017-10-19 00:00:00+03', NULL, '2020-05-04 11:41:24.792+03',
+        '2020-05-06 11:41:24.792+03', '2020-05-06 11:41:24.792+03', NULL);
+
+INSERT INTO contact_detail(id, company_id, source, version, language, value, type, registration_date,
+                           end_date, created, changed, fetched, removed)
+VALUES (1, 1, 0, 1, 'EN', '', 0, '2010-05-03 00:00:00+03', NULL, '2020-05-04 11:41:24.792+03', '2020-05-06 11:41:24.792+03',
+        '2020-05-06 11:41:24.792+03', NULL);
+
+INSERT INTO language(id, company_id, source, version, name, language, registration_date, end_date, created, changed, fetched, removed)
+VALUES (1, 1, 0, 1, 'Finska', 'SE', '2001-06-27 00:00:00+02', NULL, '2020-05-04 11:41:24.792+03',
+        '2020-05-04 11:41:24.792+03', '2020-05-04 11:41:24.792+03', NULL);
+
+INSERT INTO liquidation(id, company_id, source, version, name, language, type, registration_date,
+                        end_date, created, changed, fetched, removed)
+VALUES (1, 1, 0, 0, '', 'FI', 1, '2001-06-27 00:00:00+02', NULL,
+        '2020-05-04 11:41:24.792+03', '2020-05-04 11:41:24.792+03', '2020-05-04 11:41:24.792+03', NULL);
+
+INSERT INTO registered_entry(id, company_id, description, status, register, language, authority,registration_date, end_date,
+                             created, changed, fetched, removed)
+VALUES (1, 1, 'Unregistered', 2, 1, 'EN', 2, '2001-06-11 00:00:00+02', '2001-06-24 00:00:00+02', '2020-05-04 11:41:24.792+03',
+        '2020-05-04 11:41:24.792+03', '2020-05-04 11:41:24.792+03', NULL);
+
+INSERT INTO registered_office(id, company_id, source, ordering, version, name, language, registration_date,
+                              end_date, created, changed, fetched, removed)
+VALUES (1, 1, 0, 0, 0, '', 'FI', '2001-06-11 00:00:00+02',
+        NULL, '2020-05-04 11:41:24.792+03', '2020-05-04 11:41:24.792+03', '2020-05-04 11:41:24.792+03', NULL);

@@ -29,7 +29,6 @@ import fi.vrk.xroad.catalog.persistence.entity.Wsdl;
 import fi.vrk.xroad.xroad_catalog_lister.*;
 import org.springframework.stereotype.Component;
 
-import javax.persistence.Column;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
@@ -729,5 +728,386 @@ public class JaxbConverter {
         return converted;
     }
 
+    /**
+     * Convert entities to XML objects
+     * @param companies Iterable of Company entities
+     * @return Collection of Companies (JAXB generated)
+     */
+    public Collection<Company> convertCompanies(
+            Iterable<fi.vrk.xroad.catalog.persistence.entity.Company> companies)  {
+        List<Company> converted = new ArrayList<>();
+        for (fi.vrk.xroad.catalog.persistence.entity.Company company: companies) {
+            Company co = new Company();
+
+            co.setChanged(toXmlGregorianCalendar(company.getStatusInfo().getChanged()));
+            co.setCreated(toXmlGregorianCalendar(company.getStatusInfo().getCreated()));
+            co.setFetched(toXmlGregorianCalendar(company.getStatusInfo().getFetched()));
+            co.setRemoved(toXmlGregorianCalendar(company.getStatusInfo().getRemoved()));
+            co.setBusinessId(company.getBusinessId());
+            co.setCompanyForm(company.getCompanyForm());
+            co.setDetailsUri(company.getDetailsUri());
+            co.setName(company.getName());
+            co.setRegistrationDate(toXmlGregorianCalendar(company.getRegistrationDate()));
+
+            co.setBusinessAddresses(new BusinessAddressList());
+            Iterable<fi.vrk.xroad.catalog.persistence.entity.BusinessAddress> businessAddresses = company.getAllBusinessAddresses();
+            if (businessAddresses != null) {
+                co.getBusinessAddresses().getBusinessAddress().addAll(convertBusinessAddresses(businessAddresses));
+            }
+
+            co.setBusinessAuxiliaryNames(new BusinessAuxiliaryNameList());
+            Iterable<fi.vrk.xroad.catalog.persistence.entity.BusinessAuxiliaryName> businessAuxiliaryNames = company.getAllBusinessAuxiliaryNames();
+            if (businessAuxiliaryNames != null) {
+                co.getBusinessAuxiliaryNames().getBusinessAuxiliaryName().addAll(convertBusinessAuxiliaryNames(businessAuxiliaryNames));
+            }
+
+            co.setBusinessIdChanges(new BusinessIdChangeList());
+            Iterable<fi.vrk.xroad.catalog.persistence.entity.BusinessIdChange> businessIdChanges = company.getAllBusinessIdChanges();
+            if (businessIdChanges != null) {
+                co.getBusinessIdChanges().getBusinessIdChange().addAll(convertBusinessIdChanges(businessIdChanges));
+            }
+
+            co.setBusinessLines(new BusinessLineList());
+            Iterable<fi.vrk.xroad.catalog.persistence.entity.BusinessLine> businessLines = company.getAllBusinessLines();
+            if (businessLines != null) {
+                co.getBusinessLines().getBusinessLine().addAll(convertBusinessLines(businessLines));
+            }
+
+            co.setBusinessNames(new BusinessNameList());
+            Iterable<fi.vrk.xroad.catalog.persistence.entity.BusinessName> businessNames = company.getAllBusinessNames();
+            if (businessNames != null) {
+                co.getBusinessNames().getBusinessName().addAll(convertBusinessNames(businessNames));
+            }
+
+            co.setCompanyForms(new CompanyFormList());
+            Iterable<fi.vrk.xroad.catalog.persistence.entity.CompanyForm> companyForms = company.getAllCompanyForms();
+            if (companyForms != null) {
+                co.getCompanyForms().getCompanyForm().addAll(convertCompanyForms(companyForms));
+            }
+
+            co.setContactDetails(new ContactDetailList());
+            Iterable<fi.vrk.xroad.catalog.persistence.entity.ContactDetail> contactDetails = company.getAllContactDetails();
+            if (contactDetails != null) {
+                co.getContactDetails().getContactDetail().addAll(convertContactDetails(contactDetails));
+            }
+
+            co.setLanguages(new LanguageList());
+            Iterable<fi.vrk.xroad.catalog.persistence.entity.Language> languages = company.getAllLanguages();
+            if (languages != null) {
+                co.getLanguages().getLanguage().addAll(convertLanguages(languages));
+            }
+
+            co.setLiquidations(new LiquidationList());
+            Iterable<fi.vrk.xroad.catalog.persistence.entity.Liquidation> liquidations = company.getAllLiquidations();
+            if (liquidations != null) {
+                co.getLiquidations().getLiquidation().addAll(convertLiquidations(liquidations));
+            }
+
+            co.setRegisteredEntries(new RegisteredEntryList());
+            Iterable<fi.vrk.xroad.catalog.persistence.entity.RegisteredEntry> registeredEntries = company.getAllRegisteredEntries();
+            if (registeredEntries != null) {
+                co.getRegisteredEntries().getRegisteredEntry().addAll(convertRegisteredEntries(registeredEntries));
+            }
+
+            co.setRegisteredOffices(new RegisteredOfficeList());
+            Iterable<fi.vrk.xroad.catalog.persistence.entity.RegisteredOffice> registeredOffices = company.getAllRegisteredOffices();
+            if (registeredOffices != null) {
+                co.getRegisteredOffices().getRegisteredOffice().addAll(convertRegisteredOffices(registeredOffices));
+            }
+
+            converted.add(co);
+        }
+        return converted;
+    }
+
+    /**
+     * Convert entities to XML objects
+     * @param businessAddresses Iterable of BusinessAddress entities
+     * @return collection of XML objects
+     */
+    private Collection<fi.vrk.xroad.xroad_catalog_lister.BusinessAddress> convertBusinessAddresses(
+            Iterable<fi.vrk.xroad.catalog.persistence.entity.BusinessAddress> businessAddresses) {
+        List<fi.vrk.xroad.xroad_catalog_lister.BusinessAddress> converted = new ArrayList<>();
+        for (fi.vrk.xroad.catalog.persistence.entity.BusinessAddress businessAddress: businessAddresses) {
+            fi.vrk.xroad.xroad_catalog_lister.BusinessAddress co = new fi.vrk.xroad.xroad_catalog_lister.BusinessAddress();
+            co.setChanged(toXmlGregorianCalendar(businessAddress.getStatusInfo().getChanged()));
+            co.setCreated(toXmlGregorianCalendar(businessAddress.getStatusInfo().getCreated()));
+            co.setFetched(toXmlGregorianCalendar(businessAddress.getStatusInfo().getFetched()));
+            co.setRemoved(toXmlGregorianCalendar(businessAddress.getStatusInfo().getRemoved()));
+            co.setCareOf(businessAddress.getCareOf());
+            co.setCity(businessAddress.getCity());
+            co.setCountry(businessAddress.getCountry());
+            co.setLanguage(businessAddress.getLanguage());
+            co.setPostCode(businessAddress.getPostCode());
+            co.setSource(businessAddress.getSource());
+            co.setStreet(businessAddress.getStreet());
+            co.setType(businessAddress.getType());
+            co.setVersion(businessAddress.getVersion());
+            co.setRegistrationDate(toXmlGregorianCalendar(businessAddress.getRegistrationDate()));
+            co.setEndDate(toXmlGregorianCalendar(businessAddress.getEndDate()));
+            converted.add(co);
+        }
+        return converted;
+    }
+
+    /**
+     * Convert entities to XML objects
+     * @param businessAuxiliaryNames Iterable of BusinessAuxiliaryName entities
+     * @return collection of XML objects
+     */
+    private Collection<fi.vrk.xroad.xroad_catalog_lister.BusinessAuxiliaryName> convertBusinessAuxiliaryNames(
+            Iterable<fi.vrk.xroad.catalog.persistence.entity.BusinessAuxiliaryName> businessAuxiliaryNames) {
+        List<fi.vrk.xroad.xroad_catalog_lister.BusinessAuxiliaryName> converted = new ArrayList<>();
+        for (fi.vrk.xroad.catalog.persistence.entity.BusinessAuxiliaryName businessAuxiliaryName: businessAuxiliaryNames) {
+            fi.vrk.xroad.xroad_catalog_lister.BusinessAuxiliaryName co = new fi.vrk.xroad.xroad_catalog_lister.BusinessAuxiliaryName();
+            co.setChanged(toXmlGregorianCalendar(businessAuxiliaryName.getStatusInfo().getChanged()));
+            co.setCreated(toXmlGregorianCalendar(businessAuxiliaryName.getStatusInfo().getCreated()));
+            co.setFetched(toXmlGregorianCalendar(businessAuxiliaryName.getStatusInfo().getFetched()));
+            co.setRemoved(toXmlGregorianCalendar(businessAuxiliaryName.getStatusInfo().getRemoved()));
+            co.setLanguage(businessAuxiliaryName.getLanguage());
+            co.setName(businessAuxiliaryName.getName());
+            co.setOrdering(businessAuxiliaryName.getOrdering());
+            co.setSource(businessAuxiliaryName.getSource());
+            co.setVersion(businessAuxiliaryName.getVersion());
+            co.setRegistrationDate(toXmlGregorianCalendar(businessAuxiliaryName.getRegistrationDate()));
+            co.setEndDate(toXmlGregorianCalendar(businessAuxiliaryName.getEndDate()));
+            converted.add(co);
+        }
+        return converted;
+    }
+
+    /**
+     * Convert entities to XML objects
+     * @param businessIdChanges Iterable of BusinessIdChange entities
+     * @return collection of XML objects
+     */
+    private Collection<fi.vrk.xroad.xroad_catalog_lister.BusinessIdChange> convertBusinessIdChanges(
+            Iterable<fi.vrk.xroad.catalog.persistence.entity.BusinessIdChange> businessIdChanges) {
+        List<fi.vrk.xroad.xroad_catalog_lister.BusinessIdChange> converted = new ArrayList<>();
+        for (fi.vrk.xroad.catalog.persistence.entity.BusinessIdChange businessIdChange: businessIdChanges) {
+            fi.vrk.xroad.xroad_catalog_lister.BusinessIdChange co = new fi.vrk.xroad.xroad_catalog_lister.BusinessIdChange();
+            co.setChanged(toXmlGregorianCalendar(businessIdChange.getStatusInfo().getChanged()));
+            co.setCreated(toXmlGregorianCalendar(businessIdChange.getStatusInfo().getCreated()));
+            co.setFetched(toXmlGregorianCalendar(businessIdChange.getStatusInfo().getFetched()));
+            co.setRemoved(toXmlGregorianCalendar(businessIdChange.getStatusInfo().getRemoved()));
+            co.setLanguage(businessIdChange.getLanguage());
+            co.setSource(businessIdChange.getSource());
+            co.setChange(businessIdChange.getChange());
+            co.setChangeDate(businessIdChange.getChangeDate());
+            co.setDescription(businessIdChange.getDescription());
+            co.setReason(businessIdChange.getReason());
+            co.setOldBusinessId(businessIdChange.getOldBusinessId());
+            co.setNewBusinessId(businessIdChange.getNewBusinessId());
+            converted.add(co);
+        }
+        return converted;
+    }
+
+    /**
+     * Convert entities to XML objects
+     * @param businessLines Iterable of BusinessLine entities
+     * @return collection of XML objects
+     */
+    private Collection<fi.vrk.xroad.xroad_catalog_lister.BusinessLine> convertBusinessLines(
+            Iterable<fi.vrk.xroad.catalog.persistence.entity.BusinessLine> businessLines) {
+        List<fi.vrk.xroad.xroad_catalog_lister.BusinessLine> converted = new ArrayList<>();
+        for (fi.vrk.xroad.catalog.persistence.entity.BusinessLine businessLine: businessLines) {
+            fi.vrk.xroad.xroad_catalog_lister.BusinessLine co = new fi.vrk.xroad.xroad_catalog_lister.BusinessLine();
+            co.setChanged(toXmlGregorianCalendar(businessLine.getStatusInfo().getChanged()));
+            co.setCreated(toXmlGregorianCalendar(businessLine.getStatusInfo().getCreated()));
+            co.setFetched(toXmlGregorianCalendar(businessLine.getStatusInfo().getFetched()));
+            co.setRemoved(toXmlGregorianCalendar(businessLine.getStatusInfo().getRemoved()));
+            co.setLanguage(businessLine.getLanguage());
+            co.setSource(businessLine.getSource());
+            co.setName(businessLine.getName());
+            co.setOrdering(businessLine.getOrdering());
+            co.setVersion(businessLine.getVersion());
+            co.setRegistrationDate(toXmlGregorianCalendar(businessLine.getRegistrationDate()));
+            co.setEndDate(toXmlGregorianCalendar(businessLine.getEndDate()));
+            converted.add(co);
+        }
+        return converted;
+    }
+
+    /**
+     * Convert entities to XML objects
+     * @param businessNames Iterable of BusinessName entities
+     * @return collection of XML objects
+     */
+    private Collection<fi.vrk.xroad.xroad_catalog_lister.BusinessName> convertBusinessNames(
+            Iterable<fi.vrk.xroad.catalog.persistence.entity.BusinessName> businessNames) {
+        List<fi.vrk.xroad.xroad_catalog_lister.BusinessName> converted = new ArrayList<>();
+        for (fi.vrk.xroad.catalog.persistence.entity.BusinessName businessName: businessNames) {
+            fi.vrk.xroad.xroad_catalog_lister.BusinessName co = new fi.vrk.xroad.xroad_catalog_lister.BusinessName();
+            co.setChanged(toXmlGregorianCalendar(businessName.getStatusInfo().getChanged()));
+            co.setCreated(toXmlGregorianCalendar(businessName.getStatusInfo().getCreated()));
+            co.setFetched(toXmlGregorianCalendar(businessName.getStatusInfo().getFetched()));
+            co.setRemoved(toXmlGregorianCalendar(businessName.getStatusInfo().getRemoved()));
+            co.setLanguage(businessName.getLanguage());
+            co.setSource(businessName.getSource());
+            co.setName(businessName.getName());
+            co.setOrdering(businessName.getOrdering());
+            co.setVersion(businessName.getVersion());
+            co.setRegistrationDate(toXmlGregorianCalendar(businessName.getRegistrationDate()));
+            co.setEndDate(toXmlGregorianCalendar(businessName.getEndDate()));
+            converted.add(co);
+        }
+        return converted;
+    }
+
+    /**
+     * Convert entities to XML objects
+     * @param companyForms Iterable of CompanyForm entities
+     * @return collection of XML objects
+     */
+    private Collection<fi.vrk.xroad.xroad_catalog_lister.CompanyForm> convertCompanyForms(
+            Iterable<fi.vrk.xroad.catalog.persistence.entity.CompanyForm> companyForms) {
+        List<fi.vrk.xroad.xroad_catalog_lister.CompanyForm> converted = new ArrayList<>();
+        for (fi.vrk.xroad.catalog.persistence.entity.CompanyForm companyForm: companyForms) {
+            fi.vrk.xroad.xroad_catalog_lister.CompanyForm co = new fi.vrk.xroad.xroad_catalog_lister.CompanyForm();
+            co.setChanged(toXmlGregorianCalendar(companyForm.getStatusInfo().getChanged()));
+            co.setCreated(toXmlGregorianCalendar(companyForm.getStatusInfo().getCreated()));
+            co.setFetched(toXmlGregorianCalendar(companyForm.getStatusInfo().getFetched()));
+            co.setRemoved(toXmlGregorianCalendar(companyForm.getStatusInfo().getRemoved()));
+            co.setLanguage(companyForm.getLanguage());
+            co.setSource(companyForm.getSource());
+            co.setName(companyForm.getName());
+            co.setType(companyForm.getType());
+            co.setVersion(companyForm.getVersion());
+            co.setRegistrationDate(toXmlGregorianCalendar(companyForm.getRegistrationDate()));
+            co.setEndDate(toXmlGregorianCalendar(companyForm.getEndDate()));
+            converted.add(co);
+        }
+        return converted;
+    }
+
+    /**
+     * Convert entities to XML objects
+     * @param contactDetails Iterable of ContactDetail entities
+     * @return collection of XML objects
+     */
+    private Collection<fi.vrk.xroad.xroad_catalog_lister.ContactDetail> convertContactDetails(
+            Iterable<fi.vrk.xroad.catalog.persistence.entity.ContactDetail> contactDetails) {
+        List<fi.vrk.xroad.xroad_catalog_lister.ContactDetail> converted = new ArrayList<>();
+        for (fi.vrk.xroad.catalog.persistence.entity.ContactDetail contactDetail: contactDetails) {
+            fi.vrk.xroad.xroad_catalog_lister.ContactDetail co = new fi.vrk.xroad.xroad_catalog_lister.ContactDetail();
+            co.setChanged(toXmlGregorianCalendar(contactDetail.getStatusInfo().getChanged()));
+            co.setCreated(toXmlGregorianCalendar(contactDetail.getStatusInfo().getCreated()));
+            co.setFetched(toXmlGregorianCalendar(contactDetail.getStatusInfo().getFetched()));
+            co.setRemoved(toXmlGregorianCalendar(contactDetail.getStatusInfo().getRemoved()));
+            co.setLanguage(contactDetail.getLanguage());
+            co.setSource(contactDetail.getSource());
+            co.setValue(contactDetail.getValue());
+            co.setType(contactDetail.getType());
+            co.setVersion(contactDetail.getVersion());
+            co.setRegistrationDate(toXmlGregorianCalendar(contactDetail.getRegistrationDate()));
+            co.setEndDate(toXmlGregorianCalendar(contactDetail.getEndDate()));
+            converted.add(co);
+        }
+        return converted;
+    }
+
+    /**
+     * Convert entities to XML objects
+     * @param languages Iterable of Language entities
+     * @return collection of XML objects
+     */
+    private Collection<fi.vrk.xroad.xroad_catalog_lister.Language> convertLanguages(
+            Iterable<fi.vrk.xroad.catalog.persistence.entity.Language> languages) {
+        List<fi.vrk.xroad.xroad_catalog_lister.Language> converted = new ArrayList<>();
+        for (fi.vrk.xroad.catalog.persistence.entity.Language language: languages) {
+            fi.vrk.xroad.xroad_catalog_lister.Language co = new fi.vrk.xroad.xroad_catalog_lister.Language();
+            co.setChanged(toXmlGregorianCalendar(language.getStatusInfo().getChanged()));
+            co.setCreated(toXmlGregorianCalendar(language.getStatusInfo().getCreated()));
+            co.setFetched(toXmlGregorianCalendar(language.getStatusInfo().getFetched()));
+            co.setRemoved(toXmlGregorianCalendar(language.getStatusInfo().getRemoved()));
+            co.setLanguage(language.getLanguage());
+            co.setSource(language.getSource());
+            co.setName(language.getName());
+            co.setVersion(language.getVersion());
+            co.setRegistrationDate(toXmlGregorianCalendar(language.getRegistrationDate()));
+            co.setEndDate(toXmlGregorianCalendar(language.getEndDate()));
+            converted.add(co);
+        }
+        return converted;
+    }
+
+    /**
+     * Convert entities to XML objects
+     * @param liquidations Iterable of Liquidation entities
+     * @return collection of XML objects
+     */
+    private Collection<fi.vrk.xroad.xroad_catalog_lister.Liquidation> convertLiquidations(
+            Iterable<fi.vrk.xroad.catalog.persistence.entity.Liquidation> liquidations) {
+        List<fi.vrk.xroad.xroad_catalog_lister.Liquidation> converted = new ArrayList<>();
+        for (fi.vrk.xroad.catalog.persistence.entity.Liquidation liquidation: liquidations) {
+            fi.vrk.xroad.xroad_catalog_lister.Liquidation co = new fi.vrk.xroad.xroad_catalog_lister.Liquidation();
+            co.setChanged(toXmlGregorianCalendar(liquidation.getStatusInfo().getChanged()));
+            co.setCreated(toXmlGregorianCalendar(liquidation.getStatusInfo().getCreated()));
+            co.setFetched(toXmlGregorianCalendar(liquidation.getStatusInfo().getFetched()));
+            co.setRemoved(toXmlGregorianCalendar(liquidation.getStatusInfo().getRemoved()));
+            co.setLanguage(liquidation.getLanguage());
+            co.setSource(liquidation.getSource());
+            co.setName(liquidation.getName());
+            co.setVersion(liquidation.getVersion());
+            co.setType(liquidation.getType());
+            co.setRegistrationDate(toXmlGregorianCalendar(liquidation.getRegistrationDate()));
+            co.setEndDate(toXmlGregorianCalendar(liquidation.getEndDate()));
+            converted.add(co);
+        }
+        return converted;
+    }
+
+    /**
+     * Convert entities to XML objects
+     * @param registeredEntries Iterable of RegisteredEntry entities
+     * @return collection of XML objects
+     */
+    private Collection<fi.vrk.xroad.xroad_catalog_lister.RegisteredEntry> convertRegisteredEntries(
+            Iterable<fi.vrk.xroad.catalog.persistence.entity.RegisteredEntry> registeredEntries) {
+        List<fi.vrk.xroad.xroad_catalog_lister.RegisteredEntry> converted = new ArrayList<>();
+        for (fi.vrk.xroad.catalog.persistence.entity.RegisteredEntry registeredEntry: registeredEntries) {
+            fi.vrk.xroad.xroad_catalog_lister.RegisteredEntry co = new fi.vrk.xroad.xroad_catalog_lister.RegisteredEntry();
+            co.setChanged(toXmlGregorianCalendar(registeredEntry.getStatusInfo().getChanged()));
+            co.setCreated(toXmlGregorianCalendar(registeredEntry.getStatusInfo().getCreated()));
+            co.setFetched(toXmlGregorianCalendar(registeredEntry.getStatusInfo().getFetched()));
+            co.setRemoved(toXmlGregorianCalendar(registeredEntry.getStatusInfo().getRemoved()));
+            co.setLanguage(registeredEntry.getLanguage());
+            co.setAuthority(registeredEntry.getAuthority());
+            co.setDescription(registeredEntry.getDescription());
+            co.setRegister(registeredEntry.getRegister());
+            co.setStatus(registeredEntry.getStatus());
+            co.setRegistrationDate(toXmlGregorianCalendar(registeredEntry.getRegistrationDate()));
+            co.setEndDate(toXmlGregorianCalendar(registeredEntry.getEndDate()));
+            converted.add(co);
+        }
+        return converted;
+    }
+
+    /**
+     * Convert entities to XML objects
+     * @param registeredOffices Iterable of RegisteredOffice entities
+     * @return collection of XML objects
+     */
+    private Collection<fi.vrk.xroad.xroad_catalog_lister.RegisteredOffice> convertRegisteredOffices(
+            Iterable<fi.vrk.xroad.catalog.persistence.entity.RegisteredOffice> registeredOffices) {
+        List<fi.vrk.xroad.xroad_catalog_lister.RegisteredOffice> converted = new ArrayList<>();
+        for (fi.vrk.xroad.catalog.persistence.entity.RegisteredOffice registeredOffice: registeredOffices) {
+            fi.vrk.xroad.xroad_catalog_lister.RegisteredOffice co = new fi.vrk.xroad.xroad_catalog_lister.RegisteredOffice();
+            co.setChanged(toXmlGregorianCalendar(registeredOffice.getStatusInfo().getChanged()));
+            co.setCreated(toXmlGregorianCalendar(registeredOffice.getStatusInfo().getCreated()));
+            co.setFetched(toXmlGregorianCalendar(registeredOffice.getStatusInfo().getFetched()));
+            co.setRemoved(toXmlGregorianCalendar(registeredOffice.getStatusInfo().getRemoved()));
+            co.setLanguage(registeredOffice.getLanguage());
+            co.setSource(registeredOffice.getSource());
+            co.setOrdering(registeredOffice.getOrdering());
+            co.setVersion(registeredOffice.getVersion());
+            co.setName(registeredOffice.getName());
+            co.setRegistrationDate(toXmlGregorianCalendar(registeredOffice.getRegistrationDate()));
+            co.setEndDate(toXmlGregorianCalendar(registeredOffice.getEndDate()));
+            converted.add(co);
+        }
+        return converted;
+    }
 
 }

@@ -518,6 +518,307 @@ CREATE SEQUENCE IF NOT EXISTS post_office_box_address_additional_information_id_
 
 ALTER SEQUENCE post_office_box_address_additional_information_id_seq OWNED BY post_office_box_address_additional_information.id;
 
+CREATE TABLE IF NOT EXISTS company (
+    id BIGSERIAL PRIMARY KEY NOT NULL,
+    business_id TEXT NOT NULL,
+    company_form TEXT,
+    details_uri TEXT,
+    name TEXT NOT NULL,
+    registration_date TIMESTAMP WITH TIME ZONE NOT NULL,
+    created TIMESTAMP WITH TIME ZONE NOT NULL,
+    changed TIMESTAMP WITH TIME ZONE NOT NULL,
+    fetched TIMESTAMP WITH TIME ZONE NOT NULL,
+    removed TIMESTAMP WITH TIME ZONE
+);
+
+CREATE SEQUENCE IF NOT EXISTS company_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+ALTER SEQUENCE company_id_seq OWNED BY company.id;
+
+CREATE TABLE IF NOT EXISTS business_name (
+    id BIGSERIAL PRIMARY KEY NOT NULL,
+    company_id BIGSERIAL NOT NULL REFERENCES company(id),
+    source BIGSERIAL,
+    ordering BIGSERIAL NOT NULL,
+    version BIGSERIAL NOT NULL,
+    name TEXT NOT NULL,
+    language TEXT,
+    registration_date TIMESTAMP WITH TIME ZONE NOT NULL,
+    end_date TIMESTAMP WITH TIME ZONE,
+    created TIMESTAMP WITH TIME ZONE NOT NULL,
+    changed TIMESTAMP WITH TIME ZONE NOT NULL,
+    fetched TIMESTAMP WITH TIME ZONE NOT NULL,
+    removed TIMESTAMP WITH TIME ZONE
+);
+
+CREATE SEQUENCE IF NOT EXISTS business_name_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+ALTER SEQUENCE business_name_id_seq OWNED BY business_name.id;
+
+CREATE TABLE IF NOT EXISTS business_auxiliary_name (
+    id BIGSERIAL PRIMARY KEY NOT NULL,
+    company_id BIGSERIAL NOT NULL REFERENCES company(id),
+    source BIGSERIAL,
+    ordering BIGSERIAL NOT NULL,
+    version BIGSERIAL NOT NULL,
+    name TEXT NOT NULL,
+    language TEXT,
+    registration_date TIMESTAMP WITH TIME ZONE NOT NULL,
+    end_date TIMESTAMP WITH TIME ZONE,
+    created TIMESTAMP WITH TIME ZONE NOT NULL,
+    changed TIMESTAMP WITH TIME ZONE NOT NULL,
+    fetched TIMESTAMP WITH TIME ZONE NOT NULL,
+    removed TIMESTAMP WITH TIME ZONE
+);
+
+CREATE SEQUENCE IF NOT EXISTS business_auxiliary_name_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+ALTER SEQUENCE business_auxiliary_name_id_seq OWNED BY business_auxiliary_name.id;
+
+CREATE TABLE IF NOT EXISTS business_address (
+    id BIGSERIAL PRIMARY KEY NOT NULL,
+    company_id BIGSERIAL NOT NULL REFERENCES company(id),
+    source BIGSERIAL,
+    version BIGSERIAL NOT NULL,
+    care_of TEXT,
+    street TEXT,
+    post_code TEXT,
+    city TEXT,
+    language TEXT,
+    type BIGSERIAL NOT NULL,
+    country TEXT,
+    registration_date TIMESTAMP WITH TIME ZONE NOT NULL,
+    end_date TIMESTAMP WITH TIME ZONE,
+    created TIMESTAMP WITH TIME ZONE NOT NULL,
+    changed TIMESTAMP WITH TIME ZONE NOT NULL,
+    fetched TIMESTAMP WITH TIME ZONE NOT NULL,
+    removed TIMESTAMP WITH TIME ZONE
+);
+
+CREATE SEQUENCE IF NOT EXISTS business_address_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+ALTER SEQUENCE business_address_id_seq OWNED BY business_address.id;
+
+CREATE TABLE IF NOT EXISTS company_form (
+    id BIGSERIAL PRIMARY KEY NOT NULL,
+    company_id BIGSERIAL NOT NULL REFERENCES company(id),
+    source BIGSERIAL,
+    version BIGSERIAL NOT NULL,
+    name TEXT NOT NULL,
+    language TEXT,
+    type BIGSERIAL NOT NULL,
+    registration_date TIMESTAMP WITH TIME ZONE NOT NULL,
+    end_date TIMESTAMP WITH TIME ZONE,
+    created TIMESTAMP WITH TIME ZONE NOT NULL,
+    changed TIMESTAMP WITH TIME ZONE NOT NULL,
+    fetched TIMESTAMP WITH TIME ZONE NOT NULL,
+    removed TIMESTAMP WITH TIME ZONE
+);
+
+CREATE SEQUENCE IF NOT EXISTS company_form_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+ALTER SEQUENCE company_form_id_seq OWNED BY company_form.id;
+
+CREATE TABLE IF NOT EXISTS liquidation (
+    id BIGSERIAL PRIMARY KEY NOT NULL,
+    company_id BIGSERIAL NOT NULL REFERENCES company(id),
+    source BIGSERIAL,
+    version BIGSERIAL NOT NULL,
+    name TEXT NOT NULL,
+    language TEXT,
+    type BIGSERIAL NOT NULL,
+    registration_date TIMESTAMP WITH TIME ZONE NOT NULL,
+    end_date TIMESTAMP WITH TIME ZONE,
+    created TIMESTAMP WITH TIME ZONE NOT NULL,
+    changed TIMESTAMP WITH TIME ZONE NOT NULL,
+    fetched TIMESTAMP WITH TIME ZONE NOT NULL,
+    removed TIMESTAMP WITH TIME ZONE
+);
+
+CREATE SEQUENCE IF NOT EXISTS liquidation_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+ALTER SEQUENCE liquidation_id_seq OWNED BY liquidation.id;
+
+CREATE TABLE IF NOT EXISTS business_line (
+    id BIGSERIAL PRIMARY KEY NOT NULL,
+    company_id BIGSERIAL NOT NULL REFERENCES company(id),
+    source BIGSERIAL,
+    ordering BIGSERIAL,
+    version BIGSERIAL NOT NULL,
+    name TEXT NOT NULL,
+    language TEXT,
+    registration_date TIMESTAMP WITH TIME ZONE NOT NULL,
+    end_date TIMESTAMP WITH TIME ZONE,
+    created TIMESTAMP WITH TIME ZONE NOT NULL,
+    changed TIMESTAMP WITH TIME ZONE NOT NULL,
+    fetched TIMESTAMP WITH TIME ZONE NOT NULL,
+    removed TIMESTAMP WITH TIME ZONE
+);
+
+CREATE SEQUENCE IF NOT EXISTS business_line_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+ALTER SEQUENCE business_line_id_seq OWNED BY business_line.id;
+
+CREATE TABLE IF NOT EXISTS language (
+    id BIGSERIAL PRIMARY KEY NOT NULL,
+    company_id BIGSERIAL NOT NULL REFERENCES company(id),
+    source BIGSERIAL,
+    version BIGSERIAL NOT NULL,
+    name TEXT NOT NULL,
+    language TEXT,
+    registration_date TIMESTAMP WITH TIME ZONE NOT NULL,
+    end_date TIMESTAMP WITH TIME ZONE,
+    created TIMESTAMP WITH TIME ZONE NOT NULL,
+    changed TIMESTAMP WITH TIME ZONE NOT NULL,
+    fetched TIMESTAMP WITH TIME ZONE NOT NULL,
+    removed TIMESTAMP WITH TIME ZONE
+);
+
+CREATE SEQUENCE IF NOT EXISTS language_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+ALTER SEQUENCE language_id_seq OWNED BY language.id;
+
+CREATE TABLE IF NOT EXISTS registered_office (
+    id BIGSERIAL PRIMARY KEY NOT NULL,
+    company_id BIGSERIAL NOT NULL REFERENCES company(id),
+    source BIGSERIAL,
+    ordering BIGSERIAL NOT NULL,
+    version BIGSERIAL NOT NULL,
+    name TEXT NOT NULL,
+    language TEXT,
+    registration_date TIMESTAMP WITH TIME ZONE NOT NULL,
+    end_date TIMESTAMP WITH TIME ZONE,
+    created TIMESTAMP WITH TIME ZONE NOT NULL,
+    changed TIMESTAMP WITH TIME ZONE NOT NULL,
+    fetched TIMESTAMP WITH TIME ZONE NOT NULL,
+    removed TIMESTAMP WITH TIME ZONE
+);
+
+CREATE SEQUENCE IF NOT EXISTS registered_office_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+ALTER SEQUENCE registered_office_id_seq OWNED BY registered_office.id;
+
+CREATE TABLE IF NOT EXISTS contact_detail (
+    id BIGSERIAL PRIMARY KEY NOT NULL,
+    company_id BIGSERIAL NOT NULL REFERENCES company(id),
+    source BIGSERIAL,
+    version BIGSERIAL NOT NULL,
+    language TEXT,
+    value TEXT NOT NULL,
+    type TEXT NOT NULL,
+    registration_date TIMESTAMP WITH TIME ZONE NOT NULL,
+    end_date TIMESTAMP WITH TIME ZONE,
+    created TIMESTAMP WITH TIME ZONE NOT NULL,
+    changed TIMESTAMP WITH TIME ZONE NOT NULL,
+    fetched TIMESTAMP WITH TIME ZONE NOT NULL,
+    removed TIMESTAMP WITH TIME ZONE
+);
+
+CREATE SEQUENCE IF NOT EXISTS contact_detail_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+ALTER SEQUENCE contact_detail_id_seq OWNED BY contact_detail.id;
+
+CREATE TABLE IF NOT EXISTS registered_entry (
+    id BIGSERIAL PRIMARY KEY NOT NULL,
+    company_id BIGSERIAL NOT NULL REFERENCES company(id),
+    description TEXT NOT NULL,
+    status BIGSERIAL NOT NULL,
+    register BIGSERIAL NOT NULL,
+    language TEXT,
+    authority BIGSERIAL NOT NULL,
+    registration_date TIMESTAMP WITH TIME ZONE NOT NULL,
+    end_date TIMESTAMP WITH TIME ZONE,
+    created TIMESTAMP WITH TIME ZONE NOT NULL,
+    changed TIMESTAMP WITH TIME ZONE NOT NULL,
+    fetched TIMESTAMP WITH TIME ZONE NOT NULL,
+    removed TIMESTAMP WITH TIME ZONE
+);
+
+CREATE SEQUENCE IF NOT EXISTS registered_entry_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+ALTER SEQUENCE registered_entry_id_seq OWNED BY registered_entry.id;
+
+CREATE TABLE IF NOT EXISTS business_id_change (
+    id BIGSERIAL PRIMARY KEY NOT NULL,
+    company_id BIGSERIAL NOT NULL REFERENCES company(id),
+    source BIGSERIAL,
+    description TEXT NOT NULL,
+    reason TEXT NOT NULL,
+    change_date TEXT,
+    change BIGSERIAL NOT NULL,
+    old_business_id TEXT NOT NULL,
+    new_business_id TEXT NOT NULL,
+    language TEXT,
+    created TIMESTAMP WITH TIME ZONE NOT NULL,
+    changed TIMESTAMP WITH TIME ZONE NOT NULL,
+    fetched TIMESTAMP WITH TIME ZONE NOT NULL,
+    removed TIMESTAMP WITH TIME ZONE
+);
+
+CREATE SEQUENCE IF NOT EXISTS business_id_change_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+ALTER SEQUENCE business_id_change_id_seq OWNED BY business_id_change.id;
+
 CREATE UNIQUE INDEX IF NOT EXISTS idx_wsdl_external_id ON wsdl USING btree (external_id);
 CREATE UNIQUE INDEX IF NOT EXISTS idx_open_api_external_id ON open_api USING btree (external_id);
 CREATE UNIQUE INDEX IF NOT EXISTS idx_member_natural_keys ON member(member_code, member_class, x_road_instance);
@@ -549,6 +850,18 @@ CREATE INDEX IF NOT EXISTS idx_street_address_changed ON street_address(changed)
 CREATE INDEX IF NOT EXISTS idx_street_address_additional_information_changed ON street_address_additional_information(changed);
 CREATE INDEX IF NOT EXISTS idx_street_address_post_office_changed ON street_address_post_office(changed);
 CREATE INDEX IF NOT EXISTS idx_webpage_changed ON web_page(changed);
+CREATE INDEX IF NOT EXISTS idx_company_changed ON company(changed);
+CREATE INDEX IF NOT EXISTS idx_business_name_changed ON business_name(changed);
+CREATE INDEX IF NOT EXISTS idx_business_auxiliary_name_changed ON business_auxiliary_name(changed);
+CREATE INDEX IF NOT EXISTS idx_business_address_changed ON business_address(changed);
+CREATE INDEX IF NOT EXISTS idx_company_form_changed ON company_form(changed);
+CREATE INDEX IF NOT EXISTS idx_liquidation_changed ON liquidation(changed);
+CREATE INDEX IF NOT EXISTS idx_business_line_changed ON business_line(changed);
+CREATE INDEX IF NOT EXISTS idx_language_changed ON language(changed);
+CREATE INDEX IF NOT EXISTS idx_registered_office_changed ON registered_office(changed);
+CREATE INDEX IF NOT EXISTS idx_contact_detail_changed ON contact_detail(changed);
+CREATE INDEX IF NOT EXISTS idx_registered_entry_changed ON registered_entry(changed);
+CREATE INDEX IF NOT EXISTS idx_business_id_change_changed ON business_id_change(changed);
 CREATE INDEX IF NOT EXISTS idx_wsdl_service_id ON wsdl(service_id);
 CREATE INDEX IF NOT EXISTS idx_open_api_service_id ON open_api(service_id);
 CREATE INDEX IF NOT EXISTS idx_organization_description_organization_id ON organization_description(organization_id);
@@ -557,6 +870,17 @@ CREATE INDEX IF NOT EXISTS idx_email_organization_id ON email(organization_id);
 CREATE INDEX IF NOT EXISTS idx_address_organization_id ON address(organization_id);
 CREATE INDEX IF NOT EXISTS idx_phone_number_organization_id ON phone_number(organization_id);
 CREATE INDEX IF NOT EXISTS idx_webpage_organization_id ON web_page(organization_id);
+CREATE INDEX IF NOT EXISTS idx_business_name_company_id ON business_name(company_id);
+CREATE INDEX IF NOT EXISTS idx_business_auxiliary_name_company_id ON business_auxiliary_name(company_id);
+CREATE INDEX IF NOT EXISTS idx_business_address_company_id ON business_address(company_id);
+CREATE INDEX IF NOT EXISTS idx_company_form_company_id ON company_form(company_id);
+CREATE INDEX IF NOT EXISTS idx_liquidation_company_id ON liquidation(company_id);
+CREATE INDEX IF NOT EXISTS idx_business_line_company_id ON business_line(company_id);
+CREATE INDEX IF NOT EXISTS idx_language_company_id ON language(company_id);
+CREATE INDEX IF NOT EXISTS idx_registered_office_company_id ON registered_office(company_id);
+CREATE INDEX IF NOT EXISTS idx_contact_detail_company_id ON contact_detail(company_id);
+CREATE INDEX IF NOT EXISTS idx_registered_entry_company_id ON registered_entry(company_id);
+CREATE INDEX IF NOT EXISTS idx_business_id_change_company_id ON business_id_change(company_id);
 
 ALTER TABLE member OWNER TO xroad_catalog;
 ALTER TABLE service OWNER TO xroad_catalog;
@@ -582,3 +906,15 @@ ALTER TABLE post_office OWNER TO xroad_catalog;
 ALTER TABLE post_office_box_address_municipality OWNER TO xroad_catalog;
 ALTER TABLE post_office_box_address_municipality_name OWNER TO xroad_catalog;
 ALTER TABLE post_office_box_address_additional_information OWNER TO xroad_catalog;
+ALTER TABLE company OWNER TO xroad_catalog;
+ALTER TABLE business_name OWNER TO xroad_catalog;
+ALTER TABLE business_auxiliary_name OWNER TO xroad_catalog;
+ALTER TABLE business_address OWNER TO xroad_catalog;
+ALTER TABLE company_form OWNER TO xroad_catalog;
+ALTER TABLE liquidation OWNER TO xroad_catalog;
+ALTER TABLE business_line OWNER TO xroad_catalog;
+ALTER TABLE language OWNER TO xroad_catalog;
+ALTER TABLE registered_office OWNER TO xroad_catalog;
+ALTER TABLE contact_detail OWNER TO xroad_catalog;
+ALTER TABLE registered_entry OWNER TO xroad_catalog;
+ALTER TABLE business_id_change OWNER TO xroad_catalog;

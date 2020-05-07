@@ -23,6 +23,7 @@
 package fi.vrk.xroad.catalog.collector.util;
 
 import fi.vrk.xroad.catalog.persistence.entity.*;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.http.conn.ssl.NoopHostnameVerifier;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.conn.ssl.TrustStrategy;
@@ -40,14 +41,35 @@ import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
+@Slf4j
 public class OrganizationUtil {
 
     private OrganizationUtil() {
 
+    }
+
+    public static JSONObject getCompany(String url, String businessCode) {
+        final String fetchCompaniesUrl = new StringBuilder().append(url)
+                .append("/").append(businessCode).toString();
+        JSONObject jsonObject = new JSONObject();
+        try {
+            String ret = getResponseBody(fetchCompaniesUrl);
+            jsonObject = new JSONObject(ret);
+            return jsonObject;
+        } catch (KeyStoreException e) {
+            log.error("KeyStoreException occurred when fetching companies from url {} with businessCode {}", url, businessCode);
+        } catch (NoSuchAlgorithmException e) {
+            log.error("NoSuchAlgorithmException occurred when fetching companies from url {} with businessCode {}", url, businessCode);
+        } catch (KeyManagementException e) {
+            log.error("KeyManagementException occurred when fetching companies from url {} with businessCode {}", url, businessCode);
+        }
+        return jsonObject;
     }
 
     public static List<String> getOrganizationIdsList(String url, Integer fetchOrganizationsLimit)
@@ -268,6 +290,202 @@ public class OrganizationUtil {
         return phoneNumbers;
     }
 
+    public static Company createCompany(JSONObject jsonObject) {
+        return Company.builder().businessId(jsonObject.optString("businessId"))
+                .companyForm(jsonObject.optString("companyForm"))
+                .detailsUri(jsonObject.optString("detailsUri"))
+                .name(jsonObject.optString("name"))
+                .registrationDate(parseDateFromString(jsonObject.optString("registrationDate")))
+                .build();
+    }
+
+    public static List<BusinessAddress> createBusinessAddresses(JSONArray jsonArray) {
+        List<BusinessAddress> businessAddresses = new ArrayList<>();
+        for (int i = 0; i < jsonArray.length(); i++) {
+            businessAddresses.add(BusinessAddress.builder()
+                    .careOf(jsonArray.optJSONObject(i).optString("careOf"))
+                    .city(jsonArray.optJSONObject(i).optString("city"))
+                    .country(jsonArray.optJSONObject(i).optString("country"))
+                    .language(jsonArray.optJSONObject(i).optString("language"))
+                    .postCode(jsonArray.optJSONObject(i).optString("postCode"))
+                    .source(jsonArray.optJSONObject(i).optLong("source"))
+                    .type(jsonArray.optJSONObject(i).optLong("type"))
+                    .version(jsonArray.optJSONObject(i).optLong("version"))
+                    .street(jsonArray.optJSONObject(i).optString("street"))
+                    .registrationDate(parseDateFromString(jsonArray.optJSONObject(i).optString("registrationDate")))
+                    .endDate(parseDateFromString(jsonArray.optJSONObject(i).optString("endDate")))
+                    .build());
+        }
+        return businessAddresses;
+    }
+
+    public static List<BusinessAuxiliaryName> createBusinessAuxiliaryNames(JSONArray jsonArray) {
+        List<BusinessAuxiliaryName> businessAuxiliaryNames = new ArrayList<>();
+        for (int i = 0; i < jsonArray.length(); i++) {
+            businessAuxiliaryNames.add(BusinessAuxiliaryName.builder()
+                    .language(jsonArray.optJSONObject(i).optString("language"))
+                    .name(jsonArray.optJSONObject(i).optString("name"))
+                    .ordering(jsonArray.optJSONObject(i).optLong("order"))
+                    .source(jsonArray.optJSONObject(i).optLong("source"))
+                    .version(jsonArray.optJSONObject(i).optLong("version"))
+                    .registrationDate(parseDateFromString(jsonArray.optJSONObject(i).optString("registrationDate")))
+                    .endDate(parseDateFromString(jsonArray.optJSONObject(i).optString("endDate")))
+                    .build());
+        }
+        return businessAuxiliaryNames;
+    }
+
+    public static List<BusinessIdChange> createBusinessIdChanges(JSONArray jsonArray) {
+        List<BusinessIdChange> businessIdChanges = new ArrayList<>();
+        for (int i = 0; i < jsonArray.length(); i++) {
+            businessIdChanges.add(BusinessIdChange.builder()
+                    .language(jsonArray.optJSONObject(i).optString("language"))
+                    .change(jsonArray.optJSONObject(i).optLong("change"))
+                    .changeDate(jsonArray.optJSONObject(i).optString("changeDate"))
+                    .description(jsonArray.optJSONObject(i).optString("description"))
+                    .reason(jsonArray.optJSONObject(i).optString("reason"))
+                    .oldBusinessId(jsonArray.optJSONObject(i).optString("oldBusinessId"))
+                    .newBusinessId(jsonArray.optJSONObject(i).optString("newBusinessId"))
+                    .source(jsonArray.optJSONObject(i).optLong("source"))
+                    .build());
+        }
+        return businessIdChanges;
+    }
+
+    public static List<BusinessLine> createBusinessLines(JSONArray jsonArray) {
+        List<BusinessLine> businessLines = new ArrayList<>();
+        for (int i = 0; i < jsonArray.length(); i++) {
+            businessLines.add(BusinessLine.builder()
+                    .language(jsonArray.optJSONObject(i).optString("language"))
+                    .name(jsonArray.optJSONObject(i).optString("name"))
+                    .ordering(jsonArray.optJSONObject(i).optLong("order"))
+                    .source(jsonArray.optJSONObject(i).optLong("source"))
+                    .version(jsonArray.optJSONObject(i).optLong("version"))
+                    .registrationDate(parseDateFromString(jsonArray.optJSONObject(i).optString("registrationDate")))
+                    .endDate(parseDateFromString(jsonArray.optJSONObject(i).optString("endDate")))
+                    .build());
+        }
+        return businessLines;
+    }
+
+    public static List<BusinessName> createBusinessNames(JSONArray jsonArray) {
+        List<BusinessName> businessNames = new ArrayList<>();
+        for (int i = 0; i < jsonArray.length(); i++) {
+            businessNames.add(BusinessName.builder()
+                    .language(jsonArray.optJSONObject(i).optString("language"))
+                    .name(jsonArray.optJSONObject(i).optString("name"))
+                    .ordering(jsonArray.optJSONObject(i).optLong("order"))
+                    .source(jsonArray.optJSONObject(i).optLong("source"))
+                    .version(jsonArray.optJSONObject(i).optLong("version"))
+                    .registrationDate(parseDateFromString(jsonArray.optJSONObject(i).optString("registrationDate")))
+                    .endDate(parseDateFromString(jsonArray.optJSONObject(i).optString("endDate")))
+                    .build());
+        }
+        return businessNames;
+    }
+
+    public static List<CompanyForm> createCompanyForms(JSONArray jsonArray) {
+        List<CompanyForm> companyForms = new ArrayList<>();
+        for (int i = 0; i < jsonArray.length(); i++) {
+            companyForms.add(CompanyForm.builder()
+                    .language(jsonArray.optJSONObject(i).optString("language"))
+                    .name(jsonArray.optJSONObject(i).optString("name"))
+                    .source(jsonArray.optJSONObject(i).optLong("source"))
+                    .type(jsonArray.optJSONObject(i).optLong("type"))
+                    .version(jsonArray.optJSONObject(i).optLong("version"))
+                    .registrationDate(parseDateFromString(jsonArray.optJSONObject(i).optString("registrationDate")))
+                    .endDate(parseDateFromString(jsonArray.optJSONObject(i).optString("endDate")))
+                    .build());
+        }
+        return companyForms;
+    }
+
+    public static List<ContactDetail> createContactDetails(JSONArray jsonArray) {
+        List<ContactDetail> contactDetails = new ArrayList<>();
+        for (int i = 0; i < jsonArray.length(); i++) {
+            contactDetails.add(ContactDetail.builder()
+                    .version(jsonArray.optJSONObject(i).optLong("version"))
+                    .type(jsonArray.optJSONObject(i).optLong("type"))
+                    .source(jsonArray.optJSONObject(i).optLong("source"))
+                    .language(jsonArray.optJSONObject(i).optString("language"))
+                    .value(jsonArray.optJSONObject(i).optString("value"))
+                    .registrationDate(parseDateFromString(jsonArray.optJSONObject(i).optString("registrationDate")))
+                    .endDate(parseDateFromString(jsonArray.optJSONObject(i).optString("endDate")))
+                    .build());
+        }
+        return contactDetails;
+    }
+
+    public static List<Language> createLanguages(JSONArray jsonArray) {
+        List<Language> languages = new ArrayList<>();
+        for (int i = 0; i < jsonArray.length(); i++) {
+            languages.add(Language.builder()
+                    .version(jsonArray.optJSONObject(i).optLong("version"))
+                    .source(jsonArray.optJSONObject(i).optLong("source"))
+                    .language(jsonArray.optJSONObject(i).optString("language"))
+                    .name(jsonArray.optJSONObject(i).optString("name"))
+                    .registrationDate(parseDateFromString(jsonArray.optJSONObject(i).optString("registrationDate")))
+                    .endDate(parseDateFromString(jsonArray.optJSONObject(i).optString("endDate")))
+                    .build());
+        }
+        return languages;
+    }
+
+    public static List<Liquidation> createLiquidations(JSONArray jsonArray) {
+        List<Liquidation> liquidations = new ArrayList<>();
+        for (int i = 0; i < jsonArray.length(); i++) {
+            liquidations.add(Liquidation.builder()
+                    .version(jsonArray.optJSONObject(i).optLong("version"))
+                    .source(jsonArray.optJSONObject(i).optLong("source"))
+                    .language(jsonArray.optJSONObject(i).optString("language"))
+                    .name(jsonArray.optJSONObject(i).optString("name"))
+                    .type(jsonArray.optJSONObject(i).optLong("type"))
+                    .registrationDate(LocalDateTime.now())
+                    .endDate(LocalDateTime.now())
+                    .build());
+        }
+        return liquidations;
+    }
+
+    public static List<RegisteredEntry> createRegisteredEntries(JSONArray jsonArray) {
+        List<RegisteredEntry> registeredEntries = new ArrayList<>();
+        for (int i = 0; i < jsonArray.length(); i++) {
+            registeredEntries.add(RegisteredEntry.builder()
+                    .language(jsonArray.optJSONObject(i).optString("language"))
+                    .description(jsonArray.optJSONObject(i).optString("description"))
+                    .register(jsonArray.optJSONObject(i).optLong("register"))
+                    .status(jsonArray.optJSONObject(i).optLong("status"))
+                    .authority(jsonArray.optJSONObject(i).optLong("authority"))
+                    .registrationDate(parseDateFromString(jsonArray.optJSONObject(i).optString("registrationDate")))
+                    .endDate(parseDateFromString(jsonArray.optJSONObject(i).optString("endDate")))
+                    .build());
+        }
+        return registeredEntries;
+    }
+
+    public static List<RegisteredOffice> createRegisteredOffices(JSONArray jsonArray) {
+        List<RegisteredOffice> registeredOffices = new ArrayList<>();
+        for (int i = 0; i < jsonArray.length(); i++) {
+            registeredOffices.add(RegisteredOffice.builder()
+                    .source(jsonArray.optJSONObject(i).optLong("source"))
+                    .language(jsonArray.optJSONObject(i).optString("language"))
+                    .name(jsonArray.optJSONObject(i).optString("name"))
+                    .ordering(jsonArray.optJSONObject(i).optLong("order"))
+                    .version(jsonArray.optJSONObject(i).optLong("version"))
+                    .registrationDate(parseDateFromString(jsonArray.optJSONObject(i).optString("registrationDate")))
+                    .endDate(parseDateFromString(jsonArray.optJSONObject(i).optString("endDate")))
+                    .build());
+        }
+        return registeredOffices;
+    }
+
+    private static LocalDateTime parseDateFromString(String dateValue) {
+        if (dateValue != null && !dateValue.isEmpty()) {
+            return LocalDate.parse(dateValue).atStartOfDay();
+        }
+        return null;
+    }
+
     private static JSONArray getDataByIds(List<String> guids, String url) {
         String requestGuids = "";
         for (int i = 0; i < guids.size(); i++) {
@@ -280,21 +498,19 @@ public class OrganizationUtil {
         final String listOrganizationsUrl = new StringBuilder().append(url)
                 .append("/list?guids=").append(requestGuids).toString();
 
-        String ret = null;
+        JSONArray itemList = new JSONArray();
         try {
-            ret = getResponseBody(listOrganizationsUrl);
+            String ret = getResponseBody(listOrganizationsUrl);
+            JSONObject json = new JSONObject("{\"items\":" + ret + "}");
+            itemList = json.optJSONArray("items");
+            return itemList;
         } catch (KeyStoreException e) {
-            e.printStackTrace();
+            log.error("KeyStoreException occurred when fetching organizations with from url {}", url);
         } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
+            log.error("NoSuchAlgorithmException occurred when fetching organizations with from url {}", url);
         } catch (KeyManagementException e) {
-            e.printStackTrace();
+            log.error("KeyManagementException occurred when fetching organizations with from url {}", url);
         }
-
-        ret = "{\"items\":" + ret + "}";
-        JSONObject json = new JSONObject(ret);
-        JSONArray itemList = json.optJSONArray("items");
-
         return itemList;
     }
 
