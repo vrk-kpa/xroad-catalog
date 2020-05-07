@@ -23,6 +23,7 @@
 package fi.vrk.xroad.catalog.collector.util;
 
 import fi.vrk.xroad.catalog.persistence.entity.*;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.http.conn.ssl.NoopHostnameVerifier;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.conn.ssl.TrustStrategy;
@@ -42,11 +43,11 @@ import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
+@Slf4j
 public class OrganizationUtil {
 
     private OrganizationUtil() {
@@ -60,11 +61,11 @@ public class OrganizationUtil {
         try {
             ret = getResponseBody(fetchCompaniesUrl);
         } catch (KeyStoreException e) {
-            e.printStackTrace();
+            log.error("KeyStoreException occurred when fetching companies from url {} with businessCode {}", url, businessCode);
         } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
+            log.error("NoSuchAlgorithmException occurred when fetching companies from url {} with businessCode {}", url, businessCode);
         } catch (KeyManagementException e) {
-            e.printStackTrace();
+            log.error("KeyManagementException occurred when fetching companies from url {} with businessCode {}", url, businessCode);
         }
         return new JSONObject(ret);
     }
@@ -499,11 +500,11 @@ public class OrganizationUtil {
         try {
             ret = getResponseBody(listOrganizationsUrl);
         } catch (KeyStoreException e) {
-            e.printStackTrace();
+            log.error("KeyStoreException occurred when fetching organizations with from url {}", url);
         } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
+            log.error("NoSuchAlgorithmException occurred when fetching organizations with from url {}", url);
         } catch (KeyManagementException e) {
-            e.printStackTrace();
+            log.error("KeyManagementException occurred when fetching organizations with from url {}", url);
         }
 
         ret = "{\"items\":" + ret + "}";
