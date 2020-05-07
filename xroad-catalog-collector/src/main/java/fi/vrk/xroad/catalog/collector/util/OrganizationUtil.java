@@ -57,9 +57,11 @@ public class OrganizationUtil {
     public static JSONObject getCompany(String url, String businessCode) {
         final String fetchCompaniesUrl = new StringBuilder().append(url)
                 .append("/").append(businessCode).toString();
-        String ret = null;
+        JSONObject jsonObject = new JSONObject();
         try {
-            ret = getResponseBody(fetchCompaniesUrl);
+            String ret = getResponseBody(fetchCompaniesUrl);
+            jsonObject = new JSONObject(ret);
+            return jsonObject;
         } catch (KeyStoreException e) {
             log.error("KeyStoreException occurred when fetching companies from url {} with businessCode {}", url, businessCode);
         } catch (NoSuchAlgorithmException e) {
@@ -67,7 +69,7 @@ public class OrganizationUtil {
         } catch (KeyManagementException e) {
             log.error("KeyManagementException occurred when fetching companies from url {} with businessCode {}", url, businessCode);
         }
-        return new JSONObject(ret);
+        return jsonObject;
     }
 
     public static List<String> getOrganizationIdsList(String url, Integer fetchOrganizationsLimit)
@@ -496,9 +498,12 @@ public class OrganizationUtil {
         final String listOrganizationsUrl = new StringBuilder().append(url)
                 .append("/list?guids=").append(requestGuids).toString();
 
-        String ret = null;
+        JSONArray itemList = new JSONArray();
         try {
-            ret = getResponseBody(listOrganizationsUrl);
+            String ret = getResponseBody(listOrganizationsUrl);
+            JSONObject json = new JSONObject("{\"items\":" + ret + "}");
+            itemList = json.optJSONArray("items");
+            return itemList;
         } catch (KeyStoreException e) {
             log.error("KeyStoreException occurred when fetching organizations with from url {}", url);
         } catch (NoSuchAlgorithmException e) {
@@ -506,11 +511,6 @@ public class OrganizationUtil {
         } catch (KeyManagementException e) {
             log.error("KeyManagementException occurred when fetching organizations with from url {}", url);
         }
-
-        ret = "{\"items\":" + ret + "}";
-        JSONObject json = new JSONObject(ret);
-        JSONArray itemList = json.optJSONArray("items");
-
         return itemList;
     }
 
