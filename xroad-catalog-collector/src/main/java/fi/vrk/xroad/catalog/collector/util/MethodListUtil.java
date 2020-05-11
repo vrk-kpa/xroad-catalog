@@ -43,10 +43,13 @@ public class MethodListUtil {
         // Private empty constructor
     }
 
-    public static Boolean shouldFetchCompanies(int fetchWeekDay, int fetchHourAfter, int fetchHourBefore) {
+    public static Boolean shouldFetchCompanies(boolean fetchUnlimited, int fetchHourAfter, int fetchHourBefore) {
+        if (fetchUnlimited) {
+            return true;
+        }
         LocalDateTime today = LocalDateTime.now();
-        LocalDateTime fetchTimeFrom = LocalDate.now().atTime(fetchHourAfter, 0).plusDays(fetchWeekDay - today.getDayOfWeek().getValue());
-        LocalDateTime fetchTimeTo = LocalDate.now().atTime(fetchHourBefore, 0).plusDays(fetchWeekDay - today.getDayOfWeek().getValue());
+        LocalDateTime fetchTimeFrom = LocalDate.now().atTime(fetchHourAfter, 0);
+        LocalDateTime fetchTimeTo = LocalDate.now().atTime(fetchHourBefore, 0);
         return (today.isAfter(fetchTimeFrom) && today.isBefore(fetchTimeTo));
     }
 

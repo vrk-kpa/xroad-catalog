@@ -75,9 +75,6 @@ public class ListMethodsActor extends XRoadCatalogActor {
     @Value("${xroad-catalog.webservices-endpoint}")
     private String webservicesEndpoint;
 
-    @Value("${xroad-catalog.fetch-companies-on-weekday}")
-    private Integer fetchCompaniesWeekDay;
-
     @Value("${xroad-catalog.fetch-companies-time-after-hour}")
     private Integer fetchCompaniesTimeAfterHour;
 
@@ -168,9 +165,9 @@ public class ListMethodsActor extends XRoadCatalogActor {
             }
 
             // Fetch companies only during a limited period if not unlimited
-            if (fetchCompaniesUnlimited || MethodListUtil.shouldFetchCompanies(fetchCompaniesWeekDay,
-                    fetchCompaniesTimeAfterHour,
-                    fetchCompaniesTimeBeforeHour)) {
+            if (MethodListUtil.shouldFetchCompanies(fetchCompaniesUnlimited,
+                                                    fetchCompaniesTimeAfterHour,
+                                                    fetchCompaniesTimeBeforeHour)) {
                 fetchCompaniesPoolRef.tell(clientType, getSelf());
             }
 
