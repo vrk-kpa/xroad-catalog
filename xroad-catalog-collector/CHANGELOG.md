@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.11.4] - 2020-05-13
+
+### Changed
+- update version
+
 ## [0.11.3] - 2020-05-07
 
 ### Changed
@@ -147,10 +152,3 @@ refacto ListMethodsActor to also receive REST services
 - SSL parameter names in conf files
 - fix for a task by adding if clause to FetchWsdlActor buildUri method
 - incorrect ListMethods query
-
-
-
-
-
-
-
