@@ -158,6 +158,9 @@ public class ServiceEndpoint {
     @PayloadRoot(namespace = NAMESPACE_URI, localPart = "HasOrganizationChanged")
     @ResponsePayload
     public HasOrganizationChangedResponse hasOrganizationChanged(@RequestPayload HasOrganizationChanged request) {
+        if ((request.getGuid().isEmpty() || request.getGuid() == null) || request.getChangedAfter() == null) {
+            throw new ChangedValuesException("Guid and ChangedAfter are both required parameters");
+        }
         HasOrganizationChangedResponse response = new HasOrganizationChangedResponse();
         response.setChangedValueList(new ChangedValueList());
         Iterable<ChangedValue> changedValues = jaxbCatalogService.getChangedOrganizationValues(request.getGuid(), request.getChangedAfter());
@@ -183,6 +186,9 @@ public class ServiceEndpoint {
     @PayloadRoot(namespace = NAMESPACE_URI, localPart = "HasCompanyChanged")
     @ResponsePayload
     public HasCompanyChangedResponse hasCompanyChanged(@RequestPayload HasCompanyChanged request) {
+        if ((request.getBusinessId().isEmpty() || request.getBusinessId() == null) || request.getChangedAfter() == null) {
+            throw new ChangedValuesException("BusinessId and ChangedAfter are both required parameters");
+        }
         HasCompanyChangedResponse response = new HasCompanyChangedResponse();
         response.setChangedValueList(new ChangedValueList());
         Iterable<ChangedValue> changedValues = jaxbCatalogService.getChangedCompanyValues(request.getBusinessId(), request.getChangedAfter());
