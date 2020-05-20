@@ -158,7 +158,7 @@ public class ServiceEndpoint {
     @PayloadRoot(namespace = NAMESPACE_URI, localPart = "HasOrganizationChanged")
     @ResponsePayload
     public HasOrganizationChangedResponse hasOrganizationChanged(@RequestPayload HasOrganizationChanged request) {
-        if ((request.getGuid().isEmpty() || request.getGuid() == null) || request.getChangedAfter() == null) {
+        if ((request.getGuid() == null || request.getGuid().isEmpty()) || request.getChangedAfter() == null) {
             throw new ChangedValuesException("Guid and ChangedAfter are both required parameters");
         }
         HasOrganizationChangedResponse response = new HasOrganizationChangedResponse();
@@ -186,7 +186,7 @@ public class ServiceEndpoint {
     @PayloadRoot(namespace = NAMESPACE_URI, localPart = "HasCompanyChanged")
     @ResponsePayload
     public HasCompanyChangedResponse hasCompanyChanged(@RequestPayload HasCompanyChanged request) {
-        if ((request.getBusinessId().isEmpty() || request.getBusinessId() == null) || request.getChangedAfter() == null) {
+        if ((request.getBusinessId() == null || request.getBusinessId().isEmpty()) || request.getChangedAfter() == null) {
             throw new ChangedValuesException("BusinessId and ChangedAfter are both required parameters");
         }
         HasCompanyChangedResponse response = new HasCompanyChangedResponse();
