@@ -23,7 +23,9 @@
 package fi.vrk.xroad.catalog.persistence.repository;
 
 import fi.vrk.xroad.catalog.persistence.entity.OrganizationName;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 import java.util.Optional;
@@ -31,4 +33,11 @@ import java.util.Optional;
 public interface OrganizationNameRepository extends CrudRepository<OrganizationName, Long> {
 
     Optional<List<OrganizationName>> findAnyByOrganizationId(Long organizationId);
+
+    @Query("SELECT o FROM OrganizationName o WHERE o.organization.id = :organizationId "
+            +"AND o.language = :language "
+            + "AND o.type = :type")
+    Optional<OrganizationName> findAny(@Param("organizationId") Long organizationId,
+                                       @Param("language") String language,
+                                       @Param("type") String type);
 }

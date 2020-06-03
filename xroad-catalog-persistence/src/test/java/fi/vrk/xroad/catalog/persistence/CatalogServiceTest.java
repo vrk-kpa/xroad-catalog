@@ -517,12 +517,12 @@ public class CatalogServiceTest {
         assertEquals(true, organization.isPresent());
         assertEquals(1, organization.get().getAllOrganizationNames().size());
         OrganizationName organizationName = OrganizationName.builder()
-                .language("EN").type("Name").value("Vaasa town").organization(organization.get()).build();
+                .language("fi").type("Name").value("Vaasa").organization(organization.get()).build();
         catalogService.saveOrganizationName(organizationName);
         Optional<Organization> foundOrganization = catalogService.getOrganization("abcdef123456");
         assertEquals(1, foundOrganization.get().getAllOrganizationNames().size());
-        assertEquals("EN", foundOrganization.get().getAllOrganizationNames().iterator().next().getLanguage());
-        assertEquals("Vaasa town", foundOrganization.get().getAllOrganizationNames().iterator().next().getValue());
+        assertEquals("fi", foundOrganization.get().getAllOrganizationNames().iterator().next().getLanguage());
+        assertEquals("Vaasa", foundOrganization.get().getAllOrganizationNames().iterator().next().getValue());
         verifySavedStatusInfo(foundOrganization.get().getAllOrganizationNames().iterator().next().getStatusInfo());
     }
 
@@ -532,12 +532,12 @@ public class CatalogServiceTest {
         assertEquals(true, organization.isPresent());
         assertEquals(1, organization.get().getAllOrganizationNames().size());
         OrganizationDescription organizationDescription = OrganizationDescription.builder()
-                .language("EN").type("Description").value("Vaasa is a small town").organization(organization.get()).build();
+                .language("fi").type("Description").value("Vaasa").organization(organization.get()).build();
         catalogService.saveOrganizationDescription(organizationDescription);
         Optional<Organization> foundOrganization = catalogService.getOrganization("abcdef123456");
         assertEquals(1, foundOrganization.get().getAllOrganizationDescriptions().size());
-        assertEquals("EN", foundOrganization.get().getAllOrganizationDescriptions().iterator().next().getLanguage());
-        assertEquals("Vaasa is a small town", foundOrganization.get().getAllOrganizationDescriptions().iterator().next().getValue());
+        assertEquals("fi", foundOrganization.get().getAllOrganizationDescriptions().iterator().next().getLanguage());
+        assertEquals("Vaasa", foundOrganization.get().getAllOrganizationDescriptions().iterator().next().getValue());
         verifySavedStatusInfo(foundOrganization.get().getAllOrganizationDescriptions().iterator().next().getStatusInfo());
     }
 
@@ -547,11 +547,11 @@ public class CatalogServiceTest {
         assertEquals(true, organization.isPresent());
         assertEquals(1, organization.get().getAllOrganizationNames().size());
         Email email = Email.builder()
-                .language("EN").description("Description").value("info@vaasa.fi").organization(organization.get()).build();
+                .language("fi").description("Asiakaspalvelu").value("info@vaasa.fi").organization(organization.get()).build();
         catalogService.saveEmail(email);
         Optional<Organization> foundOrganization = catalogService.getOrganization("abcdef123456");
         assertEquals(1, foundOrganization.get().getAllEmails().size());
-        assertEquals("EN", foundOrganization.get().getAllEmails().iterator().next().getLanguage());
+        assertEquals("fi", foundOrganization.get().getAllEmails().iterator().next().getLanguage());
         assertEquals("info@vaasa.fi", foundOrganization.get().getAllEmails().iterator().next().getValue());
         verifySavedStatusInfo(foundOrganization.get().getAllEmails().iterator().next().getStatusInfo());
     }
@@ -567,7 +567,7 @@ public class CatalogServiceTest {
                 .number("123456789")
                 .isFinnishServiceNumber(true)
                 .prefixNumber("+358")
-                .language("fi")
+                .language("FI")
                 .chargeDescription("Chargeable")
                 .serviceChargeType("charge").build();
         catalogService.savePhoneNumber(phoneNumber);
@@ -584,13 +584,13 @@ public class CatalogServiceTest {
         assertEquals(true, organization.isPresent());
         assertEquals(1, organization.get().getAllOrganizationNames().size());
         WebPage webPage = WebPage.builder()
-                .language("EN").url("http://www.google.com").value("Google").organization(organization.get()).build();
+                .language("fi").url("https://www.vaasa.fi/").value("Vaasa").organization(organization.get()).build();
         catalogService.saveWebPage(webPage);
         Optional<Organization> foundOrganization = catalogService.getOrganization("abcdef123456");
         assertEquals(1, foundOrganization.get().getAllWebPages().size());
-        assertEquals("EN", foundOrganization.get().getAllWebPages().iterator().next().getLanguage());
-        assertEquals("http://www.google.com", foundOrganization.get().getAllWebPages().iterator().next().getUrl());
-        assertEquals("Google", foundOrganization.get().getAllWebPages().iterator().next().getValue());
+        assertEquals("fi", foundOrganization.get().getAllWebPages().iterator().next().getLanguage());
+        assertEquals("https://www.vaasa.fi/", foundOrganization.get().getAllWebPages().iterator().next().getUrl());
+        assertEquals("Vaasa", foundOrganization.get().getAllWebPages().iterator().next().getValue());
         verifySavedStatusInfo(foundOrganization.get().getAllWebPages().iterator().next().getStatusInfo());
     }
 
@@ -634,11 +634,11 @@ public class CatalogServiceTest {
         assertEquals(1, organization.get().getAllAddresses().iterator().next().getAllStreetAddresses().size());
         Street street = Street.builder()
                 .streetAddress(organization.get().getAllAddresses().iterator().next().getAllStreetAddresses().iterator().next())
-                .language("EN").value("Oxford street").build();
+                .language("fi").value("Motellikuja").build();
         Street savedStreet = catalogService.saveStreet(street);
         assertNotNull(savedStreet);
-        assertEquals("EN", savedStreet.getLanguage());
-        assertEquals("Oxford street", savedStreet.getValue());
+        assertEquals("fi", savedStreet.getLanguage());
+        assertEquals("Motellikuja", savedStreet.getValue());
         verifySavedStatusInfo(savedStreet.getStatusInfo());
     }
 
@@ -650,11 +650,11 @@ public class CatalogServiceTest {
         assertEquals(1, organization.get().getAllAddresses().iterator().next().getAllStreetAddresses().size());
         StreetAddressPostOffice streetAddressPostOffice = StreetAddressPostOffice.builder()
                 .streetAddress(organization.get().getAllAddresses().iterator().next().getAllStreetAddresses().iterator().next())
-                .language("EN").value("London Post").build();
+                .language("fi").value("NIVALA").build();
         StreetAddressPostOffice savedStreetAddressPostOffice = catalogService.saveStreetAddressPostOffice(streetAddressPostOffice);
         assertNotNull(savedStreetAddressPostOffice);
-        assertEquals("EN", savedStreetAddressPostOffice.getLanguage());
-        assertEquals("London Post", savedStreetAddressPostOffice.getValue());
+        assertEquals("fi", savedStreetAddressPostOffice.getLanguage());
+        assertEquals("NIVALA", savedStreetAddressPostOffice.getValue());
         verifySavedStatusInfo(savedStreetAddressPostOffice.getStatusInfo());
     }
 
@@ -666,12 +666,12 @@ public class CatalogServiceTest {
         assertEquals(1, organization.get().getAllAddresses().iterator().next().getAllStreetAddresses().size());
         StreetAddressAdditionalInformation addressAdditionalInformation = StreetAddressAdditionalInformation.builder()
                 .streetAddress(organization.get().getAllAddresses().iterator().next().getAllStreetAddresses().iterator().next())
-                .language("EN").value("Some additional information").build();
+                .language("fi").value("Kaupungintalo/kaupunginjohtaja").build();
         StreetAddressAdditionalInformation savedStreetAddressAdditionalInformation =
                 catalogService.saveStreetAddressAdditionalInformation(addressAdditionalInformation);
         assertNotNull(savedStreetAddressAdditionalInformation);
-        assertEquals("EN", savedStreetAddressAdditionalInformation.getLanguage());
-        assertEquals("Some additional information", savedStreetAddressAdditionalInformation.getValue());
+        assertEquals("fi", savedStreetAddressAdditionalInformation.getLanguage());
+        assertEquals("Kaupungintalo/kaupunginjohtaja", savedStreetAddressAdditionalInformation.getValue());
         verifySavedStatusInfo(savedStreetAddressAdditionalInformation.getStatusInfo());
     }
 
@@ -699,12 +699,12 @@ public class CatalogServiceTest {
         StreetAddressMunicipalityName streetAddressMunicipalityName = StreetAddressMunicipalityName.builder()
                 .streetAddressMunicipality(organization.get().getAllAddresses().iterator().next().getAllStreetAddresses()
                         .iterator().next().getAllMunicipalities().iterator().next())
-                .language("EN").value("Municipality name").build();
+                .language("fi").value("Nivala").build();
         StreetAddressMunicipalityName savedStreetAddressMunicipalityName =
                 catalogService.saveStreetAddressMunicipalityName(streetAddressMunicipalityName);
         assertNotNull(savedStreetAddressMunicipalityName);
-        assertEquals("EN", savedStreetAddressMunicipalityName.getLanguage());
-        assertEquals("Municipality name", savedStreetAddressMunicipalityName.getValue());
+        assertEquals("fi", savedStreetAddressMunicipalityName.getLanguage());
+        assertEquals("Nivala", savedStreetAddressMunicipalityName.getValue());
         verifySavedStatusInfo(savedStreetAddressMunicipalityName.getStatusInfo());
     }
 
@@ -729,11 +729,11 @@ public class CatalogServiceTest {
         assertEquals(1, organization.get().getAllAddresses().iterator().next().getAllPostOfficeBoxAddresses().size());
         PostOffice postOffice = PostOffice.builder()
                 .postOfficeBoxAddress(organization.get().getAllAddresses().iterator().next().getAllPostOfficeBoxAddresses().iterator().next())
-                .language("EN").value("London post office").build();
+                .language("FI").value("Posti").build();
         PostOffice savedPostOffice = catalogService.savePostOffice(postOffice);
         assertNotNull(savedPostOffice);
-        assertEquals("EN", savedPostOffice.getLanguage());
-        assertEquals("London post office", savedPostOffice.getValue());
+        assertEquals("FI", savedPostOffice.getLanguage());
+        assertEquals("Posti", savedPostOffice.getValue());
         verifySavedStatusInfo(savedPostOffice.getStatusInfo());
     }
 
@@ -745,11 +745,11 @@ public class CatalogServiceTest {
         assertEquals(1, organization.get().getAllAddresses().iterator().next().getAllPostOfficeBoxAddresses().size());
         PostOfficeBox postOfficeBox = PostOfficeBox.builder()
                 .postOfficeBoxAddress(organization.get().getAllAddresses().iterator().next().getAllPostOfficeBoxAddresses().iterator().next())
-                .language("EN").value("London PO box").build();
+                .language("FI").value("NIVALA").build();
         PostOfficeBox savedPostOfficeBox = catalogService.savePostOfficeBox(postOfficeBox);
         assertNotNull(savedPostOfficeBox);
-        assertEquals("EN", savedPostOfficeBox.getLanguage());
-        assertEquals("London PO box", savedPostOfficeBox.getValue());
+        assertEquals("FI", savedPostOfficeBox.getLanguage());
+        assertEquals("NIVALA", savedPostOfficeBox.getValue());
         verifySavedStatusInfo(savedPostOfficeBox.getStatusInfo());
     }
 
@@ -761,12 +761,12 @@ public class CatalogServiceTest {
         assertEquals(1, organization.get().getAllAddresses().iterator().next().getAllPostOfficeBoxAddresses().size());
         PostOfficeBoxAddressAdditionalInformation addressAdditionalInformation = PostOfficeBoxAddressAdditionalInformation.builder()
                 .postOfficeBoxAddress(organization.get().getAllAddresses().iterator().next().getAllPostOfficeBoxAddresses().iterator().next())
-                .language("EN").value("Additional information").build();
+                .language("fi").value("Kaupungintalo/kaupunginjohtaja").build();
         PostOfficeBoxAddressAdditionalInformation savedAdditionalInformation =
                 catalogService.savePostOfficeBoxAddressAdditionalInformation(addressAdditionalInformation);
         assertNotNull(savedAdditionalInformation);
-        assertEquals("EN", savedAdditionalInformation.getLanguage());
-        assertEquals("Additional information", savedAdditionalInformation.getValue());
+        assertEquals("fi", savedAdditionalInformation.getLanguage());
+        assertEquals("Kaupungintalo/kaupunginjohtaja", savedAdditionalInformation.getValue());
         verifySavedStatusInfo(savedAdditionalInformation.getStatusInfo());
     }
 
@@ -795,12 +795,12 @@ public class CatalogServiceTest {
         PostOfficeBoxAddressMunicipalityName postOfficeBoxAddressMunicipalityName = PostOfficeBoxAddressMunicipalityName.builder()
                 .postOfficeBoxAddressMunicipality(organization.get().getAllAddresses().iterator().next().getAllPostOfficeBoxAddresses()
                         .iterator().next().getAllMunicipalities().iterator().next())
-                .language("EN").value("Name of the municipality").build();
+                .language("fi").value("Nivala").build();
         PostOfficeBoxAddressMunicipalityName savedPostOfficeBoxMunicipalityName =
                 catalogService.savePostOfficeBoxAddressMunicipalityName(postOfficeBoxAddressMunicipalityName);
         assertNotNull(savedPostOfficeBoxMunicipalityName);
-        assertEquals("EN", savedPostOfficeBoxMunicipalityName.getLanguage());
-        assertEquals("Name of the municipality", savedPostOfficeBoxMunicipalityName.getValue());
+        assertEquals("fi", savedPostOfficeBoxMunicipalityName.getLanguage());
+        assertEquals("Nivala", savedPostOfficeBoxMunicipalityName.getValue());
         verifySavedStatusInfo(savedPostOfficeBoxMunicipalityName.getStatusInfo());
     }
 

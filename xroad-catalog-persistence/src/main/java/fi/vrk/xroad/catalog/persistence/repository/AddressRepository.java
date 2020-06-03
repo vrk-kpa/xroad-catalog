@@ -23,7 +23,9 @@
 package fi.vrk.xroad.catalog.persistence.repository;
 
 import fi.vrk.xroad.catalog.persistence.entity.Address;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 import java.util.Optional;
@@ -31,5 +33,12 @@ import java.util.Optional;
 public interface AddressRepository extends CrudRepository<Address, Long> {
 
     Optional<List<Address>> findAnyByOrganizationId(Long organizationId);
+
+    @Query("SELECT a FROM Address a WHERE a.organization.id = :organizationId "
+            +"AND a.type = :type "
+            + "AND a.subType = :subType")
+    Optional<Address> findAny(@Param("organizationId") Long organizationId,
+                              @Param("type") String type,
+                              @Param("subType") String subType);
 
 }

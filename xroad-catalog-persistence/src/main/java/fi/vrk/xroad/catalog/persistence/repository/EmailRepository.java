@@ -23,7 +23,9 @@
 package fi.vrk.xroad.catalog.persistence.repository;
 
 import fi.vrk.xroad.catalog.persistence.entity.Email;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 import java.util.Optional;
@@ -32,4 +34,10 @@ public interface EmailRepository extends CrudRepository<Email, Long> {
 
     Optional<List<Email>> findAnyByOrganizationId(Long organizationId);
 
+    @Query("SELECT e FROM Email e WHERE e.organization.id = :organizationId "
+            +"AND e.language = :language "
+            + "AND e.description = :description")
+    Optional<Email> findAny(@Param("organizationId") Long organizationId,
+                            @Param("language") String language,
+                            @Param("description") String description);
 }
