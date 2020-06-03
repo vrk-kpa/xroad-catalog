@@ -23,7 +23,9 @@
 package fi.vrk.xroad.catalog.persistence.repository;
 
 import fi.vrk.xroad.catalog.persistence.entity.WebPage;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 import java.util.Optional;
@@ -31,4 +33,11 @@ import java.util.Optional;
 public interface WebPageRepository extends CrudRepository<WebPage, Long> {
 
     Optional<List<WebPage>> findAnyByOrganizationId(Long organizationId);
+
+    @Query("SELECT w FROM WebPage w WHERE w.organization.id = :organizationId "
+            +"AND w.language = :language "
+            + "AND w.url = :url")
+    Optional<WebPage> findAny(@Param("organizationId") Long organizationId,
+                              @Param("language") String language,
+                              @Param("url") String url);
 }

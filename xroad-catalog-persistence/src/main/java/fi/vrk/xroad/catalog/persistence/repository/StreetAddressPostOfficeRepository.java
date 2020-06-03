@@ -23,7 +23,9 @@
 package fi.vrk.xroad.catalog.persistence.repository;
 
 import fi.vrk.xroad.catalog.persistence.entity.StreetAddressPostOffice;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 import java.util.Optional;
@@ -31,4 +33,7 @@ import java.util.Optional;
 public interface StreetAddressPostOfficeRepository extends CrudRepository<StreetAddressPostOffice, Long> {
 
     Optional<List<StreetAddressPostOffice>> findAnyByStreetAddressId(Long streetAddressId);
+
+    @Query("SELECT s FROM StreetAddressPostOffice s WHERE s.streetAddress.id = :streetAddressId AND s.language = :language")
+    Optional<StreetAddressPostOffice> findAny(@Param("streetAddressId") Long streetAddressId, @Param("language") String language);
 }

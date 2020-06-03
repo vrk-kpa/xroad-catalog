@@ -23,7 +23,9 @@
 package fi.vrk.xroad.catalog.persistence.repository;
 
 import fi.vrk.xroad.catalog.persistence.entity.PostOfficeBox;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 import java.util.Optional;
@@ -31,4 +33,7 @@ import java.util.Optional;
 public interface PostOfficeBoxRepository extends CrudRepository<PostOfficeBox, Long> {
 
     Optional<List<PostOfficeBox>> findAnyByPostOfficeBoxAddressId(Long postOfficeBoxAddressId);
+
+    @Query("SELECT p FROM PostOfficeBox p WHERE p.postOfficeBoxAddress.id = :postOfficeBoxAddressId AND p.language = :language")
+    Optional<PostOfficeBox> findAny(@Param("postOfficeBoxAddressId") Long postOfficeBoxAddressId, @Param("language") String language);
 }

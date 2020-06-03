@@ -454,18 +454,17 @@ public class CatalogServiceImpl implements CatalogService {
 
     @Override
     public void saveOrganizationName(OrganizationName organizationName) {
-        Optional<List<OrganizationName>> foundList = organizationNameRepository
-                .findAnyByOrganizationId(organizationName.getOrganization().getId());
-        if (foundList.isPresent() && !foundList.get().isEmpty()) {
-            foundList.get().forEach(oldOrganizationName -> {
-                StatusInfo statusInfo = oldOrganizationName.getStatusInfo();
-                statusInfo.setFetched(LocalDateTime.now());
-                if (!oldOrganizationName.equals(organizationName)) {
-                    statusInfo.setChanged(LocalDateTime.now());
-                }
-                organizationName.setStatusInfo(statusInfo);
-                organizationName.setId(oldOrganizationName.getId());
-            });
+        Optional<OrganizationName> foundOrganizationName = organizationNameRepository
+                .findAny(organizationName.getOrganization().getId(), organizationName.getLanguage(), organizationName.getType());
+        if (foundOrganizationName.isPresent()) {
+            OrganizationName oldOrganizationName = foundOrganizationName.get();
+            StatusInfo statusInfo = oldOrganizationName.getStatusInfo();
+            statusInfo.setFetched(LocalDateTime.now());
+            if (!oldOrganizationName.equals(organizationName)) {
+                statusInfo.setChanged(LocalDateTime.now());
+            }
+            organizationName.setStatusInfo(statusInfo);
+            organizationName.setId(oldOrganizationName.getId());
         } else {
             StatusInfo statusInfo = new StatusInfo();
             statusInfo.setCreated(LocalDateTime.now());
@@ -478,18 +477,18 @@ public class CatalogServiceImpl implements CatalogService {
 
     @Override
     public void saveOrganizationDescription(OrganizationDescription organizationDescription) {
-        Optional<List<OrganizationDescription>> foundList = organizationDescriptionRepository
-                .findAnyByOrganizationId(organizationDescription.getOrganization().getId());
-        if (foundList.isPresent() && !foundList.get().isEmpty()) {
-            foundList.get().forEach(oldOrganizationDescription -> {
-                StatusInfo statusInfo = oldOrganizationDescription.getStatusInfo();
-                statusInfo.setFetched(LocalDateTime.now());
-                if (!oldOrganizationDescription.equals(organizationDescription)) {
-                    statusInfo.setChanged(LocalDateTime.now());
-                }
-                organizationDescription.setStatusInfo(statusInfo);
-                organizationDescription.setId(oldOrganizationDescription.getId());
-            });
+        Optional<OrganizationDescription> foundOrganizationDescription = organizationDescriptionRepository
+                .findAny(organizationDescription.getOrganization().getId(),
+                        organizationDescription.getLanguage(), organizationDescription.getType());
+        if (foundOrganizationDescription.isPresent()) {
+            OrganizationDescription oldOrganizationDescription = foundOrganizationDescription.get();
+            StatusInfo statusInfo = oldOrganizationDescription.getStatusInfo();
+            statusInfo.setFetched(LocalDateTime.now());
+            if (!oldOrganizationDescription.equals(organizationDescription)) {
+                statusInfo.setChanged(LocalDateTime.now());
+            }
+            organizationDescription.setStatusInfo(statusInfo);
+            organizationDescription.setId(oldOrganizationDescription.getId());
         } else {
             StatusInfo statusInfo = new StatusInfo();
             statusInfo.setCreated(LocalDateTime.now());
@@ -502,18 +501,17 @@ public class CatalogServiceImpl implements CatalogService {
 
     @Override
     public void saveEmail(Email email) {
-        Optional<List<Email>> foundList = emailRepository
-                .findAnyByOrganizationId(email.getOrganization().getId());
-        if (foundList.isPresent() && !foundList.get().isEmpty()) {
-            foundList.get().forEach(oldEmail -> {
-                StatusInfo statusInfo = oldEmail.getStatusInfo();
-                statusInfo.setFetched(LocalDateTime.now());
-                if (!oldEmail.equals(email)) {
-                    statusInfo.setChanged(LocalDateTime.now());
-                }
-                email.setStatusInfo(statusInfo);
-                email.setId(oldEmail.getId());
-            });
+        Optional<Email> foundEmail = emailRepository
+                .findAny(email.getOrganization().getId(), email.getLanguage(), email.getDescription());
+        if (foundEmail.isPresent()) {
+            Email oldEmail = foundEmail.get();
+            StatusInfo statusInfo = oldEmail.getStatusInfo();
+            statusInfo.setFetched(LocalDateTime.now());
+            if (!oldEmail.equals(email)) {
+                statusInfo.setChanged(LocalDateTime.now());
+            }
+            email.setStatusInfo(statusInfo);
+            email.setId(oldEmail.getId());
         } else {
             StatusInfo statusInfo = new StatusInfo();
             statusInfo.setCreated(LocalDateTime.now());
@@ -526,18 +524,17 @@ public class CatalogServiceImpl implements CatalogService {
 
     @Override
     public void savePhoneNumber(PhoneNumber phoneNumber) {
-        Optional<List<PhoneNumber>> foundList = phoneNumberRepository
-                .findAnyByOrganizationId(phoneNumber.getOrganization().getId());
-        if (foundList.isPresent() && !foundList.get().isEmpty()) {
-            foundList.get().forEach(oldPhoneNumber -> {
-                StatusInfo statusInfo = oldPhoneNumber.getStatusInfo();
-                statusInfo.setFetched(LocalDateTime.now());
-                if (!oldPhoneNumber.equals(phoneNumber)) {
-                    statusInfo.setChanged(LocalDateTime.now());
-                }
-                phoneNumber.setStatusInfo(statusInfo);
-                phoneNumber.setId(oldPhoneNumber.getId());
-            });
+        Optional<PhoneNumber> foundPhoneNumber = phoneNumberRepository
+                .findAny(phoneNumber.getOrganization().getId(), phoneNumber.getLanguage());
+        if (foundPhoneNumber.isPresent()) {
+            PhoneNumber oldPhoneNumber = foundPhoneNumber.get();
+            StatusInfo statusInfo = oldPhoneNumber.getStatusInfo();
+            statusInfo.setFetched(LocalDateTime.now());
+            if (!oldPhoneNumber.equals(phoneNumber)) {
+                statusInfo.setChanged(LocalDateTime.now());
+            }
+            phoneNumber.setStatusInfo(statusInfo);
+            phoneNumber.setId(oldPhoneNumber.getId());
         } else {
             StatusInfo statusInfo = new StatusInfo();
             statusInfo.setCreated(LocalDateTime.now());
@@ -550,18 +547,17 @@ public class CatalogServiceImpl implements CatalogService {
 
     @Override
     public void saveWebPage(WebPage webPage) {
-        Optional<List<WebPage>> foundList = webpageRepository
-                .findAnyByOrganizationId(webPage.getOrganization().getId());
-        if (foundList.isPresent() && !foundList.get().isEmpty()) {
-            foundList.get().forEach(oldWebPage -> {
-                StatusInfo statusInfo = oldWebPage.getStatusInfo();
-                statusInfo.setFetched(LocalDateTime.now());
-                if (!oldWebPage.equals(webPage)) {
-                    statusInfo.setChanged(LocalDateTime.now());
-                }
-                webPage.setStatusInfo(statusInfo);
-                webPage.setId(oldWebPage.getId());
-            });
+        Optional<WebPage> foundWebPage = webpageRepository
+                .findAny(webPage.getOrganization().getId(), webPage.getLanguage(), webPage.getUrl());
+        if (foundWebPage.isPresent()) {
+            WebPage oldWebPage = foundWebPage.get();
+            StatusInfo statusInfo = oldWebPage.getStatusInfo();
+            statusInfo.setFetched(LocalDateTime.now());
+            if (!oldWebPage.equals(webPage)) {
+                statusInfo.setChanged(LocalDateTime.now());
+            }
+            webPage.setStatusInfo(statusInfo);
+            webPage.setId(oldWebPage.getId());
         } else {
             StatusInfo statusInfo = new StatusInfo();
             statusInfo.setCreated(LocalDateTime.now());
@@ -574,18 +570,17 @@ public class CatalogServiceImpl implements CatalogService {
 
     @Override
     public Address saveAddress(Address address) {
-        Optional<List<Address>> foundList = addressRepository
-                .findAnyByOrganizationId(address.getOrganization().getId());
-        if (foundList.isPresent() && !foundList.get().isEmpty()) {
-            foundList.get().forEach(oldAddress -> {
-                StatusInfo statusInfo = oldAddress.getStatusInfo();
-                statusInfo.setFetched(LocalDateTime.now());
-                if (!oldAddress.equals(address)) {
-                    statusInfo.setChanged(LocalDateTime.now());
-                }
-                address.setStatusInfo(statusInfo);
-                address.setId(oldAddress.getId());
-            });
+        Optional<Address> foundAddress = addressRepository
+                .findAny(address.getOrganization().getId(), address.getType(), address.getSubType());
+        if (foundAddress.isPresent()) {
+            Address oldAddress = foundAddress.get();
+            StatusInfo statusInfo = oldAddress.getStatusInfo();
+            statusInfo.setFetched(LocalDateTime.now());
+            if (!oldAddress.equals(address)) {
+                statusInfo.setChanged(LocalDateTime.now());
+            }
+            address.setStatusInfo(statusInfo);
+            address.setId(oldAddress.getId());
         } else {
             StatusInfo statusInfo = new StatusInfo();
             statusInfo.setCreated(LocalDateTime.now());
@@ -693,18 +688,17 @@ public class CatalogServiceImpl implements CatalogService {
     @Override
     public StreetAddressMunicipalityName saveStreetAddressMunicipalityName(
             StreetAddressMunicipalityName streetAddressMunicipalityName) {
-        Optional<List<StreetAddressMunicipalityName>> foundList = streetAddressMunicipalityNameRepository
-                .findAnyByStreetAddressMunicipalityId(streetAddressMunicipalityName.getStreetAddressMunicipality().getId());
-        if (foundList.isPresent() && !foundList.get().isEmpty()) {
-            foundList.get().forEach(oldStreetAddressMunicipalityName -> {
-                StatusInfo statusInfo = oldStreetAddressMunicipalityName.getStatusInfo();
-                statusInfo.setFetched(LocalDateTime.now());
-                if (!oldStreetAddressMunicipalityName.equals(streetAddressMunicipalityName)) {
-                    statusInfo.setChanged(LocalDateTime.now());
-                }
-                streetAddressMunicipalityName.setStatusInfo(statusInfo);
-                streetAddressMunicipalityName.setId(oldStreetAddressMunicipalityName.getId());
-            });
+        Optional<StreetAddressMunicipalityName> foundStreetAddressMunicipalityName = streetAddressMunicipalityNameRepository
+                .findAny(streetAddressMunicipalityName.getStreetAddressMunicipality().getId(), streetAddressMunicipalityName.getLanguage());
+        if (foundStreetAddressMunicipalityName.isPresent()) {
+            StreetAddressMunicipalityName oldStreetAddressMunicipalityName = foundStreetAddressMunicipalityName.get();
+            StatusInfo statusInfo = oldStreetAddressMunicipalityName.getStatusInfo();
+            statusInfo.setFetched(LocalDateTime.now());
+            if (!oldStreetAddressMunicipalityName.equals(streetAddressMunicipalityName)) {
+                statusInfo.setChanged(LocalDateTime.now());
+            }
+            streetAddressMunicipalityName.setStatusInfo(statusInfo);
+            streetAddressMunicipalityName.setId(oldStreetAddressMunicipalityName.getId());
         } else {
             StatusInfo statusInfo = new StatusInfo();
             statusInfo.setCreated(LocalDateTime.now());
@@ -718,19 +712,20 @@ public class CatalogServiceImpl implements CatalogService {
     @Override
     public PostOfficeBoxAddressMunicipalityName savePostOfficeBoxAddressMunicipalityName(
             PostOfficeBoxAddressMunicipalityName postOfficeBoxAddressMunicipalityName) {
-        Optional<List<PostOfficeBoxAddressMunicipalityName>> foundList =
-                postOfficeBoxAddressMunicipalityNameRepository
-                .findAnyByPostOfficeBoxAddressMunicipalityId(postOfficeBoxAddressMunicipalityName.getPostOfficeBoxAddressMunicipality().getId());
-        if (foundList.isPresent() && !foundList.get().isEmpty()) {
-            foundList.get().forEach(oldPostOfficeBoxAddressMunicipalityName -> {
-                StatusInfo statusInfo = oldPostOfficeBoxAddressMunicipalityName.getStatusInfo();
-                statusInfo.setFetched(LocalDateTime.now());
-                if (!oldPostOfficeBoxAddressMunicipalityName.equals(postOfficeBoxAddressMunicipalityName)) {
-                    statusInfo.setChanged(LocalDateTime.now());
-                }
-                postOfficeBoxAddressMunicipalityName.setStatusInfo(statusInfo);
-                postOfficeBoxAddressMunicipalityName.setId(oldPostOfficeBoxAddressMunicipalityName.getId());
-            });
+        Optional<PostOfficeBoxAddressMunicipalityName> foundPostOfficeBoxAddressMunicipalityName
+                = postOfficeBoxAddressMunicipalityNameRepository.findAny(
+                        postOfficeBoxAddressMunicipalityName.getPostOfficeBoxAddressMunicipality().getId(),
+                postOfficeBoxAddressMunicipalityName.getLanguage());
+        if (foundPostOfficeBoxAddressMunicipalityName.isPresent()) {
+            PostOfficeBoxAddressMunicipalityName oldPostOfficeBoxAddressMunicipalityName
+                    = foundPostOfficeBoxAddressMunicipalityName.get();
+            StatusInfo statusInfo = oldPostOfficeBoxAddressMunicipalityName.getStatusInfo();
+            statusInfo.setFetched(LocalDateTime.now());
+            if (!oldPostOfficeBoxAddressMunicipalityName.equals(postOfficeBoxAddressMunicipalityName)) {
+                statusInfo.setChanged(LocalDateTime.now());
+            }
+            postOfficeBoxAddressMunicipalityName.setStatusInfo(statusInfo);
+            postOfficeBoxAddressMunicipalityName.setId(oldPostOfficeBoxAddressMunicipalityName.getId());
         } else {
             StatusInfo statusInfo = new StatusInfo();
             statusInfo.setCreated(LocalDateTime.now());
@@ -744,18 +739,17 @@ public class CatalogServiceImpl implements CatalogService {
     @Override
     public StreetAddressAdditionalInformation saveStreetAddressAdditionalInformation(
             StreetAddressAdditionalInformation streetAddressAdditionalInformation) {
-        Optional<List<StreetAddressAdditionalInformation>> foundList = streetAddressAdditionalInformationRepository
-                .findAnyByStreetAddressId(streetAddressAdditionalInformation.getStreetAddress().getId());
-        if (foundList.isPresent() && !foundList.get().isEmpty()) {
-            foundList.get().forEach(oldStreetAddressAdditionalInformation -> {
-                StatusInfo statusInfo = oldStreetAddressAdditionalInformation.getStatusInfo();
-                statusInfo.setFetched(LocalDateTime.now());
-                if (!oldStreetAddressAdditionalInformation.equals(streetAddressAdditionalInformation)) {
-                    statusInfo.setChanged(LocalDateTime.now());
-                }
-                streetAddressAdditionalInformation.setStatusInfo(statusInfo);
-                streetAddressAdditionalInformation.setId(oldStreetAddressAdditionalInformation.getId());
-            });
+        Optional<StreetAddressAdditionalInformation> foundStreetAddressAdditionalInformation = streetAddressAdditionalInformationRepository
+                .findAny(streetAddressAdditionalInformation.getStreetAddress().getId(), streetAddressAdditionalInformation.getLanguage());
+        if (foundStreetAddressAdditionalInformation.isPresent()) {
+            StreetAddressAdditionalInformation oldStreetAddressAdditionalInformation = foundStreetAddressAdditionalInformation.get();
+            StatusInfo statusInfo = oldStreetAddressAdditionalInformation.getStatusInfo();
+            statusInfo.setFetched(LocalDateTime.now());
+            if (!oldStreetAddressAdditionalInformation.equals(streetAddressAdditionalInformation)) {
+                statusInfo.setChanged(LocalDateTime.now());
+            }
+            streetAddressAdditionalInformation.setStatusInfo(statusInfo);
+            streetAddressAdditionalInformation.setId(oldStreetAddressAdditionalInformation.getId());
         } else {
             StatusInfo statusInfo = new StatusInfo();
             statusInfo.setCreated(LocalDateTime.now());
@@ -769,19 +763,20 @@ public class CatalogServiceImpl implements CatalogService {
     @Override
     public PostOfficeBoxAddressAdditionalInformation savePostOfficeBoxAddressAdditionalInformation(
             PostOfficeBoxAddressAdditionalInformation postOfficeBoxAddressAdditionalInformation) {
-        Optional<List<PostOfficeBoxAddressAdditionalInformation>> foundList =
-                postOfficeBoxAddressAdditionalInformationRepository
-                        .findAnyByPostOfficeBoxAddressId(postOfficeBoxAddressAdditionalInformation.getPostOfficeBoxAddress().getId());
-        if (foundList.isPresent() && !foundList.get().isEmpty()) {
-            foundList.get().forEach(oldPostOfficeBoxAddressAdditionalInformation -> {
-                StatusInfo statusInfo = oldPostOfficeBoxAddressAdditionalInformation.getStatusInfo();
-                statusInfo.setFetched(LocalDateTime.now());
-                if (!oldPostOfficeBoxAddressAdditionalInformation.equals(postOfficeBoxAddressAdditionalInformation)) {
-                    statusInfo.setChanged(LocalDateTime.now());
-                }
-                postOfficeBoxAddressAdditionalInformation.setStatusInfo(statusInfo);
-                postOfficeBoxAddressAdditionalInformation.setId(oldPostOfficeBoxAddressAdditionalInformation.getId());
-            });
+        Optional<PostOfficeBoxAddressAdditionalInformation> foundPostOfficeBoxAddressAdditionalInformation
+                = postOfficeBoxAddressAdditionalInformationRepository.findAny(
+                        postOfficeBoxAddressAdditionalInformation.getPostOfficeBoxAddress().getId(),
+                postOfficeBoxAddressAdditionalInformation.getLanguage());
+        if (foundPostOfficeBoxAddressAdditionalInformation.isPresent()) {
+            PostOfficeBoxAddressAdditionalInformation oldPostOfficeBoxAddressAdditionalInformation
+                    = foundPostOfficeBoxAddressAdditionalInformation.get();
+            StatusInfo statusInfo = oldPostOfficeBoxAddressAdditionalInformation.getStatusInfo();
+            statusInfo.setFetched(LocalDateTime.now());
+            if (!oldPostOfficeBoxAddressAdditionalInformation.equals(postOfficeBoxAddressAdditionalInformation)) {
+                statusInfo.setChanged(LocalDateTime.now());
+            }
+            postOfficeBoxAddressAdditionalInformation.setStatusInfo(statusInfo);
+            postOfficeBoxAddressAdditionalInformation.setId(oldPostOfficeBoxAddressAdditionalInformation.getId());
         } else {
             StatusInfo statusInfo = new StatusInfo();
             statusInfo.setCreated(LocalDateTime.now());
@@ -794,18 +789,17 @@ public class CatalogServiceImpl implements CatalogService {
 
     @Override
     public StreetAddressPostOffice saveStreetAddressPostOffice(StreetAddressPostOffice streetAddressPostOffice) {
-        Optional<List<StreetAddressPostOffice>> foundList = streetAddressPostOfficeRepository
-                .findAnyByStreetAddressId(streetAddressPostOffice.getStreetAddress().getId());
-        if (foundList.isPresent() && !foundList.get().isEmpty()) {
-            foundList.get().forEach(oldStreetAddressPostOffice -> {
-                StatusInfo statusInfo = oldStreetAddressPostOffice.getStatusInfo();
-                statusInfo.setFetched(LocalDateTime.now());
-                if (!oldStreetAddressPostOffice.equals(streetAddressPostOffice)) {
-                    statusInfo.setChanged(LocalDateTime.now());
-                }
-                streetAddressPostOffice.setStatusInfo(statusInfo);
-                streetAddressPostOffice.setId(oldStreetAddressPostOffice.getId());
-            });
+        Optional<StreetAddressPostOffice> foundStreetAddressPostOffice = streetAddressPostOfficeRepository
+                .findAny(streetAddressPostOffice.getStreetAddress().getId(), streetAddressPostOffice.getLanguage());
+        if (foundStreetAddressPostOffice.isPresent()) {
+            StreetAddressPostOffice oldStreetAddressPostOffice = foundStreetAddressPostOffice.get();
+            StatusInfo statusInfo = oldStreetAddressPostOffice.getStatusInfo();
+            statusInfo.setFetched(LocalDateTime.now());
+            if (!oldStreetAddressPostOffice.equals(streetAddressPostOffice)) {
+                statusInfo.setChanged(LocalDateTime.now());
+            }
+            streetAddressPostOffice.setStatusInfo(statusInfo);
+            streetAddressPostOffice.setId(oldStreetAddressPostOffice.getId());
         } else {
             StatusInfo statusInfo = new StatusInfo();
             statusInfo.setCreated(LocalDateTime.now());
@@ -818,18 +812,17 @@ public class CatalogServiceImpl implements CatalogService {
 
     @Override
     public PostOffice savePostOffice(PostOffice postOffice) {
-        Optional<List<PostOffice>> foundList = postOfficeRepository
-                .findAnyByPostOfficeBoxAddressId(postOffice.getPostOfficeBoxAddress().getId());
-        if (foundList.isPresent() && !foundList.get().isEmpty()) {
-            foundList.get().forEach(oldPostOffice -> {
-                StatusInfo statusInfo = oldPostOffice.getStatusInfo();
-                statusInfo.setFetched(LocalDateTime.now());
-                if (!oldPostOffice.equals(postOffice)) {
-                    statusInfo.setChanged(LocalDateTime.now());
-                }
-                postOffice.setStatusInfo(statusInfo);
-                postOffice.setId(oldPostOffice.getId());
-            });
+        Optional<PostOffice> foundPostOffice = postOfficeRepository
+                .findAny(postOffice.getPostOfficeBoxAddress().getId(), postOffice.getLanguage());
+        if (foundPostOffice.isPresent()) {
+            PostOffice oldPostOffice = foundPostOffice.get();
+            StatusInfo statusInfo = oldPostOffice.getStatusInfo();
+            statusInfo.setFetched(LocalDateTime.now());
+            if (!oldPostOffice.equals(postOffice)) {
+                statusInfo.setChanged(LocalDateTime.now());
+            }
+            postOffice.setStatusInfo(statusInfo);
+            postOffice.setId(oldPostOffice.getId());
         } else {
             StatusInfo statusInfo = new StatusInfo();
             statusInfo.setCreated(LocalDateTime.now());
@@ -842,18 +835,17 @@ public class CatalogServiceImpl implements CatalogService {
 
     @Override
     public PostOfficeBox savePostOfficeBox(PostOfficeBox postOfficeBox) {
-        Optional<List<PostOfficeBox>> foundList = postOfficeBoxRepository
-                .findAnyByPostOfficeBoxAddressId(postOfficeBox.getPostOfficeBoxAddress().getId());
-        if (foundList.isPresent() && !foundList.get().isEmpty()) {
-            foundList.get().forEach(oldPostOfficeBox -> {
-                StatusInfo statusInfo = oldPostOfficeBox.getStatusInfo();
-                statusInfo.setFetched(LocalDateTime.now());
-                if (!oldPostOfficeBox.equals(postOfficeBox)) {
-                    statusInfo.setChanged(LocalDateTime.now());
-                }
-                postOfficeBox.setStatusInfo(statusInfo);
-                postOfficeBox.setId(oldPostOfficeBox.getId());
-            });
+        Optional<PostOfficeBox> foundPostOfficeBox = postOfficeBoxRepository
+                .findAny(postOfficeBox.getPostOfficeBoxAddress().getId(), postOfficeBox.getLanguage());
+        if (foundPostOfficeBox.isPresent()) {
+            PostOfficeBox oldPostOfficeBox = foundPostOfficeBox.get();
+            StatusInfo statusInfo = oldPostOfficeBox.getStatusInfo();
+            statusInfo.setFetched(LocalDateTime.now());
+            if (!oldPostOfficeBox.equals(postOfficeBox)) {
+                statusInfo.setChanged(LocalDateTime.now());
+            }
+            postOfficeBox.setStatusInfo(statusInfo);
+            postOfficeBox.setId(oldPostOfficeBox.getId());
         } else {
             StatusInfo statusInfo = new StatusInfo();
             statusInfo.setCreated(LocalDateTime.now());
@@ -866,18 +858,17 @@ public class CatalogServiceImpl implements CatalogService {
 
     @Override
     public Street saveStreet(Street street) {
-        Optional<List<Street>> foundList = streetRepository
-                .findAnyByStreetAddressId(street.getStreetAddress().getId());
-        if (foundList.isPresent() && !foundList.get().isEmpty()) {
-            foundList.get().forEach(oldStreet -> {
-                StatusInfo statusInfo = oldStreet.getStatusInfo();
-                statusInfo.setFetched(LocalDateTime.now());
-                if (!oldStreet.equals(street)) {
-                    statusInfo.setChanged(LocalDateTime.now());
-                }
-                street.setStatusInfo(statusInfo);
-                street.setId(oldStreet.getId());
-            });
+        Optional<Street> foundStreet = streetRepository
+                .findAny(street.getStreetAddress().getId(), street.getLanguage());
+        if (foundStreet.isPresent()) {
+            Street oldStreet = foundStreet.get();
+            StatusInfo statusInfo = oldStreet.getStatusInfo();
+            statusInfo.setFetched(LocalDateTime.now());
+            if (!oldStreet.equals(street)) {
+                statusInfo.setChanged(LocalDateTime.now());
+            }
+            street.setStatusInfo(statusInfo);
+            street.setId(oldStreet.getId());
         } else {
             StatusInfo statusInfo = new StatusInfo();
             statusInfo.setCreated(LocalDateTime.now());
