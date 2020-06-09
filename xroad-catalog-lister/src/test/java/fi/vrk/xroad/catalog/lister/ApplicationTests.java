@@ -79,6 +79,7 @@ public class ApplicationTests {
 		IsSoapService request = new IsSoapService();
 		request.setServiceCode("testService");
 		request.setSubsystemCode("TestSubSystem");
+		request.setServiceVersion("v1");
 		IsSoapServiceResponse result = (IsSoapServiceResponse)new WebServiceTemplate(marshaller).marshalSendAndReceive(
 				"http://localhost:" + port + "/ws/IsSoapService/", request);
 		assertNotNull(result);
@@ -90,6 +91,7 @@ public class ApplicationTests {
 		IsSoapService request = new IsSoapService();
 		request.setServiceCode("getRandom");
 		request.setSubsystemCode("TestSubSystem");
+		request.setServiceVersion("v1");
 		IsSoapServiceResponse result = (IsSoapServiceResponse)new WebServiceTemplate(marshaller).marshalSendAndReceive(
 				"http://localhost:" + port + "/ws/IsSoapService/", request);
 		assertNotNull(result);
@@ -104,6 +106,7 @@ public class ApplicationTests {
 			IsSoapService request = new IsSoapService();
 			request.setServiceCode("testService123");
 			request.setSubsystemCode("TestSubSystem");
+			request.setServiceVersion("v1");
 			new WebServiceTemplate(marshaller).marshalSendAndReceive(
 					"http://localhost:" + port + "/ws/IsSoapService/", request);
 		} catch (SoapFaultClientException e) {
@@ -111,7 +114,8 @@ public class ApplicationTests {
 			exceptionMessage = e.getMessage();
 		}
 		assertTrue(thrown);
-		assertEquals(exceptionMessage, "Service with serviceCode \"testService123\" and subsystemCode \"TestSubSystem\" not found");
+		assertEquals(exceptionMessage, "Service with serviceCode \"testService123\" and subsystemCode \"TestSubSystem\" " +
+				"and serviceVersion \"v1\" not found");
 	}
 
 	@Test
@@ -119,6 +123,7 @@ public class ApplicationTests {
 		IsRestService request = new IsRestService();
 		request.setServiceCode("getRandom");
 		request.setSubsystemCode("TestSubSystem");
+		request.setServiceVersion("v1");
 		IsRestServiceResponse result = (IsRestServiceResponse)new WebServiceTemplate(marshaller).marshalSendAndReceive(
 				"http://localhost:" + port + "/ws/IsRestService/", request);
 		assertNotNull(result);
@@ -130,6 +135,7 @@ public class ApplicationTests {
 		IsRestService request = new IsRestService();
 		request.setServiceCode("testService");
 		request.setSubsystemCode("TestSubSystem");
+		request.setServiceVersion("v1");
 		IsRestServiceResponse result = (IsRestServiceResponse)new WebServiceTemplate(marshaller).marshalSendAndReceive(
 				"http://localhost:" + port + "/ws/IsRestService/", request);
 		assertNotNull(result);
@@ -144,6 +150,7 @@ public class ApplicationTests {
 			IsRestService request = new IsRestService();
 			request.setServiceCode("getRandom123");
 			request.setSubsystemCode("TestSubSystem");
+			request.setServiceVersion("v1");
 			new WebServiceTemplate(marshaller).marshalSendAndReceive(
 					"http://localhost:" + port + "/ws/IsSoapService/", request);
 		} catch (SoapFaultClientException e) {
@@ -151,7 +158,8 @@ public class ApplicationTests {
 			exceptionMessage = e.getMessage();
 		}
 		assertTrue(thrown);
-		assertEquals(exceptionMessage, "Service with serviceCode \"getRandom123\" and subsystemCode \"TestSubSystem\" not found");
+		assertEquals(exceptionMessage, "Service with serviceCode \"getRandom123\" and subsystemCode \"TestSubSystem\" " +
+				"and serviceVersion \"v1\" not found");
 	}
 
 	@Test

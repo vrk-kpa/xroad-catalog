@@ -70,9 +70,12 @@ public class ServiceRepositoryTest {
 
     @Test
     public void testFindActiveByServiceAndSubsystem() {
-        Service service = serviceRepository.findActiveByServiceAndSubsystem("service-with-null-version", "subsystem_7-1");
+        Service service = serviceRepository.findActiveByServiceAndSubsystem("dummy-service_7-1-5",
+                "subsystem_7-1",
+                "v1");
         assertNotNull(service);
-        service = serviceRepository.findActiveByServiceAndSubsystem("removed-service_7-1-3", "subsystem_7-1");
+        service = serviceRepository.findActiveByServiceAndSubsystem("removed-service_7-1-3",
+                "subsystem_7-1", "v1");
         assertNull(service);
     }
 }
