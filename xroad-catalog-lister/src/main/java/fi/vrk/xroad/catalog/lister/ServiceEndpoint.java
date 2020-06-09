@@ -66,10 +66,11 @@ public class ServiceEndpoint {
     @ResponsePayload
     public IsSoapServiceResponse IsSoapService(@RequestPayload IsSoapService request) {
         IsSoapServiceResponse response = new IsSoapServiceResponse();
-        Service service = catalogService.getService(request.getServiceCode(), request.getSubsystemCode());
+        Service service = catalogService.getService(request.getServiceCode(), request.getSubsystemCode(), request.getServiceVersion());
         if (service == null) {
             throw new ServiceNotFoundException("Service with serviceCode \"" + request.getServiceCode()
-            + "\" and subsystemCode \"" + request.getSubsystemCode() + "\" not found");
+            + "\" and subsystemCode \"" + request.getSubsystemCode()
+                    + "\" and serviceVersion \"" + request.getServiceVersion() + "\" not found");
         }
         response.setSoap(service.hasWsdl());
         return response;
@@ -79,10 +80,11 @@ public class ServiceEndpoint {
     @ResponsePayload
     public IsRestServiceResponse IsRestService(@RequestPayload IsRestService request) {
         IsRestServiceResponse response = new IsRestServiceResponse();
-        Service service = catalogService.getService(request.getServiceCode(), request.getSubsystemCode());
+        Service service = catalogService.getService(request.getServiceCode(), request.getSubsystemCode(), request.getServiceVersion());
         if (service == null) {
             throw new ServiceNotFoundException("Service with serviceCode \"" + request.getServiceCode()
-                    + "\" and subsystemCode \"" + request.getSubsystemCode() + "\" not found");
+                    + "\" and subsystemCode \"" + request.getSubsystemCode()
+                    + "\" and serviceVersion \"" + request.getServiceVersion() + "\" not found");
         }
         response.setRest(service.hasOpenApi());
         return response;
