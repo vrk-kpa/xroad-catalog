@@ -210,11 +210,18 @@ public class CatalogServiceImpl implements CatalogService {
     }
 
     @Override
-    public Service getService(String serviceCode, String subsystemCode, String serviceVersion) {
+    public Service getService(String xRoadInstance,
+                              String memberClass,
+                              String memberCode,
+                              String serviceCode,
+                              String subsystemCode,
+                              String serviceVersion) {
         if (serviceVersion.isEmpty() || serviceVersion == null) {
-            return serviceRepository.findActiveByServiceAndSubsystem(serviceCode, subsystemCode);
+            return serviceRepository.findActiveByMemberServiceAndSubsystem(xRoadInstance,
+                    memberClass, memberCode, serviceCode, subsystemCode);
         }
-        return serviceRepository.findActiveByServiceAndSubsystemAndVersion(serviceCode, subsystemCode, serviceVersion);
+        return serviceRepository.findActiveByMemberServiceAndSubsystemAndVersion(xRoadInstance,
+                memberClass, memberCode, serviceCode, subsystemCode, serviceVersion);
     }
 
     @Override
