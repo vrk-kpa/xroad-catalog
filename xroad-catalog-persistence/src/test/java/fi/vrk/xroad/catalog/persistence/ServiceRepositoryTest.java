@@ -69,13 +69,23 @@ public class ServiceRepositoryTest {
     }
 
     @Test
-    public void testFindActiveByServiceAndSubsystem() {
-        Service service = serviceRepository.findActiveByServiceAndSubsystem("dummy-service_7-1-5",
+    public void testFindActiveByServiceAndSubsystemAndVersion() {
+        Service service = serviceRepository.findActiveByServiceAndSubsystemAndVersion("dummy-service_7-1-5",
                 "subsystem_7-1",
                 "v1");
         assertNotNull(service);
-        service = serviceRepository.findActiveByServiceAndSubsystem("removed-service_7-1-3",
+        service = serviceRepository.findActiveByServiceAndSubsystemAndVersion("removed-service_7-1-3",
                 "subsystem_7-1", "v1");
+        assertNull(service);
+    }
+
+    @Test
+    public void testFindActiveByServiceAndSubsystem() {
+        Service service = serviceRepository.findActiveByServiceAndSubsystem("dummy-service_7-1-5",
+                "subsystem_7-1");
+        assertNotNull(service);
+        service = serviceRepository.findActiveByServiceAndSubsystem("removed-service_7-1-3",
+                "subsystem_7-1");
         assertNull(service);
     }
 }
