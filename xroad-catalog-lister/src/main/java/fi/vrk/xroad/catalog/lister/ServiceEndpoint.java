@@ -66,10 +66,17 @@ public class ServiceEndpoint {
     @ResponsePayload
     public IsSoapServiceResponse IsSoapService(@RequestPayload IsSoapService request) {
         IsSoapServiceResponse response = new IsSoapServiceResponse();
-        Service service = catalogService.getService(request.getServiceCode(), request.getSubsystemCode(), request.getServiceVersion());
+        Service service = catalogService.getService(request.getXRoadInstance(),
+                request.getMemberClass(),
+                request.getMemberCode(),
+                request.getServiceCode(),
+                request.getSubsystemCode(),
+                request.getServiceVersion());
         if (service == null) {
-            throw new ServiceNotFoundException("Service with serviceCode \"" + request.getServiceCode()
-            + "\" and subsystemCode \"" + request.getSubsystemCode()
+            throw new ServiceNotFoundException("Service with xRoadInstance \"" + request.getXRoadInstance()
+                    + "\", memberClass \"" + request.getMemberClass()
+                    + "\", memberCode \"" + request.getMemberCode()
+                    + "\", subsystemCode \"" + request.getSubsystemCode()
                     + "\" and serviceVersion \"" + request.getServiceVersion() + "\" not found");
         }
         response.setSoap(service.hasWsdl());
@@ -80,10 +87,17 @@ public class ServiceEndpoint {
     @ResponsePayload
     public IsRestServiceResponse IsRestService(@RequestPayload IsRestService request) {
         IsRestServiceResponse response = new IsRestServiceResponse();
-        Service service = catalogService.getService(request.getServiceCode(), request.getSubsystemCode(), request.getServiceVersion());
+        Service service = catalogService.getService(request.getXRoadInstance(),
+                                                    request.getMemberClass(),
+                                                    request.getMemberCode(),
+                                                    request.getServiceCode(),
+                                                    request.getSubsystemCode(),
+                                                    request.getServiceVersion());
         if (service == null) {
-            throw new ServiceNotFoundException("Service with serviceCode \"" + request.getServiceCode()
-                    + "\" and subsystemCode \"" + request.getSubsystemCode()
+            throw new ServiceNotFoundException("Service with xRoadInstance \"" + request.getXRoadInstance()
+                    + "\", memberClass \"" + request.getMemberClass()
+                    + "\", memberCode \"" + request.getMemberCode()
+                    + "\", subsystemCode \"" + request.getSubsystemCode()
                     + "\" and serviceVersion \"" + request.getServiceVersion() + "\" not found");
         }
         response.setRest(service.hasOpenApi());

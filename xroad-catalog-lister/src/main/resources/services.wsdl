@@ -161,6 +161,9 @@ http://x-road.eu/xsd/identifiers ">
             <xs:element name="IsSoapService">
                 <xs:complexType>
                     <xs:sequence>
+                        <xs:element name="xRoadInstance" type="xs:string"/>
+                        <xs:element name="memberClass" type="xs:string"/>
+                        <xs:element name="memberCode" type="xs:string"/>
                         <xs:element name="serviceCode" type="xs:string"/>
                         <xs:element name="subsystemCode" type="xs:string"/>
                         <xs:element name="serviceVersion" type="xs:string"/>
@@ -179,6 +182,9 @@ http://x-road.eu/xsd/identifiers ">
             <xs:element name="IsRestService">
                 <xs:complexType>
                     <xs:sequence>
+                        <xs:element name="xRoadInstance" type="xs:string"/>
+                        <xs:element name="memberClass" type="xs:string"/>
+                        <xs:element name="memberCode" type="xs:string"/>
                         <xs:element name="serviceCode" type="xs:string"/>
                         <xs:element name="subsystemCode" type="xs:string"/>
                         <xs:element name="serviceVersion" type="xs:string"/>

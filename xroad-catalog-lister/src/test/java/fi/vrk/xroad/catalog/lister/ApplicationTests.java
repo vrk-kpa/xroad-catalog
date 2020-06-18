@@ -77,6 +77,9 @@ public class ApplicationTests {
 	@Test
 	public void testIsSoapService() {
 		IsSoapService request = new IsSoapService();
+		request.setXRoadInstance("dev-cs");
+		request.setMemberClass("PUB");
+		request.setMemberCode("14151328");
 		request.setServiceCode("testService");
 		request.setSubsystemCode("TestSubSystem");
 		request.setServiceVersion("v1");
@@ -89,6 +92,9 @@ public class ApplicationTests {
 	@Test
 	public void testIsSoapServiceFalse() {
 		IsSoapService request = new IsSoapService();
+		request.setXRoadInstance("dev-cs");
+		request.setMemberClass("PUB");
+		request.setMemberCode("14151328");
 		request.setServiceCode("getRandom");
 		request.setSubsystemCode("TestSubSystem");
 		request.setServiceVersion("v1");
@@ -104,6 +110,9 @@ public class ApplicationTests {
 		String exceptionMessage = null;
 		try {
 			IsSoapService request = new IsSoapService();
+			request.setXRoadInstance("dev-cs");
+			request.setMemberClass("PUB");
+			request.setMemberCode("14151328");
 			request.setServiceCode("testService123");
 			request.setSubsystemCode("TestSubSystem");
 			request.setServiceVersion("v1");
@@ -114,13 +123,17 @@ public class ApplicationTests {
 			exceptionMessage = e.getMessage();
 		}
 		assertTrue(thrown);
-		assertEquals(exceptionMessage, "Service with serviceCode \"testService123\" and subsystemCode \"TestSubSystem\" " +
+		assertEquals(exceptionMessage, "Service with xRoadInstance \"dev-cs\", " +
+				"memberClass \"PUB\", memberCode \"14151328\", subsystemCode \"TestSubSystem\" " +
 				"and serviceVersion \"v1\" not found");
 	}
 
 	@Test
 	public void testIsRestService() {
 		IsRestService request = new IsRestService();
+		request.setXRoadInstance("dev-cs");
+		request.setMemberClass("PUB");
+		request.setMemberCode("14151328");
 		request.setServiceCode("getRandom");
 		request.setSubsystemCode("TestSubSystem");
 		request.setServiceVersion("v1");
@@ -133,6 +146,9 @@ public class ApplicationTests {
 	@Test
 	public void testIsRestServiceFalse() {
 		IsRestService request = new IsRestService();
+		request.setXRoadInstance("dev-cs");
+		request.setMemberClass("PUB");
+		request.setMemberCode("14151328");
 		request.setServiceCode("testService");
 		request.setSubsystemCode("TestSubSystem");
 		request.setServiceVersion("v1");
@@ -148,6 +164,9 @@ public class ApplicationTests {
 		String exceptionMessage = null;
 		try {
 			IsRestService request = new IsRestService();
+			request.setXRoadInstance("dev-cs");
+			request.setMemberClass("PUB");
+			request.setMemberCode("14151328");
 			request.setServiceCode("getRandom123");
 			request.setSubsystemCode("TestSubSystem");
 			request.setServiceVersion("v1");
@@ -158,7 +177,8 @@ public class ApplicationTests {
 			exceptionMessage = e.getMessage();
 		}
 		assertTrue(thrown);
-		assertEquals(exceptionMessage, "Service with serviceCode \"getRandom123\" and subsystemCode \"TestSubSystem\" " +
+		assertEquals(exceptionMessage, "Service with xRoadInstance \"dev-cs\", " +
+				"memberClass \"PUB\", memberCode \"14151328\", subsystemCode \"TestSubSystem\" " +
 				"and serviceVersion \"v1\" not found");
 	}
 

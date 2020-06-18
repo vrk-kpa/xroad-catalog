@@ -66,15 +66,27 @@ public interface ServiceRepository extends CrudRepository<Service, Long> {
 
     @Query("SELECT s FROM Service s WHERE s.serviceCode = :serviceCode "
             +"AND s.subsystem.subsystemCode = :subsystemCode "
+            + "AND s.subsystem.member.memberCode = :memberCode "
+            + "AND s.subsystem.member.memberClass = :memberClass "
+            + "AND s.subsystem.member.xRoadInstance = :xRoadInstance "
             +"AND s.serviceVersion = :serviceVersion "
             + "AND s.statusInfo.removed IS NULL")
-    Service findActiveByServiceAndSubsystemAndVersion(@Param("serviceCode") String serviceCode,
-                                                      @Param("subsystemCode") String subsystemCode,
-                                                      @Param("serviceVersion") String serviceVersion);
+    Service findActiveByMemberServiceAndSubsystemAndVersion(@Param("xRoadInstance") String xRoadInstance,
+                                                            @Param("memberClass") String memberClass,
+                                                            @Param("memberCode") String memberCode,
+                                                            @Param("serviceCode") String serviceCode,
+                                                            @Param("subsystemCode") String subsystemCode,
+                                                            @Param("serviceVersion") String serviceVersion);
 
     @Query("SELECT s FROM Service s WHERE s.serviceCode = :serviceCode "
             +"AND s.subsystem.subsystemCode = :subsystemCode "
+            + "AND s.subsystem.member.memberCode = :memberCode "
+            + "AND s.subsystem.member.memberClass = :memberClass "
+            + "AND s.subsystem.member.xRoadInstance = :xRoadInstance "
             + "AND s.statusInfo.removed IS NULL")
-    Service findActiveByServiceAndSubsystem(@Param("serviceCode") String serviceCode,
-                                            @Param("subsystemCode") String subsystemCode);
+    Service findActiveByMemberServiceAndSubsystem(@Param("xRoadInstance") String xRoadInstance,
+                                                  @Param("memberClass") String memberClass,
+                                                  @Param("memberCode") String memberCode,
+                                                  @Param("serviceCode") String serviceCode,
+                                                  @Param("subsystemCode") String subsystemCode);
 }

@@ -1126,8 +1126,12 @@ public class CatalogServiceTest {
     @Test
     public void testGetService() {
         Service service = serviceRepository.findOne(1L);
-        Service foundService = catalogService.getService(service.getServiceCode(),
-                service.getSubsystem().getSubsystemCode(), service.getServiceVersion());
+        Service foundService = catalogService.getService(service.getSubsystem().getMember().getXRoadInstance(),
+                service.getSubsystem().getMember().getMemberClass(),
+                service.getSubsystem().getMember().getMemberCode(),
+                service.getServiceCode(),
+                service.getSubsystem().getSubsystemCode(),
+                service.getServiceVersion());
         assertNotNull(foundService);
     }
 

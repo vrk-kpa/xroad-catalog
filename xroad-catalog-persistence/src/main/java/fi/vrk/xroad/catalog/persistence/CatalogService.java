@@ -107,7 +107,12 @@ public interface CatalogService {
      * @return Service, if any, null if not found
      * @throws RuntimeException if multiple matches found.
      */
-    Service getService(String serviceCode, String subsystemCode, String serviceVersion);
+    Service getService(String xRoadInstance,
+                       String memberClass,
+                       String memberCode,
+                       String serviceCode,
+                       String subsystemCode,
+                       String serviceVersion);
 
     /**
      * Returns the full Organization object.
