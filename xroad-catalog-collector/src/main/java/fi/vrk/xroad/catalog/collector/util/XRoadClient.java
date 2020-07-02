@@ -25,6 +25,7 @@ package fi.vrk.xroad.catalog.collector.util;
 import fi.vrk.xroad.catalog.collector.wsimport.*;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.cxf.configuration.jsse.TLSClientParameters;
 import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.frontend.ClientProxy;
 import org.apache.cxf.message.Attachment;
@@ -179,10 +180,15 @@ public class XRoadClient {
         MetaServicesPort port = service.getMetaServicesPortSoap11();
         BindingProvider bindingProvider = (BindingProvider) port;
         bindingProvider.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, url.toString());
-
+        ClientListUtil.disableCertificateValidation();
         final HTTPConduit conduit = (HTTPConduit) ClientProxy.getClient(port).getConduit();
         conduit.getClient().setConnectionTimeout(30000);
         conduit.getClient().setReceiveTimeout(60000);
+
+        TLSClientParameters tlsParams = new TLSClientParameters();
+        tlsParams.setUseHttpsURLConnectionDefaultSslSocketFactory(true);
+        tlsParams.setUseHttpsURLConnectionDefaultHostnameVerifier(true);
+        conduit.setTlsClientParameters(tlsParams);
 
         return port;
     }
