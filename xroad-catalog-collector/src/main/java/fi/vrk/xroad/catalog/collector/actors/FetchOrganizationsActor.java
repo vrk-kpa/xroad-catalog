@@ -152,8 +152,8 @@ public class FetchOrganizationsActor extends XRoadCatalogActor {
         JSONArray addressesListJson = data.optJSONArray("addresses");
         addresses.forEach(address -> {
             address.setOrganization(savedOrganization);
-            Address savedAddress = catalogService.saveAddress(address);
-            saveAddressDetails(addressesListJson, savedAddress);
+            catalogService.saveAddress(address);
+            //saveAddressDetails(addressesListJson, savedAddress);
         });
     }
 
@@ -176,9 +176,9 @@ public class FetchOrganizationsActor extends XRoadCatalogActor {
         StreetAddress streetAddress = OrganizationUtil.createStreetAddress(streetAddressJson);
         streetAddress.setAddress(savedAddress);
         StreetAddress savedStreetAddress = catalogService.saveStreetAddress(streetAddress);
-        //saveStreetAddressMunicipality(streetAddressJson.optJSONObject("municipality"), savedStreetAddress);
-        //saveStreetAddressAdditionalInformation(streetAddressJson.optJSONArray("additionalInformation"), savedStreetAddress);
-        //saveStreetAddressPostOffice(streetAddressJson.optJSONArray("postOffice"), savedStreetAddress);
+        saveStreetAddressMunicipality(streetAddressJson.optJSONObject("municipality"), savedStreetAddress);
+        saveStreetAddressAdditionalInformation(streetAddressJson.optJSONArray("additionalInformation"), savedStreetAddress);
+        saveStreetAddressPostOffice(streetAddressJson.optJSONArray("postOffice"), savedStreetAddress);
         saveStreetAddressStreet(streetAddressJson.optJSONArray("street"), savedStreetAddress);
     }
 
