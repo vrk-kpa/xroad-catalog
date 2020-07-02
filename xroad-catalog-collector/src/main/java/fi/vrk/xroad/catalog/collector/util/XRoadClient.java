@@ -185,6 +185,7 @@ public class XRoadClient {
         conduit.getClient().setConnectionTimeout(30000);
         conduit.getClient().setReceiveTimeout(60000);
 
+        log.info("IGNORE CERTIFICATES");
         TLSClientParameters tlsParams = new TLSClientParameters();
         tlsParams.setUseHttpsURLConnectionDefaultSslSocketFactory(true);
         tlsParams.setUseHttpsURLConnectionDefaultHostnameVerifier(true);
