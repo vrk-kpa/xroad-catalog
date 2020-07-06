@@ -23,7 +23,9 @@
 package fi.vrk.xroad.catalog.persistence.repository;
 
 import fi.vrk.xroad.catalog.persistence.entity.RegisteredOffice;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 import java.util.Optional;
@@ -31,5 +33,16 @@ import java.util.Optional;
 public interface RegisteredOfficeRepository extends CrudRepository<RegisteredOffice, Long> {
 
     Optional<List<RegisteredOffice>> findAnyByCompanyId(Long companyId);
+
+    @Query("SELECT r FROM RegisteredOffice r WHERE r.company.id = :companyId "
+            +"AND r.language = :language "
+            +"AND r.ordering = :ordering "
+            +"AND r.version = :version "
+            + "AND r.source = :source")
+    Optional<RegisteredOffice> findAny(@Param("companyId") Long companyId,
+                                       @Param("language") String language,
+                                       @Param("ordering") Long ordering,
+                                       @Param("version") Long version,
+                                       @Param("source") Long source);
 
 }

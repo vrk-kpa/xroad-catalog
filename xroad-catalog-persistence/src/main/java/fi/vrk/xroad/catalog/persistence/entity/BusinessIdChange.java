@@ -50,7 +50,7 @@ public class BusinessIdChange {
     @Column
     private String changeDate;
     @Column(nullable = false)
-    private long change;
+    private String change;
     @Column(nullable = false)
     private String oldBusinessId;
     @Column(nullable = false)

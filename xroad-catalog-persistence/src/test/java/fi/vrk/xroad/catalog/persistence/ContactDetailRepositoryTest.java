@@ -56,7 +56,7 @@ public class ContactDetailRepositoryTest {
         assertEquals("EN", contactDetails.get().get(0).getLanguage());
         assertEquals("", contactDetails.get().get(0).getValue());
         assertEquals(0, contactDetails.get().get(0).getSource());
-        assertEquals(0, contactDetails.get().get(0).getType());
+        assertEquals("0", contactDetails.get().get(0).getType());
         assertEquals(1, contactDetails.get().get(0).getVersion());
         assertEquals(LocalDate.of(2010, 5, 3), contactDetails.get().get(0).getRegistrationDate().toLocalDate());
         assertNull(contactDetails.get().get(0).getEndDate());

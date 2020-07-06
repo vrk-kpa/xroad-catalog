@@ -169,7 +169,7 @@ VALUES (1, 1, 1, 5, 1, 'Solinor', '', '2019-01-31 00:00:00+02', NULL, '2020-05-0
 
 INSERT INTO business_id_change(id, company_id, source, description, reason, change_date, change,
     old_business_id, new_business_id, language, created, changed, fetched, removed)
-VALUES (1, 1, 2, '', '', '2019-02-01', 44, '1796717-0', '1710128-9', '', '2020-05-04 11:41:24.717+03', '2020-05-04 11:41:24.717+03',
+VALUES (1, 1, 2, '', '', '2019-02-01', '44', '1796717-0', '1710128-9', '', '2020-05-04 11:41:24.717+03', '2020-05-04 11:41:24.717+03',
         '2020-05-04 11:41:24.717+03', NULL);
 
 INSERT INTO business_line(id, company_id, source, ordering, version, name, language, registration_date,

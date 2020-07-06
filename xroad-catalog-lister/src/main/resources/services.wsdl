@@ -744,7 +744,7 @@ http://x-road.eu/xsd/identifiers ">
                     <xs:element name="description" type="xs:string"/>
                     <xs:element name="reason" type="xs:string"/>
                     <xs:element name="changeDate" type="xs:string"/>
-                    <xs:element name="change" type="xs:long"/>
+                    <xs:element name="change" type="xs:string"/>
                     <xs:element name="oldBusinessId" type="xs:string"/>
                     <xs:element name="newBusinessId" type="xs:string"/>
                     <xs:element name="language" type="xs:string"/>
@@ -833,7 +833,7 @@ http://x-road.eu/xsd/identifiers ">
                     <xs:element name="version" type="xs:long"/>
                     <xs:element name="language" type="xs:string"/>
                     <xs:element name="value" type="xs:string"/>
-                    <xs:element name="type" type="xs:long"/>
+                    <xs:element name="type" type="xs:string"/>
                     <xs:element name="registrationDate" type="xs:dateTime"/>
                     <xs:element name="endDate" type="xs:dateTime"/>
                     <xs:element name="created" type="xs:dateTime"/>

@@ -23,7 +23,9 @@
 package fi.vrk.xroad.catalog.persistence.repository;
 
 import fi.vrk.xroad.catalog.persistence.entity.CompanyForm;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 import java.util.Optional;
@@ -31,4 +33,14 @@ import java.util.Optional;
 public interface CompanyFormRepository extends CrudRepository<CompanyForm, Long> {
     Optional<List<CompanyForm>> findAnyByCompanyId(Long companyId);
 
+    @Query("SELECT c FROM CompanyForm c WHERE c.company.id = :companyId "
+            +"AND c.language = :language "
+            +"AND c.source = :source "
+            +"AND c.type = :type "
+            + "AND c.version = :version")
+    Optional<CompanyForm> findAny(@Param("companyId") Long companyId,
+                                  @Param("language") String language,
+                                  @Param("source") Long source,
+                                  @Param("type") Long type,
+                                  @Param("version") Long version);
 }

@@ -23,7 +23,9 @@
 package fi.vrk.xroad.catalog.persistence.repository;
 
 import fi.vrk.xroad.catalog.persistence.entity.Language;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 import java.util.Optional;
@@ -32,4 +34,12 @@ public interface LanguageRepository extends CrudRepository<Language, Long> {
 
     Optional<List<Language>> findAnyByCompanyId(Long companyId);
 
+    @Query("SELECT l FROM Language l WHERE l.company.id = :companyId "
+            +"AND l.language = :language "
+            +"AND l.source = :source "
+            + "AND l.version = :version")
+    Optional<Language> findAny(@Param("companyId") Long companyId,
+                               @Param("language") String language,
+                               @Param("source") Long source,
+                               @Param("version") Long version);
 }

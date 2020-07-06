@@ -56,7 +56,7 @@ public class BusinessIdChangeRepositoryTest {
         assertEquals("", businessIdChanges.get().get(0).getDescription());
         assertEquals(2, businessIdChanges.get().get(0).getSource());
         assertEquals("", businessIdChanges.get().get(0).getReason());
-        assertEquals(44, businessIdChanges.get().get(0).getChange());
+        assertEquals("44", businessIdChanges.get().get(0).getChange());
         assertEquals("1796717-0", businessIdChanges.get().get(0).getOldBusinessId());
         assertEquals("1710128-9", businessIdChanges.get().get(0).getNewBusinessId());
         assertEquals("2019-02-01", businessIdChanges.get().get(0).getChangeDate());

@@ -23,7 +23,9 @@
 package fi.vrk.xroad.catalog.persistence.repository;
 
 import fi.vrk.xroad.catalog.persistence.entity.BusinessAuxiliaryName;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 import java.util.Optional;
@@ -32,4 +34,14 @@ public interface BusinessAuxiliaryNameRepository extends CrudRepository<Business
 
     Optional<List<BusinessAuxiliaryName>> findAnyByCompanyId(Long companyId);
 
+    @Query("SELECT b FROM BusinessAuxiliaryName b WHERE b.company.id = :companyId "
+            +"AND b.language = :language "
+            +"AND b.source = :source "
+            +"AND b.ordering = :ordering "
+            + "AND b.version = :version")
+    Optional<BusinessAuxiliaryName> findAny(@Param("companyId") Long companyId,
+                                            @Param("language") String language,
+                                            @Param("source") Long source,
+                                            @Param("ordering") Long ordering,
+                                            @Param("version") Long version);
 }

@@ -800,7 +800,7 @@ CREATE TABLE IF NOT EXISTS business_id_change (
     description TEXT NOT NULL,
     reason TEXT NOT NULL,
     change_date TEXT,
-    change BIGSERIAL NOT NULL,
+    change TEXT NOT NULL,
     old_business_id TEXT NOT NULL,
     new_business_id TEXT NOT NULL,
     language TEXT,

@@ -22,7 +22,9 @@
  */package fi.vrk.xroad.catalog.persistence.repository;
 
 import fi.vrk.xroad.catalog.persistence.entity.BusinessName;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 import java.util.Optional;
@@ -31,4 +33,14 @@ public interface BusinessNameRepository extends CrudRepository<BusinessName, Lon
 
     Optional<List<BusinessName>> findAnyByCompanyId(Long companyId);
 
+    @Query("SELECT b FROM BusinessName b WHERE b.company.id = :companyId "
+            +"AND b.language = :language "
+            +"AND b.source = :source "
+            +"AND b.ordering = :ordering "
+            + "AND b.version = :version")
+    Optional<BusinessName> findAny(@Param("companyId") Long companyId,
+                                   @Param("language") String language,
+                                   @Param("source") Long source,
+                                   @Param("ordering") Long ordering,
+                                   @Param("version") Long version);
 }
