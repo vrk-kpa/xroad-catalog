@@ -51,7 +51,7 @@ public class ContactDetail {
     @Column(nullable = false)
     private String value;
     @Column(nullable = false)
-    private long type;
+    private String type;
     @Column(nullable = false)
     private LocalDateTime registrationDate;
     @Column

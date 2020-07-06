@@ -914,18 +914,21 @@ public class CatalogServiceImpl implements CatalogService {
 
     @Override
     public void saveBusinessName(BusinessName businessName) {
-        Optional<List<BusinessName>> foundList = businessNameRepository
-                .findAnyByCompanyId(businessName.getCompany().getId());
-        if (foundList.isPresent() && !foundList.get().isEmpty()) {
-            foundList.get().forEach(oldBusinessName -> {
-                StatusInfo statusInfo = oldBusinessName.getStatusInfo();
-                statusInfo.setFetched(LocalDateTime.now());
-                if (!oldBusinessName.equals(businessName)) {
-                    statusInfo.setChanged(LocalDateTime.now());
-                }
-                businessName.setStatusInfo(statusInfo);
-                businessName.setId(oldBusinessName.getId());
-            });
+        Optional<BusinessName> foundBusinessLine = businessNameRepository.findAny(
+                businessName.getCompany().getId(),
+                businessName.getLanguage(),
+                businessName.getSource(),
+                businessName.getOrdering(),
+                businessName.getVersion());
+        if (foundBusinessLine.isPresent()) {
+            BusinessName oldBusinessName = foundBusinessLine.get();
+            StatusInfo statusInfo = oldBusinessName.getStatusInfo();
+            statusInfo.setFetched(LocalDateTime.now());
+            if (!oldBusinessName.equals(businessName)) {
+                statusInfo.setChanged(LocalDateTime.now());
+            }
+            businessName.setStatusInfo(statusInfo);
+            businessName.setId(oldBusinessName.getId());
         } else {
             StatusInfo statusInfo = new StatusInfo();
             statusInfo.setCreated(LocalDateTime.now());
@@ -938,18 +941,21 @@ public class CatalogServiceImpl implements CatalogService {
 
     @Override
     public void saveBusinessAuxiliaryName(BusinessAuxiliaryName businessAuxiliaryName) {
-        Optional<List<BusinessAuxiliaryName>> foundList = businessAuxiliaryNameRepository
-                .findAnyByCompanyId(businessAuxiliaryName.getCompany().getId());
-        if (foundList.isPresent() && !foundList.get().isEmpty()) {
-            foundList.get().forEach(oldBusinessAuxiliaryName -> {
-                StatusInfo statusInfo = oldBusinessAuxiliaryName.getStatusInfo();
-                statusInfo.setFetched(LocalDateTime.now());
-                if (!oldBusinessAuxiliaryName.equals(businessAuxiliaryName)) {
-                    statusInfo.setChanged(LocalDateTime.now());
-                }
-                businessAuxiliaryName.setStatusInfo(statusInfo);
-                businessAuxiliaryName.setId(oldBusinessAuxiliaryName.getId());
-            });
+        Optional<BusinessAuxiliaryName> foundBusinessAuxiliaryName = businessAuxiliaryNameRepository.findAny(
+                businessAuxiliaryName.getCompany().getId(),
+                businessAuxiliaryName.getLanguage(),
+                businessAuxiliaryName.getSource(),
+                businessAuxiliaryName.getOrdering(),
+                businessAuxiliaryName.getVersion());
+        if (foundBusinessAuxiliaryName.isPresent()) {
+            BusinessAuxiliaryName oldBusinessAuxiliaryName = foundBusinessAuxiliaryName.get();
+            StatusInfo statusInfo = oldBusinessAuxiliaryName.getStatusInfo();
+            statusInfo.setFetched(LocalDateTime.now());
+            if (!oldBusinessAuxiliaryName.equals(businessAuxiliaryName)) {
+                statusInfo.setChanged(LocalDateTime.now());
+            }
+            businessAuxiliaryName.setStatusInfo(statusInfo);
+            businessAuxiliaryName.setId(oldBusinessAuxiliaryName.getId());
         } else {
             StatusInfo statusInfo = new StatusInfo();
             statusInfo.setCreated(LocalDateTime.now());
@@ -962,18 +968,21 @@ public class CatalogServiceImpl implements CatalogService {
 
     @Override
     public void saveBusinessAddress(BusinessAddress businessAddress) {
-        Optional<List<BusinessAddress>> foundList = businessAddressRepository
-                .findAnyByCompanyId(businessAddress.getCompany().getId());
-        if (foundList.isPresent() && !foundList.get().isEmpty()) {
-            foundList.get().forEach(oldBusinessAddress -> {
-                StatusInfo statusInfo = oldBusinessAddress.getStatusInfo();
-                statusInfo.setFetched(LocalDateTime.now());
-                if (!oldBusinessAddress.equals(businessAddress)) {
-                    statusInfo.setChanged(LocalDateTime.now());
-                }
-                businessAddress.setStatusInfo(statusInfo);
-                businessAddress.setId(oldBusinessAddress.getId());
-            });
+        Optional<BusinessAddress> foundAddress = businessAddressRepository.findAny(
+                businessAddress.getCompany().getId(),
+                businessAddress.getLanguage(),
+                businessAddress.getType(),
+                businessAddress.getSource(),
+                businessAddress.getVersion());
+        if (foundAddress.isPresent()) {
+            BusinessAddress oldBusinessAddress = foundAddress.get();
+            StatusInfo statusInfo = oldBusinessAddress.getStatusInfo();
+            statusInfo.setFetched(LocalDateTime.now());
+            if (!oldBusinessAddress.equals(businessAddress)) {
+                statusInfo.setChanged(LocalDateTime.now());
+            }
+            businessAddress.setStatusInfo(statusInfo);
+            businessAddress.setId(oldBusinessAddress.getId());
         } else {
             StatusInfo statusInfo = new StatusInfo();
             statusInfo.setCreated(LocalDateTime.now());
@@ -986,18 +995,22 @@ public class CatalogServiceImpl implements CatalogService {
 
     @Override
     public void saveBusinessIdChange(BusinessIdChange businessIdChange) {
-        Optional<List<BusinessIdChange>> foundList = businessIdChangeRepository
-                .findAnyByCompanyId(businessIdChange.getCompany().getId());
-        if (foundList.isPresent() && !foundList.get().isEmpty()) {
-            foundList.get().forEach(oldBusinessIdChange -> {
-                StatusInfo statusInfo = oldBusinessIdChange.getStatusInfo();
-                statusInfo.setFetched(LocalDateTime.now());
-                if (!oldBusinessIdChange.equals(businessIdChange)) {
-                    statusInfo.setChanged(LocalDateTime.now());
-                }
-                businessIdChange.setStatusInfo(statusInfo);
-                businessIdChange.setId(oldBusinessIdChange.getId());
-            });
+        Optional<BusinessIdChange> foundBusinessIdChange = businessIdChangeRepository.findAny(
+                businessIdChange.getCompany().getId(),
+                businessIdChange.getLanguage(),
+                businessIdChange.getSource(),
+                businessIdChange.getChange(),
+                businessIdChange.getOldBusinessId(),
+                businessIdChange.getNewBusinessId());
+        if (foundBusinessIdChange.isPresent()) {
+            BusinessIdChange oldBusinessIdChange = foundBusinessIdChange.get();
+            StatusInfo statusInfo = oldBusinessIdChange.getStatusInfo();
+            statusInfo.setFetched(LocalDateTime.now());
+            if (!oldBusinessIdChange.equals(businessIdChange)) {
+                statusInfo.setChanged(LocalDateTime.now());
+            }
+            businessIdChange.setStatusInfo(statusInfo);
+            businessIdChange.setId(oldBusinessIdChange.getId());
         } else {
             StatusInfo statusInfo = new StatusInfo();
             statusInfo.setCreated(LocalDateTime.now());
@@ -1010,18 +1023,21 @@ public class CatalogServiceImpl implements CatalogService {
 
     @Override
     public void saveBusinessLine(BusinessLine businessLine) {
-        Optional<List<BusinessLine>> foundList = businessLineRepository
-                .findAnyByCompanyId(businessLine.getCompany().getId());
-        if (foundList.isPresent() && !foundList.get().isEmpty()) {
-            foundList.get().forEach(oldBusinessLine -> {
-                StatusInfo statusInfo = oldBusinessLine.getStatusInfo();
-                statusInfo.setFetched(LocalDateTime.now());
-                if (!oldBusinessLine.equals(businessLine)) {
-                    statusInfo.setChanged(LocalDateTime.now());
-                }
-                businessLine.setStatusInfo(statusInfo);
-                businessLine.setId(oldBusinessLine.getId());
-            });
+        Optional<BusinessLine> foundBusinessLine = businessLineRepository.findAny(
+                businessLine.getCompany().getId(),
+                businessLine.getLanguage(),
+                businessLine.getSource(),
+                businessLine.getOrdering(),
+                businessLine.getVersion());
+        if (foundBusinessLine.isPresent()) {
+            BusinessLine oldBusinessLine = foundBusinessLine.get();
+            StatusInfo statusInfo = oldBusinessLine.getStatusInfo();
+            statusInfo.setFetched(LocalDateTime.now());
+            if (!oldBusinessLine.equals(businessLine)) {
+                statusInfo.setChanged(LocalDateTime.now());
+            }
+            businessLine.setStatusInfo(statusInfo);
+            businessLine.setId(oldBusinessLine.getId());
         } else {
             StatusInfo statusInfo = new StatusInfo();
             statusInfo.setCreated(LocalDateTime.now());
@@ -1034,18 +1050,21 @@ public class CatalogServiceImpl implements CatalogService {
 
     @Override
     public void saveCompanyForm(CompanyForm companyForm) {
-        Optional<List<CompanyForm>> foundList = companyFormRepository
-                .findAnyByCompanyId(companyForm.getCompany().getId());
-        if (foundList.isPresent() && !foundList.get().isEmpty()) {
-            foundList.get().forEach(oldCompanyForm -> {
-                StatusInfo statusInfo = oldCompanyForm.getStatusInfo();
-                statusInfo.setFetched(LocalDateTime.now());
-                if (!oldCompanyForm.equals(companyForm)) {
-                    statusInfo.setChanged(LocalDateTime.now());
-                }
-                companyForm.setStatusInfo(statusInfo);
-                companyForm.setId(oldCompanyForm.getId());
-            });
+        Optional<CompanyForm> foundCompanyForm = companyFormRepository.findAny(
+                companyForm.getCompany().getId(),
+                companyForm.getLanguage(),
+                companyForm.getSource(),
+                companyForm.getType(),
+                companyForm.getVersion());
+        if (foundCompanyForm.isPresent()) {
+            CompanyForm oldCompanyForm = foundCompanyForm.get();
+            StatusInfo statusInfo = oldCompanyForm.getStatusInfo();
+            statusInfo.setFetched(LocalDateTime.now());
+            if (!oldCompanyForm.equals(companyForm)) {
+                statusInfo.setChanged(LocalDateTime.now());
+            }
+            companyForm.setStatusInfo(statusInfo);
+            companyForm.setId(oldCompanyForm.getId());
         } else {
             StatusInfo statusInfo = new StatusInfo();
             statusInfo.setCreated(LocalDateTime.now());
@@ -1058,18 +1077,21 @@ public class CatalogServiceImpl implements CatalogService {
 
     @Override
     public void saveContactDetail(ContactDetail contactDetail) {
-        Optional<List<ContactDetail>> foundList = contactDetailRepository
-                .findAnyByCompanyId(contactDetail.getCompany().getId());
-        if (foundList.isPresent() && !foundList.get().isEmpty()) {
-            foundList.get().forEach(oldContactDetail -> {
-                StatusInfo statusInfo = oldContactDetail.getStatusInfo();
-                statusInfo.setFetched(LocalDateTime.now());
-                if (!oldContactDetail.equals(contactDetail)) {
-                    statusInfo.setChanged(LocalDateTime.now());
-                }
-                contactDetail.setStatusInfo(statusInfo);
-                contactDetail.setId(oldContactDetail.getId());
-            });
+        Optional<ContactDetail> foundContactDetail = contactDetailRepository.findAny(
+                contactDetail.getCompany().getId(),
+                contactDetail.getLanguage(),
+                contactDetail.getSource(),
+                contactDetail.getType(),
+                contactDetail.getVersion());
+        if (foundContactDetail.isPresent()) {
+            ContactDetail oldContactDetail = foundContactDetail.get();
+            StatusInfo statusInfo = oldContactDetail.getStatusInfo();
+            statusInfo.setFetched(LocalDateTime.now());
+            if (!oldContactDetail.equals(contactDetail)) {
+                statusInfo.setChanged(LocalDateTime.now());
+            }
+            contactDetail.setStatusInfo(statusInfo);
+            contactDetail.setId(oldContactDetail.getId());
         } else {
             StatusInfo statusInfo = new StatusInfo();
             statusInfo.setCreated(LocalDateTime.now());
@@ -1082,18 +1104,20 @@ public class CatalogServiceImpl implements CatalogService {
 
     @Override
     public void saveLanguage(Language language) {
-        Optional<List<Language>> foundList = languageRepository
-                .findAnyByCompanyId(language.getCompany().getId());
-        if (foundList.isPresent() && !foundList.get().isEmpty()) {
-            foundList.get().forEach(oldLanguage -> {
-                StatusInfo statusInfo = oldLanguage.getStatusInfo();
-                statusInfo.setFetched(LocalDateTime.now());
-                if (!oldLanguage.equals(language)) {
-                    statusInfo.setChanged(LocalDateTime.now());
-                }
-                language.setStatusInfo(statusInfo);
-                language.setId(oldLanguage.getId());
-            });
+        Optional<Language> foundLanguage = languageRepository.findAny(
+                language.getCompany().getId(),
+                language.getLanguage(),
+                language.getSource(),
+                language.getVersion());
+        if (foundLanguage.isPresent()) {
+            Language oldLanguage = foundLanguage.get();
+            StatusInfo statusInfo = oldLanguage.getStatusInfo();
+            statusInfo.setFetched(LocalDateTime.now());
+            if (!oldLanguage.equals(language)) {
+                statusInfo.setChanged(LocalDateTime.now());
+            }
+            language.setStatusInfo(statusInfo);
+            language.setId(oldLanguage.getId());
         } else {
             StatusInfo statusInfo = new StatusInfo();
             statusInfo.setCreated(LocalDateTime.now());
@@ -1106,18 +1130,21 @@ public class CatalogServiceImpl implements CatalogService {
 
     @Override
     public void saveLiquidation(Liquidation liquidation) {
-        Optional<List<Liquidation>> foundList = liquidationRepository
-                .findAnyByCompanyId(liquidation.getCompany().getId());
-        if (foundList.isPresent() && !foundList.get().isEmpty()) {
-            foundList.get().forEach(oldLiquidation -> {
-                StatusInfo statusInfo = oldLiquidation.getStatusInfo();
-                statusInfo.setFetched(LocalDateTime.now());
-                if (!oldLiquidation.equals(liquidation)) {
-                    statusInfo.setChanged(LocalDateTime.now());
-                }
-                liquidation.setStatusInfo(statusInfo);
-                liquidation.setId(oldLiquidation.getId());
-            });
+        Optional<Liquidation> foundLiquidation = liquidationRepository.findAny(
+                liquidation.getCompany().getId(),
+                liquidation.getLanguage(),
+                liquidation.getSource(),
+                liquidation.getType(),
+                liquidation.getVersion());
+        if (foundLiquidation.isPresent()) {
+            Liquidation oldLiquidation = foundLiquidation.get();
+            StatusInfo statusInfo = oldLiquidation.getStatusInfo();
+            statusInfo.setFetched(LocalDateTime.now());
+            if (!oldLiquidation.equals(liquidation)) {
+                statusInfo.setChanged(LocalDateTime.now());
+            }
+            liquidation.setStatusInfo(statusInfo);
+            liquidation.setId(oldLiquidation.getId());
         } else {
             StatusInfo statusInfo = new StatusInfo();
             statusInfo.setCreated(LocalDateTime.now());
@@ -1130,18 +1157,22 @@ public class CatalogServiceImpl implements CatalogService {
 
     @Override
     public void saveRegisteredEntry(RegisteredEntry registeredEntry) {
-        Optional<List<RegisteredEntry>> foundList = registeredEntryRepository
-                .findAnyByCompanyId(registeredEntry.getCompany().getId());
-        if (foundList.isPresent() && !foundList.get().isEmpty()) {
-            foundList.get().forEach(oldRegisteredEntry -> {
-                StatusInfo statusInfo = oldRegisteredEntry.getStatusInfo();
-                statusInfo.setFetched(LocalDateTime.now());
-                if (!oldRegisteredEntry.equals(registeredEntry)) {
-                    statusInfo.setChanged(LocalDateTime.now());
-                }
-                registeredEntry.setStatusInfo(statusInfo);
-                registeredEntry.setId(oldRegisteredEntry.getId());
-            });
+        Optional<RegisteredEntry> foundRegisteredEntry = registeredEntryRepository.findAny(
+                registeredEntry.getCompany().getId(),
+                registeredEntry.getLanguage(),
+                registeredEntry.getAuthority(),
+                registeredEntry.getRegister(),
+                registeredEntry.getStatus(),
+                registeredEntry.getDescription());
+        if (foundRegisteredEntry.isPresent()) {
+            RegisteredEntry oldRegisteredEntry = foundRegisteredEntry.get();
+            StatusInfo statusInfo = oldRegisteredEntry.getStatusInfo();
+            statusInfo.setFetched(LocalDateTime.now());
+            if (!oldRegisteredEntry.equals(registeredEntry)) {
+                statusInfo.setChanged(LocalDateTime.now());
+            }
+            registeredEntry.setStatusInfo(statusInfo);
+            registeredEntry.setId(oldRegisteredEntry.getId());
         } else {
             StatusInfo statusInfo = new StatusInfo();
             statusInfo.setCreated(LocalDateTime.now());
@@ -1154,18 +1185,21 @@ public class CatalogServiceImpl implements CatalogService {
 
     @Override
     public void saveRegisteredOffice(RegisteredOffice registeredOffice) {
-        Optional<List<RegisteredOffice>> foundList = registeredOfficeRepository
-                .findAnyByCompanyId(registeredOffice.getCompany().getId());
-        if (foundList.isPresent() && !foundList.get().isEmpty()) {
-            foundList.get().forEach(oldRegisteredOffice -> {
-                StatusInfo statusInfo = oldRegisteredOffice.getStatusInfo();
-                statusInfo.setFetched(LocalDateTime.now());
-                if (!oldRegisteredOffice.equals(registeredOffice)) {
-                    statusInfo.setChanged(LocalDateTime.now());
-                }
-                registeredOffice.setStatusInfo(statusInfo);
-                registeredOffice.setId(oldRegisteredOffice.getId());
-            });
+        Optional<RegisteredOffice> foundRegisteredOffice = registeredOfficeRepository.findAny(
+                registeredOffice.getCompany().getId(),
+                registeredOffice.getLanguage(),
+                registeredOffice.getOrdering(),
+                registeredOffice.getVersion(),
+                registeredOffice.getSource());
+        if (foundRegisteredOffice.isPresent()) {
+            RegisteredOffice oldRegisteredOffice = foundRegisteredOffice.get();
+            StatusInfo statusInfo = oldRegisteredOffice.getStatusInfo();
+            statusInfo.setFetched(LocalDateTime.now());
+            if (!oldRegisteredOffice.equals(registeredOffice)) {
+                statusInfo.setChanged(LocalDateTime.now());
+            }
+            registeredOffice.setStatusInfo(statusInfo);
+            registeredOffice.setId(oldRegisteredOffice.getId());
         } else {
             StatusInfo statusInfo = new StatusInfo();
             statusInfo.setCreated(LocalDateTime.now());

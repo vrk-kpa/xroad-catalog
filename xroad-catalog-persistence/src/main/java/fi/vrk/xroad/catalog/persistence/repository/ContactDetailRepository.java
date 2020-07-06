@@ -23,7 +23,9 @@
 package fi.vrk.xroad.catalog.persistence.repository;
 
 import fi.vrk.xroad.catalog.persistence.entity.ContactDetail;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 import java.util.Optional;
@@ -31,5 +33,16 @@ import java.util.Optional;
 public interface ContactDetailRepository extends CrudRepository<ContactDetail, Long> {
 
     Optional<List<ContactDetail>> findAnyByCompanyId(Long companyId);
+
+    @Query("SELECT c FROM ContactDetail c WHERE c.company.id = :companyId "
+            +"AND c.language = :language "
+            +"AND c.source = :source "
+            +"AND c.type = :type "
+            + "AND c.version = :version")
+    Optional<ContactDetail> findAny(@Param("companyId") Long companyId,
+                                    @Param("language") String language,
+                                    @Param("source") Long source,
+                                    @Param("type") String type,
+                                    @Param("version") Long version);
 
 }

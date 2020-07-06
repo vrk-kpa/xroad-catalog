@@ -23,7 +23,9 @@
 package fi.vrk.xroad.catalog.persistence.repository;
 
 import fi.vrk.xroad.catalog.persistence.entity.BusinessIdChange;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 import java.util.Optional;
@@ -32,4 +34,16 @@ public interface BusinessIdChangeRepository extends CrudRepository<BusinessIdCha
 
     Optional<List<BusinessIdChange>> findAnyByCompanyId(Long companyId);
 
+    @Query("SELECT b FROM BusinessIdChange b WHERE b.company.id = :companyId "
+            +"AND b.language = :language "
+            +"AND b.source = :source "
+            +"AND b.change = :change "
+            +"AND b.oldBusinessId = :oldBusinessId "
+            + "AND b.newBusinessId = :newBusinessId")
+    Optional<BusinessIdChange> findAny(@Param("companyId") Long companyId,
+                                       @Param("language") String language,
+                                       @Param("source") Long source,
+                                       @Param("change") String change,
+                                       @Param("oldBusinessId") String oldBusinessId,
+                                       @Param("newBusinessId") String newBusinessId);
 }

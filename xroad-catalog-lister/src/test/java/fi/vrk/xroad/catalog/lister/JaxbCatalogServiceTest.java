@@ -778,7 +778,7 @@ public class JaxbCatalogServiceTest {
     private Set<BusinessIdChange> createBusinessIdChanges(Company c) {
         Set<BusinessIdChange> businessIdChanges = new HashSet<>();
         BusinessIdChange businessIdChange = BusinessIdChange.builder()
-                .language("EN").change(1).description("Change description").reason("Change reason")
+                .language("EN").change("1").description("Change description").reason("Change reason")
                 .source(0).oldBusinessId("12345").newBusinessId("67890").changeDate("2020-01-25")
                 .statusInfo(createStatusInfo(DATETIME_2015, DATETIME_2015, DATETIME_2015, null))
                 .company(c).build();
@@ -822,7 +822,7 @@ public class JaxbCatalogServiceTest {
     private Set<ContactDetail> createContactDetails(Company c) {
         Set<ContactDetail> contactDetails = new HashSet<>();
         ContactDetail contactDetail = ContactDetail.builder()
-                .value("VALUE").language("EN").source(0).version(0).type(1)
+                .value("VALUE").language("EN").source(0).version(0).type("1")
                 .registrationDate(LocalDateTime.of(2020, 4, 30, 0, 0 ,0))
                 .statusInfo(createStatusInfo(DATETIME_2015, DATETIME_2015, DATETIME_2015, null))
                 .endDate(null).company(c).build();

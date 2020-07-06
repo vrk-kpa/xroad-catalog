@@ -340,7 +340,7 @@ public class OrganizationUtil {
         for (int i = 0; i < jsonArray.length(); i++) {
             businessIdChanges.add(BusinessIdChange.builder()
                     .language(jsonArray.optJSONObject(i).optString("language"))
-                    .change(jsonArray.optJSONObject(i).optLong("change"))
+                    .change(jsonArray.optJSONObject(i).optString("change"))
                     .changeDate(jsonArray.optJSONObject(i).optString("changeDate"))
                     .description(jsonArray.optJSONObject(i).optString("description"))
                     .reason(jsonArray.optJSONObject(i).optString("reason"))
@@ -405,7 +405,7 @@ public class OrganizationUtil {
         for (int i = 0; i < jsonArray.length(); i++) {
             contactDetails.add(ContactDetail.builder()
                     .version(jsonArray.optJSONObject(i).optLong("version"))
-                    .type(jsonArray.optJSONObject(i).optLong("type"))
+                    .type(jsonArray.optJSONObject(i).optString("type"))
                     .source(jsonArray.optJSONObject(i).optLong("source"))
                     .language(jsonArray.optJSONObject(i).optString("language"))
                     .value(jsonArray.optJSONObject(i).optString("value"))
