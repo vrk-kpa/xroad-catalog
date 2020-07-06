@@ -127,8 +127,8 @@ public class ListMethodsActor extends XRoadCatalogActor {
             log.info("{} Handling subsystem {} ", COUNTER, subsystem);
             log.info("Fetching methods for the client with listMethods -service...");
 
-            List<XRoadServiceIdentifierType> restServices = MethodListUtil.methodListFromResponse(clientType, xroadSecurityServerHost);
-            log.info("Received all REST methods for client {} ", ClientTypeUtil.toString(clientType));
+/*            List<XRoadServiceIdentifierType> restServices = MethodListUtil.methodListFromResponse(clientType, xroadSecurityServerHost);
+            log.info("Received all REST methods for client {} ", ClientTypeUtil.toString(clientType));*/
 
             // fetch the methods
             log.info("calling web service at {}", webservicesEndpoint);
@@ -137,9 +137,9 @@ public class ListMethodsActor extends XRoadCatalogActor {
 
             // Save services for subsystems
             List<Service> services = new ArrayList<>();
-            for (XRoadServiceIdentifierType service : restServices) {
+/*            for (XRoadServiceIdentifierType service : restServices) {
                 services.add(new Service(subsystem, service.getServiceCode(), service.getServiceVersion()));
-            }
+            }*/
             for (XRoadServiceIdentifierType service : soapServices) {
                 services.add(new Service(subsystem, service.getServiceCode(), service.getServiceVersion()));
             }
@@ -153,10 +153,10 @@ public class ListMethodsActor extends XRoadCatalogActor {
             }
 
             // get openApis
-            for (XRoadServiceIdentifierType service : restServices) {
+/*            for (XRoadServiceIdentifierType service : restServices) {
                 log.info("{} Sending service {} to new MethodActor ", COUNTER, service.getServiceCode());
                 fetchOpenApiPoolRef.tell(service, getSender());
-            }
+            }*/
 
             // Fetch organizations only once, not for each client
             if (!organizationsFetched) {
