@@ -119,9 +119,9 @@ public class OrganizationUtil {
         List<Email> emails = new ArrayList<>();
         for (int i = 0; i < jsonArray.length(); i++) {
             emails.add(Email.builder()
-                    .description(jsonArray.optJSONObject(i).optString("description"))
+                    .description(replaceUnicodeControlCharacters(jsonArray.optJSONObject(i).optString("description")))
                     .language(jsonArray.optJSONObject(i).optString("language"))
-                    .value(jsonArray.optJSONObject(i).optString("value")).build());
+                    .value(replaceUnicodeControlCharacters(jsonArray.optJSONObject(i).optString("value"))).build());
         }
         return emails;
     }
@@ -130,9 +130,9 @@ public class OrganizationUtil {
         List<WebPage> webPages = new ArrayList<>();
         for (int i = 0; i < jsonArray.length(); i++) {
             webPages.add(WebPage.builder()
-                    .url(jsonArray.optJSONObject(i).optString("url"))
+                    .url(replaceUnicodeControlCharacters(jsonArray.optJSONObject(i).optString("url")))
                     .language(jsonArray.optJSONObject(i).optString("language"))
-                    .value(jsonArray.optJSONObject(i).optString("value")).build());
+                    .value(replaceUnicodeControlCharacters(jsonArray.optJSONObject(i).optString("value"))).build());
         }
         return webPages;
     }
@@ -143,9 +143,13 @@ public class OrganizationUtil {
             organizationDescriptions.add(OrganizationDescription.builder()
                     .type(jsonArray.optJSONObject(i).optString("type"))
                     .language(jsonArray.optJSONObject(i).optString("language"))
-                    .value(jsonArray.optJSONObject(i).optString("value")).build());
+                    .value(replaceUnicodeControlCharacters(jsonArray.optJSONObject(i).optString("value"))).build());
         }
         return organizationDescriptions;
+    }
+
+    private static String replaceUnicodeControlCharacters(String input) {
+        return input.replaceAll("[\\x{0000}-\\x{0009}]|[\\x{000b}-\\x{000c}]|[\\x{000e}-\\x{000f}]|[\\x{0010}-\\x{001f}]", "");
     }
 
     public static List<OrganizationName> createNames(JSONArray jsonArray) {
@@ -154,7 +158,7 @@ public class OrganizationUtil {
             organizationNames.add(OrganizationName.builder()
                     .type(jsonArray.optJSONObject(i).optString("type"))
                     .language(jsonArray.optJSONObject(i).optString("language"))
-                    .value(jsonArray.optJSONObject(i).optString("value")).build());
+                    .value(replaceUnicodeControlCharacters(jsonArray.optJSONObject(i).optString("value"))).build());
         }
         return organizationNames;
     }
@@ -199,7 +203,7 @@ public class OrganizationUtil {
         for (int i = 0; i < jsonArray.length(); i++) {
             additionalInformationList.add(StreetAddressAdditionalInformation.builder()
                     .language(jsonArray.optJSONObject(i).optString("language"))
-                    .value(jsonArray.optJSONObject(i).optString("value")).build());
+                    .value(replaceUnicodeControlCharacters(jsonArray.optJSONObject(i).optString("value"))).build());
         }
         return additionalInformationList;
     }
@@ -235,7 +239,7 @@ public class OrganizationUtil {
         for (int i = 0; i < jsonArray.length(); i++) {
             additionalInformationList.add(PostOfficeBoxAddressAdditionalInformation.builder()
                     .language(jsonArray.optJSONObject(i).optString("language"))
-                    .value(jsonArray.optJSONObject(i).optString("value")).build());
+                    .value(replaceUnicodeControlCharacters(jsonArray.optJSONObject(i).optString("value"))).build());
         }
         return additionalInformationList;
     }
@@ -279,12 +283,12 @@ public class OrganizationUtil {
         List<PhoneNumber> phoneNumbers = new ArrayList<>();
         for (int i = 0; i < jsonArray.length(); i++) {
             phoneNumbers.add(PhoneNumber.builder()
-                    .additionalInformation(jsonArray.optJSONObject(i).optString("additionalInformation"))
+                    .additionalInformation(replaceUnicodeControlCharacters(jsonArray.optJSONObject(i).optString("additionalInformation")))
                     .number(jsonArray.optJSONObject(i).optString("number"))
                     .isFinnishServiceNumber(jsonArray.optJSONObject(i).getBoolean("isFinnishServiceNumber"))
                     .prefixNumber(jsonArray.optJSONObject(i).optString("prefixNumber"))
                     .language(jsonArray.optJSONObject(i).optString("language"))
-                    .chargeDescription(jsonArray.optJSONObject(i).optString("chargeDescription"))
+                    .chargeDescription(replaceUnicodeControlCharacters(jsonArray.optJSONObject(i).optString("chargeDescription")))
                     .serviceChargeType(jsonArray.optJSONObject(i).optString("serviceChargeType")).build());
         }
         return phoneNumbers;
