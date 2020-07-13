@@ -47,7 +47,7 @@ public class PostOffice {
     @Builder.Default
     @Embedded
     private StatusInfo statusInfo = new StatusInfo();
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "POST_OFFICE_BOX_ADDRESS_ID")
     private PostOfficeBoxAddress postOfficeBoxAddress;
 }

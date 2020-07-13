@@ -59,7 +59,7 @@ public class BusinessName {
     @Builder.Default
     @Embedded
     private StatusInfo statusInfo = new StatusInfo();
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "COMPANY_ID")
     private Company company;
 }

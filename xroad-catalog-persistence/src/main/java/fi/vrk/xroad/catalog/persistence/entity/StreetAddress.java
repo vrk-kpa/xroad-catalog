@@ -42,7 +42,7 @@ public class StreetAddress {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "STREET_ADDRESS_GEN")
     @SequenceGenerator(name = "STREET_ADDRESS_GEN", sequenceName = "STREET_ADDRESS_ID_SEQ", allocationSize = 1)
     private long id;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ADDRESS_ID")
     private Address address;
     @Column(nullable = false)
