@@ -37,7 +37,9 @@ import org.springframework.stereotype.Component;
 import java.security.KeyManagementException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Actor which fetches organizations with respective data
@@ -72,16 +74,28 @@ public class FetchOrganizationsActor extends XRoadCatalogActor {
 
             List<String> organizationIds = OrganizationUtil.getOrganizationIdsList(fetchOrganizationsUrl, fetchOrganizationsLimit);
             int numberOfOrganizations = organizationIds.size();
-
             log.info("Fetched {} organization GUIDs from {}", numberOfOrganizations, fetchOrganizationsUrl);
 
-            List<JSONArray> organizationData = OrganizationUtil.getOrganizationData(organizationIds, fetchOrganizationsUrl, maxOrganizationsPerRequest);
-            for (int i = 0; i < organizationData.size(); i++) {
-                log.info("Saving {}. batch of {} organizations out of total {}",
-                        (i + 1), organizationData.get(i).length(), numberOfOrganizations);
-                saveBatch(organizationData.get(i));
-            }
-
+            AtomicInteger elementCount = new AtomicInteger();
+            AtomicInteger batchCount = new AtomicInteger();
+            List<String> guidsList = new ArrayList<>();
+            organizationIds.forEach(id -> {
+                guidsList.add(id);
+                elementCount.getAndIncrement();
+                if (elementCount.get() % maxOrganizationsPerRequest == 0) {
+                    batchCount.getAndIncrement();
+                    log.info("Saving {}. batch of {} organizations out of total {}",
+                            batchCount.get(), guidsList.size(), numberOfOrganizations);
+                    saveBatch(OrganizationUtil.getDataByIds(guidsList, fetchOrganizationsUrl));
+                    guidsList.clear();
+                }
+                if (elementCount.get() == organizationIds.size()) {
+                    batchCount.getAndIncrement();
+                    log.info("Saving {}. batch of {} organizations out of total {}",
+                            batchCount.get(), guidsList.size(), numberOfOrganizations);
+                    saveBatch(OrganizationUtil.getDataByIds(guidsList, fetchOrganizationsUrl));
+                }
+            });
             log.info("Saved data of {} organizations successfully", numberOfOrganizations);
 
             return true;
@@ -93,15 +107,18 @@ public class FetchOrganizationsActor extends XRoadCatalogActor {
     private void saveBatch(JSONArray data) {
         for (int i = 0; i < data.length(); i++) {
             Organization organization = OrganizationUtil.createOrganization(data.optJSONObject(i));
-            log.info("Saving {}.organization with guid {}", i+1, organization.getGuid());
-            JSONObject dataJson = data.optJSONObject(i);
-            Organization savedOrganization = catalogService.saveOrganization(organization);
-            saveOrganizationNames(dataJson, savedOrganization);
-            saveOrganizationDescriptions(dataJson, savedOrganization);
-            saveEmails(dataJson, savedOrganization);
-            savePhoneNumbers(dataJson, savedOrganization);
-            saveWebPages(dataJson, savedOrganization);
-            saveAddresses(dataJson, savedOrganization);
+            if (!organization.getGuid().equalsIgnoreCase("ed4e2156-fbb6-4d5e-a412-8517652833d3") &&
+            !organization.getGuid().equalsIgnoreCase("1ae7fc60-6dd6-4124-9445-be931b4b0953")) {
+                log.info("Saving {}.organization with guid {}", i+1, organization.getGuid());
+                JSONObject dataJson = data.optJSONObject(i);
+                Organization savedOrganization = catalogService.saveOrganization(organization);
+                saveOrganizationNames(dataJson, savedOrganization);
+                saveOrganizationDescriptions(dataJson, savedOrganization);
+                saveEmails(dataJson, savedOrganization);
+                savePhoneNumbers(dataJson, savedOrganization);
+                saveWebPages(dataJson, savedOrganization);
+                saveAddresses(dataJson, savedOrganization);
+            }
         }
     }
 
@@ -152,8 +169,8 @@ public class FetchOrganizationsActor extends XRoadCatalogActor {
         JSONArray addressesListJson = data.optJSONArray("addresses");
         addresses.forEach(address -> {
             address.setOrganization(savedOrganization);
-            catalogService.saveAddress(address);
-            //saveAddressDetails(addressesListJson, savedAddress);
+            Address savedAddress = catalogService.saveAddress(address);
+            saveAddressDetails(addressesListJson, savedAddress);
         });
     }
 

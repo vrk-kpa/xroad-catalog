@@ -47,7 +47,7 @@ public class StreetAddressMunicipalityName {
     @Builder.Default
     @Embedded
     private StatusInfo statusInfo = new StatusInfo();
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "STREET_ADDRESS_MUNICIPALITY_ID")
     private StreetAddressMunicipality streetAddressMunicipality;
 }

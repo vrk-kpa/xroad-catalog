@@ -490,7 +490,7 @@ public class OrganizationUtil {
         return null;
     }
 
-    private static JSONArray getDataByIds(List<String> guids, String url) {
+    public static JSONArray getDataByIds(List<String> guids, String url) {
         String requestGuids = "";
         for (int i = 0; i < guids.size(); i++) {
             requestGuids += guids.get(i);

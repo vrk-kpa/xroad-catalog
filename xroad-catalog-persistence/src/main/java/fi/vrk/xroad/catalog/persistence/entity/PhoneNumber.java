@@ -58,7 +58,7 @@ public class PhoneNumber {
     @Builder.Default
     @Embedded
     private StatusInfo statusInfo = new StatusInfo();
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ORGANIZATION_ID")
     private Organization organization;
 }
