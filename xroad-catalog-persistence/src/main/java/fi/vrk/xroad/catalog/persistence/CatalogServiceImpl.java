@@ -35,6 +35,8 @@ import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.StreamSupport;
 
+
+
 /**
  * Implementation for catalogservice CRUD
  */
@@ -258,49 +260,6 @@ public class CatalogServiceImpl implements CatalogService {
         removeUnprocessedOldMembers(now, unprocessedOldMembers);
     }
 
-    private void handleOldMember(LocalDateTime now, Member member, Member oldMember) {
-        oldMember.updateWithDataFrom(member, now);
-        // process subsystems for the old member
-        Map<SubsystemId, Subsystem> unprocessedOldSubsystems = new HashMap<>();
-        for (Subsystem subsystem: oldMember.getAllSubsystems()) {
-            unprocessedOldSubsystems.put(subsystem.createKey(), subsystem);
-        }
-        for (Subsystem subsystem: member.getAllSubsystems()) {
-            Subsystem oldSubsystem = unprocessedOldSubsystems.get(subsystem.createKey());
-            if (oldSubsystem == null) {
-                // brand new item, add it
-                subsystem.getStatusInfo().setTimestampsForNew(now);
-                subsystem.setMember(oldMember);
-                oldMember.getAllSubsystems().add(subsystem);
-            } else {
-                oldSubsystem.getStatusInfo().setTimestampsForFetched(now);
-            }
-            unprocessedOldSubsystems.remove(subsystem.createKey());
-        }
-        // remaining old subsystems - that were not included in member.subsystems -
-        // are removed (if not already)
-        for (Subsystem oldToRemove: unprocessedOldSubsystems.values()) {
-            StatusInfo status = oldToRemove.getStatusInfo();
-            if (!status.isRemoved()) {
-                status.setTimestampsForRemoved(now);
-            }
-        }
-    }
-
-    private void removeUnprocessedOldMembers(LocalDateTime now, Map<MemberId, Member> unprocessedOldMembers) {
-        for (Member oldToRemove: unprocessedOldMembers.values()) {
-            StatusInfo status = oldToRemove.getStatusInfo();
-            if (!status.isRemoved()) {
-                status.setTimestampsForRemoved(now);
-            }
-            for (Subsystem subsystem: oldToRemove.getAllSubsystems()) {
-                if (!subsystem.getStatusInfo().isRemoved()) {
-                    subsystem.getStatusInfo().setTimestampsForRemoved(now);
-                }
-            }
-        }
-    }
-
     @Override
     public void saveServices(SubsystemId subsystemId, Collection<Service> services) {
         assert subsystemId != null;
@@ -440,6 +399,7 @@ public class CatalogServiceImpl implements CatalogService {
     }
 
     @Override
+    @Transactional
     public Organization saveOrganization(Organization organization) {
         Optional<Organization> foundOrganization = organizationRepository
                 .findAnyByOrganizationGuid(organization.getGuid());
@@ -459,11 +419,486 @@ public class CatalogServiceImpl implements CatalogService {
             statusInfo.setFetched(LocalDateTime.now());
             organization.setStatusInfo(statusInfo);
         }
-        return organizationRepository.save(organization);
+
+        Organization newOrganization = organizationRepository.save(Organization.builder().publishingStatus(organization.getPublishingStatus())
+                .id(organization.getId())
+                .organizationType(organization.getOrganizationType()).businessCode(organization.getBusinessCode())
+                .statusInfo(organization.getStatusInfo()).guid(organization.getGuid())
+                .organizationNames(new HashSet<>()).organizationDescriptions(new HashSet<>())
+                .emails(new HashSet<>()).webPages(new HashSet<>()).phoneNumbers(new HashSet<>()).addresses(new HashSet<>()).build());
+
+        Set<OrganizationName> organizationNames = organization.getAllOrganizationNames();
+        Set<OrganizationName> updatedOrganizationNames = new HashSet<>();
+        for (OrganizationName organizationName: organizationNames) {
+            organizationName.setOrganization(newOrganization);
+            updatedOrganizationNames.add(updateOrganizationNameData(organizationName));
+        }
+        newOrganization.setOrganizationNames(updatedOrganizationNames);
+
+        Set<OrganizationDescription> organizationDescriptions = organization.getAllOrganizationDescriptions();
+        Set<OrganizationDescription> updatedOrganizationDescriptions = new HashSet<>();
+        for (OrganizationDescription organizationDescription : organizationDescriptions) {
+            organizationDescription.setOrganization(newOrganization);
+            updatedOrganizationDescriptions.add(updateOrganizationDescriptionData(organizationDescription));
+        }
+        newOrganization.setOrganizationDescriptions(updatedOrganizationDescriptions);
+
+        Set<Email> emails = organization.getAllEmails();
+        Set<Email> updatedEmails = new HashSet<>();
+        for (Email email : emails) {
+            email.setOrganization(newOrganization);
+            updatedEmails.add(updateEmailData(email));
+        }
+        newOrganization.setEmails(updatedEmails);
+
+        Set<PhoneNumber> phoneNumbers = organization.getAllPhoneNumbers();
+        Set<PhoneNumber> updatedPhoneNumbers = new HashSet<>();
+        for (PhoneNumber phoneNumber : phoneNumbers) {
+            phoneNumber.setOrganization(newOrganization);
+            updatedPhoneNumbers.add(updatePhoneNumberData(phoneNumber));
+        }
+        newOrganization.setPhoneNumbers(updatedPhoneNumbers);
+
+        Set<WebPage> webPages = organization.getAllWebPages();
+        Set<WebPage> updatedWebPages = new HashSet<>();
+        for (WebPage webPage : webPages) {
+            webPage.setOrganization(newOrganization);
+            updatedWebPages.add(updateWebPageData(webPage));
+        }
+        newOrganization.setWebPages(updatedWebPages);
+
+        Set<Address> addresses = organization.getAllAddresses();
+        Set<Address> updatedAddresses = new HashSet<>();
+        for (Address address : addresses) {
+            address.setOrganization(newOrganization);
+            Address updatedAddress = updateAddressData(address);
+            Address newAddress = addressRepository.save(Address.builder().country(updatedAddress.getCountry()).id(updatedAddress.getId())
+                    .subType(updatedAddress.getSubType()).type(updatedAddress.getType()).statusInfo(updatedAddress.getStatusInfo())
+                    .streetAddresses(new HashSet<>()).postOfficeBoxAddresses(new HashSet<>()).organization(newOrganization).build());
+            updatedAddresses.add(newAddress);
+
+            Set<StreetAddress> streetAddresses = address.getAllStreetAddresses();
+            Set<StreetAddress> updatedStreetAddresses = new HashSet<>();
+            for (StreetAddress streetAddress : streetAddresses) {
+                streetAddress.setAddress(newAddress);
+                StreetAddress updatedStreetAddress = updateStreetAddressData(streetAddress);
+                StreetAddress newStreetAddress = streetAddressRepository.save(StreetAddress.builder().address(updatedStreetAddress.getAddress())
+                        .coordinateState(updatedStreetAddress.getCoordinateState()).id(updatedStreetAddress.getId()).latitude(updatedStreetAddress.getLatitude())
+                        .longitude(updatedStreetAddress.getLongitude()).postalCode(updatedStreetAddress.getPostalCode()).streetNumber(updatedStreetAddress.getStreetNumber())
+                        .statusInfo(updatedStreetAddress.getStatusInfo()).additionalInformation(new HashSet<>()).municipalities(new HashSet<>())
+                        .postOffices(new HashSet<>()).streets(new HashSet<>()).build());
+                updatedStreetAddresses.add(newStreetAddress);
+
+                Set<StreetAddressAdditionalInformation> streetAddressAdditionalInformationSet = streetAddress.getAllAdditionalInformation();
+                Set<StreetAddressAdditionalInformation> updatedStreetAddressAdditionalInformation = new HashSet<>();
+                for (StreetAddressAdditionalInformation streetAddressAdditionalInformation : streetAddressAdditionalInformationSet) {
+                    streetAddressAdditionalInformation.setStreetAddress(newStreetAddress);
+                    updatedStreetAddressAdditionalInformation.add(updateStreetAddressAdditionalInformationData(streetAddressAdditionalInformation));
+                }
+                streetAddress.setAdditionalInformation(updatedStreetAddressAdditionalInformation);
+
+                Set<StreetAddressPostOffice> streetAddressPostOffices = streetAddress.getAllPostOffices();
+                Set<StreetAddressPostOffice> updatedStreetAddressPostOffices = new HashSet<>();
+                for (StreetAddressPostOffice streetAddressPostOffice : streetAddressPostOffices) {
+                    streetAddressPostOffice.setStreetAddress(newStreetAddress);
+                    updatedStreetAddressPostOffices.add(updateStreetAddressPostOfficeData(streetAddressPostOffice));
+                }
+                streetAddress.setPostOffices(updatedStreetAddressPostOffices);
+
+                Set<Street> streets = streetAddress.getAllStreets();
+                Set<Street> updatedStreets = new HashSet<>();
+                for (Street street : streets) {
+                    street.setStreetAddress(newStreetAddress);
+                    updatedStreets.add(updateStreetAddressStreetData(street));
+                }
+                streetAddress.setStreets(updatedStreets);
+
+                Set<StreetAddressMunicipality> streetAddressMunicipalities = streetAddress.getAllMunicipalities();
+                Set<StreetAddressMunicipality> updatedStreetAddressMunicipalities = new HashSet<>();
+                for (StreetAddressMunicipality streetAddressMunicipality : streetAddressMunicipalities) {
+                    streetAddressMunicipality.setStreetAddress(newStreetAddress);
+                    updatedStreetAddressMunicipalities.add(updateStreetAddressMunicipalityData(streetAddressMunicipality));
+                    Set<StreetAddressMunicipalityName> streetAddressMunicipalityNames = streetAddressMunicipality.getAllMunicipalityNames();
+                    Set<StreetAddressMunicipalityName> updatedStreetAddressMunicipalityNames = new HashSet<>();
+                    for (StreetAddressMunicipalityName streetAddressMunicipalityName : streetAddressMunicipalityNames) {
+                        streetAddressMunicipalityName.setStreetAddressMunicipality(streetAddressMunicipality);
+                        updatedStreetAddressMunicipalityNames.add(updateStreetAddressMunicipalityNameData(streetAddressMunicipalityName));
+                    }
+                    streetAddressMunicipality.setStreetAddressMunicipalityNames(updatedStreetAddressMunicipalityNames);
+                }
+                streetAddress.setMunicipalities(updatedStreetAddressMunicipalities);
+            }
+            address.setStreetAddresses(updatedStreetAddresses);
+
+            Set<PostOfficeBoxAddress> postOfficeBoxAddresses = address.getAllPostOfficeBoxAddresses();
+            Set<PostOfficeBoxAddress> updatedPostOfficeBoxAddresses = new HashSet<>();
+            for (PostOfficeBoxAddress postOfficeBoxAddress : postOfficeBoxAddresses) {
+                postOfficeBoxAddress.setAddress(newAddress);
+                PostOfficeBoxAddress updatedPostOfficeBoxAddress = updatePostOfficeBoxAddressData(postOfficeBoxAddress);
+                PostOfficeBoxAddress newPostOfficeBoxAddress = postOfficeBoxAddressRepository.save(PostOfficeBoxAddress.builder()
+                .address(updatedPostOfficeBoxAddress.getAddress()).postalCode(updatedPostOfficeBoxAddress.getPostalCode())
+                        .id(updatedPostOfficeBoxAddress.getId()).statusInfo(updatedPostOfficeBoxAddress.getStatusInfo())
+                        .additionalInformation(new HashSet<>()).postOfficeBoxAddressMunicipalities(new HashSet<>())
+                        .postOffices(new HashSet<>()).postOfficesBoxes(new HashSet<>()).build());
+                updatedPostOfficeBoxAddresses.add(newPostOfficeBoxAddress);
+
+                Set<PostOfficeBoxAddressAdditionalInformation> postOfficeBoxAddressAdditionalInformationSet = postOfficeBoxAddress.getAllAdditionalInformation();
+                Set<PostOfficeBoxAddressAdditionalInformation> updatedPostOfficeBoxAddressAdditionalInformation = new HashSet<>();
+                for (PostOfficeBoxAddressAdditionalInformation postOfficeBoxAddressAdditionalInformation : postOfficeBoxAddressAdditionalInformationSet) {
+                    postOfficeBoxAddressAdditionalInformation.setPostOfficeBoxAddress(newPostOfficeBoxAddress);
+                    updatedPostOfficeBoxAddressAdditionalInformation.add(updatePostOfficeBoxAddressAdditionalInformationData(postOfficeBoxAddressAdditionalInformation));
+                }
+                postOfficeBoxAddress.setAdditionalInformation(updatedPostOfficeBoxAddressAdditionalInformation);
+
+                Set<PostOfficeBox> postOfficeBoxes = postOfficeBoxAddress.getAllPostOfficeBoxes();
+                Set<PostOfficeBox> updatedPostOfficeBoxes = new HashSet<>();
+                for (PostOfficeBox postOfficeBox : postOfficeBoxes) {
+                    postOfficeBox.setPostOfficeBoxAddress(newPostOfficeBoxAddress);
+                    updatedPostOfficeBoxes.add(updatePostOfficeBoxData(postOfficeBox));
+                }
+                postOfficeBoxAddress.setPostOfficesBoxes(updatedPostOfficeBoxes);
+
+                Set<PostOffice> postOffices = postOfficeBoxAddress.getAllPostOffices();
+                Set<PostOffice> updatedPostOffices = new HashSet<>();
+                for (PostOffice postOffice : postOffices) {
+                    postOffice.setPostOfficeBoxAddress(newPostOfficeBoxAddress);
+                    updatedPostOffices.add(updatePostOfficeData(postOffice));
+                }
+                postOfficeBoxAddress.setPostOffices(updatedPostOffices);
+
+                Set<PostOfficeBoxAddressMunicipality> postOfficeBoxAddressMunicipalities = postOfficeBoxAddress.getAllMunicipalities();
+                Set<PostOfficeBoxAddressMunicipality> updatedPostOfficeBoxAddressMunicipalities = new HashSet<>();
+                for (PostOfficeBoxAddressMunicipality postOfficeBoxAddressMunicipality : postOfficeBoxAddressMunicipalities) {
+                    postOfficeBoxAddressMunicipality.setPostOfficeBoxAddress(newPostOfficeBoxAddress);
+                    updatedPostOfficeBoxAddressMunicipalities.add(updatePostOfficeBoxAddressMunicipalityData(postOfficeBoxAddressMunicipality));
+                    Set<PostOfficeBoxAddressMunicipalityName> postOfficeBoxAddressMunicipalityNames = postOfficeBoxAddressMunicipality.getAllMunicipalityNames();
+                    Set<PostOfficeBoxAddressMunicipalityName> updatedPostOfficeBoxAddressMunicipalityNames = new HashSet<>();
+                    for (PostOfficeBoxAddressMunicipalityName postOfficeBoxAddressMunicipalityName : postOfficeBoxAddressMunicipalityNames) {
+                        postOfficeBoxAddressMunicipalityName.setPostOfficeBoxAddressMunicipality(postOfficeBoxAddressMunicipality);
+                        updatedPostOfficeBoxAddressMunicipalityNames.add(updatePostOfficeBoxAddressMunicipalityNameData(postOfficeBoxAddressMunicipalityName));
+                    }
+                    postOfficeBoxAddressMunicipality.setPostOfficeBoxAddressMunicipalityNames(updatedPostOfficeBoxAddressMunicipalityNames);
+                }
+                postOfficeBoxAddress.setPostOfficeBoxAddressMunicipalities(updatedPostOfficeBoxAddressMunicipalities);
+            }
+            address.setPostOfficeBoxAddresses(updatedPostOfficeBoxAddresses);
+        }
+        newOrganization.setAddresses(updatedAddresses);
+
+        return organizationRepository.save(newOrganization);
     }
 
     @Override
     public void saveOrganizationName(OrganizationName organizationName) {
+        organizationNameRepository.save(updateOrganizationNameData(organizationName));
+    }
+
+    @Override
+    public void saveOrganizationDescription(OrganizationDescription organizationDescription) {
+        organizationDescriptionRepository.save(updateOrganizationDescriptionData(organizationDescription));
+    }
+
+    @Override
+    public void saveEmail(Email email) {
+        emailRepository.save(updateEmailData(email));
+    }
+
+    @Override
+    public void savePhoneNumber(PhoneNumber phoneNumber) {
+        phoneNumberRepository.save(updatePhoneNumberData(phoneNumber));
+    }
+
+    @Override
+    public void saveWebPage(WebPage webPage) {
+        webpageRepository.save(updateWebPageData(webPage));
+    }
+
+    @Override
+    public Address saveAddress(Address address) {
+        return addressRepository.save(updateAddressData(address));
+    }
+
+    @Override
+    public StreetAddress saveStreetAddress(StreetAddress streetAddress) {
+        return streetAddressRepository.save(updateStreetAddressData(streetAddress));
+    }
+
+    @Override
+    public PostOfficeBoxAddress savePostOfficeBoxAddress(PostOfficeBoxAddress postOfficeBoxAddress) {
+        return postOfficeBoxAddressRepository.save(updatePostOfficeBoxAddressData(postOfficeBoxAddress));
+    }
+
+    @Override
+    public StreetAddressMunicipality saveStreetAddressMunicipality(StreetAddressMunicipality streetAddressMunicipality) {
+        return streetAddressMunicipalityRepository.save(updateStreetAddressMunicipalityData(streetAddressMunicipality));
+    }
+
+    @Override
+    public StreetAddressMunicipalityName saveStreetAddressMunicipalityName(
+            StreetAddressMunicipalityName streetAddressMunicipalityName) {
+        return streetAddressMunicipalityNameRepository.save(updateStreetAddressMunicipalityNameData(streetAddressMunicipalityName));
+    }
+
+    @Override
+    public StreetAddressAdditionalInformation saveStreetAddressAdditionalInformation(
+            StreetAddressAdditionalInformation streetAddressAdditionalInformation) {
+        return streetAddressAdditionalInformationRepository.save(updateStreetAddressAdditionalInformationData(streetAddressAdditionalInformation));
+    }
+
+    @Override
+    public StreetAddressPostOffice saveStreetAddressPostOffice(StreetAddressPostOffice streetAddressPostOffice) {
+        return streetAddressPostOfficeRepository.save(updateStreetAddressPostOfficeData(streetAddressPostOffice));
+    }
+
+    @Override
+    public Street saveStreet(Street street) {
+        return streetRepository.save(updateStreetAddressStreetData(street));
+    }
+
+    @Override
+    public PostOfficeBoxAddressMunicipality savePostOfficeBoxAddressMunicipality(PostOfficeBoxAddressMunicipality postOfficeBoxAddressMunicipality) {
+        return postOfficeBoxAddressMunicipalityRepository.save(updatePostOfficeBoxAddressMunicipalityData(postOfficeBoxAddressMunicipality));
+    }
+
+    @Override
+    public PostOfficeBoxAddressMunicipalityName savePostOfficeBoxAddressMunicipalityName(
+            PostOfficeBoxAddressMunicipalityName postOfficeBoxAddressMunicipalityName) {
+        return postOfficeBoxAddressMunicipalityNameRepository.save(updatePostOfficeBoxAddressMunicipalityNameData(postOfficeBoxAddressMunicipalityName));
+    }
+
+    @Override
+    public PostOfficeBoxAddressAdditionalInformation savePostOfficeBoxAddressAdditionalInformation(
+            PostOfficeBoxAddressAdditionalInformation postOfficeBoxAddressAdditionalInformation) {
+        return postOfficeBoxAddressAdditionalInformationRepository.save(
+                updatePostOfficeBoxAddressAdditionalInformationData(postOfficeBoxAddressAdditionalInformation));
+    }
+
+    @Override
+    public PostOffice savePostOffice(PostOffice postOffice) {
+        return postOfficeRepository.save(updatePostOfficeData(postOffice));
+    }
+
+    @Override
+    public PostOfficeBox savePostOfficeBox(PostOfficeBox postOfficeBox) {
+        return postOfficeBoxRepository.save(updatePostOfficeBoxData(postOfficeBox));
+    }
+
+    @Override
+    public Company saveCompany(Company company) {
+        Optional<Company> foundCompany = companyRepository.findAny(company.getBusinessId(), company.getCompanyForm(), company.getName());
+        if (foundCompany.isPresent()) {
+            Company oldCompany = foundCompany.get();
+            StatusInfo statusInfo = oldCompany.getStatusInfo();
+            statusInfo.setFetched(LocalDateTime.now());
+            if (!oldCompany.equals(company)) {
+                statusInfo.setChanged(LocalDateTime.now());
+            }
+            company.setStatusInfo(statusInfo);
+            company.setId(oldCompany.getId());
+        } else {
+            StatusInfo statusInfo = new StatusInfo();
+            statusInfo.setCreated(LocalDateTime.now());
+            statusInfo.setChanged(LocalDateTime.now());
+            statusInfo.setFetched(LocalDateTime.now());
+            company.setStatusInfo(statusInfo);
+        }
+
+        Company newCompany = companyRepository.save(Company.builder().registrationDate(company.getRegistrationDate()).name(company.getName()).detailsUri(company.getDetailsUri())
+                .companyForm(company.getCompanyForm()).businessId(company.getBusinessId()).id(company.getId()).statusInfo(company.getStatusInfo())
+                .businessAddresses(new HashSet<>()).businessAuxiliaryNames(new HashSet<>()).businessIdChanges(new HashSet<>()).businessLines(new HashSet<>())
+                .businessNames(new HashSet<>()).companyForms(new HashSet<>()).contactDetails(new HashSet<>()).languages(new HashSet<>())
+                .liquidations(new HashSet<>()).registeredEntries(new HashSet<>()).registeredOffices(new HashSet<>()).build());
+
+        Set<BusinessName> businessNames = company.getAllBusinessNames();
+        Set<BusinessName> updatedBusinessNames = new HashSet<>();
+        for (BusinessName businessName: businessNames) {
+            businessName.setCompany(newCompany);
+            updatedBusinessNames.add(updateBusinessNameData(businessName));
+        }
+        newCompany.setBusinessNames(updatedBusinessNames);
+
+        Set<BusinessAuxiliaryName> businessAuxiliaryNames = company.getAllBusinessAuxiliaryNames();
+        Set<BusinessAuxiliaryName> updatedBusinessAuxiliaryNames = new HashSet<>();
+        for (BusinessAuxiliaryName businessAuxiliaryName: businessAuxiliaryNames) {
+            businessAuxiliaryName.setCompany(newCompany);
+            updatedBusinessAuxiliaryNames.add(updateBusinessAuxiliaryNameData(businessAuxiliaryName));
+        }
+        newCompany.setBusinessAuxiliaryNames(updatedBusinessAuxiliaryNames);
+
+        Set<BusinessAddress> businessAddresses = company.getAllBusinessAddresses();
+        Set<BusinessAddress> updatedBusinessAddresses = new HashSet<>();
+        for (BusinessAddress businessAddress: businessAddresses) {
+            businessAddress.setCompany(newCompany);
+            updatedBusinessAddresses.add(updateBusinessAddressData(businessAddress));
+        }
+        newCompany.setBusinessAddresses(updatedBusinessAddresses);
+
+        Set<BusinessIdChange> businessIdChanges = company.getAllBusinessIdChanges();
+        Set<BusinessIdChange> updatedBusinessIdChanges = new HashSet<>();
+        for (BusinessIdChange businessIdChange: businessIdChanges) {
+            businessIdChange.setCompany(newCompany);
+            updatedBusinessIdChanges.add(updateBusinessIdChangeData(businessIdChange));
+        }
+        newCompany.setBusinessIdChanges(updatedBusinessIdChanges);
+
+        Set<BusinessLine> businessLines = company.getAllBusinessLines();
+        Set<BusinessLine> updatedBusinessLines = new HashSet<>();
+        for (BusinessLine businessLine: businessLines) {
+            businessLine.setCompany(newCompany);
+            updatedBusinessLines.add(updateBusinessLineData(businessLine));
+        }
+        newCompany.setBusinessLines(updatedBusinessLines);
+
+        Set<CompanyForm> companyForms = company.getAllCompanyForms();
+        Set<CompanyForm> updatedCompanyForms = new HashSet<>();
+        for (CompanyForm companyForm: companyForms) {
+            companyForm.setCompany(newCompany);
+            updatedCompanyForms.add(updateCompanyFormData(companyForm));
+        }
+        newCompany.setCompanyForms(updatedCompanyForms);
+
+        Set<ContactDetail> contactDetails = company.getAllContactDetails();
+        Set<ContactDetail> updatedContactDetails = new HashSet<>();
+        for (ContactDetail contactDetail: contactDetails) {
+            contactDetail.setCompany(newCompany);
+            updatedContactDetails.add(updateContactDetailData(contactDetail));
+        }
+        newCompany.setContactDetails(updatedContactDetails);
+
+        Set<Language> languages = company.getAllLanguages();
+        Set<Language> updatedLanguages = new HashSet<>();
+        for (Language language: languages) {
+            language.setCompany(newCompany);
+            updatedLanguages.add(updateLanguageData(language));
+        }
+        newCompany.setLanguages(updatedLanguages);
+
+        Set<Liquidation> liquidations = company.getAllLiquidations();
+        Set<Liquidation> updatedLiquidations = new HashSet<>();
+        for (Liquidation liquidation: liquidations) {
+            liquidation.setCompany(newCompany);
+            updatedLiquidations.add(updateLiquidationData(liquidation));
+        }
+        newCompany.setLiquidations(updatedLiquidations);
+
+        Set<RegisteredEntry> registeredEntries = company.getAllRegisteredEntries();
+        Set<RegisteredEntry> updatedRegisteredEntries = new HashSet<>();
+        for (RegisteredEntry registeredEntry: registeredEntries) {
+            registeredEntry.setCompany(newCompany);
+            updatedRegisteredEntries.add(updateRegisteredEntryData(registeredEntry));
+        }
+        newCompany.setRegisteredEntries(updatedRegisteredEntries);
+
+        Set<RegisteredOffice> registeredOffices = company.getAllRegisteredOffices();
+        Set<RegisteredOffice> updatedRegisteredOffices = new HashSet<>();
+        for (RegisteredOffice registeredOffice: registeredOffices) {
+            registeredOffice.setCompany(newCompany);
+            updatedRegisteredOffices.add(updateRegisteredOfficeData(registeredOffice));
+        }
+        newCompany.setRegisteredOffices(updatedRegisteredOffices);
+
+        return companyRepository.save(newCompany);
+    }
+
+    @Override
+    public void saveBusinessName(BusinessName businessName) {
+        businessNameRepository.save(updateBusinessNameData(businessName));
+    }
+
+    @Override
+    public void saveBusinessAuxiliaryName(BusinessAuxiliaryName businessAuxiliaryName) {
+        businessAuxiliaryNameRepository.save(updateBusinessAuxiliaryNameData(businessAuxiliaryName));
+    }
+
+    @Override
+    public void saveBusinessAddress(BusinessAddress businessAddress) {
+        businessAddressRepository.save(updateBusinessAddressData(businessAddress));
+    }
+
+    @Override
+    public void saveBusinessIdChange(BusinessIdChange businessIdChange) {
+        businessIdChangeRepository.save(updateBusinessIdChangeData(businessIdChange));
+    }
+
+    @Override
+    public void saveBusinessLine(BusinessLine businessLine) {
+        businessLineRepository.save(updateBusinessLineData(businessLine));
+    }
+
+    @Override
+    public void saveCompanyForm(CompanyForm companyForm) {
+        companyFormRepository.save(updateCompanyFormData(companyForm));
+    }
+
+    @Override
+    public void saveContactDetail(ContactDetail contactDetail) {
+        contactDetailRepository.save(updateContactDetailData(contactDetail));
+    }
+
+    @Override
+    public void saveLanguage(Language language) {
+        languageRepository.save(updateLanguageData(language));
+    }
+
+    @Override
+    public void saveLiquidation(Liquidation liquidation) {
+        liquidationRepository.save(updateLiquidationData(liquidation));
+    }
+
+    @Override
+    public void saveRegisteredEntry(RegisteredEntry registeredEntry) {
+        registeredEntryRepository.save(updateRegisteredEntryData(registeredEntry));
+    }
+
+    @Override
+    public void saveRegisteredOffice(RegisteredOffice registeredOffice) {
+        registeredOfficeRepository.save(updateRegisteredOfficeData(registeredOffice));
+    }
+
+    private void handleOldMember(LocalDateTime now, Member member, Member oldMember) {
+        oldMember.updateWithDataFrom(member, now);
+        // process subsystems for the old member
+        Map<SubsystemId, Subsystem> unprocessedOldSubsystems = new HashMap<>();
+        for (Subsystem subsystem: oldMember.getAllSubsystems()) {
+            unprocessedOldSubsystems.put(subsystem.createKey(), subsystem);
+        }
+        for (Subsystem subsystem: member.getAllSubsystems()) {
+            Subsystem oldSubsystem = unprocessedOldSubsystems.get(subsystem.createKey());
+            if (oldSubsystem == null) {
+                // brand new item, add it
+                subsystem.getStatusInfo().setTimestampsForNew(now);
+                subsystem.setMember(oldMember);
+                oldMember.getAllSubsystems().add(subsystem);
+            } else {
+                oldSubsystem.getStatusInfo().setTimestampsForFetched(now);
+            }
+            unprocessedOldSubsystems.remove(subsystem.createKey());
+        }
+        // remaining old subsystems - that were not included in member.subsystems -
+        // are removed (if not already)
+        for (Subsystem oldToRemove: unprocessedOldSubsystems.values()) {
+            StatusInfo status = oldToRemove.getStatusInfo();
+            if (!status.isRemoved()) {
+                status.setTimestampsForRemoved(now);
+            }
+        }
+    }
+
+    private void removeUnprocessedOldMembers(LocalDateTime now, Map<MemberId, Member> unprocessedOldMembers) {
+        for (Member oldToRemove: unprocessedOldMembers.values()) {
+            StatusInfo status = oldToRemove.getStatusInfo();
+            if (!status.isRemoved()) {
+                status.setTimestampsForRemoved(now);
+            }
+            for (Subsystem subsystem: oldToRemove.getAllSubsystems()) {
+                if (!subsystem.getStatusInfo().isRemoved()) {
+                    subsystem.getStatusInfo().setTimestampsForRemoved(now);
+                }
+            }
+        }
+    }
+
+    private OrganizationName updateOrganizationNameData(OrganizationName organizationName) {
         Optional<OrganizationName> foundOrganizationName = organizationNameRepository
                 .findAny(organizationName.getOrganization().getId(), organizationName.getLanguage(), organizationName.getType());
         if (foundOrganizationName.isPresent()) {
@@ -482,14 +917,12 @@ public class CatalogServiceImpl implements CatalogService {
             statusInfo.setFetched(LocalDateTime.now());
             organizationName.setStatusInfo(statusInfo);
         }
-        organizationNameRepository.save(organizationName);
+        return organizationName;
     }
 
-    @Override
-    public void saveOrganizationDescription(OrganizationDescription organizationDescription) {
+    private OrganizationDescription updateOrganizationDescriptionData(OrganizationDescription organizationDescription) {
         Optional<OrganizationDescription> foundOrganizationDescription = organizationDescriptionRepository
-                .findAny(organizationDescription.getOrganization().getId(),
-                        organizationDescription.getLanguage(), organizationDescription.getType());
+                .findAny(organizationDescription.getOrganization().getId(), organizationDescription.getLanguage(), organizationDescription.getType());
         if (foundOrganizationDescription.isPresent()) {
             OrganizationDescription oldOrganizationDescription = foundOrganizationDescription.get();
             StatusInfo statusInfo = oldOrganizationDescription.getStatusInfo();
@@ -506,13 +939,12 @@ public class CatalogServiceImpl implements CatalogService {
             statusInfo.setFetched(LocalDateTime.now());
             organizationDescription.setStatusInfo(statusInfo);
         }
-        organizationDescriptionRepository.save(organizationDescription);
+        return organizationDescription;
     }
 
-    @Override
-    public void saveEmail(Email email) {
-        Optional<Email> foundEmail = emailRepository
-                .findAny(email.getOrganization().getId(), email.getLanguage(), email.getDescription());
+    private Email updateEmailData(Email email) {
+        Optional<Email> foundEmail = emailRepository.findAny(email.getOrganization().getId(),
+                email.getLanguage(), email.getValue(), email.getDescription());
         if (foundEmail.isPresent()) {
             Email oldEmail = foundEmail.get();
             StatusInfo statusInfo = oldEmail.getStatusInfo();
@@ -529,13 +961,12 @@ public class CatalogServiceImpl implements CatalogService {
             statusInfo.setFetched(LocalDateTime.now());
             email.setStatusInfo(statusInfo);
         }
-        emailRepository.save(email);
+        return email;
     }
 
-    @Override
-    public void savePhoneNumber(PhoneNumber phoneNumber) {
-        Optional<PhoneNumber> foundPhoneNumber = phoneNumberRepository
-                .findAny(phoneNumber.getOrganization().getId(), phoneNumber.getLanguage());
+    private PhoneNumber updatePhoneNumberData(PhoneNumber phoneNumber) {
+        Optional<PhoneNumber> foundPhoneNumber = phoneNumberRepository.findAny(phoneNumber.getOrganization().getId(),
+                phoneNumber.getNumber(), phoneNumber.getAdditionalInformation(), phoneNumber.getLanguage());
         if (foundPhoneNumber.isPresent()) {
             PhoneNumber oldPhoneNumber = foundPhoneNumber.get();
             StatusInfo statusInfo = oldPhoneNumber.getStatusInfo();
@@ -552,13 +983,11 @@ public class CatalogServiceImpl implements CatalogService {
             statusInfo.setFetched(LocalDateTime.now());
             phoneNumber.setStatusInfo(statusInfo);
         }
-        phoneNumberRepository.save(phoneNumber);
+        return phoneNumber;
     }
 
-    @Override
-    public void saveWebPage(WebPage webPage) {
-        Optional<WebPage> foundWebPage = webpageRepository
-                .findAny(webPage.getOrganization().getId(), webPage.getLanguage(), webPage.getUrl());
+    private WebPage updateWebPageData(WebPage webPage) {
+        Optional<WebPage> foundWebPage = webpageRepository.findAny(webPage.getOrganization().getId(), webPage.getLanguage(), webPage.getUrl());
         if (foundWebPage.isPresent()) {
             WebPage oldWebPage = foundWebPage.get();
             StatusInfo statusInfo = oldWebPage.getStatusInfo();
@@ -575,13 +1004,11 @@ public class CatalogServiceImpl implements CatalogService {
             statusInfo.setFetched(LocalDateTime.now());
             webPage.setStatusInfo(statusInfo);
         }
-        webpageRepository.save(webPage);
+        return webPage;
     }
 
-    @Override
-    public Address saveAddress(Address address) {
-        Optional<Address> foundAddress = addressRepository
-                .findAny(address.getOrganization().getId(), address.getType(), address.getSubType());
+    private Address updateAddressData(Address address) {
+        Optional<Address> foundAddress = addressRepository.findAny(address.getOrganization().getId(), address.getType(), address.getSubType());
         if (foundAddress.isPresent()) {
             Address oldAddress = foundAddress.get();
             StatusInfo statusInfo = oldAddress.getStatusInfo();
@@ -598,13 +1025,11 @@ public class CatalogServiceImpl implements CatalogService {
             statusInfo.setFetched(LocalDateTime.now());
             address.setStatusInfo(statusInfo);
         }
-        return addressRepository.save(address);
+        return address;
     }
 
-    @Override
-    public StreetAddress saveStreetAddress(StreetAddress streetAddress) {
-        Optional<StreetAddress> foundStreetAddress = Optional.ofNullable(streetAddressRepository
-                .findByAddressId(streetAddress.getAddress().getId()));
+    private StreetAddress updateStreetAddressData(StreetAddress streetAddress) {
+        Optional<StreetAddress> foundStreetAddress = Optional.ofNullable(streetAddressRepository.findByAddressId(streetAddress.getAddress().getId()));
         if (foundStreetAddress.isPresent()) {
             StreetAddress oldStreetAddress = foundStreetAddress.get();
             StatusInfo statusInfo = oldStreetAddress.getStatusInfo();
@@ -621,37 +1046,12 @@ public class CatalogServiceImpl implements CatalogService {
             statusInfo.setFetched(LocalDateTime.now());
             streetAddress.setStatusInfo(statusInfo);
         }
-        return streetAddressRepository.save(streetAddress);
+        return streetAddress;
     }
 
-    @Override
-    public PostOfficeBoxAddress savePostOfficeBoxAddress(PostOfficeBoxAddress postOfficeBoxAddress) {
-        Optional<PostOfficeBoxAddress> foundPostOfficeBoxAddress = Optional.ofNullable(postOfficeBoxAddressRepository
-                .findByAddressId(postOfficeBoxAddress.getAddress().getId()));
-        if (foundPostOfficeBoxAddress.isPresent()) {
-            PostOfficeBoxAddress oldPostOfficeBoxAddress = foundPostOfficeBoxAddress.get();
-            StatusInfo statusInfo = oldPostOfficeBoxAddress.getStatusInfo();
-            statusInfo.setFetched(LocalDateTime.now());
-            if (!oldPostOfficeBoxAddress.equals(postOfficeBoxAddress)) {
-                statusInfo.setChanged(LocalDateTime.now());
-            }
-            postOfficeBoxAddress.setStatusInfo(statusInfo);
-            postOfficeBoxAddress.setId(oldPostOfficeBoxAddress.getId());
-        } else {
-            StatusInfo statusInfo = new StatusInfo();
-            statusInfo.setCreated(LocalDateTime.now());
-            statusInfo.setChanged(LocalDateTime.now());
-            statusInfo.setFetched(LocalDateTime.now());
-            postOfficeBoxAddress.setStatusInfo(statusInfo);
-        }
-        return postOfficeBoxAddressRepository.save(postOfficeBoxAddress);
-    }
-
-    @Override
-    public StreetAddressMunicipality saveStreetAddressMunicipality(StreetAddressMunicipality streetAddressMunicipality) {
+    private StreetAddressMunicipality updateStreetAddressMunicipalityData(StreetAddressMunicipality streetAddressMunicipality) {
         Optional<StreetAddressMunicipality> foundStreetAddressMunicipality =
-                Optional.ofNullable(streetAddressMunicipalityRepository
-                        .findByStreetAddressId(streetAddressMunicipality.getStreetAddress().getId()));
+                Optional.ofNullable(streetAddressMunicipalityRepository.findByStreetAddressId(streetAddressMunicipality.getStreetAddress().getId()));
         if (foundStreetAddressMunicipality.isPresent()) {
             StreetAddressMunicipality oldStreetAddressMunicipality = foundStreetAddressMunicipality.get();
             StatusInfo statusInfo = oldStreetAddressMunicipality.getStatusInfo();
@@ -668,35 +1068,10 @@ public class CatalogServiceImpl implements CatalogService {
             statusInfo.setFetched(LocalDateTime.now());
             streetAddressMunicipality.setStatusInfo(statusInfo);
         }
-        return streetAddressMunicipalityRepository.save(streetAddressMunicipality);
+        return streetAddressMunicipality;
     }
 
-    @Override
-    public PostOfficeBoxAddressMunicipality savePostOfficeBoxAddressMunicipality(PostOfficeBoxAddressMunicipality postOfficeBoxAddressMunicipality) {
-        Optional<PostOfficeBoxAddressMunicipality> foundPostOfficeBoxAddressMunicipality =
-                Optional.ofNullable(postOfficeBoxAddressMunicipalityRepository
-                        .findByPostOfficeBoxAddressId(postOfficeBoxAddressMunicipality.getPostOfficeBoxAddress().getId()));
-        if (foundPostOfficeBoxAddressMunicipality.isPresent()) {
-            PostOfficeBoxAddressMunicipality oldPostOfficeBoxAddressMunicipality = foundPostOfficeBoxAddressMunicipality.get();
-            StatusInfo statusInfo = oldPostOfficeBoxAddressMunicipality.getStatusInfo();
-            statusInfo.setFetched(LocalDateTime.now());
-            if (!oldPostOfficeBoxAddressMunicipality.equals(postOfficeBoxAddressMunicipality)) {
-                statusInfo.setChanged(LocalDateTime.now());
-            }
-            postOfficeBoxAddressMunicipality.setStatusInfo(statusInfo);
-            postOfficeBoxAddressMunicipality.setId(oldPostOfficeBoxAddressMunicipality.getId());
-        } else {
-            StatusInfo statusInfo = new StatusInfo();
-            statusInfo.setCreated(LocalDateTime.now());
-            statusInfo.setChanged(LocalDateTime.now());
-            statusInfo.setFetched(LocalDateTime.now());
-            postOfficeBoxAddressMunicipality.setStatusInfo(statusInfo);
-        }
-        return postOfficeBoxAddressMunicipalityRepository.save(postOfficeBoxAddressMunicipality);
-    }
-
-    @Override
-    public StreetAddressMunicipalityName saveStreetAddressMunicipalityName(
+    private StreetAddressMunicipalityName updateStreetAddressMunicipalityNameData(
             StreetAddressMunicipalityName streetAddressMunicipalityName) {
         Optional<StreetAddressMunicipalityName> foundStreetAddressMunicipalityName = streetAddressMunicipalityNameRepository
                 .findAny(streetAddressMunicipalityName.getStreetAddressMunicipality().getId(), streetAddressMunicipalityName.getLanguage());
@@ -716,38 +1091,32 @@ public class CatalogServiceImpl implements CatalogService {
             statusInfo.setFetched(LocalDateTime.now());
             streetAddressMunicipalityName.setStatusInfo(statusInfo);
         }
-        return streetAddressMunicipalityNameRepository.save(streetAddressMunicipalityName);
+        return streetAddressMunicipalityName;
     }
 
-    @Override
-    public PostOfficeBoxAddressMunicipalityName savePostOfficeBoxAddressMunicipalityName(
-            PostOfficeBoxAddressMunicipalityName postOfficeBoxAddressMunicipalityName) {
-        Optional<PostOfficeBoxAddressMunicipalityName> foundPostOfficeBoxAddressMunicipalityName
-                = postOfficeBoxAddressMunicipalityNameRepository.findAny(
-                        postOfficeBoxAddressMunicipalityName.getPostOfficeBoxAddressMunicipality().getId(),
-                postOfficeBoxAddressMunicipalityName.getLanguage());
-        if (foundPostOfficeBoxAddressMunicipalityName.isPresent()) {
-            PostOfficeBoxAddressMunicipalityName oldPostOfficeBoxAddressMunicipalityName
-                    = foundPostOfficeBoxAddressMunicipalityName.get();
-            StatusInfo statusInfo = oldPostOfficeBoxAddressMunicipalityName.getStatusInfo();
+    private PostOfficeBoxAddress updatePostOfficeBoxAddressData(PostOfficeBoxAddress postOfficeBoxAddress) {
+        Optional<PostOfficeBoxAddress> foundPostOfficeBoxAddress = Optional.ofNullable(postOfficeBoxAddressRepository
+                .findByAddressId(postOfficeBoxAddress.getAddress().getId()));
+        if (foundPostOfficeBoxAddress.isPresent()) {
+            PostOfficeBoxAddress oldPostOfficeBoxAddress = foundPostOfficeBoxAddress.get();
+            StatusInfo statusInfo = oldPostOfficeBoxAddress.getStatusInfo();
             statusInfo.setFetched(LocalDateTime.now());
-            if (!oldPostOfficeBoxAddressMunicipalityName.equals(postOfficeBoxAddressMunicipalityName)) {
+            if (!oldPostOfficeBoxAddress.equals(postOfficeBoxAddress)) {
                 statusInfo.setChanged(LocalDateTime.now());
             }
-            postOfficeBoxAddressMunicipalityName.setStatusInfo(statusInfo);
-            postOfficeBoxAddressMunicipalityName.setId(oldPostOfficeBoxAddressMunicipalityName.getId());
+            postOfficeBoxAddress.setStatusInfo(statusInfo);
+            postOfficeBoxAddress.setId(oldPostOfficeBoxAddress.getId());
         } else {
             StatusInfo statusInfo = new StatusInfo();
             statusInfo.setCreated(LocalDateTime.now());
             statusInfo.setChanged(LocalDateTime.now());
             statusInfo.setFetched(LocalDateTime.now());
-            postOfficeBoxAddressMunicipalityName.setStatusInfo(statusInfo);
+            postOfficeBoxAddress.setStatusInfo(statusInfo);
         }
-        return postOfficeBoxAddressMunicipalityNameRepository.save(postOfficeBoxAddressMunicipalityName);
+        return postOfficeBoxAddress;
     }
 
-    @Override
-    public StreetAddressAdditionalInformation saveStreetAddressAdditionalInformation(
+    private StreetAddressAdditionalInformation updateStreetAddressAdditionalInformationData(
             StreetAddressAdditionalInformation streetAddressAdditionalInformation) {
         Optional<StreetAddressAdditionalInformation> foundStreetAddressAdditionalInformation = streetAddressAdditionalInformationRepository
                 .findAny(streetAddressAdditionalInformation.getStreetAddress().getId(), streetAddressAdditionalInformation.getLanguage());
@@ -767,38 +1136,11 @@ public class CatalogServiceImpl implements CatalogService {
             statusInfo.setFetched(LocalDateTime.now());
             streetAddressAdditionalInformation.setStatusInfo(statusInfo);
         }
-        return streetAddressAdditionalInformationRepository.save(streetAddressAdditionalInformation);
+        return streetAddressAdditionalInformation;
     }
 
-    @Override
-    public PostOfficeBoxAddressAdditionalInformation savePostOfficeBoxAddressAdditionalInformation(
-            PostOfficeBoxAddressAdditionalInformation postOfficeBoxAddressAdditionalInformation) {
-        Optional<PostOfficeBoxAddressAdditionalInformation> foundPostOfficeBoxAddressAdditionalInformation
-                = postOfficeBoxAddressAdditionalInformationRepository.findAny(
-                        postOfficeBoxAddressAdditionalInformation.getPostOfficeBoxAddress().getId(),
-                postOfficeBoxAddressAdditionalInformation.getLanguage());
-        if (foundPostOfficeBoxAddressAdditionalInformation.isPresent()) {
-            PostOfficeBoxAddressAdditionalInformation oldPostOfficeBoxAddressAdditionalInformation
-                    = foundPostOfficeBoxAddressAdditionalInformation.get();
-            StatusInfo statusInfo = oldPostOfficeBoxAddressAdditionalInformation.getStatusInfo();
-            statusInfo.setFetched(LocalDateTime.now());
-            if (!oldPostOfficeBoxAddressAdditionalInformation.equals(postOfficeBoxAddressAdditionalInformation)) {
-                statusInfo.setChanged(LocalDateTime.now());
-            }
-            postOfficeBoxAddressAdditionalInformation.setStatusInfo(statusInfo);
-            postOfficeBoxAddressAdditionalInformation.setId(oldPostOfficeBoxAddressAdditionalInformation.getId());
-        } else {
-            StatusInfo statusInfo = new StatusInfo();
-            statusInfo.setCreated(LocalDateTime.now());
-            statusInfo.setChanged(LocalDateTime.now());
-            statusInfo.setFetched(LocalDateTime.now());
-            postOfficeBoxAddressAdditionalInformation.setStatusInfo(statusInfo);
-        }
-        return postOfficeBoxAddressAdditionalInformationRepository.save(postOfficeBoxAddressAdditionalInformation);
-    }
-
-    @Override
-    public StreetAddressPostOffice saveStreetAddressPostOffice(StreetAddressPostOffice streetAddressPostOffice) {
+    private StreetAddressPostOffice updateStreetAddressPostOfficeData(
+            StreetAddressPostOffice streetAddressPostOffice) {
         Optional<StreetAddressPostOffice> foundStreetAddressPostOffice = streetAddressPostOfficeRepository
                 .findAny(streetAddressPostOffice.getStreetAddress().getId(), streetAddressPostOffice.getLanguage());
         if (foundStreetAddressPostOffice.isPresent()) {
@@ -817,57 +1159,10 @@ public class CatalogServiceImpl implements CatalogService {
             statusInfo.setFetched(LocalDateTime.now());
             streetAddressPostOffice.setStatusInfo(statusInfo);
         }
-        return streetAddressPostOfficeRepository.save(streetAddressPostOffice);
+        return streetAddressPostOffice;
     }
 
-    @Override
-    public PostOffice savePostOffice(PostOffice postOffice) {
-        Optional<PostOffice> foundPostOffice = postOfficeRepository
-                .findAny(postOffice.getPostOfficeBoxAddress().getId(), postOffice.getLanguage());
-        if (foundPostOffice.isPresent()) {
-            PostOffice oldPostOffice = foundPostOffice.get();
-            StatusInfo statusInfo = oldPostOffice.getStatusInfo();
-            statusInfo.setFetched(LocalDateTime.now());
-            if (!oldPostOffice.equals(postOffice)) {
-                statusInfo.setChanged(LocalDateTime.now());
-            }
-            postOffice.setStatusInfo(statusInfo);
-            postOffice.setId(oldPostOffice.getId());
-        } else {
-            StatusInfo statusInfo = new StatusInfo();
-            statusInfo.setCreated(LocalDateTime.now());
-            statusInfo.setChanged(LocalDateTime.now());
-            statusInfo.setFetched(LocalDateTime.now());
-            postOffice.setStatusInfo(statusInfo);
-        }
-        return postOfficeRepository.save(postOffice);
-    }
-
-    @Override
-    public PostOfficeBox savePostOfficeBox(PostOfficeBox postOfficeBox) {
-        Optional<PostOfficeBox> foundPostOfficeBox = postOfficeBoxRepository
-                .findAny(postOfficeBox.getPostOfficeBoxAddress().getId(), postOfficeBox.getLanguage());
-        if (foundPostOfficeBox.isPresent()) {
-            PostOfficeBox oldPostOfficeBox = foundPostOfficeBox.get();
-            StatusInfo statusInfo = oldPostOfficeBox.getStatusInfo();
-            statusInfo.setFetched(LocalDateTime.now());
-            if (!oldPostOfficeBox.equals(postOfficeBox)) {
-                statusInfo.setChanged(LocalDateTime.now());
-            }
-            postOfficeBox.setStatusInfo(statusInfo);
-            postOfficeBox.setId(oldPostOfficeBox.getId());
-        } else {
-            StatusInfo statusInfo = new StatusInfo();
-            statusInfo.setCreated(LocalDateTime.now());
-            statusInfo.setChanged(LocalDateTime.now());
-            statusInfo.setFetched(LocalDateTime.now());
-            postOfficeBox.setStatusInfo(statusInfo);
-        }
-        return postOfficeBoxRepository.save(postOfficeBox);
-    }
-
-    @Override
-    public Street saveStreet(Street street) {
+    private Street updateStreetAddressStreetData(Street street) {
         Optional<Street> foundStreet = streetRepository
                 .findAny(street.getStreetAddress().getId(), street.getLanguage());
         if (foundStreet.isPresent()) {
@@ -886,42 +1181,138 @@ public class CatalogServiceImpl implements CatalogService {
             statusInfo.setFetched(LocalDateTime.now());
             street.setStatusInfo(statusInfo);
         }
-        return streetRepository.save(street);
+        return street;
     }
 
-    @Override
-    public Company saveCompany(Company company) {
-        Set<Company> foundCompanies = companyRepository.findAllByBusinessId(company.getBusinessId());
-        if (foundCompanies.size() > 0) {
-            foundCompanies.forEach(foundCompany -> {
-                StatusInfo statusInfo = foundCompany.getStatusInfo();
-                statusInfo.setFetched(LocalDateTime.now());
-                if (!foundCompany.equals(company)) {
-                    statusInfo.setChanged(LocalDateTime.now());
-                }
-                company.setStatusInfo(statusInfo);
-                company.setId(foundCompany.getId());
-            });
+    private PostOffice updatePostOfficeData(PostOffice postOffice) {
+        Optional<PostOffice> foundPostOffice = postOfficeRepository
+                .findAny(postOffice.getPostOfficeBoxAddress().getId(), postOffice.getLanguage());
+        if (foundPostOffice.isPresent()) {
+            PostOffice oldPostOffice = foundPostOffice.get();
+            StatusInfo statusInfo = oldPostOffice.getStatusInfo();
+            statusInfo.setFetched(LocalDateTime.now());
+            if (!oldPostOffice.equals(postOffice)) {
+                statusInfo.setChanged(LocalDateTime.now());
+            }
+            postOffice.setStatusInfo(statusInfo);
+            postOffice.setId(oldPostOffice.getId());
         } else {
             StatusInfo statusInfo = new StatusInfo();
             statusInfo.setCreated(LocalDateTime.now());
             statusInfo.setChanged(LocalDateTime.now());
             statusInfo.setFetched(LocalDateTime.now());
-            company.setStatusInfo(statusInfo);
+            postOffice.setStatusInfo(statusInfo);
         }
-        return companyRepository.save(company);
+        return postOffice;
     }
 
-    @Override
-    public void saveBusinessName(BusinessName businessName) {
-        Optional<BusinessName> foundBusinessLine = businessNameRepository.findAny(
+    private PostOfficeBox updatePostOfficeBoxData(PostOfficeBox postOfficeBox) {
+        Optional<PostOfficeBox> foundPostOfficeBox = postOfficeBoxRepository
+                .findAny(postOfficeBox.getPostOfficeBoxAddress().getId(), postOfficeBox.getLanguage());
+        if (foundPostOfficeBox.isPresent()) {
+            PostOfficeBox oldPostOfficeBox = foundPostOfficeBox.get();
+            StatusInfo statusInfo = oldPostOfficeBox.getStatusInfo();
+            statusInfo.setFetched(LocalDateTime.now());
+            if (!oldPostOfficeBox.equals(postOfficeBox)) {
+                statusInfo.setChanged(LocalDateTime.now());
+            }
+            postOfficeBox.setStatusInfo(statusInfo);
+            postOfficeBox.setId(oldPostOfficeBox.getId());
+        } else {
+            StatusInfo statusInfo = new StatusInfo();
+            statusInfo.setCreated(LocalDateTime.now());
+            statusInfo.setChanged(LocalDateTime.now());
+            statusInfo.setFetched(LocalDateTime.now());
+            postOfficeBox.setStatusInfo(statusInfo);
+        }
+        return postOfficeBox;
+    }
+
+    private PostOfficeBoxAddressAdditionalInformation updatePostOfficeBoxAddressAdditionalInformationData(
+            PostOfficeBoxAddressAdditionalInformation postOfficeBoxAddressAdditionalInformation) {
+        Optional<PostOfficeBoxAddressAdditionalInformation> foundPostOfficeBoxAddressAdditionalInformation
+                = postOfficeBoxAddressAdditionalInformationRepository.findAny(
+                postOfficeBoxAddressAdditionalInformation.getPostOfficeBoxAddress().getId(),
+                postOfficeBoxAddressAdditionalInformation.getLanguage());
+        if (foundPostOfficeBoxAddressAdditionalInformation.isPresent()) {
+            PostOfficeBoxAddressAdditionalInformation oldPostOfficeBoxAddressAdditionalInformation
+                    = foundPostOfficeBoxAddressAdditionalInformation.get();
+            StatusInfo statusInfo = oldPostOfficeBoxAddressAdditionalInformation.getStatusInfo();
+            statusInfo.setFetched(LocalDateTime.now());
+            if (!oldPostOfficeBoxAddressAdditionalInformation.equals(postOfficeBoxAddressAdditionalInformation)) {
+                statusInfo.setChanged(LocalDateTime.now());
+            }
+            postOfficeBoxAddressAdditionalInformation.setStatusInfo(statusInfo);
+            postOfficeBoxAddressAdditionalInformation.setId(oldPostOfficeBoxAddressAdditionalInformation.getId());
+        } else {
+            StatusInfo statusInfo = new StatusInfo();
+            statusInfo.setCreated(LocalDateTime.now());
+            statusInfo.setChanged(LocalDateTime.now());
+            statusInfo.setFetched(LocalDateTime.now());
+            postOfficeBoxAddressAdditionalInformation.setStatusInfo(statusInfo);
+        }
+        return postOfficeBoxAddressAdditionalInformation;
+    }
+
+    private PostOfficeBoxAddressMunicipality updatePostOfficeBoxAddressMunicipalityData(
+            PostOfficeBoxAddressMunicipality postOfficeBoxAddressMunicipality) {
+        Optional<PostOfficeBoxAddressMunicipality> foundPostOfficeBoxAddressMunicipality =
+                Optional.ofNullable(postOfficeBoxAddressMunicipalityRepository
+                        .findByPostOfficeBoxAddressId(postOfficeBoxAddressMunicipality.getPostOfficeBoxAddress().getId()));
+        if (foundPostOfficeBoxAddressMunicipality.isPresent()) {
+            PostOfficeBoxAddressMunicipality oldPostOfficeBoxAddressMunicipality = foundPostOfficeBoxAddressMunicipality.get();
+            StatusInfo statusInfo = oldPostOfficeBoxAddressMunicipality.getStatusInfo();
+            statusInfo.setFetched(LocalDateTime.now());
+            if (!oldPostOfficeBoxAddressMunicipality.equals(postOfficeBoxAddressMunicipality)) {
+                statusInfo.setChanged(LocalDateTime.now());
+            }
+            postOfficeBoxAddressMunicipality.setStatusInfo(statusInfo);
+            postOfficeBoxAddressMunicipality.setId(oldPostOfficeBoxAddressMunicipality.getId());
+        } else {
+            StatusInfo statusInfo = new StatusInfo();
+            statusInfo.setCreated(LocalDateTime.now());
+            statusInfo.setChanged(LocalDateTime.now());
+            statusInfo.setFetched(LocalDateTime.now());
+            postOfficeBoxAddressMunicipality.setStatusInfo(statusInfo);
+        }
+        return postOfficeBoxAddressMunicipality;
+    }
+
+    private PostOfficeBoxAddressMunicipalityName updatePostOfficeBoxAddressMunicipalityNameData(
+            PostOfficeBoxAddressMunicipalityName postOfficeBoxAddressMunicipalityName) {
+        Optional<PostOfficeBoxAddressMunicipalityName> foundPostOfficeBoxAddressMunicipalityName
+                = postOfficeBoxAddressMunicipalityNameRepository.findAny(
+                postOfficeBoxAddressMunicipalityName.getPostOfficeBoxAddressMunicipality().getId(),
+                postOfficeBoxAddressMunicipalityName.getLanguage());
+        if (foundPostOfficeBoxAddressMunicipalityName.isPresent()) {
+            PostOfficeBoxAddressMunicipalityName oldPostOfficeBoxAddressMunicipalityName
+                    = foundPostOfficeBoxAddressMunicipalityName.get();
+            StatusInfo statusInfo = oldPostOfficeBoxAddressMunicipalityName.getStatusInfo();
+            statusInfo.setFetched(LocalDateTime.now());
+            if (!oldPostOfficeBoxAddressMunicipalityName.equals(postOfficeBoxAddressMunicipalityName)) {
+                statusInfo.setChanged(LocalDateTime.now());
+            }
+            postOfficeBoxAddressMunicipalityName.setStatusInfo(statusInfo);
+            postOfficeBoxAddressMunicipalityName.setId(oldPostOfficeBoxAddressMunicipalityName.getId());
+        } else {
+            StatusInfo statusInfo = new StatusInfo();
+            statusInfo.setCreated(LocalDateTime.now());
+            statusInfo.setChanged(LocalDateTime.now());
+            statusInfo.setFetched(LocalDateTime.now());
+            postOfficeBoxAddressMunicipalityName.setStatusInfo(statusInfo);
+        }
+        return postOfficeBoxAddressMunicipalityName;
+    }
+
+    private BusinessName updateBusinessNameData(BusinessName businessName) {
+        Optional<BusinessName> foundBusinessName = businessNameRepository.findAny(
                 businessName.getCompany().getId(),
                 businessName.getLanguage(),
                 businessName.getSource(),
                 businessName.getOrdering(),
                 businessName.getVersion());
-        if (foundBusinessLine.isPresent()) {
-            BusinessName oldBusinessName = foundBusinessLine.get();
+        if (foundBusinessName.isPresent()) {
+            BusinessName oldBusinessName = foundBusinessName.get();
             StatusInfo statusInfo = oldBusinessName.getStatusInfo();
             statusInfo.setFetched(LocalDateTime.now());
             if (!oldBusinessName.equals(businessName)) {
@@ -936,11 +1327,10 @@ public class CatalogServiceImpl implements CatalogService {
             statusInfo.setFetched(LocalDateTime.now());
             businessName.setStatusInfo(statusInfo);
         }
-        businessNameRepository.save(businessName);
+        return businessName;
     }
 
-    @Override
-    public void saveBusinessAuxiliaryName(BusinessAuxiliaryName businessAuxiliaryName) {
+    private BusinessAuxiliaryName updateBusinessAuxiliaryNameData(BusinessAuxiliaryName businessAuxiliaryName) {
         Optional<BusinessAuxiliaryName> foundBusinessAuxiliaryName = businessAuxiliaryNameRepository.findAny(
                 businessAuxiliaryName.getCompany().getId(),
                 businessAuxiliaryName.getLanguage(),
@@ -963,11 +1353,10 @@ public class CatalogServiceImpl implements CatalogService {
             statusInfo.setFetched(LocalDateTime.now());
             businessAuxiliaryName.setStatusInfo(statusInfo);
         }
-        businessAuxiliaryNameRepository.save(businessAuxiliaryName);
+        return businessAuxiliaryName;
     }
 
-    @Override
-    public void saveBusinessAddress(BusinessAddress businessAddress) {
+    private BusinessAddress updateBusinessAddressData(BusinessAddress businessAddress) {
         Optional<BusinessAddress> foundAddress = businessAddressRepository.findAny(
                 businessAddress.getCompany().getId(),
                 businessAddress.getLanguage(),
@@ -990,11 +1379,10 @@ public class CatalogServiceImpl implements CatalogService {
             statusInfo.setFetched(LocalDateTime.now());
             businessAddress.setStatusInfo(statusInfo);
         }
-        businessAddressRepository.save(businessAddress);
+        return businessAddress;
     }
 
-    @Override
-    public void saveBusinessIdChange(BusinessIdChange businessIdChange) {
+    private BusinessIdChange updateBusinessIdChangeData(BusinessIdChange businessIdChange) {
         Optional<BusinessIdChange> foundBusinessIdChange = businessIdChangeRepository.findAny(
                 businessIdChange.getCompany().getId(),
                 businessIdChange.getLanguage(),
@@ -1018,11 +1406,10 @@ public class CatalogServiceImpl implements CatalogService {
             statusInfo.setFetched(LocalDateTime.now());
             businessIdChange.setStatusInfo(statusInfo);
         }
-        businessIdChangeRepository.save(businessIdChange);
+        return businessIdChange;
     }
 
-    @Override
-    public void saveBusinessLine(BusinessLine businessLine) {
+    private BusinessLine updateBusinessLineData(BusinessLine businessLine) {
         Optional<BusinessLine> foundBusinessLine = businessLineRepository.findAny(
                 businessLine.getCompany().getId(),
                 businessLine.getLanguage(),
@@ -1045,11 +1432,10 @@ public class CatalogServiceImpl implements CatalogService {
             statusInfo.setFetched(LocalDateTime.now());
             businessLine.setStatusInfo(statusInfo);
         }
-        businessLineRepository.save(businessLine);
+        return businessLine;
     }
 
-    @Override
-    public void saveCompanyForm(CompanyForm companyForm) {
+    private CompanyForm updateCompanyFormData(CompanyForm companyForm) {
         Optional<CompanyForm> foundCompanyForm = companyFormRepository.findAny(
                 companyForm.getCompany().getId(),
                 companyForm.getLanguage(),
@@ -1072,11 +1458,10 @@ public class CatalogServiceImpl implements CatalogService {
             statusInfo.setFetched(LocalDateTime.now());
             companyForm.setStatusInfo(statusInfo);
         }
-        companyFormRepository.save(companyForm);
+        return companyForm;
     }
 
-    @Override
-    public void saveContactDetail(ContactDetail contactDetail) {
+    private ContactDetail updateContactDetailData(ContactDetail contactDetail) {
         Optional<ContactDetail> foundContactDetail = contactDetailRepository.findAny(
                 contactDetail.getCompany().getId(),
                 contactDetail.getLanguage(),
@@ -1099,11 +1484,10 @@ public class CatalogServiceImpl implements CatalogService {
             statusInfo.setFetched(LocalDateTime.now());
             contactDetail.setStatusInfo(statusInfo);
         }
-        contactDetailRepository.save(contactDetail);
+        return contactDetail;
     }
 
-    @Override
-    public void saveLanguage(Language language) {
+    private Language updateLanguageData(Language language) {
         Optional<Language> foundLanguage = languageRepository.findAny(
                 language.getCompany().getId(),
                 language.getLanguage(),
@@ -1125,11 +1509,10 @@ public class CatalogServiceImpl implements CatalogService {
             statusInfo.setFetched(LocalDateTime.now());
             language.setStatusInfo(statusInfo);
         }
-        languageRepository.save(language);
+        return language;
     }
 
-    @Override
-    public void saveLiquidation(Liquidation liquidation) {
+    private Liquidation updateLiquidationData(Liquidation liquidation) {
         Optional<Liquidation> foundLiquidation = liquidationRepository.findAny(
                 liquidation.getCompany().getId(),
                 liquidation.getLanguage(),
@@ -1152,11 +1535,10 @@ public class CatalogServiceImpl implements CatalogService {
             statusInfo.setFetched(LocalDateTime.now());
             liquidation.setStatusInfo(statusInfo);
         }
-        liquidationRepository.save(liquidation);
+        return liquidation;
     }
 
-    @Override
-    public void saveRegisteredEntry(RegisteredEntry registeredEntry) {
+    private RegisteredEntry updateRegisteredEntryData(RegisteredEntry registeredEntry) {
         Optional<RegisteredEntry> foundRegisteredEntry = registeredEntryRepository.findAny(
                 registeredEntry.getCompany().getId(),
                 registeredEntry.getLanguage(),
@@ -1180,11 +1562,10 @@ public class CatalogServiceImpl implements CatalogService {
             statusInfo.setFetched(LocalDateTime.now());
             registeredEntry.setStatusInfo(statusInfo);
         }
-        registeredEntryRepository.save(registeredEntry);
+        return registeredEntry;
     }
 
-    @Override
-    public void saveRegisteredOffice(RegisteredOffice registeredOffice) {
+    private RegisteredOffice updateRegisteredOfficeData(RegisteredOffice registeredOffice) {
         Optional<RegisteredOffice> foundRegisteredOffice = registeredOfficeRepository.findAny(
                 registeredOffice.getCompany().getId(),
                 registeredOffice.getLanguage(),
@@ -1207,7 +1588,7 @@ public class CatalogServiceImpl implements CatalogService {
             statusInfo.setFetched(LocalDateTime.now());
             registeredOffice.setStatusInfo(statusInfo);
         }
-        registeredOfficeRepository.save(registeredOffice);
+        return registeredOffice;
     }
 
 }

@@ -35,8 +35,15 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import java.security.KeyManagementException;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 
 /**
@@ -65,13 +72,13 @@ public class FetchCompaniesActor extends XRoadCatalogActor {
         if (message instanceof ClientType) {
             ClientType clientType = (ClientType) message;
             XRoadClientIdentifierType client = clientType.getId();
-            if (client.getMemberClass().equalsIgnoreCase(COMMERCIAL_MEMBER_CLASS)) {
+            //if (client.getMemberClass().equalsIgnoreCase(COMMERCIAL_MEMBER_CLASS)) {
                 log.info("Fetching data for company with businessCode {}", client.getMemberCode());
-                String businessCode = clientType.getId().getMemberCode();
-                JSONObject companyJson = OrganizationUtil.getCompany(fetchCompaniesUrl, businessCode);
+                String businessCode = "1710128-9";//clientType.getId().getMemberCode();
+                JSONObject companyJson = getCompany(fetchCompaniesUrl, businessCode);
                 saveData(companyJson.optJSONArray("results"));
                 log.info("Successfully saved data for company with businessCode {}", businessCode);
-            }
+            //}
 
             return true;
         } else {
@@ -79,9 +86,27 @@ public class FetchCompaniesActor extends XRoadCatalogActor {
         }
     }
 
+    public static JSONObject getCompany(String url, String businessCode) {
+        final String fetchCompaniesUrl = new StringBuilder().append(url)
+                .append("/").append(businessCode).toString();
+        JSONObject jsonObject = new JSONObject();
+        try {
+            String ret = OrganizationUtil.getResponseBody(fetchCompaniesUrl);
+            jsonObject = new JSONObject(ret);
+            return jsonObject;
+        } catch (KeyStoreException e) {
+            log.error("KeyStoreException occurred when fetching companies from url {} with businessCode {}", url, businessCode);
+        } catch (NoSuchAlgorithmException e) {
+            log.error("NoSuchAlgorithmException occurred when fetching companies from url {} with businessCode {}", url, businessCode);
+        } catch (KeyManagementException e) {
+            log.error("KeyManagementException occurred when fetching companies from url {} with businessCode {}", url, businessCode);
+        }
+        return jsonObject;
+    }
+
     private void saveData(JSONArray data) {
         for (int i = 0; i < data.length(); i++) {
-            Company company = OrganizationUtil.createCompany(data.optJSONObject(i));
+            Company company = createCompany(data.optJSONObject(i));
             JSONArray businessAddressesJson = data.optJSONObject(i).optJSONArray("addresses");
             JSONArray businessAuxiliaryNamesJson = data.optJSONObject(i).optJSONArray("auxiliaryNames");
             JSONArray businessIdChangesJson = data.optJSONObject(i).optJSONArray("businessIdChanges");
@@ -94,96 +119,259 @@ public class FetchCompaniesActor extends XRoadCatalogActor {
             JSONArray registeredEntriesJson = data.optJSONObject(i).optJSONArray("registeredEntries");
             JSONArray registeredOfficesJson = data.optJSONObject(i).optJSONArray("registeredOffices");
 
-            List<BusinessAddress> businessAddresses = businessAddressesJson != null
-                    ? OrganizationUtil.createBusinessAddresses(businessAddressesJson)
-                    : new ArrayList<>();
-            List<BusinessAuxiliaryName> businessAuxiliaryNames = businessAuxiliaryNamesJson != null
-                    ? OrganizationUtil.createBusinessAuxiliaryNames(businessAuxiliaryNamesJson)
-                    : new ArrayList<>();
-            List<BusinessIdChange> businessIdChanges = businessIdChangesJson != null
-                    ? OrganizationUtil.createBusinessIdChanges(businessIdChangesJson)
-                    : new ArrayList<>();
-            List<BusinessLine> businessLines = businessLinesJson != null
-                    ? OrganizationUtil.createBusinessLines(businessLinesJson)
-                    : new ArrayList<>();
-            List<BusinessName> businessNames = businessNamesJson != null
-                    ? OrganizationUtil.createBusinessNames(businessNamesJson)
-                    : new ArrayList<>();
-            List<CompanyForm> companyForms = companyFormsJson != null
-                    ? OrganizationUtil.createCompanyForms(companyFormsJson)
-                    : new ArrayList<>();
-            List<ContactDetail> contactDetails = contactDetailsJson != null
-                    ? OrganizationUtil.createContactDetails(contactDetailsJson)
-                    : new ArrayList<>();
-            List<Language> languages = languagesJson != null
-                    ? OrganizationUtil.createLanguages(languagesJson)
-                    : new ArrayList<>();
-            List<Liquidation> liquidations = liquidationsJson != null
-                    ? OrganizationUtil.createLiquidations(liquidationsJson)
-                    : new ArrayList<>();
-            List<RegisteredEntry> registeredEntries = registeredEntriesJson != null
-                    ? OrganizationUtil.createRegisteredEntries(registeredEntriesJson)
-                    : new ArrayList<>();
-            List<RegisteredOffice> registeredOffices = registeredOfficesJson != null
-                    ? OrganizationUtil.createRegisteredOffices(registeredOfficesJson)
-                    : new ArrayList<>();
+            Set<BusinessAddress> businessAddresses = businessAddressesJson != null
+                    ? createBusinessAddresses(businessAddressesJson) : new HashSet<>();
+            Set<BusinessAuxiliaryName> businessAuxiliaryNames = businessAuxiliaryNamesJson != null
+                    ? createBusinessAuxiliaryNames(businessAuxiliaryNamesJson) : new HashSet<>();
+            Set<BusinessIdChange> businessIdChanges = businessIdChangesJson != null
+                    ? createBusinessIdChanges(businessIdChangesJson) : new HashSet<>();
+            Set<BusinessLine> businessLines = businessLinesJson != null
+                    ? createBusinessLines(businessLinesJson) : new HashSet<>();
+            Set<BusinessName> businessNames = businessNamesJson != null
+                    ? createBusinessNames(businessNamesJson) : new HashSet<>();
+            Set<CompanyForm> companyForms = companyFormsJson != null
+                    ? createCompanyForms(companyFormsJson) : new HashSet<>();
+            Set<ContactDetail> contactDetails = contactDetailsJson != null
+                    ? createContactDetails(contactDetailsJson) : new HashSet<>();
+            Set<Language> languages = languagesJson != null
+                    ? createLanguages(languagesJson) : new HashSet<>();
+            Set<Liquidation> liquidations = liquidationsJson != null
+                    ? createLiquidations(liquidationsJson) : new HashSet<>();
+            Set<RegisteredEntry> registeredEntries = registeredEntriesJson != null
+                    ? createRegisteredEntries(registeredEntriesJson) : new HashSet<>();
+            Set<RegisteredOffice> registeredOffices = registeredOfficesJson != null
+                    ? createRegisteredOffices(registeredOfficesJson) : new HashSet<>();
 
-            Company savedCompany = catalogService.saveCompany(company);
-
-            businessAddresses.forEach(businessAddress -> {
-                businessAddress.setCompany(savedCompany);
-                catalogService.saveBusinessAddress(businessAddress);
-            });
-
-            businessAuxiliaryNames.forEach(businessAuxiliaryName -> {
-                businessAuxiliaryName.setCompany(savedCompany);
-                catalogService.saveBusinessAuxiliaryName(businessAuxiliaryName);
-            });
-
-            businessIdChanges.forEach(businessIdChange -> {
-                businessIdChange.setCompany(savedCompany);
-                catalogService.saveBusinessIdChange(businessIdChange);
-            });
-
-            businessLines.forEach(businessLine -> {
-                businessLine.setCompany(savedCompany);
-                catalogService.saveBusinessLine(businessLine);
-            });
-
-            businessNames.forEach(businessName -> {
-                businessName.setCompany(savedCompany);
-                catalogService.saveBusinessName(businessName);
-            });
-
-            companyForms.forEach(companyForm -> {
-                companyForm.setCompany(savedCompany);
-                catalogService.saveCompanyForm(companyForm);
-            });
-
-            contactDetails.forEach(contactDetail -> {
-                contactDetail.setCompany(savedCompany);
-                catalogService.saveContactDetail(contactDetail);
-            });
-
-            languages.forEach(language -> {
-                language.setCompany(savedCompany);
-                catalogService.saveLanguage(language);
-            });
-
-            liquidations.forEach(liquidation -> {
-                liquidation.setCompany(savedCompany);
-                catalogService.saveLiquidation(liquidation);
-            });
-
-            registeredEntries.forEach(registeredEntry -> {
-                registeredEntry.setCompany(savedCompany);
-                catalogService.saveRegisteredEntry(registeredEntry);
-            });
-
-            registeredOffices.forEach(registeredOffice -> {
-                registeredOffice.setCompany(savedCompany);
-                catalogService.saveRegisteredOffice(registeredOffice);
-            });
+            company.setBusinessAddresses(businessAddresses);
+            company.setBusinessAuxiliaryNames(businessAuxiliaryNames);
+            company.setBusinessIdChanges(businessIdChanges);
+            company.setBusinessLines(businessLines);
+            company.setBusinessNames(businessNames);
+            company.setCompanyForms(companyForms);
+            company.setContactDetails(contactDetails);
+            company.setLanguages(languages);
+            company.setLiquidations(liquidations);
+            company.setRegisteredEntries(registeredEntries);
+            company.setRegisteredOffices(registeredOffices);
+            catalogService.saveCompany(company);
         }
+    }
+
+    private Company createCompany(JSONObject jsonObject) {
+        return Company.builder().businessId(jsonObject.optString("businessId"))
+                .companyForm(jsonObject.optString("companyForm"))
+                .detailsUri(jsonObject.optString("detailsUri"))
+                .name(jsonObject.optString("name"))
+                .registrationDate(parseDateFromString(jsonObject.optString("registrationDate")))
+                .build();
+    }
+
+    private Set<BusinessAddress> createBusinessAddresses(JSONArray jsonArray) {
+        List<BusinessAddress> businessAddressesList = new ArrayList<>();
+        for (int i = 0; i < jsonArray.length(); i++) {
+            businessAddressesList.add(BusinessAddress.builder()
+                    .careOf(jsonArray.optJSONObject(i).optString("careOf"))
+                    .city(jsonArray.optJSONObject(i).optString("city"))
+                    .country(jsonArray.optJSONObject(i).optString("country"))
+                    .language(jsonArray.optJSONObject(i).optString("language"))
+                    .postCode(jsonArray.optJSONObject(i).optString("postCode"))
+                    .source(jsonArray.optJSONObject(i).optLong("source"))
+                    .type(jsonArray.optJSONObject(i).optLong("type"))
+                    .version(jsonArray.optJSONObject(i).optLong("version"))
+                    .street(jsonArray.optJSONObject(i).optString("street"))
+                    .registrationDate(parseDateFromString(jsonArray.optJSONObject(i).optString("registrationDate")))
+                    .endDate(parseDateFromString(jsonArray.optJSONObject(i).optString("endDate")))
+                    .build());
+        }
+        Set<BusinessAddress> businessAddresses = new HashSet<>();
+        businessAddressesList.forEach(businessAddress -> businessAddresses.add(businessAddress));
+        return businessAddresses;
+    }
+
+    private Set<BusinessAuxiliaryName> createBusinessAuxiliaryNames(JSONArray jsonArray) {
+        List<BusinessAuxiliaryName> businessAuxiliaryNamesList = new ArrayList<>();
+        for (int i = 0; i < jsonArray.length(); i++) {
+            businessAuxiliaryNamesList.add(BusinessAuxiliaryName.builder()
+                    .language(jsonArray.optJSONObject(i).optString("language"))
+                    .name(jsonArray.optJSONObject(i).optString("name"))
+                    .ordering(jsonArray.optJSONObject(i).optLong("order"))
+                    .source(jsonArray.optJSONObject(i).optLong("source"))
+                    .version(jsonArray.optJSONObject(i).optLong("version"))
+                    .registrationDate(parseDateFromString(jsonArray.optJSONObject(i).optString("registrationDate")))
+                    .endDate(parseDateFromString(jsonArray.optJSONObject(i).optString("endDate")))
+                    .build());
+        }
+        Set<BusinessAuxiliaryName> businessAuxiliaryNames = new HashSet<>();
+        businessAuxiliaryNamesList.forEach(businessAuxiliaryName -> businessAuxiliaryNames.add(businessAuxiliaryName));
+        return businessAuxiliaryNames;
+    }
+
+    private Set<BusinessIdChange> createBusinessIdChanges(JSONArray jsonArray) {
+        List<BusinessIdChange> businessIdChangesList = new ArrayList<>();
+        for (int i = 0; i < jsonArray.length(); i++) {
+            businessIdChangesList.add(BusinessIdChange.builder()
+                    .language(jsonArray.optJSONObject(i).optString("language"))
+                    .change(jsonArray.optJSONObject(i).optString("change"))
+                    .changeDate(jsonArray.optJSONObject(i).optString("changeDate"))
+                    .description(jsonArray.optJSONObject(i).optString("description"))
+                    .reason(jsonArray.optJSONObject(i).optString("reason"))
+                    .oldBusinessId(jsonArray.optJSONObject(i).optString("oldBusinessId"))
+                    .newBusinessId(jsonArray.optJSONObject(i).optString("newBusinessId"))
+                    .source(jsonArray.optJSONObject(i).optLong("source"))
+                    .build());
+        }
+        Set<BusinessIdChange> businessIdChanges = new HashSet<>();
+        businessIdChangesList.forEach(businessIdChange -> businessIdChanges.add(businessIdChange));
+        return businessIdChanges;
+    }
+
+    private Set<BusinessLine> createBusinessLines(JSONArray jsonArray) {
+        List<BusinessLine> businessLinesList = new ArrayList<>();
+        for (int i = 0; i < jsonArray.length(); i++) {
+            businessLinesList.add(BusinessLine.builder()
+                    .language(jsonArray.optJSONObject(i).optString("language"))
+                    .name(jsonArray.optJSONObject(i).optString("name"))
+                    .ordering(jsonArray.optJSONObject(i).optLong("order"))
+                    .source(jsonArray.optJSONObject(i).optLong("source"))
+                    .version(jsonArray.optJSONObject(i).optLong("version"))
+                    .registrationDate(parseDateFromString(jsonArray.optJSONObject(i).optString("registrationDate")))
+                    .endDate(parseDateFromString(jsonArray.optJSONObject(i).optString("endDate")))
+                    .build());
+        }
+        Set<BusinessLine> businessLines = new HashSet<>();
+        businessLinesList.forEach(businessLine -> businessLines.add(businessLine));
+        return businessLines;
+    }
+
+    private Set<BusinessName> createBusinessNames(JSONArray jsonArray) {
+        List<BusinessName> businessNamesList = new ArrayList<>();
+        for (int i = 0; i < jsonArray.length(); i++) {
+            businessNamesList.add(BusinessName.builder()
+                    .language(jsonArray.optJSONObject(i).optString("language"))
+                    .name(jsonArray.optJSONObject(i).optString("name"))
+                    .ordering(jsonArray.optJSONObject(i).optLong("order"))
+                    .source(jsonArray.optJSONObject(i).optLong("source"))
+                    .version(jsonArray.optJSONObject(i).optLong("version"))
+                    .registrationDate(parseDateFromString(jsonArray.optJSONObject(i).optString("registrationDate")))
+                    .endDate(parseDateFromString(jsonArray.optJSONObject(i).optString("endDate")))
+                    .build());
+        }
+        Set<BusinessName> businessNames = new HashSet<>();
+        businessNamesList.forEach(businessName -> businessNames.add(businessName));
+        return businessNames;
+    }
+
+    private Set<CompanyForm> createCompanyForms(JSONArray jsonArray) {
+        List<CompanyForm> companyFormsList = new ArrayList<>();
+        for (int i = 0; i < jsonArray.length(); i++) {
+            companyFormsList.add(CompanyForm.builder()
+                    .language(jsonArray.optJSONObject(i).optString("language"))
+                    .name(jsonArray.optJSONObject(i).optString("name"))
+                    .source(jsonArray.optJSONObject(i).optLong("source"))
+                    .type(jsonArray.optJSONObject(i).optLong("type"))
+                    .version(jsonArray.optJSONObject(i).optLong("version"))
+                    .registrationDate(parseDateFromString(jsonArray.optJSONObject(i).optString("registrationDate")))
+                    .endDate(parseDateFromString(jsonArray.optJSONObject(i).optString("endDate")))
+                    .build());
+        }
+        Set<CompanyForm> companyForms = new HashSet<>();
+        companyFormsList.forEach(companyForm -> companyForms.add(companyForm));
+        return companyForms;
+    }
+
+    private Set<ContactDetail> createContactDetails(JSONArray jsonArray) {
+        List<ContactDetail> contactDetailsList = new ArrayList<>();
+        for (int i = 0; i < jsonArray.length(); i++) {
+            contactDetailsList.add(ContactDetail.builder()
+                    .version(jsonArray.optJSONObject(i).optLong("version"))
+                    .type(jsonArray.optJSONObject(i).optString("type"))
+                    .source(jsonArray.optJSONObject(i).optLong("source"))
+                    .language(jsonArray.optJSONObject(i).optString("language"))
+                    .value(jsonArray.optJSONObject(i).optString("value"))
+                    .registrationDate(parseDateFromString(jsonArray.optJSONObject(i).optString("registrationDate")))
+                    .endDate(parseDateFromString(jsonArray.optJSONObject(i).optString("endDate")))
+                    .build());
+        }
+        Set<ContactDetail> contactDetails = new HashSet<>();
+        contactDetailsList.forEach(contactDetail -> contactDetails.add(contactDetail));
+        return contactDetails;
+    }
+
+    private Set<Language> createLanguages(JSONArray jsonArray) {
+        List<Language> languagesList = new ArrayList<>();
+        for (int i = 0; i < jsonArray.length(); i++) {
+            languagesList.add(Language.builder()
+                    .version(jsonArray.optJSONObject(i).optLong("version"))
+                    .source(jsonArray.optJSONObject(i).optLong("source"))
+                    .language(jsonArray.optJSONObject(i).optString("language"))
+                    .name(jsonArray.optJSONObject(i).optString("name"))
+                    .registrationDate(parseDateFromString(jsonArray.optJSONObject(i).optString("registrationDate")))
+                    .endDate(parseDateFromString(jsonArray.optJSONObject(i).optString("endDate")))
+                    .build());
+        }
+        Set<Language> languages = new HashSet<>();
+        languagesList.forEach(language -> languages.add(language));
+        return languages;
+    }
+
+    private Set<Liquidation> createLiquidations(JSONArray jsonArray) {
+        List<Liquidation> liquidationsList = new ArrayList<>();
+        for (int i = 0; i < jsonArray.length(); i++) {
+            liquidationsList.add(Liquidation.builder()
+                    .version(jsonArray.optJSONObject(i).optLong("version"))
+                    .source(jsonArray.optJSONObject(i).optLong("source"))
+                    .language(jsonArray.optJSONObject(i).optString("language"))
+                    .name(jsonArray.optJSONObject(i).optString("name"))
+                    .type(jsonArray.optJSONObject(i).optLong("type"))
+                    .registrationDate(LocalDateTime.now())
+                    .endDate(LocalDateTime.now())
+                    .build());
+        }
+        Set<Liquidation> liquidations = new HashSet<>();
+        liquidationsList.forEach(liquidation -> liquidations.add(liquidation));
+        return liquidations;
+    }
+
+    private Set<RegisteredEntry> createRegisteredEntries(JSONArray jsonArray) {
+        List<RegisteredEntry> registeredEntriesList = new ArrayList<>();
+        for (int i = 0; i < jsonArray.length(); i++) {
+            registeredEntriesList.add(RegisteredEntry.builder()
+                    .language(jsonArray.optJSONObject(i).optString("language"))
+                    .description(jsonArray.optJSONObject(i).optString("description"))
+                    .register(jsonArray.optJSONObject(i).optLong("register"))
+                    .status(jsonArray.optJSONObject(i).optLong("status"))
+                    .authority(jsonArray.optJSONObject(i).optLong("authority"))
+                    .registrationDate(parseDateFromString(jsonArray.optJSONObject(i).optString("registrationDate")))
+                    .endDate(parseDateFromString(jsonArray.optJSONObject(i).optString("endDate")))
+                    .build());
+        }
+        Set<RegisteredEntry> registeredEntries = new HashSet<>();
+        registeredEntriesList.forEach(registeredEntry -> registeredEntries.add(registeredEntry));
+        return registeredEntries;
+    }
+
+    private Set<RegisteredOffice> createRegisteredOffices(JSONArray jsonArray) {
+        List<RegisteredOffice> registeredOfficesList = new ArrayList<>();
+        for (int i = 0; i < jsonArray.length(); i++) {
+            registeredOfficesList.add(RegisteredOffice.builder()
+                    .source(jsonArray.optJSONObject(i).optLong("source"))
+                    .language(jsonArray.optJSONObject(i).optString("language"))
+                    .name(jsonArray.optJSONObject(i).optString("name"))
+                    .ordering(jsonArray.optJSONObject(i).optLong("order"))
+                    .version(jsonArray.optJSONObject(i).optLong("version"))
+                    .registrationDate(parseDateFromString(jsonArray.optJSONObject(i).optString("registrationDate")))
+                    .endDate(parseDateFromString(jsonArray.optJSONObject(i).optString("endDate")))
+                    .build());
+        }
+        Set<RegisteredOffice> registeredOffices = new HashSet<>();
+        registeredOfficesList.forEach(registeredOffice -> registeredOffices.add(registeredOffice));
+        return registeredOffices;
+    }
+
+    private LocalDateTime parseDateFromString(String dateValue) {
+        if (dateValue != null && !dateValue.isEmpty()) {
+            return LocalDate.parse(dateValue).atStartOfDay();
+        }
+        return null;
     }
 }

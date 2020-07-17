@@ -54,26 +54,7 @@ import java.util.Set;
 public class Organization {
 
     static final String FIND_ALL_BY_BUSINESS_CODE =
-            "SELECT DISTINCT org FROM Organization org " +
-                    "LEFT JOIN FETCH org.organizationNames fetchedOrganizationNames " +
-                    "LEFT JOIN FETCH org.organizationDescriptions fetchedOrganizationDescriptions " +
-                    "LEFT JOIN FETCH org.emails fetchedEmails " +
-                    "LEFT JOIN FETCH org.phoneNumbers fetchedPhoneNumbers " +
-                    "LEFT JOIN FETCH org.webPages fetchedWebPages " +
-                    "LEFT JOIN FETCH org.addresses fetchedAddresses " +
-                    "LEFT JOIN FETCH fetchedAddresses.streetAddresses fetchedStreetAddresses " +
-                    "LEFT JOIN FETCH fetchedStreetAddresses.additionalInformation fetchedStreetAddressAdditionalInformation " +
-                    "LEFT JOIN FETCH fetchedStreetAddresses.postOffices fetchedStreetAddressPostOffices " +
-                    "LEFT JOIN FETCH fetchedStreetAddresses.streets fetchedStreets " +
-                    "LEFT JOIN FETCH fetchedStreetAddresses.municipalities fetchedStreetAddressMunicipalities " +
-                    "LEFT JOIN FETCH fetchedStreetAddressMunicipalities.streetAddressMunicipalityNames fetchedStreetAddressMunicipalityNames " +
-                    "LEFT JOIN FETCH fetchedAddresses.postOfficeBoxAddresses fetchedPostOfficeBoxAddresses " +
-                    "LEFT JOIN FETCH fetchedPostOfficeBoxAddresses.postOffices fetchedPostOfficeBoxAddressPostOffices " +
-                    "LEFT JOIN FETCH fetchedPostOfficeBoxAddresses.postOfficesBoxes fetchedPostOfficeBoxAddressPostOfficeBoxes " +
-                    "LEFT JOIN FETCH fetchedPostOfficeBoxAddresses.additionalInformation fetchedPostOfficeBoxAdditionalInformation " +
-                    "LEFT JOIN FETCH fetchedPostOfficeBoxAddresses.postOfficeBoxAddressMunicipalities fetchedPostOfficeBoxAddressMunicipalities " +
-                    "LEFT JOIN FETCH fetchedPostOfficeBoxAddressMunicipalities.postOfficeBoxAddressMunicipalityNames fetchedPostOfficeBoxAddressMunicipalityNames " +
-                    "WHERE org.businessCode = :businessCode";
+            "SELECT DISTINCT org FROM Organization org WHERE org.businessCode = :businessCode";
 
     @Id
     @Column(nullable = false)

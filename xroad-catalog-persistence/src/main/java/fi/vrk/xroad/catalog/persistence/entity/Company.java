@@ -65,19 +65,7 @@ import java.util.Set;
 public class Company {
 
     static final String FIND_ALL_BY_BUSINESS_ID =
-            "SELECT DISTINCT com FROM Company com " +
-                    "LEFT JOIN FETCH com.businessAddresses fetchedBusinessAddresses " +
-                    "LEFT JOIN FETCH com.businessAuxiliaryNames fetchedBusinessAuxiliaryNames " +
-                    "LEFT JOIN FETCH com.businessIdChanges fetchedBusinessIdChanges " +
-                    "LEFT JOIN FETCH com.businessLines fetchedBusinessLines " +
-                    "LEFT JOIN FETCH com.businessNames fetchedBusinessNames " +
-                    "LEFT JOIN FETCH com.companyForms fetchedCompanyForms " +
-                    "LEFT JOIN FETCH com.contactDetails fetchedContactDetails " +
-                    "LEFT JOIN FETCH com.languages fetchedLanguages " +
-                    "LEFT JOIN FETCH com.liquidations fetchedLiquidations " +
-                    "LEFT JOIN FETCH com.registeredEntries fetchedRegisteredEntries " +
-                    "LEFT JOIN FETCH com.registeredOffices fetchedRegisteredOffices " +
-                    "WHERE com.businessId = :businessId";
+            "SELECT DISTINCT com FROM Company com WHERE com.businessId = :businessId";
 
     @Id
     @Column(nullable = false)
