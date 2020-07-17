@@ -35,8 +35,6 @@ import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.StreamSupport;
 
-
-
 /**
  * Implementation for catalogservice CRUD
  */
@@ -401,8 +399,7 @@ public class CatalogServiceImpl implements CatalogService {
     @Override
     @Transactional
     public Organization saveOrganization(Organization organization) {
-        Optional<Organization> foundOrganization = organizationRepository
-                .findAnyByOrganizationGuid(organization.getGuid());
+        Optional<Organization> foundOrganization = organizationRepository.findAnyByOrganizationGuid(organization.getGuid());
         if (foundOrganization.isPresent()) {
             Organization oldOrganization = foundOrganization.get();
             StatusInfo statusInfo = oldOrganization.getStatusInfo();
@@ -419,173 +416,7 @@ public class CatalogServiceImpl implements CatalogService {
             statusInfo.setFetched(LocalDateTime.now());
             organization.setStatusInfo(statusInfo);
         }
-
-        Organization newOrganization = organizationRepository.save(Organization.builder().publishingStatus(organization.getPublishingStatus())
-                .id(organization.getId())
-                .organizationType(organization.getOrganizationType()).businessCode(organization.getBusinessCode())
-                .statusInfo(organization.getStatusInfo()).guid(organization.getGuid())
-                .organizationNames(new HashSet<>()).organizationDescriptions(new HashSet<>())
-                .emails(new HashSet<>()).webPages(new HashSet<>()).phoneNumbers(new HashSet<>()).addresses(new HashSet<>()).build());
-
-        Set<OrganizationName> organizationNames = organization.getAllOrganizationNames();
-        Set<OrganizationName> updatedOrganizationNames = new HashSet<>();
-        for (OrganizationName organizationName: organizationNames) {
-            organizationName.setOrganization(newOrganization);
-            updatedOrganizationNames.add(updateOrganizationNameData(organizationName));
-        }
-        newOrganization.setOrganizationNames(updatedOrganizationNames);
-
-        Set<OrganizationDescription> organizationDescriptions = organization.getAllOrganizationDescriptions();
-        Set<OrganizationDescription> updatedOrganizationDescriptions = new HashSet<>();
-        for (OrganizationDescription organizationDescription : organizationDescriptions) {
-            organizationDescription.setOrganization(newOrganization);
-            updatedOrganizationDescriptions.add(updateOrganizationDescriptionData(organizationDescription));
-        }
-        newOrganization.setOrganizationDescriptions(updatedOrganizationDescriptions);
-
-        Set<Email> emails = organization.getAllEmails();
-        Set<Email> updatedEmails = new HashSet<>();
-        for (Email email : emails) {
-            email.setOrganization(newOrganization);
-            updatedEmails.add(updateEmailData(email));
-        }
-        newOrganization.setEmails(updatedEmails);
-
-        Set<PhoneNumber> phoneNumbers = organization.getAllPhoneNumbers();
-        Set<PhoneNumber> updatedPhoneNumbers = new HashSet<>();
-        for (PhoneNumber phoneNumber : phoneNumbers) {
-            phoneNumber.setOrganization(newOrganization);
-            updatedPhoneNumbers.add(updatePhoneNumberData(phoneNumber));
-        }
-        newOrganization.setPhoneNumbers(updatedPhoneNumbers);
-
-        Set<WebPage> webPages = organization.getAllWebPages();
-        Set<WebPage> updatedWebPages = new HashSet<>();
-        for (WebPage webPage : webPages) {
-            webPage.setOrganization(newOrganization);
-            updatedWebPages.add(updateWebPageData(webPage));
-        }
-        newOrganization.setWebPages(updatedWebPages);
-
-        Set<Address> addresses = organization.getAllAddresses();
-        Set<Address> updatedAddresses = new HashSet<>();
-        for (Address address : addresses) {
-            address.setOrganization(newOrganization);
-            Address updatedAddress = updateAddressData(address);
-            Address newAddress = addressRepository.save(Address.builder().country(updatedAddress.getCountry()).id(updatedAddress.getId())
-                    .subType(updatedAddress.getSubType()).type(updatedAddress.getType()).statusInfo(updatedAddress.getStatusInfo())
-                    .streetAddresses(new HashSet<>()).postOfficeBoxAddresses(new HashSet<>()).organization(newOrganization).build());
-            updatedAddresses.add(newAddress);
-
-            Set<StreetAddress> streetAddresses = address.getAllStreetAddresses();
-            Set<StreetAddress> updatedStreetAddresses = new HashSet<>();
-            for (StreetAddress streetAddress : streetAddresses) {
-                streetAddress.setAddress(newAddress);
-                StreetAddress updatedStreetAddress = updateStreetAddressData(streetAddress);
-                StreetAddress newStreetAddress = streetAddressRepository.save(StreetAddress.builder().address(updatedStreetAddress.getAddress())
-                        .coordinateState(updatedStreetAddress.getCoordinateState()).id(updatedStreetAddress.getId()).latitude(updatedStreetAddress.getLatitude())
-                        .longitude(updatedStreetAddress.getLongitude()).postalCode(updatedStreetAddress.getPostalCode()).streetNumber(updatedStreetAddress.getStreetNumber())
-                        .statusInfo(updatedStreetAddress.getStatusInfo()).additionalInformation(new HashSet<>()).municipalities(new HashSet<>())
-                        .postOffices(new HashSet<>()).streets(new HashSet<>()).build());
-                updatedStreetAddresses.add(newStreetAddress);
-
-                Set<StreetAddressAdditionalInformation> streetAddressAdditionalInformationSet = streetAddress.getAllAdditionalInformation();
-                Set<StreetAddressAdditionalInformation> updatedStreetAddressAdditionalInformation = new HashSet<>();
-                for (StreetAddressAdditionalInformation streetAddressAdditionalInformation : streetAddressAdditionalInformationSet) {
-                    streetAddressAdditionalInformation.setStreetAddress(newStreetAddress);
-                    updatedStreetAddressAdditionalInformation.add(updateStreetAddressAdditionalInformationData(streetAddressAdditionalInformation));
-                }
-                streetAddress.setAdditionalInformation(updatedStreetAddressAdditionalInformation);
-
-                Set<StreetAddressPostOffice> streetAddressPostOffices = streetAddress.getAllPostOffices();
-                Set<StreetAddressPostOffice> updatedStreetAddressPostOffices = new HashSet<>();
-                for (StreetAddressPostOffice streetAddressPostOffice : streetAddressPostOffices) {
-                    streetAddressPostOffice.setStreetAddress(newStreetAddress);
-                    updatedStreetAddressPostOffices.add(updateStreetAddressPostOfficeData(streetAddressPostOffice));
-                }
-                streetAddress.setPostOffices(updatedStreetAddressPostOffices);
-
-                Set<Street> streets = streetAddress.getAllStreets();
-                Set<Street> updatedStreets = new HashSet<>();
-                for (Street street : streets) {
-                    street.setStreetAddress(newStreetAddress);
-                    updatedStreets.add(updateStreetAddressStreetData(street));
-                }
-                streetAddress.setStreets(updatedStreets);
-
-                Set<StreetAddressMunicipality> streetAddressMunicipalities = streetAddress.getAllMunicipalities();
-                Set<StreetAddressMunicipality> updatedStreetAddressMunicipalities = new HashSet<>();
-                for (StreetAddressMunicipality streetAddressMunicipality : streetAddressMunicipalities) {
-                    streetAddressMunicipality.setStreetAddress(newStreetAddress);
-                    updatedStreetAddressMunicipalities.add(updateStreetAddressMunicipalityData(streetAddressMunicipality));
-                    Set<StreetAddressMunicipalityName> streetAddressMunicipalityNames = streetAddressMunicipality.getAllMunicipalityNames();
-                    Set<StreetAddressMunicipalityName> updatedStreetAddressMunicipalityNames = new HashSet<>();
-                    for (StreetAddressMunicipalityName streetAddressMunicipalityName : streetAddressMunicipalityNames) {
-                        streetAddressMunicipalityName.setStreetAddressMunicipality(streetAddressMunicipality);
-                        updatedStreetAddressMunicipalityNames.add(updateStreetAddressMunicipalityNameData(streetAddressMunicipalityName));
-                    }
-                    streetAddressMunicipality.setStreetAddressMunicipalityNames(updatedStreetAddressMunicipalityNames);
-                }
-                streetAddress.setMunicipalities(updatedStreetAddressMunicipalities);
-            }
-            address.setStreetAddresses(updatedStreetAddresses);
-
-            Set<PostOfficeBoxAddress> postOfficeBoxAddresses = address.getAllPostOfficeBoxAddresses();
-            Set<PostOfficeBoxAddress> updatedPostOfficeBoxAddresses = new HashSet<>();
-            for (PostOfficeBoxAddress postOfficeBoxAddress : postOfficeBoxAddresses) {
-                postOfficeBoxAddress.setAddress(newAddress);
-                PostOfficeBoxAddress updatedPostOfficeBoxAddress = updatePostOfficeBoxAddressData(postOfficeBoxAddress);
-                PostOfficeBoxAddress newPostOfficeBoxAddress = postOfficeBoxAddressRepository.save(PostOfficeBoxAddress.builder()
-                .address(updatedPostOfficeBoxAddress.getAddress()).postalCode(updatedPostOfficeBoxAddress.getPostalCode())
-                        .id(updatedPostOfficeBoxAddress.getId()).statusInfo(updatedPostOfficeBoxAddress.getStatusInfo())
-                        .additionalInformation(new HashSet<>()).postOfficeBoxAddressMunicipalities(new HashSet<>())
-                        .postOffices(new HashSet<>()).postOfficesBoxes(new HashSet<>()).build());
-                updatedPostOfficeBoxAddresses.add(newPostOfficeBoxAddress);
-
-                Set<PostOfficeBoxAddressAdditionalInformation> postOfficeBoxAddressAdditionalInformationSet = postOfficeBoxAddress.getAllAdditionalInformation();
-                Set<PostOfficeBoxAddressAdditionalInformation> updatedPostOfficeBoxAddressAdditionalInformation = new HashSet<>();
-                for (PostOfficeBoxAddressAdditionalInformation postOfficeBoxAddressAdditionalInformation : postOfficeBoxAddressAdditionalInformationSet) {
-                    postOfficeBoxAddressAdditionalInformation.setPostOfficeBoxAddress(newPostOfficeBoxAddress);
-                    updatedPostOfficeBoxAddressAdditionalInformation.add(updatePostOfficeBoxAddressAdditionalInformationData(postOfficeBoxAddressAdditionalInformation));
-                }
-                postOfficeBoxAddress.setAdditionalInformation(updatedPostOfficeBoxAddressAdditionalInformation);
-
-                Set<PostOfficeBox> postOfficeBoxes = postOfficeBoxAddress.getAllPostOfficeBoxes();
-                Set<PostOfficeBox> updatedPostOfficeBoxes = new HashSet<>();
-                for (PostOfficeBox postOfficeBox : postOfficeBoxes) {
-                    postOfficeBox.setPostOfficeBoxAddress(newPostOfficeBoxAddress);
-                    updatedPostOfficeBoxes.add(updatePostOfficeBoxData(postOfficeBox));
-                }
-                postOfficeBoxAddress.setPostOfficesBoxes(updatedPostOfficeBoxes);
-
-                Set<PostOffice> postOffices = postOfficeBoxAddress.getAllPostOffices();
-                Set<PostOffice> updatedPostOffices = new HashSet<>();
-                for (PostOffice postOffice : postOffices) {
-                    postOffice.setPostOfficeBoxAddress(newPostOfficeBoxAddress);
-                    updatedPostOffices.add(updatePostOfficeData(postOffice));
-                }
-                postOfficeBoxAddress.setPostOffices(updatedPostOffices);
-
-                Set<PostOfficeBoxAddressMunicipality> postOfficeBoxAddressMunicipalities = postOfficeBoxAddress.getAllMunicipalities();
-                Set<PostOfficeBoxAddressMunicipality> updatedPostOfficeBoxAddressMunicipalities = new HashSet<>();
-                for (PostOfficeBoxAddressMunicipality postOfficeBoxAddressMunicipality : postOfficeBoxAddressMunicipalities) {
-                    postOfficeBoxAddressMunicipality.setPostOfficeBoxAddress(newPostOfficeBoxAddress);
-                    updatedPostOfficeBoxAddressMunicipalities.add(updatePostOfficeBoxAddressMunicipalityData(postOfficeBoxAddressMunicipality));
-                    Set<PostOfficeBoxAddressMunicipalityName> postOfficeBoxAddressMunicipalityNames = postOfficeBoxAddressMunicipality.getAllMunicipalityNames();
-                    Set<PostOfficeBoxAddressMunicipalityName> updatedPostOfficeBoxAddressMunicipalityNames = new HashSet<>();
-                    for (PostOfficeBoxAddressMunicipalityName postOfficeBoxAddressMunicipalityName : postOfficeBoxAddressMunicipalityNames) {
-                        postOfficeBoxAddressMunicipalityName.setPostOfficeBoxAddressMunicipality(postOfficeBoxAddressMunicipality);
-                        updatedPostOfficeBoxAddressMunicipalityNames.add(updatePostOfficeBoxAddressMunicipalityNameData(postOfficeBoxAddressMunicipalityName));
-                    }
-                    postOfficeBoxAddressMunicipality.setPostOfficeBoxAddressMunicipalityNames(updatedPostOfficeBoxAddressMunicipalityNames);
-                }
-                postOfficeBoxAddress.setPostOfficeBoxAddressMunicipalities(updatedPostOfficeBoxAddressMunicipalities);
-            }
-            address.setPostOfficeBoxAddresses(updatedPostOfficeBoxAddresses);
-        }
-        newOrganization.setAddresses(updatedAddresses);
-
-        return organizationRepository.save(newOrganization);
+        return organizationRepository.save(organization);
     }
 
     @Override
@@ -702,102 +533,7 @@ public class CatalogServiceImpl implements CatalogService {
             statusInfo.setFetched(LocalDateTime.now());
             company.setStatusInfo(statusInfo);
         }
-
-        Company newCompany = companyRepository.save(Company.builder().registrationDate(company.getRegistrationDate()).name(company.getName()).detailsUri(company.getDetailsUri())
-                .companyForm(company.getCompanyForm()).businessId(company.getBusinessId()).id(company.getId()).statusInfo(company.getStatusInfo())
-                .businessAddresses(new HashSet<>()).businessAuxiliaryNames(new HashSet<>()).businessIdChanges(new HashSet<>()).businessLines(new HashSet<>())
-                .businessNames(new HashSet<>()).companyForms(new HashSet<>()).contactDetails(new HashSet<>()).languages(new HashSet<>())
-                .liquidations(new HashSet<>()).registeredEntries(new HashSet<>()).registeredOffices(new HashSet<>()).build());
-
-        Set<BusinessName> businessNames = company.getAllBusinessNames();
-        Set<BusinessName> updatedBusinessNames = new HashSet<>();
-        for (BusinessName businessName: businessNames) {
-            businessName.setCompany(newCompany);
-            updatedBusinessNames.add(updateBusinessNameData(businessName));
-        }
-        newCompany.setBusinessNames(updatedBusinessNames);
-
-        Set<BusinessAuxiliaryName> businessAuxiliaryNames = company.getAllBusinessAuxiliaryNames();
-        Set<BusinessAuxiliaryName> updatedBusinessAuxiliaryNames = new HashSet<>();
-        for (BusinessAuxiliaryName businessAuxiliaryName: businessAuxiliaryNames) {
-            businessAuxiliaryName.setCompany(newCompany);
-            updatedBusinessAuxiliaryNames.add(updateBusinessAuxiliaryNameData(businessAuxiliaryName));
-        }
-        newCompany.setBusinessAuxiliaryNames(updatedBusinessAuxiliaryNames);
-
-        Set<BusinessAddress> businessAddresses = company.getAllBusinessAddresses();
-        Set<BusinessAddress> updatedBusinessAddresses = new HashSet<>();
-        for (BusinessAddress businessAddress: businessAddresses) {
-            businessAddress.setCompany(newCompany);
-            updatedBusinessAddresses.add(updateBusinessAddressData(businessAddress));
-        }
-        newCompany.setBusinessAddresses(updatedBusinessAddresses);
-
-        Set<BusinessIdChange> businessIdChanges = company.getAllBusinessIdChanges();
-        Set<BusinessIdChange> updatedBusinessIdChanges = new HashSet<>();
-        for (BusinessIdChange businessIdChange: businessIdChanges) {
-            businessIdChange.setCompany(newCompany);
-            updatedBusinessIdChanges.add(updateBusinessIdChangeData(businessIdChange));
-        }
-        newCompany.setBusinessIdChanges(updatedBusinessIdChanges);
-
-        Set<BusinessLine> businessLines = company.getAllBusinessLines();
-        Set<BusinessLine> updatedBusinessLines = new HashSet<>();
-        for (BusinessLine businessLine: businessLines) {
-            businessLine.setCompany(newCompany);
-            updatedBusinessLines.add(updateBusinessLineData(businessLine));
-        }
-        newCompany.setBusinessLines(updatedBusinessLines);
-
-        Set<CompanyForm> companyForms = company.getAllCompanyForms();
-        Set<CompanyForm> updatedCompanyForms = new HashSet<>();
-        for (CompanyForm companyForm: companyForms) {
-            companyForm.setCompany(newCompany);
-            updatedCompanyForms.add(updateCompanyFormData(companyForm));
-        }
-        newCompany.setCompanyForms(updatedCompanyForms);
-
-        Set<ContactDetail> contactDetails = company.getAllContactDetails();
-        Set<ContactDetail> updatedContactDetails = new HashSet<>();
-        for (ContactDetail contactDetail: contactDetails) {
-            contactDetail.setCompany(newCompany);
-            updatedContactDetails.add(updateContactDetailData(contactDetail));
-        }
-        newCompany.setContactDetails(updatedContactDetails);
-
-        Set<Language> languages = company.getAllLanguages();
-        Set<Language> updatedLanguages = new HashSet<>();
-        for (Language language: languages) {
-            language.setCompany(newCompany);
-            updatedLanguages.add(updateLanguageData(language));
-        }
-        newCompany.setLanguages(updatedLanguages);
-
-        Set<Liquidation> liquidations = company.getAllLiquidations();
-        Set<Liquidation> updatedLiquidations = new HashSet<>();
-        for (Liquidation liquidation: liquidations) {
-            liquidation.setCompany(newCompany);
-            updatedLiquidations.add(updateLiquidationData(liquidation));
-        }
-        newCompany.setLiquidations(updatedLiquidations);
-
-        Set<RegisteredEntry> registeredEntries = company.getAllRegisteredEntries();
-        Set<RegisteredEntry> updatedRegisteredEntries = new HashSet<>();
-        for (RegisteredEntry registeredEntry: registeredEntries) {
-            registeredEntry.setCompany(newCompany);
-            updatedRegisteredEntries.add(updateRegisteredEntryData(registeredEntry));
-        }
-        newCompany.setRegisteredEntries(updatedRegisteredEntries);
-
-        Set<RegisteredOffice> registeredOffices = company.getAllRegisteredOffices();
-        Set<RegisteredOffice> updatedRegisteredOffices = new HashSet<>();
-        for (RegisteredOffice registeredOffice: registeredOffices) {
-            registeredOffice.setCompany(newCompany);
-            updatedRegisteredOffices.add(updateRegisteredOfficeData(registeredOffice));
-        }
-        newCompany.setRegisteredOffices(updatedRegisteredOffices);
-
-        return companyRepository.save(newCompany);
+        return companyRepository.save(company);
     }
 
     @Override
