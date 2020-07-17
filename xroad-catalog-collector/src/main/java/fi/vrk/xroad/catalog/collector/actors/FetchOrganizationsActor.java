@@ -38,9 +38,7 @@ import java.security.KeyManagementException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -74,7 +72,7 @@ public class FetchOrganizationsActor extends XRoadCatalogActor {
 
             log.info("Fetching organizations from {}", fetchOrganizationsUrl);
 
-            List<String> organizationIds = getOrganizationIdsList(fetchOrganizationsUrl, fetchOrganizationsLimit);
+            List<String> organizationIds = OrganizationUtil.getOrganizationIdsList(fetchOrganizationsUrl, fetchOrganizationsLimit);
             int numberOfOrganizations = organizationIds.size();
             log.info("Fetched {} organization GUIDs from {}", numberOfOrganizations, fetchOrganizationsUrl);
 
@@ -88,14 +86,14 @@ public class FetchOrganizationsActor extends XRoadCatalogActor {
                     batchCount.getAndIncrement();
                     log.info("Saving {}. batch of {} organizations out of total {}",
                             batchCount.get(), guidsList.size(), numberOfOrganizations);
-                    saveBatch(getDataByIds(guidsList, fetchOrganizationsUrl));
+                    saveBatch(OrganizationUtil.getDataByIds(guidsList, fetchOrganizationsUrl));
                     guidsList.clear();
                 }
                 if (elementCount.get() == organizationIds.size()) {
                     batchCount.getAndIncrement();
                     log.info("Saving {}. batch of {} organizations out of total {}",
                             batchCount.get(), guidsList.size(), numberOfOrganizations);
-                    saveBatch(getDataByIds(guidsList, fetchOrganizationsUrl));
+                    saveBatch(OrganizationUtil.getDataByIds(guidsList, fetchOrganizationsUrl));
                 }
             });
             log.info("Saved data of {} organizations successfully", numberOfOrganizations);
@@ -106,314 +104,214 @@ public class FetchOrganizationsActor extends XRoadCatalogActor {
         }
     }
 
-    private List<String> getOrganizationIdsList(String url, Integer fetchOrganizationsLimit)
-            throws KeyStoreException, NoSuchAlgorithmException, KeyManagementException {
-        String response = OrganizationUtil.getResponseBody(url);
-        JSONObject json = new JSONObject(response);
-        JSONArray itemList = json.optJSONArray("itemList");
-        List<String> idsList = new ArrayList<>();
-        int totalFetchAmount = itemList.length() > fetchOrganizationsLimit ? fetchOrganizationsLimit : itemList.length();
-        for (int i = 0; i < totalFetchAmount; i++) {
-            String id = itemList.optJSONObject(i).optString("id");
-            idsList.add(id);
-        }
-
-        return idsList;
-    }
-
-    private JSONArray getDataByIds(List<String> guids, String url) {
-        String requestGuids = "";
-        for (int i = 0; i < guids.size(); i++) {
-            requestGuids += guids.get(i);
-            if (i < (guids.size() - 1)) {
-                requestGuids += ",";
-            }
-        }
-
-        final String listOrganizationsUrl = new StringBuilder().append(url)
-                .append("/list?guids=").append(requestGuids).toString();
-
-        JSONArray itemList = new JSONArray();
-        try {
-            String ret = OrganizationUtil.getResponseBody(listOrganizationsUrl);
-            JSONObject json = new JSONObject("{\"items\":" + ret + "}");
-            itemList = json.optJSONArray("items");
-            return itemList;
-        } catch (KeyStoreException e) {
-            log.error("KeyStoreException occurred when fetching organizations with from url {}", url);
-        } catch (NoSuchAlgorithmException e) {
-            log.error("NoSuchAlgorithmException occurred when fetching organizations with from url {}", url);
-        } catch (KeyManagementException e) {
-            log.error("KeyManagementException occurred when fetching organizations with from url {}", url);
-        }
-        return itemList;
-    }
-
     private void saveBatch(JSONArray data) {
         for (int i = 0; i < data.length(); i++) {
-            JSONObject dataJson = data.optJSONObject(i);
-            Organization organization = Organization.builder().businessCode(dataJson.optString("businessCode"))
-                    .guid(dataJson.optString("id")).organizationType(dataJson.optString("organizationType"))
-                    .publishingStatus(dataJson.optString("publishingStatus")).build();
+            Organization organization = OrganizationUtil.createOrganization(data.optJSONObject(i));
             log.info("Saving {}.organization with guid {}", i+1, organization.getGuid());
-            organization.setOrganizationNames(createOrganizationNames(dataJson));
-            organization.setOrganizationDescriptions(createOrganizationDescriptions(dataJson));
-            organization.setEmails(createEmails(dataJson));
-            organization.setPhoneNumbers(createPhoneNumbers(dataJson));
-            organization.setWebPages(createWebPages(dataJson));
-            organization.setAddresses(createAddresses(dataJson));
-            catalogService.saveOrganization(organization);
+            JSONObject dataJson = data.optJSONObject(i);
+            Organization savedOrganization = catalogService.saveOrganization(organization);
+            saveOrganizationNames(dataJson, savedOrganization);
+            saveOrganizationDescriptions(dataJson, savedOrganization);
+            saveEmails(dataJson, savedOrganization);
+            savePhoneNumbers(dataJson, savedOrganization);
+            saveWebPages(dataJson, savedOrganization);
+            saveAddresses(dataJson, savedOrganization);
         }
     }
 
-    private Set<OrganizationName> createOrganizationNames(JSONObject data) {
-        JSONArray jsonArray = data.optJSONArray("organizationNames");
-        List<OrganizationName> organizationNamesList = new ArrayList<>();
-        for (int i = 0; i < jsonArray.length(); i++) {
-            organizationNamesList.add(OrganizationName.builder()
-                    .type(jsonArray.optJSONObject(i).optString("type"))
-                    .language(jsonArray.optJSONObject(i).optString("language"))
-                    .value(replaceUnicodeControlCharacters(jsonArray.optJSONObject(i).optString("value"))).build());
-        }
-        Set<OrganizationName> organizationNames = new HashSet<>();
-        organizationNamesList.forEach(organizationName -> organizationNames.add(organizationName));
-        return organizationNames;
-    }
-
-    private Set<OrganizationDescription> createOrganizationDescriptions(JSONObject data) {
-        JSONArray jsonArray = data.optJSONArray("organizationDescriptions");
-        List<OrganizationDescription> organizationDescriptionsList = new ArrayList<>();
-        for (int i = 0; i < jsonArray.length(); i++) {
-            organizationDescriptionsList.add(OrganizationDescription.builder()
-                    .type(jsonArray.optJSONObject(i).optString("type"))
-                    .language(jsonArray.optJSONObject(i).optString("language"))
-                    .value(replaceUnicodeControlCharacters(jsonArray.optJSONObject(i).optString("value"))).build());
-        }
-        Set<OrganizationDescription> organizationDescriptions = new HashSet<>();
-        organizationDescriptionsList.forEach(organizationDescription -> organizationDescriptions.add(organizationDescription));
-        return organizationDescriptions;
-    }
-
-    private Set<Email> createEmails(JSONObject data) {
-        JSONArray jsonArray = data.optJSONArray("emails");
-        List<Email> emailsList = new ArrayList<>();
-        for (int i = 0; i < jsonArray.length(); i++) {
-            emailsList.add(Email.builder()
-                    .description(replaceUnicodeControlCharacters(jsonArray.optJSONObject(i).optString("description")))
-                    .language(jsonArray.optJSONObject(i).optString("language"))
-                    .value(replaceUnicodeControlCharacters(jsonArray.optJSONObject(i).optString("value"))).build());
-        }
-        Set<Email> emails = new HashSet<>();
-        emailsList.forEach(email -> emails.add(email));
-        return emails;
-    }
-
-    private Set<PhoneNumber> createPhoneNumbers(JSONObject data) {
-        JSONArray jsonArray = data.optJSONArray("phoneNumbers");
-        List<PhoneNumber> phoneNumbersList = new ArrayList<>();
-        for (int i = 0; i < jsonArray.length(); i++) {
-            phoneNumbersList.add(PhoneNumber.builder()
-                    .additionalInformation(replaceUnicodeControlCharacters(jsonArray.optJSONObject(i).optString("additionalInformation")))
-                    .number(jsonArray.optJSONObject(i).optString("number"))
-                    .isFinnishServiceNumber(jsonArray.optJSONObject(i).getBoolean("isFinnishServiceNumber"))
-                    .prefixNumber(jsonArray.optJSONObject(i).optString("prefixNumber"))
-                    .language(jsonArray.optJSONObject(i).optString("language"))
-                    .chargeDescription(replaceUnicodeControlCharacters(jsonArray.optJSONObject(i).optString("chargeDescription")))
-                    .serviceChargeType(jsonArray.optJSONObject(i).optString("serviceChargeType")).build());
-        }
-        Set<PhoneNumber> phoneNumbers = new HashSet<>();
-        phoneNumbersList.forEach(phoneNumber -> phoneNumbers.add(phoneNumber));
-        return phoneNumbers;
-    }
-
-    private Set<WebPage> createWebPages(JSONObject data) {
-        JSONArray jsonArray = data.optJSONArray("webPages");
-        List<WebPage> webPagesList = new ArrayList<>();
-        for (int i = 0; i < jsonArray.length(); i++) {
-            webPagesList.add(WebPage.builder()
-                    .url(replaceUnicodeControlCharacters(jsonArray.optJSONObject(i).optString("url")))
-                    .language(jsonArray.optJSONObject(i).optString("language"))
-                    .value(replaceUnicodeControlCharacters(jsonArray.optJSONObject(i).optString("value"))).build());
-        }
-        Set<WebPage> webPages = new HashSet<>();
-        webPagesList.forEach(webPage -> webPages.add(webPage));
-        return webPages;
-    }
-
-    private Set<Address> createAddresses(JSONObject data) {
-        JSONArray jsonArray = data.optJSONArray("addresses");
-        List<Address> addressesList = new ArrayList<>();
-        for (int i = 0; i < jsonArray.length(); i++) {
-            addressesList.add(Address.builder()
-                    .type(jsonArray.optJSONObject(i).optString("type"))
-                    .subType(jsonArray.optJSONObject(i).optString("subType"))
-                    .country(jsonArray.optJSONObject(i).optString("country")).build());
-        }
-        Set<Address> addresses = new HashSet<>();
-        addressesList.forEach(address -> {
-            address.setStreetAddresses(createStreetAddresses(jsonArray));
-            address.setPostOfficeBoxAddresses(createPostOfficeBoxAddresses(jsonArray));
-            addresses.add(address);
+    private void saveOrganizationNames(JSONObject data, Organization savedOrganization) {
+        List<OrganizationName> organizationNames = OrganizationUtil.createNames(data
+                .optJSONArray("organizationNames"));
+        organizationNames.forEach(organizationName -> {
+            organizationName.setOrganization(savedOrganization);
+            catalogService.saveOrganizationName(organizationName);
         });
-        return addresses;
     }
 
-    private Set<StreetAddress> createStreetAddresses(JSONArray addressesListJson) {
-        Set<StreetAddress> streetAddresses = new HashSet<>();
+    private void saveOrganizationDescriptions(JSONObject data, Organization savedOrganization) {
+        List<OrganizationDescription> organizationDescriptions = OrganizationUtil.createDescriptions(data
+                .optJSONArray("organizationDescriptions"));
+        organizationDescriptions.forEach(organizationDescription -> {
+            organizationDescription.setOrganization(savedOrganization);
+            catalogService.saveOrganizationDescription(organizationDescription);
+        });
+    }
+
+    private void saveEmails(JSONObject data, Organization savedOrganization) {
+        List<Email> emails = OrganizationUtil.createEmails(data.optJSONArray("emails"));
+        emails.forEach(email -> {
+            email.setOrganization(savedOrganization);
+            catalogService.saveEmail(email);
+        });
+    }
+
+    private void savePhoneNumbers(JSONObject data, Organization savedOrganization) {
+        List<PhoneNumber> phoneNumbers = OrganizationUtil.createPhoneNumbers(data.optJSONArray("phoneNumbers"));
+        phoneNumbers.forEach(phone -> {
+            phone.setOrganization(savedOrganization);
+            catalogService.savePhoneNumber(phone);
+        });
+    }
+
+    private void saveWebPages(JSONObject data, Organization savedOrganization) {
+        List<WebPage> webPages = OrganizationUtil.createWebPages(data.optJSONArray("webPages"));
+        webPages.forEach(webPage -> {
+            webPage.setOrganization(savedOrganization);
+            catalogService.saveWebPage(webPage);
+        });
+    }
+
+    private void saveAddresses(JSONObject data, Organization savedOrganization) {
+        List<Address> addresses = OrganizationUtil.createAddresses(data.optJSONArray("addresses"));
+        JSONArray addressesListJson = data.optJSONArray("addresses");
+        addresses.forEach(address -> {
+            address.setOrganization(savedOrganization);
+            Address savedAddress = catalogService.saveAddress(address);
+            saveAddressDetails(addressesListJson, savedAddress);
+        });
+    }
+
+    private void saveAddressDetails(JSONArray addressesListJson, Address savedAddress) {
         for (int j = 0; j < addressesListJson.length(); j++) {
             if (addressesListJson.optJSONObject(j).optJSONObject("streetAddress") != null) {
                 JSONObject streetAddressJson = addressesListJson.optJSONObject(j).optJSONObject("streetAddress");
-                StreetAddress streetAddress = StreetAddress.builder()
-                        .streetNumber(streetAddressJson.optString("streetNumber"))
-                        .postalCode(streetAddressJson.optString("postalCode"))
-                        .latitude(streetAddressJson.optString("latitude"))
-                        .longitude(streetAddressJson.optString("longitude"))
-                        .coordinateState(streetAddressJson.optString("coordinateState")).build();
-                streetAddress.setMunicipalities(createStreetAddressMunicipalities(streetAddressJson.optJSONObject("municipality")));
-                streetAddress.setAdditionalInformation(createStreetAddressAdditionalInformation(streetAddressJson.optJSONArray("additionalInformation")));
-                streetAddress.setPostOffices(createStreetAddressPostOffices(streetAddressJson.optJSONArray("postOffice")));
-                streetAddress.setStreets(createStreetAddressStreets(streetAddressJson.optJSONArray("street")));
-                streetAddresses.add(streetAddress);
+                saveStreetAddress(streetAddressJson, savedAddress);
             }
-        }
-        return streetAddresses;
-    }
 
-    private Set<PostOfficeBoxAddress> createPostOfficeBoxAddresses(JSONArray addressesListJson) {
-        Set<PostOfficeBoxAddress> postOfficeBoxAddresses = new HashSet<>();
-        for (int j = 0; j < addressesListJson.length(); j++) {
             if (addressesListJson.optJSONObject(j).optJSONObject("postOfficeBoxStreetAddress") != null) {
                 JSONObject postOfficeBoxAddressJson = addressesListJson.optJSONObject(j)
                         .optJSONObject("postOfficeBoxStreetAddress");
-                PostOfficeBoxAddress postOfficeBoxAddress = PostOfficeBoxAddress.builder()
-                        .postalCode(postOfficeBoxAddressJson.optString("postalCode")).build();
-                postOfficeBoxAddress.setAdditionalInformation(createPostOfficeBoxAddressAdditionalInformation(
-                        postOfficeBoxAddressJson.optJSONArray("additionalInformation")));
-                postOfficeBoxAddress.setPostOffices(createPostOffices(postOfficeBoxAddressJson.optJSONArray("postOffice")));
-                postOfficeBoxAddress.setPostOfficesBoxes(createPostOfficeBoxes(postOfficeBoxAddressJson.optJSONArray("postOfficeBox")));
-                postOfficeBoxAddress.setPostOfficeBoxAddressMunicipalities(createPostOfficeBoxAddressMunicipalities(
-                        postOfficeBoxAddressJson.optJSONObject("municipality")));
-                postOfficeBoxAddresses.add(postOfficeBoxAddress);
+                savePostOfficeBoxAddress(postOfficeBoxAddressJson, savedAddress);
             }
         }
-        return postOfficeBoxAddresses;
     }
 
-    private Set<StreetAddressMunicipality> createStreetAddressMunicipalities(JSONObject municipalityJson) {
-        Set<StreetAddressMunicipality> streetAddressMunicipalities = new HashSet<>();
+    private void saveStreetAddress(JSONObject streetAddressJson, Address savedAddress) {
+        StreetAddress streetAddress = OrganizationUtil.createStreetAddress(streetAddressJson);
+        streetAddress.setAddress(savedAddress);
+        StreetAddress savedStreetAddress = catalogService.saveStreetAddress(streetAddress);
+        saveStreetAddressMunicipality(streetAddressJson.optJSONObject("municipality"), savedStreetAddress);
+        saveStreetAddressAdditionalInformation(streetAddressJson.optJSONArray("additionalInformation"), savedStreetAddress);
+        saveStreetAddressPostOffice(streetAddressJson.optJSONArray("postOffice"), savedStreetAddress);
+        saveStreetAddressStreet(streetAddressJson.optJSONArray("street"), savedStreetAddress);
+    }
+
+    private void saveStreetAddressMunicipality(JSONObject municipalityJson, StreetAddress savedStreetAddress) {
         if (municipalityJson != null) {
-            StreetAddressMunicipality streetAddressMunicipality = StreetAddressMunicipality.builder()
-                    .code(municipalityJson.optString("code")).build();
-            Set<StreetAddressMunicipalityName> streetAddressMunicipalityNames = new HashSet<>();
+            StreetAddressMunicipality streetAddressMunicipality = OrganizationUtil
+                    .createStreetAddressMunicipality(municipalityJson);
+            streetAddressMunicipality.setStreetAddress(savedStreetAddress);
+            StreetAddressMunicipality savedStreetAddressMunicipality = catalogService
+                    .saveStreetAddressMunicipality(streetAddressMunicipality);
+
             if (municipalityJson.optJSONArray("name") != null) {
                 JSONArray streetAddressMunicipalityNamesJson = municipalityJson.optJSONArray("name");
-                for (int i = 0; i < streetAddressMunicipalityNamesJson.length(); i++) {
-                    streetAddressMunicipalityNames.add(StreetAddressMunicipalityName.builder()
-                            .language(streetAddressMunicipalityNamesJson.optJSONObject(i).optString("language"))
-                            .value(streetAddressMunicipalityNamesJson.optJSONObject(i).optString("value")).build());
-                }
+                List<StreetAddressMunicipalityName> streetAddressMunicipalityNames = OrganizationUtil
+                        .createStreetAddressMunicipalityNames(streetAddressMunicipalityNamesJson);
+                streetAddressMunicipalityNames.forEach(municipalityName -> {
+                    municipalityName.setStreetAddressMunicipality(savedStreetAddressMunicipality);
+                    catalogService.saveStreetAddressMunicipalityName(municipalityName);
+                });
             }
-            streetAddressMunicipality.setStreetAddressMunicipalityNames(streetAddressMunicipalityNames);
-            streetAddressMunicipalities.add(streetAddressMunicipality);
         }
-        return streetAddressMunicipalities;
     }
 
-    private Set<StreetAddressAdditionalInformation> createStreetAddressAdditionalInformation(JSONArray additionalInformationJson) {
-        Set<StreetAddressAdditionalInformation> streetAddressAdditionalInformation = new HashSet<>();
+    private void saveStreetAddressAdditionalInformation(JSONArray additionalInformationJson, StreetAddress savedStreetAddress) {
         if (additionalInformationJson != null) {
-            for (int i = 0; i < additionalInformationJson.length(); i++) {
-                streetAddressAdditionalInformation.add(StreetAddressAdditionalInformation.builder()
-                        .language(additionalInformationJson.optJSONObject(i).optString("language"))
-                        .value(replaceUnicodeControlCharacters(additionalInformationJson.optJSONObject(i).optString("value"))).build());
-            }
+            List<StreetAddressAdditionalInformation> streetAddressAdditionalInformationList = OrganizationUtil
+                    .createStreetAddressAdditionalInformation(additionalInformationJson);
+            streetAddressAdditionalInformationList.forEach(additionalInfo -> {
+                additionalInfo.setStreetAddress(savedStreetAddress);
+                catalogService.saveStreetAddressAdditionalInformation(additionalInfo);
+            });
         }
-        return streetAddressAdditionalInformation;
     }
 
-    private Set<StreetAddressPostOffice> createStreetAddressPostOffices(JSONArray postOfficeJson) {
-        Set<StreetAddressPostOffice> streetAddressPostOffices = new HashSet<>();
+    private void saveStreetAddressPostOffice(JSONArray postOfficeJson, StreetAddress savedStreetAddress) {
         if (postOfficeJson!= null) {
-            for (int i = 0; i < postOfficeJson.length(); i++) {
-                streetAddressPostOffices.add(StreetAddressPostOffice.builder()
-                        .language(postOfficeJson.optJSONObject(i).optString("language"))
-                        .value(postOfficeJson.optJSONObject(i).optString("value")).build());
-            }
+            List<StreetAddressPostOffice> streetAddressPostOfficeList = OrganizationUtil
+                    .createStreetAddressPostOffices(postOfficeJson);
+            streetAddressPostOfficeList.forEach(postOffice -> {
+                postOffice.setStreetAddress(savedStreetAddress);
+                catalogService.saveStreetAddressPostOffice(postOffice);
+            });
         }
-        return streetAddressPostOffices;
     }
 
-    private Set<Street> createStreetAddressStreets(JSONArray streetJson) {
-        Set<Street> streets = new HashSet<>();
+    private void saveStreetAddressStreet(JSONArray streetJson, StreetAddress savedStreetAddress) {
         if (streetJson != null) {
-            for (int i = 0; i < streetJson.length(); i++) {
-                streets.add(Street.builder()
-                        .language(streetJson.optJSONObject(i).optString("language"))
-                        .value(streetJson.optJSONObject(i).optString("value")).build());
-            }
+            List<Street> streetList = OrganizationUtil.createStreets(streetJson);
+            streetList.forEach(street -> {
+                street.setStreetAddress(savedStreetAddress);
+                catalogService.saveStreet(street);
+            });
         }
-        return streets;
     }
 
-    private Set<PostOfficeBoxAddressAdditionalInformation> createPostOfficeBoxAddressAdditionalInformation(JSONArray additionalInformationJson) {
-        Set<PostOfficeBoxAddressAdditionalInformation> addressAdditionalInformation = new HashSet<>();
+    private void savePostOfficeBoxAddress(JSONObject postOfficeBoxAddressJson, Address savedAddress) {
+        PostOfficeBoxAddress postOfficeBoxAddress = OrganizationUtil.createPostOfficeBoxAddress(postOfficeBoxAddressJson);
+        postOfficeBoxAddress.setAddress(savedAddress);
+        PostOfficeBoxAddress savedPostOfficeBoxAddress = catalogService.savePostOfficeBoxAddress(postOfficeBoxAddress);
+
+        savePostOfficeBoxAddressAdditionalInformation(postOfficeBoxAddressJson.optJSONArray("additionalInformation"),
+                savedPostOfficeBoxAddress);
+        savePostOffice(postOfficeBoxAddressJson.optJSONArray("postOffice"), savedPostOfficeBoxAddress);
+        savePostOfficeBoxAddressMunicipality(postOfficeBoxAddressJson.optJSONObject("municipality"), savedPostOfficeBoxAddress);
+        savePostOfficeBox(postOfficeBoxAddressJson.optJSONArray("postOfficeBox"), savedPostOfficeBoxAddress);
+    }
+
+    private void savePostOfficeBoxAddressAdditionalInformation(JSONArray additionalInformationJson,
+                                                               PostOfficeBoxAddress savedPostOfficeBoxAddress) {
         if (additionalInformationJson != null) {
-            for (int i = 0; i < additionalInformationJson.length(); i++) {
-                addressAdditionalInformation.add(PostOfficeBoxAddressAdditionalInformation.builder()
-                        .language(additionalInformationJson.optJSONObject(i).optString("language"))
-                        .value(replaceUnicodeControlCharacters(additionalInformationJson.optJSONObject(i).optString("value"))).build());
-            }
+            List<PostOfficeBoxAddressAdditionalInformation> postOfficeBoxAddressAdditionalInformationList
+                    = OrganizationUtil.createPostOfficeBoxAddressAdditionalInformation(additionalInformationJson);
+            postOfficeBoxAddressAdditionalInformationList.forEach(additionalInfo -> {
+                additionalInfo.setPostOfficeBoxAddress(savedPostOfficeBoxAddress);
+                catalogService.savePostOfficeBoxAddressAdditionalInformation(additionalInfo);
+            });
         }
-        return addressAdditionalInformation;
     }
 
-    private Set<PostOffice> createPostOffices(JSONArray postOfficeJson) {
-        Set<PostOffice> postOffices = new HashSet<>();
+    private void savePostOffice(JSONArray postOfficeJson, PostOfficeBoxAddress savedPostOfficeBoxAddress) {
         if (postOfficeJson != null) {
-            for (int i = 0; i < postOfficeJson.length(); i++) {
-                postOffices.add(PostOffice.builder()
-                        .language(postOfficeJson.optJSONObject(i).optString("language"))
-                        .value(postOfficeJson.optJSONObject(i).optString("value")).build());
-            }
+            List<PostOffice> postOfficeList = OrganizationUtil.createPostOffice(postOfficeJson);
+            postOfficeList.forEach(postOffice -> {
+                postOffice.setPostOfficeBoxAddress(savedPostOfficeBoxAddress);
+                catalogService.savePostOffice(postOffice);
+            });
         }
-        return postOffices;
     }
 
-    private Set<PostOfficeBoxAddressMunicipality> createPostOfficeBoxAddressMunicipalities(JSONObject municipalityJson) {
-        Set<PostOfficeBoxAddressMunicipality> postOfficeBoxAddressMunicipalities = new HashSet<>();
+    private void savePostOfficeBoxAddressMunicipality(JSONObject municipalityJson,
+                                                      PostOfficeBoxAddress savedPostOfficeBoxAddress) {
         if (municipalityJson!= null) {
-            PostOfficeBoxAddressMunicipality postOfficeBoxAddressMunicipality = PostOfficeBoxAddressMunicipality.builder()
-                    .code(municipalityJson.optString("code")).build();
+            PostOfficeBoxAddressMunicipality postOfficeBoxAddressMunicipality = OrganizationUtil
+                    .createPostOfficeBoxAddressMunicipality(municipalityJson);
+            postOfficeBoxAddressMunicipality.setPostOfficeBoxAddress(savedPostOfficeBoxAddress);
+            PostOfficeBoxAddressMunicipality savedPostOfficeBoxAddressMunicipality = catalogService
+                    .savePostOfficeBoxAddressMunicipality(postOfficeBoxAddressMunicipality);
 
-            Set<PostOfficeBoxAddressMunicipalityName> postOfficeBoxAddressMunicipalityNames = new HashSet<>();
             if (municipalityJson.optJSONArray("name") != null) {
                 JSONArray postOfficeBoxAddressMunicipalityNamesJson = municipalityJson.optJSONArray("name");
-                for (int i = 0; i < postOfficeBoxAddressMunicipalityNamesJson.length(); i++) {
-                    postOfficeBoxAddressMunicipalityNames.add(PostOfficeBoxAddressMunicipalityName.builder()
-                            .language(postOfficeBoxAddressMunicipalityNamesJson.optJSONObject(i).optString("language"))
-                            .value(postOfficeBoxAddressMunicipalityNamesJson.optJSONObject(i).optString("value")).build());
-                }
+                List<PostOfficeBoxAddressMunicipalityName> postOfficeBoxAddressMunicipalityNames = OrganizationUtil
+                        .createPostOfficeBoxAddressMunicipalityNames(postOfficeBoxAddressMunicipalityNamesJson);
+                postOfficeBoxAddressMunicipalityNames.forEach(municipalityName -> {
+                    municipalityName.setPostOfficeBoxAddressMunicipality(savedPostOfficeBoxAddressMunicipality);
+                    catalogService.savePostOfficeBoxAddressMunicipalityName(municipalityName);
+                });
             }
-            postOfficeBoxAddressMunicipality.setPostOfficeBoxAddressMunicipalityNames(postOfficeBoxAddressMunicipalityNames);
-            postOfficeBoxAddressMunicipalities.add(postOfficeBoxAddressMunicipality);
         }
-        return postOfficeBoxAddressMunicipalities;
     }
 
-    private Set<PostOfficeBox> createPostOfficeBoxes(JSONArray postOfficeBoxJson) {
-        Set<PostOfficeBox> postOfficeBoxes = new HashSet<>();
+    private void savePostOfficeBox(JSONArray postOfficeBoxJson, PostOfficeBoxAddress savedPostOfficeBoxAddress) {
         if (postOfficeBoxJson != null) {
-            for (int i = 0; i < postOfficeBoxJson.length(); i++) {
-                postOfficeBoxes.add(PostOfficeBox.builder()
-                        .language(postOfficeBoxJson.optJSONObject(i).optString("language"))
-                        .value(postOfficeBoxJson.optJSONObject(i).optString("value")).build());
-            }
+            List<PostOfficeBox> postOfficeBoxList = OrganizationUtil
+                    .createPostOfficeBoxes(postOfficeBoxJson);
+            postOfficeBoxList.forEach(postOfficeBox -> {
+                postOfficeBox.setPostOfficeBoxAddress(savedPostOfficeBoxAddress);
+                catalogService.savePostOfficeBox(postOfficeBox);
+            });
         }
-        return postOfficeBoxes;
-    }
-
-    private String replaceUnicodeControlCharacters(String input) {
-        return input.replaceAll("[\\x{0000}-\\x{0009}]|[\\x{000b}-\\x{000c}]|[\\x{000e}-\\x{000f}]|[\\x{0010}-\\x{001f}]", "");
     }
 
 }

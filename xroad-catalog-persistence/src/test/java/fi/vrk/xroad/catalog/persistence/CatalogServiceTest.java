@@ -29,7 +29,6 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import fi.vrk.xroad.catalog.persistence.repository.*;
 import lombok.extern.slf4j.Slf4j;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -542,33 +541,31 @@ public class CatalogServiceTest {
         verifySavedStatusInfo(foundOrganization.get().getAllOrganizationDescriptions().iterator().next().getStatusInfo());
     }
 
-    @Ignore
     @Test
     public void testSaveEmail() {
         Optional<Organization> organization = catalogService.getOrganization("abcdef123456");
         assertEquals(true, organization.isPresent());
         assertEquals(1, organization.get().getAllOrganizationNames().size());
         Email email = Email.builder()
-                .language("fi").description("Asiakaspalvelu").value("info@vaasa.fi").organization(organization.get()).build();
+                .language("fi").description("Asiakaspalvelu").value("vaasa@vaasa.fi").organization(organization.get()).build();
         catalogService.saveEmail(email);
         Optional<Organization> foundOrganization = catalogService.getOrganization("abcdef123456");
         assertEquals(1, foundOrganization.get().getAllEmails().size());
         assertEquals("fi", foundOrganization.get().getAllEmails().iterator().next().getLanguage());
-        assertEquals("info@vaasa.fi", foundOrganization.get().getAllEmails().iterator().next().getValue());
+        assertEquals("vaasa@vaasa.fi", foundOrganization.get().getAllEmails().iterator().next().getValue());
         verifySavedStatusInfo(foundOrganization.get().getAllEmails().iterator().next().getStatusInfo());
     }
 
-    @Ignore
     @Test
     public void testSavePhoneNumber() {
         Optional<Organization> organization = catalogService.getOrganization("abcdef123456");
         assertEquals(true, organization.isPresent());
         assertEquals(1, organization.get().getAllOrganizationNames().size());
         PhoneNumber phoneNumber = PhoneNumber.builder()
-                .additionalInformation("additionalInformation")
+                .additionalInformation("Puhelinvaihde")
                 .organization(organization.get())
-                .number("123456789")
-                .isFinnishServiceNumber(true)
+                .number("62249111")
+                .isFinnishServiceNumber(false)
                 .prefixNumber("+358")
                 .language("FI")
                 .chargeDescription("Chargeable")
@@ -576,8 +573,8 @@ public class CatalogServiceTest {
         catalogService.savePhoneNumber(phoneNumber);
         Optional<Organization> foundOrganization = catalogService.getOrganization("abcdef123456");
         assertEquals(1, foundOrganization.get().getAllPhoneNumbers().size());
-        assertEquals("123456789", foundOrganization.get().getAllPhoneNumbers().iterator().next().getNumber());
-        assertEquals(true, foundOrganization.get().getAllPhoneNumbers().iterator().next().getIsFinnishServiceNumber());
+        assertEquals("62249111", foundOrganization.get().getAllPhoneNumbers().iterator().next().getNumber());
+        assertEquals(false, foundOrganization.get().getAllPhoneNumbers().iterator().next().getIsFinnishServiceNumber());
         verifySavedStatusInfo(foundOrganization.get().getAllPhoneNumbers().iterator().next().getStatusInfo());
     }
 
