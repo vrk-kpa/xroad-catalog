@@ -23,9 +23,12 @@
 package fi.vrk.xroad.catalog.persistence.repository;
 
 import fi.vrk.xroad.catalog.persistence.entity.Company;
+import fi.vrk.xroad.catalog.persistence.entity.OrganizationName;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 
+import java.util.Optional;
 import java.util.Set;
 
 public interface CompanyRepository extends CrudRepository<Company, Long> {
@@ -33,4 +36,10 @@ public interface CompanyRepository extends CrudRepository<Company, Long> {
     // uses named query Company.findAllByBusinessId
     Set<Company> findAllByBusinessId(@Param("businessId") String businessId);
 
+    @Query("SELECT c FROM Company c WHERE c.businessId = :businessId "
+            +"AND c.companyForm = :companyForm "
+            + "AND c.name = :name")
+    Optional<Company> findAny(@Param("businessId") String businessId,
+                              @Param("companyForm") String companyForm,
+                              @Param("name") String name);
 }
