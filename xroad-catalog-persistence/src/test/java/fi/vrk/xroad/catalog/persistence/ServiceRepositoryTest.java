@@ -95,12 +95,12 @@ public class ServiceRepositoryTest {
     }
 
     @Test
-    public void testFindAllByMemberServiceAndSubsystem() {
-        Service service = serviceRepository.findAllByMemberServiceAndSubsystem("dev-cs",
+    public void testFindAllByMemberServiceAndSubsystemVersionNull() {
+        Service service = serviceRepository.findAllByMemberServiceAndSubsystemVersionNull("dev-cs",
                 "PUB", "15",
                 "dummy-service_7-1-5",
                 "subsystem_7-1");
-        assertNotNull(service);
+        assertNull(service);
         service = serviceRepository.findActiveByMemberServiceAndSubsystem("dev-cs",
                 "PUB", "14151329", "removed-service_7-1-3",
                 "subsystem_7-1");

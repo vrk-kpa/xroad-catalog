@@ -36,7 +36,7 @@ task wrapper(type: Wrapper) {
 
 allprojects {
     group = 'fi.vrk.xroad'
-    version = '0.13.3'
+    version = '0.13.4'
 }
 
 subprojects {

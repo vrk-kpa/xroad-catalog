@@ -23,6 +23,7 @@
 package fi.vrk.xroad.catalog.collector.util;
 
 import fi.vrk.xroad.catalog.collector.wsimport.*;
+import lombok.extern.slf4j.Slf4j;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.http.*;
@@ -36,6 +37,7 @@ import java.util.List;
 /**
  * Helper for method list
  */
+@Slf4j
 public class MethodListUtil {
 
 
@@ -58,21 +60,24 @@ public class MethodListUtil {
                 .append(clientType.getId().getXRoadInstance()).append("/")
                 .append(clientType.getId().getMemberClass()).append("/")
                 .append(clientType.getId().getMemberCode()).append("/")
-                .append(clientType.getId().getSubsystemCode()).append("/listMethods/v1").toString();
+                .append(clientType.getId().getSubsystemCode()).append("/listMethods").toString();
 
-        JSONObject json = MethodListUtil.getJSON(url, clientType);
-        JSONArray serviceList = json.getJSONArray("service");
         List<XRoadServiceIdentifierType> restServices = new ArrayList<>();
-        for (int i = 0; i < serviceList.length(); i++) {
-            JSONObject service = serviceList.getJSONObject(i);
-            XRoadServiceIdentifierType xRoadServiceIdentifierType = new XRoadServiceIdentifierType();
-            xRoadServiceIdentifierType.setMemberCode(service.optString("member_code"));
-            xRoadServiceIdentifierType.setSubsystemCode(service.optString("subsystem_code"));
-            xRoadServiceIdentifierType.setMemberClass(service.optString("member_class"));
-            xRoadServiceIdentifierType.setServiceCode(service.optString("service_code"));
-            xRoadServiceIdentifierType.setXRoadInstance(service.optString("xroad_instance"));
-            xRoadServiceIdentifierType.setObjectType(XRoadObjectType.fromValue(service.optString("object_type")));
-            restServices.add(xRoadServiceIdentifierType);
+        JSONObject json = MethodListUtil.getJSON(url, clientType);
+        if (json != null) {
+            JSONArray serviceList = json.getJSONArray("service");
+            for (int i = 0; i < serviceList.length(); i++) {
+                JSONObject service = serviceList.getJSONObject(i);
+                XRoadServiceIdentifierType xRoadServiceIdentifierType = new XRoadServiceIdentifierType();
+                xRoadServiceIdentifierType.setMemberCode(service.optString("member_code"));
+                xRoadServiceIdentifierType.setSubsystemCode(service.optString("subsystem_code"));
+                xRoadServiceIdentifierType.setMemberClass(service.optString("member_class"));
+                xRoadServiceIdentifierType.setServiceCode(service.optString("service_code"));
+                xRoadServiceIdentifierType.setServiceVersion(service.optString("service_version"));
+                xRoadServiceIdentifierType.setXRoadInstance(service.optString("xroad_instance"));
+                xRoadServiceIdentifierType.setObjectType(XRoadObjectType.fromValue(service.optString("object_type")));
+                restServices.add(xRoadServiceIdentifierType);
+            }
         }
 
         return restServices;
@@ -107,9 +112,14 @@ public class MethodListUtil {
         headers.setAccept(mediaTypes);
         headers.set("X-Road-Client", MethodListUtil.createHeader(clientType));
         final HttpEntity<String> entity = new HttpEntity<>(headers);
-        ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, entity, String.class);
-        JSONObject json = new JSONObject(response.getBody());
-        return json;
+        try {
+            ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, entity, String.class);
+            JSONObject json = new JSONObject(response.getBody());
+            return json;
+        } catch (Exception e) {
+            log.error("Fetch of REST services failed: " + e.getMessage());
+            return null;
+        }
     }
 
 }
