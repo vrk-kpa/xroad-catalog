@@ -217,10 +217,10 @@ public class CatalogServiceImpl implements CatalogService {
                               String subsystemCode,
                               String serviceVersion) {
         if (serviceVersion.isEmpty() || serviceVersion == null) {
-            return serviceRepository.findActiveByMemberServiceAndSubsystem(xRoadInstance,
+            return serviceRepository.findAllByMemberServiceAndSubsystem(xRoadInstance,
                     memberClass, memberCode, serviceCode, subsystemCode);
         }
-        return serviceRepository.findActiveByMemberServiceAndSubsystemAndVersion(xRoadInstance,
+        return serviceRepository.findAllByMemberServiceAndSubsystemAndVersion(xRoadInstance,
                 memberClass, memberCode, serviceCode, subsystemCode, serviceVersion);
     }
 

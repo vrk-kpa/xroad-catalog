@@ -93,4 +93,30 @@ public class ServiceRepositoryTest {
                 "subsystem_7-1");
         assertNull(service);
     }
+
+    @Test
+    public void testFindAllByMemberServiceAndSubsystem() {
+        Service service = serviceRepository.findAllByMemberServiceAndSubsystem("dev-cs",
+                "PUB", "15",
+                "dummy-service_7-1-5",
+                "subsystem_7-1");
+        assertNotNull(service);
+        service = serviceRepository.findActiveByMemberServiceAndSubsystem("dev-cs",
+                "PUB", "14151329", "removed-service_7-1-3",
+                "subsystem_7-1");
+        assertNull(service);
+    }
+
+    @Test
+    public void testFindAllByMemberServiceAndSubsystemAndVersion() {
+        Service service = serviceRepository.findAllByMemberServiceAndSubsystemAndVersion("dev-cs",
+                "PUB", "15","dummy-service_7-1-5",
+                "subsystem_7-1",
+                "v1");
+        assertNotNull(service);
+        service = serviceRepository.findAllByMemberServiceAndSubsystemAndVersion("dev-cs",
+                "PUB","14151329","removed-service_7-1-3",
+                "subsystem_7-1", "v1");
+        assertNull(service);
+    }
 }
