@@ -94,12 +94,13 @@ public interface ServiceRepository extends CrudRepository<Service, Long> {
             +"AND s.subsystem.subsystemCode = :subsystemCode "
             + "AND s.subsystem.member.memberCode = :memberCode "
             + "AND s.subsystem.member.memberClass = :memberClass "
-            + "AND s.subsystem.member.xRoadInstance = :xRoadInstance")
-    Service findAllByMemberServiceAndSubsystem(@Param("xRoadInstance") String xRoadInstance,
-                                               @Param("memberClass") String memberClass,
-                                               @Param("memberCode") String memberCode,
-                                               @Param("serviceCode") String serviceCode,
-                                               @Param("subsystemCode") String subsystemCode);
+            + "AND s.subsystem.member.xRoadInstance = :xRoadInstance "
+            + "AND s.serviceVersion IS NULL")
+    Service findAllByMemberServiceAndSubsystemVersionNull(@Param("xRoadInstance") String xRoadInstance,
+                                                          @Param("memberClass") String memberClass,
+                                                          @Param("memberCode") String memberCode,
+                                                          @Param("serviceCode") String serviceCode,
+                                                          @Param("subsystemCode") String subsystemCode);
 
     @Query("SELECT s FROM Service s WHERE s.serviceCode = :serviceCode "
             +"AND s.subsystem.subsystemCode = :subsystemCode "
