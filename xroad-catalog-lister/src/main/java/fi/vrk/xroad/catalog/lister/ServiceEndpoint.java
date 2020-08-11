@@ -76,6 +76,7 @@ public class ServiceEndpoint {
             throw new ServiceNotFoundException("Service with xRoadInstance \"" + request.getXRoadInstance()
                     + "\", memberClass \"" + request.getMemberClass()
                     + "\", memberCode \"" + request.getMemberCode()
+                    + "\", serviceCode \"" + request.getServiceCode()
                     + "\", subsystemCode \"" + request.getSubsystemCode()
                     + "\" and serviceVersion \"" + request.getServiceVersion() + "\" not found");
         }
@@ -97,6 +98,7 @@ public class ServiceEndpoint {
             throw new ServiceNotFoundException("Service with xRoadInstance \"" + request.getXRoadInstance()
                     + "\", memberClass \"" + request.getMemberClass()
                     + "\", memberCode \"" + request.getMemberCode()
+                    + "\", serviceCode \"" + request.getServiceCode()
                     + "\", subsystemCode \"" + request.getSubsystemCode()
                     + "\" and serviceVersion \"" + request.getServiceVersion() + "\" not found");
         }
