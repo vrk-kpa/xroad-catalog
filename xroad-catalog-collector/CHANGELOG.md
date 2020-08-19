@@ -2,6 +2,41 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.13.5] - 2020-08-19
+
+### Changed
+- update version
+- update changelogs and documentation
+
+## [0.11.9] - 2020-06-18
+
+### Changed
+- update version
+- Fix GetService returning duplicates
+
+## [0.11.8] - 2020-06-11
+
+### Changed
+- update version
+
+## [0.11.7] - 2020-06-09
+
+### Changed
+- update version
+- Add serviceVersion as input parameter to IsSoapService and IsRestService
+
+## [0.11.6] - 2020-06-03
+
+### Changed
+- update version
+- add multiple languages support to GetOrganizations and GetCompanies
+
+## [0.11.5] - 2020-05-20
+
+### Changed
+- update version
+- fix NPE for hasCompanyChanged and hasOrganizationChanged
+
 ## [0.11.4] - 2020-05-13
 
 ### Changed

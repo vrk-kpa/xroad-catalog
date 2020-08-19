@@ -2,6 +2,49 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.13.5] - 2020-08-19
+
+### Changed
+- update version
+- update changelogs and documentation
+
+## [0.13.3] - 2020-08-11
+
+### Changed
+- update version
+- Fix GetService returning only active services
+- Fix fetch of rest services and serviceVersion NULL issue
+
+## [0.13.1] - 2020-07-14
+
+### Changed
+- update version
+- Change amount of max heap size in gradle.properties
+
+## [0.13.0] - 2020-07-13
+
+### Changed
+- update version
+- Solve memory issues by lazy fetching
+
+## [0.12.9] - 2020-07-08
+
+### Changed
+- update version
+- Replace Unicode control characters from GetOrganizations in order to avoid issues when converting to XML
+
+## [0.12.7] - 2020-07-06
+
+### Changed
+- update version
+- Refacto of GetCompanies
+
+## [0.11.9] - 2020-06-18
+
+### Changed
+- update version
+- Fix GetService returning duplicates
+
 ## [0.11.4] - 2020-05-13
 
 ### Changed

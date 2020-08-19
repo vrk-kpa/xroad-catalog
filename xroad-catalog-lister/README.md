@@ -724,6 +724,9 @@ xmlns:xrcl="http://xroad.vrk.fi/xroad-catalog-lister">
    </soapenv:Header>
    <soapenv:Body>
       <xrcl:IsRestService>
+         <xrcl:xRoadInstance>DEV</xrcl:xRoadInstance>
+         <xrcl:memberClass>GOV</xrcl:memberClass>
+         <xrcl:memberCode>1234</xrcl:memberCode>
          <xrcl:serviceCode>PetStoreNew</xrcl:serviceCode>
          <xrcl:subsystemCode>MANAGEMENT</xrcl:subsystemCode>
          <xrcl:serviceVersion>v1</xrcl:serviceVersion>
@@ -793,7 +796,10 @@ xmlns:xrcl="http://xroad.vrk.fi/xroad-catalog-lister">
    </soapenv:Header>
    <soapenv:Body>
       <xrcl:IsSoapService>
-         <xrcl:serviceCode>ownerChange</xrcl:serviceCode>
+         <xrcl:xRoadInstance>DEV</xrcl:xRoadInstance>
+         <xrcl:memberClass>GOV</xrcl:memberClass>
+         <xrcl:memberCode>1234</xrcl:memberCode>
+         <xrcl:serviceCode>authCertDeletion</xrcl:serviceCode>
          <xrcl:subsystemCode>MANAGEMENT</xrcl:subsystemCode>
          <xrcl:serviceVersion>v1</xrcl:serviceVersion>
       </xrcl:IsSoapService>

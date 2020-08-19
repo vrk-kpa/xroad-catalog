@@ -2,8 +2,49 @@
 
 All notable changes to this project will be documented in this file.
 
+## 0.13.5 - 2020-08-19
+- update version
+- update changelogs and documentation
+
+## 0.13.3 - 2020-08-11
+- update version
+- Fix GetService returning only active services
+- Fix fetch of rest services and serviceVersion NULL issue
+
+## 0.13.0 - 2020-07-13
+- update version
+- Solve memory issues by lazy fetching
+
+## 0.12.7 - 2020-07-06
+- update version
+- Refacto of GetCompanies
+
+## 0.11.9 - 2020-06-18
+- update version
+- Fix GetService returning duplicates
+- Fix IsSoapService and IsRestService returning duplicates
+
+## 0.11.8 - 2020-06-11
+- update version
+
+## 0.11.7 - 2020-06-09
+- update version
+- Add serviceVersion as input parameter to IsSoapService and IsRestService
+
+## 0.11.6 - 2020-06-03
+- update version
+- add multiple languages support to GetOrganizations and GetCompanies
+
+## 0.11.5 - 2020-05-20
+- update version
+
 ## 0.11.4 - 2020-05-13
 - update version
+- update changelogs
+
+## 0.11.4 - 2020-05-13
+- update version
+- update changelogs
 
 ## 0.11.3 - 2020-05-07
 - update documentation
