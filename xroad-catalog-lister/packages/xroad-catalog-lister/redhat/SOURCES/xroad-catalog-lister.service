@@ -1,7 +1,7 @@
 [Unit]
 Description=X-Road Catalog Lister
-Wants=postgresql.service
-After=network.target postgresql.service
+Wants=postgresql-9.6.service
+After=network.target postgresql-9.6.service
 
 [Service]
 PermissionsStartOnly=true
