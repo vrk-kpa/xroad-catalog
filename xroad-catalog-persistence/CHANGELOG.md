@@ -101,3 +101,153 @@ All notable changes to this project will be documented in this file.
 
 ## 0.11.0 - 2020-03-31
 - add subsystemcode to getService query to avoid duplicates
+
+## 0.11.0 - 2020-03-26
+- update serviceRepo to return only non-removed service
+
+## 0.11.0 - 2020-03-23
+- update documentation
+
+## 0.11.0 - 2020-03-20
+- refacto IsSoapProvider and IsRestProvider
+
+## 0.10.0 - 2020-03-11
+- create getOpenApi metaservice support
+
+## 0.10.0 - 2020-03-05
+- revert dependencies update
+- add changelogs
+
+## 0.10.0 - 2020-02-13
+- update dependencies
+
+## 0.10.0 - 2019-11-29
+- document examples using gradlew
+
+## 0.10.0 - 2018-01-23
+- Update project version
+
+## 0.9.1 - 2018-01-18
+- use POST for getWSDL request. Refactoring
+
+## 0.9.1 - 2017-02-06
+- actorSelection is no longer used for fetching actor-actor ActorRefs
+
+## 0.9.1 - 2016-06-03
+- fix, handling wsdl as a cdata dom object
+
+## 0.9.1 - 2016-05-26
+- Fix for SSL parameter names in conf files
+
+## 0.9.1 - 2016-05-23
+- made common gradle root build. changed project dependencies from jar dependencies to module dependencies
+
+## 0.9.1 - 2016-05-17
+- Javadocs completed for parameters
+- Javadoc parameter fixes
+- Sonar runner and jacoco plugins
+
+## 0.9.1 - 2016-05-13
+- Fix for too deeply nested control flow
+- Checkstyle fixes
+- Fix for 'Trying to make little less complex'
+- Removed empty private constructor
+- javadocs
+- Fix for 'Unused private fields should be removed'
+- Fix for 'Dead stores should be removed'
+- Fix for 'Utility classes should not have public constr… …
+- Fix for sonar issues
+- Fix for 'Methods should not be empty'
+
+## 0.9.1 - 2016-05-12
+- Removing unused code parts
+- Some more unused fields removed
+
+## 0.9.1 - 2016-05-09
+- jcenter repo added
+- License for persistence
+
+## 0.9.1 - 2016-04-28
+- Removed unused imports
+
+## 0.9.1 - 2016-04-14
+- collectordb.properties -> catalogdb.properties
+- Config file ranames and reorganization
+
+## 0.9.1 - 2016-04-13
+- Style fixes, unsed imports etc.
+
+## 0.9.1 - 2016-04-04
+- fix saving of wsdl when service version is null. made service.service_version nullable in db. configured jpa entity columns as non-nullable when they should be so that saving null values fails in tests
+- ListMembers now lists also deleted items, removed wsdl data and data hash from soap interface, made wsdl fetching from db uniform (always fetch wsdl)
+  
+## 0.9.1 - 2016-03-31
+- improved logging
+
+## 0.9.1 - 2016-03-30
+- fix for db scripts
+- quicksave
+
+## 0.9.1 - 2016-03-22
+- Fix for db init files
+
+## 0.9.1 - 2016-03-21
+- fix broken test
+- fixed bug in wsdl saving
+- changed saveWsdl() contract, add wsdl saving
+
+## 0.9.1 - 2016-03-16
+- Database init and creation
+
+## 0.9.1 - 2016-03-14
+- switched from Date -> LocalDateTime
+- refactored tests
+- use lombok equals and hashcode for consistency
+- removed duplicate code
+- bit of documentation, after reviewing explain plans
+- refactor, use subsystemId for saveServices the same way as for saveWsdl
+- made getAllMembers NOT fetch wsdls
+- branch merge from master and fix conflicts
+- fix indexes, removed data_hash. add test that will populate test data to database
+
+## 0.9.1 - 2016-03-11
+- disabled @EqualsAndHashCode annotations - possibly not needed - and caused a few problems
+- added save wsdl
+- Save members, subsystems and services and unit testing
+- added saveServices(), subsystem.getActiveServices/getAllServices
+
+## 0.9.1 - 2016-03-10
+- added getWsdl() and more tests
+- added test for save member -> saves subsystems correctly, fixed bugs related to that, cleanup
+- member.getAllSubsystems() and member.getActiveSubsystems()
+- all current tests pass
+
+## 0.9.1 - 2016-03-09
+- added findAllMembers and findAllActiveMembers sort of methods that take into account whether member is removed or not. Made tests pass
+- added missing source file
+
+## 0.9.1 - 2016-03-08
+- one more working test case. Marking members / subsystems is functional
+- cleanup TODOs and otherwise
+- added new timestamp field "fetched", renamed "updated" -> "changed", some cleanup
+- made status fields Embeddable
+- work on merge save members
+
+## 0.9.1 - 2016-02-17
+- Renamed package lister -> persistence in xroad-catalog-persistence
+
+## 0.9.1 - 2016-02-16
+- Spring boot body for xroad catalog, akka setup, persistence
+
+## 0.9.1 - 2016-02-04
+- added findAll(updatedAfter), tests, database modifications (indexes etc)
+
+## 0.9.1 - 2016-02-01
+- Create README.md
+- PVAYLADEV-312 added integration testing mechanism
+- PVAYLADEV-312 added CatalogService and JPA magic for eager loading entity graph
+
+## 0.9.1 - 2016-01-29
+- removed IDEA file
+- fix .gitignore
+- added spring boot project with beginning of Spring Data JPA implementation, which connects to local postgresql

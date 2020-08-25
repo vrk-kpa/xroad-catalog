@@ -9,7 +9,7 @@ Release:            %{rel}%{?snapshot}%{?dist}
 Summary:            X-Road Service Listing
 Group:              Applications/Internet
 License:            MIT
-Requires:           systemd, cronie, cronie-anacron, postgresql, postgresql-server, java-1.8.0-openjdk
+Requires:           systemd, cronie, cronie-anacron, postgresql >= 9.5, postgresql-server >= 9.5, java-1.8.0-openjdk
 Requires(post):     systemd
 Requires(preun):    systemd
 Requires(postun):   systemd

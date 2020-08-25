@@ -16,7 +16,7 @@ The software consists of theree parts:
 - [xroad-catalog-persistence](xroad-catalog-persistence/README.md)
   * Library used to persist and read persisted data. Used by both of the above.
   
-![X-Road Catalog overview](xroad-catalog.png)
+![X-Road Catalog overview](architecture.png)
 
 ## Environments
 * Internal development environment in the AWS: [AWS xroad-catalog](http://xroad-catalog.i.palveluvayla.com)

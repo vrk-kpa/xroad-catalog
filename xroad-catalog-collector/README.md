@@ -12,7 +12,6 @@ The software is implemented using concurrent Akka actors:
 * FetchOrganizationsActor - fetches a list of public organizations from an external API and stores them to the db
 * FetchCompaniesActor - fetches a list of private companies from an external API and stores them to the db
 
-
 ## Build
 
 

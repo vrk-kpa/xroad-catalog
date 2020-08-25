@@ -13,8 +13,10 @@ The main endpoints this software provides:
 * IsSoapService - endpoint for requesting whether a given service is a SOAP service
 * IsRestService - endpoint for requesting whether a given service is a REST service
 * IsProvider - endpoint for requesting whether a given member is a provider
-* GetOrganizations - endpoint for requesting organization details
-* HasOrganizationChanged - endpoint for requesting whether given organization has some of its details changed
+* GetOrganizations - endpoint for requesting public organization details
+* HasOrganizationChanged - endpoint for requesting whether given public organization has some of its details changed
+* GetCompanies - endpoint for requesting private company details
+* HasCompanyChanged - endpoint for requesting whether given private company has some of its details changed
 
 ## Build
 ```sh
@@ -1210,6 +1212,297 @@ Response
             </ns2:changedValue>
          </ns2:changedValueList>
       </ns2:HasOrganizationChangedResponse>
+   </SOAP-ENV:Body>
+</SOAP-ENV:Envelope>
+```
+
+### 9. GetCompanies
+
+Request
+
+curl -k -d @GetCompaniesRequest.xml --header "Content-Type: text/xml" -X POST http://localhost:8080/ws/GetCompanies
+
+```xml
+<soapenv:Envelope
+        xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
+        xmlns:xro="http://x-road.eu/xsd/xroad.xsd"
+        xmlns:iden="http://x-road.eu/xsd/identifiers"
+        xmlns:xrcl="http://xroad.vrk.fi/xroad-catalog-lister">
+    <soapenv:Header>
+        <xro:protocolVersion>4.x</xro:protocolVersion>
+        <xro:id>ID11234</xro:id>
+        <xro:userId>EE1234567890</xro:userId>
+        <xro:client iden:objectType="MEMBER">
+            <iden:xRoadInstance>FI</iden:xRoadInstance>
+            <iden:memberClass>GOV</iden:memberClass>
+            <iden:memberCode>1710128-9</iden:memberCode>
+        </xro:client>
+        <xro:service iden:objectType="SERVICE">
+            <iden:xRoadInstance>FI</iden:xRoadInstance>
+            <iden:memberClass>GOV</iden:memberClass>
+            <iden:memberCode>1710128-9</iden:memberCode>
+            <iden:subsystemCode>SS1</iden:subsystemCode>
+            <iden:serviceCode>ListMembers</iden:serviceCode>
+            <iden:serviceVersion>v1</iden:serviceVersion>
+        </xro:service>
+    </soapenv:Header>
+    <soapenv:Body>
+        <xrcl:GetCompanies>
+            <xrcl:businessId>1710128-9</xrcl:businessId>
+        </xrcl:GetCompanies>
+    </soapenv:Body>
+</soapenv:Envelope>
+```
+
+Response
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/">
+   <SOAP-ENV:Header>
+      <xro:protocolVersion xmlns:xro="http://x-road.eu/xsd/xroad.xsd">4.x</xro:protocolVersion>
+      <xro:id xmlns:xro="http://x-road.eu/xsd/xroad.xsd">ID11234</xro:id>
+      <xro:userId xmlns:xro="http://x-road.eu/xsd/xroad.xsd">EE1234567890</xro:userId>
+      <xro:client xmlns:xro="http://x-road.eu/xsd/xroad.xsd" xmlns:iden="http://x-road.eu/xsd/identifiers" iden:objectType="MEMBER">
+         <iden:xRoadInstance>FI</iden:xRoadInstance>
+         <iden:memberClass>GOV</iden:memberClass>
+         <iden:memberCode>1710128-9</iden:memberCode>
+      </xro:client>
+      <xro:service xmlns:xro="http://x-road.eu/xsd/xroad.xsd" xmlns:iden="http://x-road.eu/xsd/identifiers" iden:objectType="SERVICE">
+         <iden:xRoadInstance>FI</iden:xRoadInstance>
+         <iden:memberClass>GOV</iden:memberClass>
+         <iden:memberCode>1710128-9</iden:memberCode>
+         <iden:subsystemCode>SS1</iden:subsystemCode>
+         <iden:serviceCode>ListMembers</iden:serviceCode>
+         <iden:serviceVersion>v1</iden:serviceVersion>
+      </xro:service>
+   </SOAP-ENV:Header>
+   <SOAP-ENV:Body>
+      <ns2:GetCompaniesResponse xmlns:ns2="http://xroad.vrk.fi/xroad-catalog-lister">
+         <ns2:companyList>
+            <ns2:company>
+               <ns2:companyForm>OYJ</ns2:companyForm>
+               <ns2:detailsUri />
+               <ns2:businessId>1710128-9</ns2:businessId>
+               <ns2:name>Gofore Oyj</ns2:name>
+               <ns2:registrationDate>2001-06-11T00:00:00.000+02:00</ns2:registrationDate>
+               <ns2:businessAddresses>
+                  <ns2:businessAddress>
+                     <ns2:source>0</ns2:source>
+                     <ns2:version>1</ns2:version>
+                     <ns2:careOf />
+                     <ns2:street>Kalevantie 2</ns2:street>
+                     <ns2:postCode>33100</ns2:postCode>
+                     <ns2:city>TAMPERE</ns2:city>
+                     <ns2:language>FI</ns2:language>
+                     <ns2:type>2</ns2:type>
+                     <ns2:country />
+                     <ns2:registrationDate>2016-07-12T00:00:00.000+03:00</ns2:registrationDate>
+                     <ns2:created>2020-05-04T11:41:17.540+03:00</ns2:created>
+                     <ns2:changed>2020-05-06T15:12:03.464+03:00</ns2:changed>
+                     <ns2:fetched>2020-05-06T15:12:03.464+03:00</ns2:fetched>
+                  </ns2:businessAddress>
+               </ns2:businessAddresses>
+               <ns2:businessAuxiliaryNames>
+                  <ns2:businessAuxiliaryName>
+                     <ns2:source>1</ns2:source>
+                     <ns2:ordering>5</ns2:ordering>
+                     <ns2:version>1</ns2:version>
+                     <ns2:name>Solinor</ns2:name>
+                     <ns2:language />
+                     <ns2:registrationDate>2019-01-31T00:00:00.000+02:00</ns2:registrationDate>
+                     <ns2:created>2020-05-04T11:41:24.717+03:00</ns2:created>
+                     <ns2:changed>2020-05-06T15:12:03.485+03:00</ns2:changed>
+                     <ns2:fetched>2020-05-06T15:12:03.485+03:00</ns2:fetched>
+                  </ns2:businessAuxiliaryName>
+               </ns2:businessAuxiliaryNames>
+               <ns2:businessIdChanges>
+                  <ns2:businessIdChange>
+                     <ns2:source>2</ns2:source>
+                     <ns2:description />
+                     <ns2:reason />
+                     <ns2:changeDate>2019-02-01</ns2:changeDate>
+                     <ns2:change>44</ns2:change>
+                     <ns2:oldBusinessId>1796717-0</ns2:oldBusinessId>
+                     <ns2:newBusinessId>1710128-9</ns2:newBusinessId>
+                     <ns2:language />
+                     <ns2:created>2020-05-04T11:41:24.747+03:00</ns2:created>
+                     <ns2:changed>2020-05-06T15:12:03.519+03:00</ns2:changed>
+                     <ns2:fetched>2020-05-06T15:12:03.519+03:00</ns2:fetched>
+                  </ns2:businessIdChange>
+               </ns2:businessIdChanges>
+               <ns2:businessLines>
+                  <ns2:businessLine>
+                     <ns2:source>2</ns2:source>
+                     <ns2:ordering>0</ns2:ordering>
+                     <ns2:version>1</ns2:version>
+                     <ns2:name>Dataprogrammering</ns2:name>
+                     <ns2:language>SE</ns2:language>
+                     <ns2:registrationDate>2007-12-31T00:00:00.000+02:00</ns2:registrationDate>
+                     <ns2:created>2020-05-04T11:41:24.792+03:00</ns2:created>
+                     <ns2:changed>2020-05-06T15:12:03.537+03:00</ns2:changed>
+                     <ns2:fetched>2020-05-06T15:12:03.537+03:00</ns2:fetched>
+                  </ns2:businessLine>
+               </ns2:businessLines>
+               <ns2:businessNames />
+               <ns2:companyForms>
+                  <ns2:companyForm>
+                     <ns2:source>1</ns2:source>
+                     <ns2:version>1</ns2:version>
+                     <ns2:name>Public limited company</ns2:name>
+                     <ns2:language>EN</ns2:language>
+                     <ns2:type>0</ns2:type>
+                     <ns2:registrationDate>2017-10-19T00:00:00.000+03:00</ns2:registrationDate>
+                     <ns2:created>2020-05-04T11:41:27.345+03:00</ns2:created>
+                     <ns2:changed>2020-05-06T15:12:03.554+03:00</ns2:changed>
+                     <ns2:fetched>2020-05-06T15:12:03.554+03:00</ns2:fetched>
+                  </ns2:companyForm>
+               </ns2:companyForms>
+               <ns2:contactDetails>
+                  <ns2:contactDetail>
+                     <ns2:source>0</ns2:source>
+                     <ns2:version>1</ns2:version>
+                     <ns2:language>EN</ns2:language>
+                     <ns2:value />
+                     <ns2:type>0</ns2:type>
+                     <ns2:registrationDate>2010-05-03T00:00:00.000+03:00</ns2:registrationDate>
+                     <ns2:created>2020-05-04T11:41:27.754+03:00</ns2:created>
+                     <ns2:changed>2020-05-06T15:12:03.648+03:00</ns2:changed>
+                     <ns2:fetched>2020-05-06T15:12:03.648+03:00</ns2:fetched>
+                  </ns2:contactDetail>
+               </ns2:contactDetails>
+               <ns2:languages>
+                  <ns2:language>
+                     <ns2:source>0</ns2:source>
+                     <ns2:version>1</ns2:version>
+                     <ns2:name>Finska</ns2:name>
+                     <ns2:language>SE</ns2:language>
+                     <ns2:registrationDate>2001-06-27T00:00:00.000+02:00</ns2:registrationDate>
+                     <ns2:created>2020-05-04T11:41:28.286+03:00</ns2:created>
+                     <ns2:changed>2020-05-06T15:12:03.664+03:00</ns2:changed>
+                     <ns2:fetched>2020-05-06T15:12:03.664+03:00</ns2:fetched>
+                  </ns2:language>
+               </ns2:languages>
+               <ns2:liquidations />
+               <ns2:registeredEntries>
+                  <ns2:registeredEntry>
+                     <ns2:description>Unregistered</ns2:description>
+                     <ns2:status>2</ns2:status>
+                     <ns2:register>1</ns2:register>
+                     <ns2:language>EN</ns2:language>
+                     <ns2:authority>2</ns2:authority>
+                     <ns2:registrationDate>2001-06-11T00:00:00.000+02:00</ns2:registrationDate>
+                     <ns2:endDate>2001-06-24T00:00:00.000+02:00</ns2:endDate>
+                     <ns2:created>2020-05-04T11:41:30.645+03:00</ns2:created>
+                     <ns2:changed>2020-05-06T15:12:03.781+03:00</ns2:changed>
+                     <ns2:fetched>2020-05-06T15:12:03.781+03:00</ns2:fetched>
+                  </ns2:registeredEntry>
+               </ns2:registeredEntries>
+               <ns2:registeredOffices />
+               <ns2:created>2020-05-04T11:41:17.484+03:00</ns2:created>
+               <ns2:changed>2020-05-04T18:23:05.052+03:00</ns2:changed>
+               <ns2:fetched>2020-05-06T15:12:03.410+03:00</ns2:fetched>
+            </ns2:company>
+         </ns2:companyList>
+      </ns2:GetCompaniesResponse>
+   </SOAP-ENV:Body>
+</SOAP-ENV:Envelope>
+```
+
+### 10. HasCompanyChanged
+
+Request
+
+curl -k -d @HasCompanyChangedRequest.xml --header "Content-Type: text/xml" -X POST http://localhost:8080/ws/HasCompanyChanged
+
+```xml
+<soapenv:Envelope
+        xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
+        xmlns:xro="http://x-road.eu/xsd/xroad.xsd"
+        xmlns:iden="http://x-road.eu/xsd/identifiers"
+        xmlns:xrcl="http://xroad.vrk.fi/xroad-catalog-lister">
+    <soapenv:Header>
+        <xro:protocolVersion>4.x</xro:protocolVersion>
+        <xro:id>ID11234</xro:id>
+        <xro:userId>EE1234567890</xro:userId>
+        <xro:client iden:objectType="MEMBER">
+            <iden:xRoadInstance>FI</iden:xRoadInstance>
+            <iden:memberClass>GOV</iden:memberClass>
+            <iden:memberCode>1710128-9</iden:memberCode>
+        </xro:client>
+        <xro:service iden:objectType="SERVICE">
+            <iden:xRoadInstance>FI</iden:xRoadInstance>
+            <iden:memberClass>GOV</iden:memberClass>
+            <iden:memberCode>1710128-9</iden:memberCode>
+            <iden:subsystemCode>SS1</iden:subsystemCode>
+            <iden:serviceCode>ListMembers</iden:serviceCode>
+            <iden:serviceVersion>v1</iden:serviceVersion>
+        </xro:service>
+    </soapenv:Header>
+    <soapenv:Body>
+        <xrcl:HasCompanyChanged>
+            <xrcl:businessId>1710128-9</xrcl:businessId>
+            <xrcl:changedAfter>2011-01-01</xrcl:changedAfter>
+        </xrcl:HasCompanyChanged>
+    </soapenv:Body>
+</soapenv:Envelope>
+```
+
+Response
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/">
+   <SOAP-ENV:Header>
+      <xro:protocolVersion xmlns:xro="http://x-road.eu/xsd/xroad.xsd">4.x</xro:protocolVersion>
+      <xro:id xmlns:xro="http://x-road.eu/xsd/xroad.xsd">ID11234</xro:id>
+      <xro:userId xmlns:xro="http://x-road.eu/xsd/xroad.xsd">EE1234567890</xro:userId>
+      <xro:client xmlns:xro="http://x-road.eu/xsd/xroad.xsd" xmlns:iden="http://x-road.eu/xsd/identifiers" iden:objectType="MEMBER">
+         <iden:xRoadInstance>FI</iden:xRoadInstance>
+         <iden:memberClass>GOV</iden:memberClass>
+         <iden:memberCode>1710128-9</iden:memberCode>
+      </xro:client>
+      <xro:service xmlns:xro="http://x-road.eu/xsd/xroad.xsd" xmlns:iden="http://x-road.eu/xsd/identifiers" iden:objectType="SERVICE">
+         <iden:xRoadInstance>FI</iden:xRoadInstance>
+         <iden:memberClass>GOV</iden:memberClass>
+         <iden:memberCode>1710128-9</iden:memberCode>
+         <iden:subsystemCode>SS1</iden:subsystemCode>
+         <iden:serviceCode>ListMembers</iden:serviceCode>
+         <iden:serviceVersion>v1</iden:serviceVersion>
+      </xro:service>
+   </SOAP-ENV:Header>
+   <SOAP-ENV:Body>
+      <ns2:HasCompanyChangedResponse xmlns:ns2="http://xroad.vrk.fi/xroad-catalog-lister">
+         <ns2:changed>true</ns2:changed>
+         <ns2:changedValueList>
+            <ns2:changedValue>
+               <ns2:name>Company</ns2:name>
+            </ns2:changedValue>
+            <ns2:changedValue>
+               <ns2:name>BusinessAddress</ns2:name>
+            </ns2:changedValue>
+            <ns2:changedValue>
+               <ns2:name>BusinessAuxiliaryName</ns2:name>
+            </ns2:changedValue>
+            <ns2:changedValue>
+               <ns2:name>BusinessIdChange</ns2:name>
+            </ns2:changedValue>
+            <ns2:changedValue>
+               <ns2:name>BusinessLine</ns2:name>
+            </ns2:changedValue>
+            <ns2:changedValue>
+               <ns2:name>CompanyForm</ns2:name>
+            </ns2:changedValue>
+            <ns2:changedValue>
+               <ns2:name>ContactDetail</ns2:name>
+            </ns2:changedValue>
+            <ns2:changedValue>
+               <ns2:name>Language</ns2:name>
+            </ns2:changedValue>
+            <ns2:changedValue>
+               <ns2:name>RegisteredEntry</ns2:name>
+            </ns2:changedValue>
+         </ns2:changedValueList>
+      </ns2:HasCompanyChangedResponse>
    </SOAP-ENV:Body>
 </SOAP-ENV:Envelope>
 ```
