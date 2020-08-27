@@ -819,6 +819,22 @@ CREATE SEQUENCE IF NOT EXISTS business_id_change_id_seq
 
 ALTER SEQUENCE business_id_change_id_seq OWNED BY business_id_change.id;
 
+CREATE TABLE IF NOT EXISTS error_log (
+    id BIGSERIAL PRIMARY KEY NOT NULL,
+    message TEXT NOT NULL,
+    code TEXT NOT NULL,
+    created TIMESTAMP WITH TIME ZONE NOT NULL
+);
+
+CREATE SEQUENCE IF NOT EXISTS error_log_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+ALTER SEQUENCE error_log_id_seq OWNED BY error_log.id;
+
 CREATE UNIQUE INDEX IF NOT EXISTS idx_wsdl_external_id ON wsdl USING btree (external_id);
 CREATE UNIQUE INDEX IF NOT EXISTS idx_open_api_external_id ON open_api USING btree (external_id);
 CREATE UNIQUE INDEX IF NOT EXISTS idx_member_natural_keys ON member(member_code, member_class, x_road_instance);
@@ -918,3 +934,4 @@ ALTER TABLE registered_office OWNER TO xroad_catalog;
 ALTER TABLE contact_detail OWNER TO xroad_catalog;
 ALTER TABLE registered_entry OWNER TO xroad_catalog;
 ALTER TABLE business_id_change OWNER TO xroad_catalog;
+ALTER TABLE error_log OWNER TO xroad_catalog;

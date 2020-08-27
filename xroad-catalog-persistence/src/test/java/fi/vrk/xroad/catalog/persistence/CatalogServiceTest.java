@@ -36,8 +36,10 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.Month;
 import java.util.*;
 import java.util.stream.StreamSupport;
 
@@ -220,6 +222,22 @@ public class CatalogServiceTest {
         assertEquals("FI", companies.iterator().next().getAllLiquidations().iterator().next().getLanguage());
         assertEquals("Unregistered", companies.iterator().next().getAllRegisteredEntries().iterator().next().getDescription());
         assertEquals("FI", companies.iterator().next().getAllRegisteredOffices().iterator().next().getLanguage());
+    }
+
+    @Test
+    public void testGetErrorLog() {
+        LocalDateTime changedAfter = LocalDateTime.of(2020, Month.JANUARY, 1, 0, 0, 0);
+        Iterable<ErrorLog> errorLogEntries = catalogService.getErrorLog(changedAfter);
+        assertNotNull(errorLogEntries);
+        assertEquals(true, errorLogEntries.iterator().hasNext());
+    }
+
+    @Test
+    public void testSaveErrorLog() {
+        ErrorLog errorLog = ErrorLog.builder().message("Error").code("500")
+                .created(LocalDateTime.now()).build();
+        ErrorLog savedErrorLog = catalogService.saveErrorLog(errorLog);
+        assertNotNull(savedErrorLog);
     }
 
     @Test

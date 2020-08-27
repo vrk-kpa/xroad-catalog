@@ -27,26 +27,39 @@ import fi.vrk.xroad.catalog.collector.wsimport.ClientType;
 import fi.vrk.xroad.catalog.collector.wsimport.XRoadClientIdentifierType;
 import fi.vrk.xroad.catalog.collector.wsimport.XRoadObjectType;
 
+import fi.vrk.xroad.catalog.persistence.CatalogService;
+import fi.vrk.xroad.catalog.persistence.entity.ErrorLog;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.web.client.RestTemplate;
+
+import java.time.LocalDateTime;
 
 /**
  * Helper for client list
  */
 public class ClientListUtil {
 
+    @Autowired
+    private static CatalogService catalogService;
+
     private ClientListUtil() {
         // Private empty constructor
     }
 
-
     public static ClientList clientListFromResponse(String url) {
         RestTemplate restTemplate = new RestTemplate();
-        ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
-        JSONObject json = new JSONObject(response.getBody());
-        JSONArray members = json.getJSONArray("member");
+        JSONArray members = new JSONArray();
+        try {
+            ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
+            JSONObject json = new JSONObject(response.getBody());
+            members = json.getJSONArray("member");
+        } catch (Exception e) {
+            ErrorLog errorLog = ErrorLog.builder().created(LocalDateTime.now()).message(e.getMessage()).code("500").build();
+            catalogService.saveErrorLog(errorLog);
+        }
 
         ClientList clientList = new ClientList();
         for (int i = 0; i < members.length(); i++)

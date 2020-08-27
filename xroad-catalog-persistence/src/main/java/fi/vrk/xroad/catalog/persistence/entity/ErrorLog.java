@@ -20,23 +20,31 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package fi.vrk.xroad.catalog.persistence.repository;
+package fi.vrk.xroad.catalog.persistence.entity;
 
-import fi.vrk.xroad.catalog.persistence.entity.Organization;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.CrudRepository;
-import org.springframework.data.repository.query.Param;
+import lombok.*;
 
-import java.util.Optional;
-import java.util.Set;
+import javax.persistence.*;
+import java.time.LocalDateTime;
 
-
-public interface OrganizationRepository extends CrudRepository<Organization, Long> {
-
-    // uses named query Organization.findAllByBusinessCode
-    Set<Organization> findAllByBusinessCode(@Param("businessCode") String businessCode);
-
-    @Query("SELECT o FROM Organization o WHERE o.guid = :guid")
-    Optional<Organization> findAnyByOrganizationGuid(@Param("guid") String guid);
-
+@Entity
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@ToString
+@EqualsAndHashCode(exclude = {"id"})
+@Builder
+public class ErrorLog {
+    @Id
+    @Column(nullable = false)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "ERROR_LOG_GEN")
+    @SequenceGenerator(name = "ERROR_LOG_GEN", sequenceName = "ERROR_LOG_SEQ", allocationSize = 1)
+    private long id;
+    @Column(nullable = false)
+    private String message;
+    @Column(nullable = false)
+    private String code;
+    @Column(nullable = false)
+    private LocalDateTime created;
 }

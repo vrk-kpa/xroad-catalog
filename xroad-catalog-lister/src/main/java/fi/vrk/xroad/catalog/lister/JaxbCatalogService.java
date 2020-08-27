@@ -24,10 +24,12 @@ package fi.vrk.xroad.catalog.lister;
 
 import fi.vrk.xroad.xroad_catalog_lister.ChangedValue;
 import fi.vrk.xroad.xroad_catalog_lister.Company;
+import fi.vrk.xroad.xroad_catalog_lister.ErrorLog;
 import fi.vrk.xroad.xroad_catalog_lister.Member;
 import fi.vrk.xroad.xroad_catalog_lister.Organization;
 
 import javax.xml.datatype.XMLGregorianCalendar;
+import java.time.LocalDateTime;
 
 /**
  * Service which talks in JAXB objects.
@@ -78,4 +80,11 @@ public interface JaxbCatalogService {
      * @return Iterable of JAXB generated Companies
      */
     Iterable<Company> getCompanies(String businessId);
+
+    /**
+     * Returns all errorLog entries
+     *
+     * @return Iterable of JAXB generated ErrorLog entries
+     */
+    Iterable<ErrorLog> getErrorLog(XMLGregorianCalendar since);
 }

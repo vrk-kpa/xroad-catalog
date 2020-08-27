@@ -23,9 +23,12 @@
 package fi.vrk.xroad.catalog.collector.util;
 
 import fi.vrk.xroad.catalog.collector.wsimport.*;
+import fi.vrk.xroad.catalog.persistence.CatalogService;
+import fi.vrk.xroad.catalog.persistence.entity.ErrorLog;
 import lombok.extern.slf4j.Slf4j;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.web.client.RestTemplate;
 
@@ -40,6 +43,8 @@ import java.util.List;
 @Slf4j
 public class MethodListUtil {
 
+    @Autowired
+    private static CatalogService catalogService;
 
     private MethodListUtil() {
         // Private empty constructor
@@ -49,10 +54,11 @@ public class MethodListUtil {
         if (fetchUnlimited) {
             return true;
         }
-        LocalDateTime today = LocalDateTime.now();
-        LocalDateTime fetchTimeFrom = LocalDate.now().atTime(fetchHourAfter, 0);
-        LocalDateTime fetchTimeTo = LocalDate.now().atTime(fetchHourBefore, 0);
-        return (today.isAfter(fetchTimeFrom) && today.isBefore(fetchTimeTo));
+        return isTimeBetweenHours(fetchHourAfter, fetchHourBefore);
+    }
+
+    public static Boolean shouldFlushLogEntries(int fetchHourAfter, int fetchHourBefore) {
+        return isTimeBetweenHours(fetchHourAfter, fetchHourBefore);
     }
 
     public static List<XRoadServiceIdentifierType> methodListFromResponse(ClientType clientType, String host) {
@@ -96,6 +102,13 @@ public class MethodListUtil {
         return json.toString();
     }
 
+    private static boolean isTimeBetweenHours(int fetchHourAfter, int fetchHourBefore) {
+        LocalDateTime today = LocalDateTime.now();
+        LocalDateTime fetchTimeFrom = LocalDate.now().atTime(fetchHourAfter, 0);
+        LocalDateTime fetchTimeTo = LocalDate.now().atTime(fetchHourBefore, 0);
+        return (today.isAfter(fetchTimeFrom) && today.isBefore(fetchTimeTo));
+    }
+
     private static String createHeader(ClientType clientType) {
         return new StringBuilder()
                 .append(clientType.getId().getXRoadInstance()).append("/")
@@ -118,6 +131,8 @@ public class MethodListUtil {
             return json;
         } catch (Exception e) {
             log.error("Fetch of REST services failed: " + e.getMessage());
+            ErrorLog errorLog = ErrorLog.builder().created(LocalDateTime.now()).message(e.getMessage()).code("500").build();
+            catalogService.saveErrorLog(errorLog);
             return null;
         }
     }

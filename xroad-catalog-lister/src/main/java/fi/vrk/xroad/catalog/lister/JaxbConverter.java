@@ -1110,4 +1110,21 @@ public class JaxbConverter {
         return converted;
     }
 
+    /**
+     * Convert entities to XML objects
+     * @param errorLogEntries Iterable of ErrorLog entities
+     * @return Collection of ErrorLog entries (JAXB generated)
+     */
+    public Collection<ErrorLog> convertErrorLog(Iterable<fi.vrk.xroad.catalog.persistence.entity.ErrorLog> errorLogEntries)  {
+        List<ErrorLog> converted = new ArrayList<>();
+        for (fi.vrk.xroad.catalog.persistence.entity.ErrorLog errorLog: errorLogEntries) {
+            ErrorLog er = new ErrorLog();
+            er.setCreated(toXmlGregorianCalendar(errorLog.getCreated()));
+            er.setMessage(errorLog.getMessage());
+            er.setCode(errorLog.getCode());
+            converted.add(er);
+        }
+        return converted;
+    }
+
 }

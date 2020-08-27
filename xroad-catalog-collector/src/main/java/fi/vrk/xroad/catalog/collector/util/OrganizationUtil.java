@@ -22,6 +22,7 @@
  */
 package fi.vrk.xroad.catalog.collector.util;
 
+import fi.vrk.xroad.catalog.persistence.CatalogService;
 import fi.vrk.xroad.catalog.persistence.entity.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.conn.ssl.NoopHostnameVerifier;
@@ -31,6 +32,7 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.web.client.RestTemplate;
@@ -50,6 +52,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 @Slf4j
 public class OrganizationUtil {
 
+    @Autowired
+    private static CatalogService catalogService;
+
     private OrganizationUtil() {
 
     }
@@ -63,10 +68,25 @@ public class OrganizationUtil {
             jsonObject = new JSONObject(ret);
             return jsonObject;
         } catch (KeyStoreException e) {
+            ErrorLog errorLog = ErrorLog.builder()
+                    .created(LocalDateTime.now())
+                    .message("KeyStoreException occurred when fetching companies from url " + url + " with businessCode "+businessCode)
+                    .code("500").build();
+            catalogService.saveErrorLog(errorLog);
             log.error("KeyStoreException occurred when fetching companies from url {} with businessCode {}", url, businessCode);
         } catch (NoSuchAlgorithmException e) {
+            ErrorLog errorLog = ErrorLog.builder()
+                    .created(LocalDateTime.now())
+                    .message("NoSuchAlgorithmException occurred when fetching companies from url " + url + " with businessCode "+businessCode)
+                    .code("500").build();
+            catalogService.saveErrorLog(errorLog);
             log.error("NoSuchAlgorithmException occurred when fetching companies from url {} with businessCode {}", url, businessCode);
         } catch (KeyManagementException e) {
+            ErrorLog errorLog = ErrorLog.builder()
+                    .created(LocalDateTime.now())
+                    .message("KeyManagementException occurred when fetching companies from url " + url + " with businessCode "+businessCode)
+                    .code("500").build();
+            catalogService.saveErrorLog(errorLog);
             log.error("KeyManagementException occurred when fetching companies from url {} with businessCode {}", url, businessCode);
         }
         return jsonObject;
@@ -509,10 +529,25 @@ public class OrganizationUtil {
             itemList = json.optJSONArray("items");
             return itemList;
         } catch (KeyStoreException e) {
+            ErrorLog errorLog = ErrorLog.builder()
+                    .created(LocalDateTime.now())
+                    .message("KeyStoreException occurred when fetching organizations with from url " + url)
+                    .code("500").build();
+            catalogService.saveErrorLog(errorLog);
             log.error("KeyStoreException occurred when fetching organizations with from url {}", url);
         } catch (NoSuchAlgorithmException e) {
+            ErrorLog errorLog = ErrorLog.builder()
+                    .created(LocalDateTime.now())
+                    .message("NoSuchAlgorithmException occurred when fetching organizations with from url " + url)
+                    .code("500").build();
+            catalogService.saveErrorLog(errorLog);
             log.error("NoSuchAlgorithmException occurred when fetching organizations with from url {}", url);
         } catch (KeyManagementException e) {
+            ErrorLog errorLog = ErrorLog.builder()
+                    .created(LocalDateTime.now())
+                    .message("KeyManagementException occurred when fetching organizations with from url " + url)
+                    .code("500").build();
+            catalogService.saveErrorLog(errorLog);
             log.error("KeyManagementException occurred when fetching organizations with from url {}", url);
         }
         return itemList;

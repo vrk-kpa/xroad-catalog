@@ -107,6 +107,14 @@ public class JaxbCatalogServiceImpl implements JaxbCatalogService {
         return jaxbConverter.convertCompanies(entities);
     }
 
+    @Override
+    public Iterable<fi.vrk.xroad.xroad_catalog_lister.ErrorLog> getErrorLog(XMLGregorianCalendar since) {
+        log.info("get errorLog entries since {}", since);
+        Iterable<fi.vrk.xroad.catalog.persistence.entity.ErrorLog> entities;
+        entities = catalogService.getErrorLog(jaxbConverter.toLocalDateTime(since));
+        return jaxbConverter.convertErrorLog(entities);
+    }
+
     private Iterable<ChangedValue> getAllChangedValuesForOrganization(fi.vrk.xroad.catalog.persistence.entity.Organization organization,
                                                LocalDateTime since) {
         List<ChangedValue> changedValueList = new ArrayList<>();

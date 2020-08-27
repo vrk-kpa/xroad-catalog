@@ -31,6 +31,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.StreamSupport;
@@ -151,6 +152,9 @@ public class CatalogServiceImpl implements CatalogService {
     @Autowired
     RegisteredOfficeRepository registeredOfficeRepository;
 
+    @Autowired
+    ErrorLogRepository errorLogRepository;
+
     @Override
     public Iterable<Member> getActiveMembers() {
         return memberRepository.findAllActive();
@@ -227,6 +231,11 @@ public class CatalogServiceImpl implements CatalogService {
     @Override
     public Optional<Organization> getOrganization(String guid) {
         return organizationRepository.findAnyByOrganizationGuid(guid);
+    }
+
+    @Override
+    public Iterable<ErrorLog> getErrorLog(LocalDateTime since) {
+        return errorLogRepository.findAny(since);
     }
 
     @Override
@@ -589,6 +598,17 @@ public class CatalogServiceImpl implements CatalogService {
     @Override
     public void saveRegisteredOffice(RegisteredOffice registeredOffice) {
         registeredOfficeRepository.save(updateRegisteredOfficeData(registeredOffice));
+    }
+
+    @Override
+    public ErrorLog saveErrorLog(ErrorLog errorLog) {
+        return errorLogRepository.save(errorLog);
+    }
+
+    @Override
+    public void deleteOldErrorLogEntries(Integer daysBefore) {
+        LocalDateTime oldDate = LocalDateTime.now().minusDays(daysBefore);
+        errorLogRepository.deleteEntriesOlderThan(oldDate);
     }
 
     private void handleOldMember(LocalDateTime now, Member member, Member oldMember) {

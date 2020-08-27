@@ -84,6 +84,15 @@ public class ListMethodsActor extends XRoadCatalogActor {
     @Value("${xroad-catalog.fetch-companies-run-unlimited}")
     private Boolean fetchCompaniesUnlimited;
 
+    @Value("${xroad-catalog.error-log-length-in-days}")
+    private Integer errorLogLengthInDays;
+
+    @Value("${xroad-catalog.flush-log-time-after-hour}")
+    private Integer flushLogTimeAfterHour;
+
+    @Value("${xroad-catalog.flush-log-time-before-hour}")
+    private Integer flushLogTimeBeforeHour;
+
     @Autowired
     protected CatalogService catalogService;
 
@@ -169,6 +178,11 @@ public class ListMethodsActor extends XRoadCatalogActor {
                                                     fetchCompaniesTimeAfterHour,
                                                     fetchCompaniesTimeBeforeHour)) {
                 fetchCompaniesPoolRef.tell(clientType, getSelf());
+            }
+
+            // Flush errorLog entries only during a limited period if not unlimited
+            if (MethodListUtil.shouldFlushLogEntries(fetchCompaniesTimeAfterHour, fetchCompaniesTimeBeforeHour)) {
+                catalogService.deleteOldErrorLogEntries(errorLogLengthInDays);
             }
 
             return true;
