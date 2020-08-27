@@ -56,6 +56,8 @@ public class ListMethodsActor extends XRoadCatalogActor {
     private static AtomicInteger COUNTER = new AtomicInteger(0);
 
     private static boolean organizationsFetched = false;
+    private static boolean companiesFetched = false;
+    private static boolean logsFlushed = false;
 
     @Value("${xroad-catalog.security-server-host}")
     private String xroadSecurityServerHost;
@@ -174,15 +176,16 @@ public class ListMethodsActor extends XRoadCatalogActor {
             }
 
             // Fetch companies only during a limited period if not unlimited
-            if (MethodListUtil.shouldFetchCompanies(fetchCompaniesUnlimited,
-                                                    fetchCompaniesTimeAfterHour,
-                                                    fetchCompaniesTimeBeforeHour)) {
+            if (!companiesFetched && MethodListUtil.shouldFetchCompanies(fetchCompaniesUnlimited,
+                    fetchCompaniesTimeAfterHour, fetchCompaniesTimeBeforeHour)) {
                 fetchCompaniesPoolRef.tell(clientType, getSelf());
+                companiesFetched = true;
             }
 
-            // Flush errorLog entries only during a limited period if not unlimited
-            if (MethodListUtil.shouldFlushLogEntries(fetchCompaniesTimeAfterHour, fetchCompaniesTimeBeforeHour)) {
+            // Flush errorLog entries only during a limited period
+            if (!logsFlushed && MethodListUtil.shouldFlushLogEntries(flushLogTimeAfterHour, flushLogTimeBeforeHour)) {
                 catalogService.deleteOldErrorLogEntries(errorLogLengthInDays);
+                logsFlushed = true;
             }
 
             return true;

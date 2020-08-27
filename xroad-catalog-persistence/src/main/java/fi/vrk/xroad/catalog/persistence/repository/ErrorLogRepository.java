@@ -23,6 +23,7 @@
 package fi.vrk.xroad.catalog.persistence.repository;
 
 import fi.vrk.xroad.catalog.persistence.entity.ErrorLog;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
@@ -35,6 +36,7 @@ public interface ErrorLogRepository extends CrudRepository<ErrorLog, Long> {
     @Query("SELECT e FROM ErrorLog e WHERE e.created >= :created")
     Set<ErrorLog> findAny(@Param("created") LocalDateTime created);
 
+    @Modifying
     @Query("DELETE FROM ErrorLog e WHERE e.created < :oldDate")
     void deleteEntriesOlderThan(@Param("oldDate") LocalDateTime oldDate);
 }
