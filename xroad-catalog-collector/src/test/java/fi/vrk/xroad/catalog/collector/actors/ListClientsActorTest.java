@@ -62,6 +62,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import static org.mockito.Matchers.anyObject;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -137,7 +139,7 @@ public class ListClientsActorTest extends TestKit {
 
         ClientList cMock = mock(ClientList.class);
         PowerMockito.mockStatic(ClientListUtil.class);
-        when(ClientListUtil.clientListFromResponse("http://localhost/listClients")).thenReturn(cMock);
+        when(ClientListUtil.clientListFromResponse(anyString(), anyObject())).thenReturn(cMock);
         when(cMock.getMember()).thenReturn(memberlist);
 
 //        doNothing().when(listMethodsPoolRef).tell(Matchers.anyObject(), Matchers.anyObject());
