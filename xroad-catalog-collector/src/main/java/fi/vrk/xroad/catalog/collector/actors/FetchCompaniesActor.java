@@ -68,7 +68,7 @@ public class FetchCompaniesActor extends XRoadCatalogActor {
             if (client.getMemberClass().equalsIgnoreCase(COMMERCIAL_MEMBER_CLASS)) {
                 log.info("Fetching data for company with businessCode {}", client.getMemberCode());
                 String businessCode = clientType.getId().getMemberCode();
-                JSONObject companyJson = OrganizationUtil.getCompany(fetchCompaniesUrl, businessCode);
+                JSONObject companyJson = OrganizationUtil.getCompany(fetchCompaniesUrl, businessCode, catalogService);
                 saveData(companyJson.optJSONArray("results"));
                 log.info("Successfully saved data for company with businessCode {}", businessCode);
             }

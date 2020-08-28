@@ -9,13 +9,17 @@ The purpose of this piece of software is to persist and read persisted data. Use
 
 ![Member diagram](db_member.png)
 
-2. A diagram of public organizations and related details
+2. Diagrams of public organizations and related details
 
 ![Organization diagram](db_organization.png)
 
-3. A diagram of private companies and related details
+![Organization relations diagram](organizations_db_relations.png)
+
+3. Diagrams of private companies and related details
 
 ![Company diagram](db_company.png)
+
+![Company relations diagram](companies_db_relations.png)
 
 ## Create database
 ```sh

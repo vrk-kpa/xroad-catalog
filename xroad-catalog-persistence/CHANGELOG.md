@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## 0.13.6 - 2020-08-27
+- new endpoint for errors
+- update changelogs and documentation
+
 ## 0.13.5 - 2020-08-19
 - update version
 - update changelogs and documentation

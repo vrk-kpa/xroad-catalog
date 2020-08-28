@@ -23,6 +23,8 @@
 package fi.vrk.xroad.catalog.collector.util;
 
 import fi.vrk.xroad.catalog.collector.wsimport.*;
+import fi.vrk.xroad.catalog.persistence.CatalogService;
+import fi.vrk.xroad.catalog.persistence.entity.ErrorLog;
 import lombok.extern.slf4j.Slf4j;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -40,7 +42,6 @@ import java.util.List;
 @Slf4j
 public class MethodListUtil {
 
-
     private MethodListUtil() {
         // Private empty constructor
     }
@@ -49,13 +50,14 @@ public class MethodListUtil {
         if (fetchUnlimited) {
             return true;
         }
-        LocalDateTime today = LocalDateTime.now();
-        LocalDateTime fetchTimeFrom = LocalDate.now().atTime(fetchHourAfter, 0);
-        LocalDateTime fetchTimeTo = LocalDate.now().atTime(fetchHourBefore, 0);
-        return (today.isAfter(fetchTimeFrom) && today.isBefore(fetchTimeTo));
+        return isTimeBetweenHours(fetchHourAfter, fetchHourBefore);
     }
 
-    public static List<XRoadServiceIdentifierType> methodListFromResponse(ClientType clientType, String host) {
+    public static Boolean shouldFlushLogEntries(int fetchHourAfter, int fetchHourBefore) {
+        return isTimeBetweenHours(fetchHourAfter, fetchHourBefore);
+    }
+
+    public static List<XRoadServiceIdentifierType> methodListFromResponse(ClientType clientType, String host, CatalogService catalogService) {
         final String url = new StringBuilder().append(host).append("/r1/")
                 .append(clientType.getId().getXRoadInstance()).append("/")
                 .append(clientType.getId().getMemberClass()).append("/")
@@ -63,7 +65,7 @@ public class MethodListUtil {
                 .append(clientType.getId().getSubsystemCode()).append("/listMethods").toString();
 
         List<XRoadServiceIdentifierType> restServices = new ArrayList<>();
-        JSONObject json = MethodListUtil.getJSON(url, clientType);
+        JSONObject json = MethodListUtil.getJSON(url, clientType, catalogService);
         if (json != null) {
             JSONArray serviceList = json.getJSONArray("service");
             for (int i = 0; i < serviceList.length(); i++) {
@@ -83,7 +85,7 @@ public class MethodListUtil {
         return restServices;
     }
 
-    public static String openApiFromResponse(ClientType clientType, String host) {
+    public static String openApiFromResponse(ClientType clientType, String host, CatalogService catalogService) {
         final String url = new StringBuilder().append(host).append("/r1/")
                 .append(clientType.getId().getXRoadInstance()).append("/")
                 .append(clientType.getId().getMemberClass()).append("/")
@@ -91,9 +93,16 @@ public class MethodListUtil {
                 .append(clientType.getId().getSubsystemCode()).append("/getOpenAPI?serviceCode=")
                 .append(clientType.getId().getServiceCode()).toString();
 
-        JSONObject json = MethodListUtil.getJSON(url, clientType);
+        JSONObject json = MethodListUtil.getJSON(url, clientType, catalogService);
 
         return json.toString();
+    }
+
+    private static boolean isTimeBetweenHours(int fetchHourAfter, int fetchHourBefore) {
+        LocalDateTime today = LocalDateTime.now();
+        LocalDateTime fetchTimeFrom = LocalDate.now().atTime(fetchHourAfter, 0);
+        LocalDateTime fetchTimeTo = LocalDate.now().atTime(fetchHourBefore, 0);
+        return (today.isAfter(fetchTimeFrom) && today.isBefore(fetchTimeTo));
     }
 
     private static String createHeader(ClientType clientType) {
@@ -104,7 +113,7 @@ public class MethodListUtil {
                 .append(clientType.getId().getSubsystemCode()).toString();
     }
 
-    private static JSONObject getJSON(String url, ClientType clientType) {
+    private static JSONObject getJSON(String url, ClientType clientType, CatalogService catalogService) {
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
         List<MediaType> mediaTypes = new ArrayList<>();
@@ -118,6 +127,10 @@ public class MethodListUtil {
             return json;
         } catch (Exception e) {
             log.error("Fetch of REST services failed: " + e.getMessage());
+            ErrorLog errorLog = ErrorLog.builder()
+                    .created(LocalDateTime.now()).message("Fetch of REST services failed(url: " + url + ", clientType: "
+                            + ClientTypeUtil.toString(clientType) + "): " + e.getMessage()).code("500").build();
+            catalogService.saveErrorLog(errorLog);
             return null;
         }
     }

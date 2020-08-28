@@ -121,6 +121,13 @@ public interface CatalogService {
     Optional<Organization> getOrganization(String guid);
 
     /**
+     * Returns the full ErrorLog object.
+     * @return ErrorLog, if any, null if not found
+     * @throws RuntimeException if multiple matches found.
+     */
+    Iterable<ErrorLog> getErrorLog(LocalDateTime since);
+
+    /**
      * Stores given members and subsystems. This should be the full dataset of both items
      * - items not included in the parameters are marked as removed, if the existed previously.
      *
@@ -370,5 +377,17 @@ public interface CatalogService {
      * @param registeredOffice the RegisteredOffice
      */
     void saveRegisteredOffice(RegisteredOffice registeredOffice);
+
+    /**
+     * Saves given errorLog data.
+     * @param errorLog the actual errorLog
+     */
+    ErrorLog saveErrorLog(ErrorLog errorLog);
+
+    /**
+     * Deletes old log entries
+     * @param daysBefore older than daysBefore
+     */
+    void deleteOldErrorLogEntries(Integer daysBefore);
 
 }

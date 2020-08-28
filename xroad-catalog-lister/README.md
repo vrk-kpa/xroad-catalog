@@ -17,6 +17,12 @@ The main endpoints this software provides:
 * HasOrganizationChanged - endpoint for requesting whether given public organization has some of its details changed
 * GetCompanies - endpoint for requesting private company details
 * HasCompanyChanged - endpoint for requesting whether given private company has some of its details changed
+* GetErrors - endpoint for requesting a list of errors related to fetching data from different apis and security servers
+
+A sequence diagram illustrating flow between XRoad-Catalog service layer and XRoad-Catalog Lister
+
+![Catalog Service sequence diagram](sequence_diagram_catalog_service.png)
+
 
 ## Build
 ```sh
@@ -1503,6 +1509,86 @@ Response
             </ns2:changedValue>
          </ns2:changedValueList>
       </ns2:HasCompanyChangedResponse>
+   </SOAP-ENV:Body>
+</SOAP-ENV:Envelope>
+```
+
+### 11. GetErrors
+
+Request
+
+curl -k -d @GetErrorsRequest.xml --header "Content-Type: text/xml" -X POST http://localhost:8080/ws/GetErrors
+
+```xml
+<soapenv:Envelope
+        xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
+        xmlns:xro="http://x-road.eu/xsd/xroad.xsd"
+        xmlns:iden="http://x-road.eu/xsd/identifiers"
+        xmlns:xrcl="http://xroad.vrk.fi/xroad-catalog-lister">
+    <soapenv:Header>
+        <xro:protocolVersion>4.x</xro:protocolVersion>
+        <xro:id>ID11234</xro:id>
+        <xro:userId>EE1234567890</xro:userId>
+        <xro:client iden:objectType="MEMBER">
+            <iden:xRoadInstance>FI</iden:xRoadInstance>
+            <iden:memberClass>GOV</iden:memberClass>
+            <iden:memberCode>1710128-9</iden:memberCode>
+        </xro:client>
+        <xro:service iden:objectType="SERVICE">
+            <iden:xRoadInstance>FI</iden:xRoadInstance>
+            <iden:memberClass>GOV</iden:memberClass>
+            <iden:memberCode>1710128-9</iden:memberCode>
+            <iden:subsystemCode>SS1</iden:subsystemCode>
+            <iden:serviceCode>ListMembers</iden:serviceCode>
+            <iden:serviceVersion>v1</iden:serviceVersion>
+        </xro:service>
+    </soapenv:Header>
+    <soapenv:Body>
+        <xrcl:GetErrors>
+            <xrcl:since>2020-01-01</xrcl:since>
+        </xrcl:GetErrors>
+    </soapenv:Body>
+</soapenv:Envelope>
+```
+
+Response
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/">
+   <SOAP-ENV:Header>
+      <xro:protocolVersion xmlns:xro="http://x-road.eu/xsd/xroad.xsd">4.x</xro:protocolVersion>
+      <xro:id xmlns:xro="http://x-road.eu/xsd/xroad.xsd">ID11234</xro:id>
+      <xro:userId xmlns:xro="http://x-road.eu/xsd/xroad.xsd">EE1234567890</xro:userId>
+      <xro:client xmlns:xro="http://x-road.eu/xsd/xroad.xsd" xmlns:iden="http://x-road.eu/xsd/identifiers" iden:objectType="MEMBER">
+         <iden:xRoadInstance>FI</iden:xRoadInstance>
+         <iden:memberClass>GOV</iden:memberClass>
+         <iden:memberCode>1710128-9</iden:memberCode>
+      </xro:client>
+      <xro:service xmlns:xro="http://x-road.eu/xsd/xroad.xsd" xmlns:iden="http://x-road.eu/xsd/identifiers" iden:objectType="SERVICE">
+         <iden:xRoadInstance>FI</iden:xRoadInstance>
+         <iden:memberClass>GOV</iden:memberClass>
+         <iden:memberCode>1710128-9</iden:memberCode>
+         <iden:subsystemCode>SS1</iden:subsystemCode>
+         <iden:serviceCode>ListMembers</iden:serviceCode>
+         <iden:serviceVersion>v1</iden:serviceVersion>
+      </xro:service>
+   </SOAP-ENV:Header>
+   <SOAP-ENV:Body>
+      <ns2:GetErrorsResponse xmlns:ns2="http://xroad.vrk.fi/xroad-catalog-lister">
+         <ns2:errorLogList>
+            <ns2:errorLog>
+               <ns2:message>Service not found</ns2:message>
+               <ns2:code>500</ns2:code>
+               <ns2:created>2020-05-04T11:41:24.792+03:00</ns2:created>
+            </ns2:errorLog>
+            <ns2:errorLog>
+               <ns2:message>Certificate issue</ns2:message>
+               <ns2:code>500</ns2:code>
+               <ns2:created>2020-05-05T11:41:24.792+03:00</ns2:created>
+            </ns2:errorLog>
+         </ns2:errorLogList>
+      </ns2:GetErrorsResponse>
    </SOAP-ENV:Body>
 </SOAP-ENV:Envelope>
 ```

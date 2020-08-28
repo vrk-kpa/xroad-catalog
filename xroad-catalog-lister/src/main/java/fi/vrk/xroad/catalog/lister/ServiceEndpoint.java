@@ -214,4 +214,17 @@ public class ServiceEndpoint {
         response.setChanged(!response.getChangedValueList().getChangedValue().isEmpty());
         return response;
     }
+
+    @PayloadRoot(namespace = NAMESPACE_URI, localPart = "GetErrors")
+    @ResponsePayload
+    public GetErrorsResponse getErrors(@RequestPayload GetErrors request) {
+        GetErrorsResponse response = new GetErrorsResponse();
+        response.setErrorLogList(new ErrorLogList());
+        Iterable<ErrorLog> errorLogEntries = jaxbCatalogService.getErrorLog(request.getSince());
+        if (!errorLogEntries.iterator().hasNext()) {
+            throw new ErrorLogNotFoundException("ErrorLog entries not found");
+        }
+        response.getErrorLogList().getErrorLog().addAll(Lists.newArrayList(errorLogEntries));
+        return response;
+    }
 }

@@ -20,23 +20,21 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package fi.vrk.xroad.catalog.persistence.repository;
+package fi.vrk.xroad.catalog.lister;
 
-import fi.vrk.xroad.catalog.persistence.entity.Organization;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.CrudRepository;
-import org.springframework.data.repository.query.Param;
+import org.springframework.ws.soap.server.endpoint.annotation.FaultCode;
+import org.springframework.ws.soap.server.endpoint.annotation.SoapFault;
 
-import java.util.Optional;
-import java.util.Set;
+@SoapFault(faultCode = FaultCode.SERVER)
+public class ErrorLogNotFoundException extends CatalogListerRuntimeException {
+
+    public ErrorLogNotFoundException(String message, Throwable cause) {
+        super(message, cause);
+    }
 
 
-public interface OrganizationRepository extends CrudRepository<Organization, Long> {
-
-    // uses named query Organization.findAllByBusinessCode
-    Set<Organization> findAllByBusinessCode(@Param("businessCode") String businessCode);
-
-    @Query("SELECT o FROM Organization o WHERE o.guid = :guid")
-    Optional<Organization> findAnyByOrganizationGuid(@Param("guid") String guid);
+    public ErrorLogNotFoundException(String s) {
+        super(s);
+    }
 
 }

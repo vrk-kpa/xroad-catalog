@@ -20,23 +20,42 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package fi.vrk.xroad.catalog.persistence.repository;
+package fi.vrk.xroad.catalog.persistence;
 
-import fi.vrk.xroad.catalog.persistence.entity.Organization;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.CrudRepository;
-import org.springframework.data.repository.query.Param;
+import fi.vrk.xroad.catalog.persistence.entity.ErrorLog;
+import fi.vrk.xroad.catalog.persistence.repository.ErrorLogRepository;
+import lombok.extern.slf4j.Slf4j;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Optional;
+import java.time.LocalDateTime;
+import java.time.Month;
 import java.util.Set;
 
+import static org.junit.Assert.*;
 
-public interface OrganizationRepository extends CrudRepository<Organization, Long> {
+@RunWith(SpringRunner.class)
+@SpringBootTest(classes = Application.class)
+@Transactional
+@Slf4j
+public class ErrorLogRepositoryTest {
 
-    // uses named query Organization.findAllByBusinessCode
-    Set<Organization> findAllByBusinessCode(@Param("businessCode") String businessCode);
+    @Autowired
+    ErrorLogRepository errorLogRepository;
 
-    @Query("SELECT o FROM Organization o WHERE o.guid = :guid")
-    Optional<Organization> findAnyByOrganizationGuid(@Param("guid") String guid);
+    @Test
+    public void testFindAnySince() {
+        LocalDateTime changedAfter = LocalDateTime.of(2020, Month.JANUARY, 1, 0, 0, 0);
+        Set<ErrorLog> errorLogEntries = errorLogRepository.findAny(changedAfter);
+        assertEquals(1, errorLogEntries.size());
+        assertEquals("Service not found", errorLogEntries.iterator().next().getMessage());
+    }
+
+
 
 }
+

@@ -22,21 +22,21 @@
  */
 package fi.vrk.xroad.catalog.persistence.repository;
 
-import fi.vrk.xroad.catalog.persistence.entity.Organization;
+import fi.vrk.xroad.catalog.persistence.entity.ErrorLog;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 
-import java.util.Optional;
+import java.time.LocalDateTime;
 import java.util.Set;
 
+public interface ErrorLogRepository extends CrudRepository<ErrorLog, Long> {
 
-public interface OrganizationRepository extends CrudRepository<Organization, Long> {
+    @Query("SELECT e FROM ErrorLog e WHERE e.created >= :created")
+    Set<ErrorLog> findAny(@Param("created") LocalDateTime created);
 
-    // uses named query Organization.findAllByBusinessCode
-    Set<Organization> findAllByBusinessCode(@Param("businessCode") String businessCode);
-
-    @Query("SELECT o FROM Organization o WHERE o.guid = :guid")
-    Optional<Organization> findAnyByOrganizationGuid(@Param("guid") String guid);
-
+    @Modifying
+    @Query("DELETE FROM ErrorLog e WHERE e.created < :oldDate")
+    void deleteEntriesOlderThan(@Param("oldDate") LocalDateTime oldDate);
 }

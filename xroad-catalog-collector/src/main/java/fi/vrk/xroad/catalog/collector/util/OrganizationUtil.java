@@ -22,6 +22,7 @@
  */
 package fi.vrk.xroad.catalog.collector.util;
 
+import fi.vrk.xroad.catalog.persistence.CatalogService;
 import fi.vrk.xroad.catalog.persistence.entity.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.conn.ssl.NoopHostnameVerifier;
@@ -54,7 +55,7 @@ public class OrganizationUtil {
 
     }
 
-    public static JSONObject getCompany(String url, String businessCode) {
+    public static JSONObject getCompany(String url, String businessCode, CatalogService catalogService) {
         final String fetchCompaniesUrl = new StringBuilder().append(url)
                 .append("/").append(businessCode).toString();
         JSONObject jsonObject = new JSONObject();
@@ -63,48 +64,66 @@ public class OrganizationUtil {
             jsonObject = new JSONObject(ret);
             return jsonObject;
         } catch (KeyStoreException e) {
+            ErrorLog errorLog = ErrorLog.builder()
+                    .created(LocalDateTime.now())
+                    .message("KeyStoreException occurred when fetching companies from url " + url + " with businessCode "+businessCode)
+                    .code("500").build();
+            catalogService.saveErrorLog(errorLog);
             log.error("KeyStoreException occurred when fetching companies from url {} with businessCode {}", url, businessCode);
         } catch (NoSuchAlgorithmException e) {
+            ErrorLog errorLog = ErrorLog.builder()
+                    .created(LocalDateTime.now())
+                    .message("NoSuchAlgorithmException occurred when fetching companies from url " + url + " with businessCode "+businessCode)
+                    .code("500").build();
+            catalogService.saveErrorLog(errorLog);
             log.error("NoSuchAlgorithmException occurred when fetching companies from url {} with businessCode {}", url, businessCode);
         } catch (KeyManagementException e) {
+            ErrorLog errorLog = ErrorLog.builder()
+                    .created(LocalDateTime.now())
+                    .message("KeyManagementException occurred when fetching companies from url " + url + " with businessCode "+businessCode)
+                    .code("500").build();
+            catalogService.saveErrorLog(errorLog);
             log.error("KeyManagementException occurred when fetching companies from url {} with businessCode {}", url, businessCode);
         }
         return jsonObject;
     }
 
-    public static List<String> getOrganizationIdsList(String url, Integer fetchOrganizationsLimit)
+    public static List<String> getOrganizationIdsList(String url, Integer fetchOrganizationsLimit, CatalogService catalogService)
             throws KeyStoreException, NoSuchAlgorithmException, KeyManagementException {
-        String response = getResponseBody(url);
-        JSONObject json = new JSONObject(response);
-        JSONArray itemList = json.optJSONArray("itemList");
         List<String> idsList = new ArrayList<>();
-        int totalFetchAmount = itemList.length() > fetchOrganizationsLimit ? fetchOrganizationsLimit : itemList.length();
-        for (int i = 0; i < totalFetchAmount; i++) {
-            String id = itemList.optJSONObject(i).optString("id");
-            idsList.add(id);
+        try {
+            String response = getResponseBody(url);
+            JSONObject json = new JSONObject(response);
+            JSONArray itemList = json.optJSONArray("itemList");
+            int totalFetchAmount = itemList.length() > fetchOrganizationsLimit ? fetchOrganizationsLimit : itemList.length();
+            for (int i = 0; i < totalFetchAmount; i++) {
+                String id = itemList.optJSONObject(i).optString("id");
+                idsList.add(id);
+            }
+            return idsList;
+        } catch (KeyStoreException e) {
+            ErrorLog errorLog = ErrorLog.builder()
+                    .created(LocalDateTime.now())
+                    .message("KeyStoreException occurred when fetching organization ids with from url " + url)
+                    .code("500").build();
+            catalogService.saveErrorLog(errorLog);
+            log.error("KeyStoreException occurred when fetching organization ids with from url {}", url);
+        } catch (NoSuchAlgorithmException e) {
+            ErrorLog errorLog = ErrorLog.builder()
+                    .created(LocalDateTime.now())
+                    .message("NoSuchAlgorithmException occurred when fetching organization ids with from url " + url)
+                    .code("500").build();
+            catalogService.saveErrorLog(errorLog);
+            log.error("NoSuchAlgorithmException occurred when fetching organization ids with from url {}", url);
+        } catch (KeyManagementException e) {
+            ErrorLog errorLog = ErrorLog.builder()
+                    .created(LocalDateTime.now())
+                    .message("KeyManagementException occurred when fetching organization ids with from url " + url)
+                    .code("500").build();
+            catalogService.saveErrorLog(errorLog);
+            log.error("KeyManagementException occurred when fetching organizations with from url {}", url);
         }
-
         return idsList;
-    }
-
-    public static List<JSONArray> getOrganizationData(List<String> idsList, String host, Integer maxPerRequest) {
-        List<JSONArray> fullList = new ArrayList<>();
-        AtomicInteger elementCount = new AtomicInteger();
-        List<String> guidsList = new ArrayList<>();
-
-        idsList.forEach(id -> {
-            guidsList.add(id);
-            elementCount.getAndIncrement();
-            if (elementCount.get() % maxPerRequest == 0) {
-                fullList.add(getDataByIds(guidsList, host));
-                guidsList.clear();
-            }
-            if (elementCount.get() == idsList.size()) {
-                fullList.add(getDataByIds(guidsList, host));
-            }
-        });
-
-        return fullList;
     }
 
     public static Organization createOrganization(JSONObject jsonObject) {
@@ -490,7 +509,7 @@ public class OrganizationUtil {
         return null;
     }
 
-    public static JSONArray getDataByIds(List<String> guids, String url) {
+    public static JSONArray getDataByIds(List<String> guids, String url, CatalogService catalogService) {
         String requestGuids = "";
         for (int i = 0; i < guids.size(); i++) {
             requestGuids += guids.get(i);
@@ -509,10 +528,25 @@ public class OrganizationUtil {
             itemList = json.optJSONArray("items");
             return itemList;
         } catch (KeyStoreException e) {
+            ErrorLog errorLog = ErrorLog.builder()
+                    .created(LocalDateTime.now())
+                    .message("KeyStoreException occurred when fetching organizations with from url " + url)
+                    .code("500").build();
+            catalogService.saveErrorLog(errorLog);
             log.error("KeyStoreException occurred when fetching organizations with from url {}", url);
         } catch (NoSuchAlgorithmException e) {
+            ErrorLog errorLog = ErrorLog.builder()
+                    .created(LocalDateTime.now())
+                    .message("NoSuchAlgorithmException occurred when fetching organizations with from url " + url)
+                    .code("500").build();
+            catalogService.saveErrorLog(errorLog);
             log.error("NoSuchAlgorithmException occurred when fetching organizations with from url {}", url);
         } catch (KeyManagementException e) {
+            ErrorLog errorLog = ErrorLog.builder()
+                    .created(LocalDateTime.now())
+                    .message("KeyManagementException occurred when fetching organizations with from url " + url)
+                    .code("500").build();
+            catalogService.saveErrorLog(errorLog);
             log.error("KeyManagementException occurred when fetching organizations with from url {}", url);
         }
         return itemList;

@@ -145,3 +145,6 @@ INSERT INTO registered_office(id, company_id, source, ordering, version, name, l
                               end_date, created, changed, fetched, removed)
 VALUES (1, 1, 0, 0, 0, '', 'FI', '2001-06-11 00:00:00+02',
         NULL, '2020-05-04 11:41:24.792+03', '2020-05-04 11:41:24.792+03', '2020-05-04 11:41:24.792+03', NULL);
+
+INSERT INTO error_log(id, message, code, created)
+VALUES (1, 'Service not found', '500', '2020-05-04 11:41:24.792+03');

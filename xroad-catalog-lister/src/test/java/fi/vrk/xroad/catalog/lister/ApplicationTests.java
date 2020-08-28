@@ -546,4 +546,49 @@ public class ApplicationTests {
 
 	}
 
+	@Test
+	public void testGetErrors() {
+		GetErrors request = new GetErrors();
+		LocalDateTime changedAfter = LocalDateTime.of(2001, Month.MAY, 6, 12, 0, 0);
+		GregorianCalendar cal = GregorianCalendar.from(changedAfter.atZone(ZoneId.systemDefault()));
+		XMLGregorianCalendar xc = null;
+		try {
+			xc = DatatypeFactory.newInstance().newXMLGregorianCalendar(cal);
+		} catch (DatatypeConfigurationException e) {
+			e.printStackTrace();
+		}
+		request.setSince(xc);
+		GetErrorsResponse result = (GetErrorsResponse)new WebServiceTemplate(marshaller).marshalSendAndReceive(
+				"http://localhost:" + port + "/ws/GetErrors/", request);
+		assertNotNull(result);
+		assertEquals("ErrorLogList size", 1, result.getErrorLogList().getErrorLog().size());
+		assertEquals("ErrorLog message", "Service not found", result.getErrorLogList().getErrorLog().get(0).getMessage());
+	}
+
+	@Test
+	public void testGetErrorsException() {
+		boolean thrown = false;
+		String exceptionMessage = null;
+		try {
+			GetErrors request = new GetErrors();
+			LocalDateTime changedAfter = LocalDateTime.of(2020, Month.MAY, 6, 12, 0, 0);
+			GregorianCalendar cal = GregorianCalendar.from(changedAfter.atZone(ZoneId.systemDefault()));
+			XMLGregorianCalendar xc = null;
+			try {
+				xc = DatatypeFactory.newInstance().newXMLGregorianCalendar(cal);
+			} catch (DatatypeConfigurationException e) {
+				e.printStackTrace();
+			}
+			request.setSince(xc);
+
+			GetErrorsResponse result = (GetErrorsResponse)new WebServiceTemplate(marshaller).marshalSendAndReceive(
+					"http://localhost:" + port + "/ws/GetErrors/", request);
+		} catch (SoapFaultClientException e) {
+			thrown = true;
+			exceptionMessage = e.getMessage();
+		}
+		assertTrue(thrown);
+		assertEquals(exceptionMessage, "ErrorLog entries not found");
+	}
+
 }

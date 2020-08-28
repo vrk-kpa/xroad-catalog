@@ -12,6 +12,11 @@ The software is implemented using concurrent Akka actors:
 * FetchOrganizationsActor - fetches a list of public organizations from an external API and stores them to the db
 * FetchCompaniesActor - fetches a list of private companies from an external API and stores them to the db
 
+A sequence diagram illustrating flow between XRoad-Catalog service layer, XRoad-Catalog Collector, 
+   XRoad security servers and different third-party apis
+
+![Sequence diagram for all systems](sequence_diagram_all.png)
+
 ## Build
 
 

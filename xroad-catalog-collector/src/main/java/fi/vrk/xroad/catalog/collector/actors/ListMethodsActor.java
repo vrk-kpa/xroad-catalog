@@ -56,6 +56,8 @@ public class ListMethodsActor extends XRoadCatalogActor {
     private static AtomicInteger COUNTER = new AtomicInteger(0);
 
     private static boolean organizationsFetched = false;
+    private static boolean companiesFetched = false;
+    private static boolean logsFlushed = false;
 
     @Value("${xroad-catalog.security-server-host}")
     private String xroadSecurityServerHost;
@@ -83,6 +85,15 @@ public class ListMethodsActor extends XRoadCatalogActor {
 
     @Value("${xroad-catalog.fetch-companies-run-unlimited}")
     private Boolean fetchCompaniesUnlimited;
+
+    @Value("${xroad-catalog.error-log-length-in-days}")
+    private Integer errorLogLengthInDays;
+
+    @Value("${xroad-catalog.flush-log-time-after-hour}")
+    private Integer flushLogTimeAfterHour;
+
+    @Value("${xroad-catalog.flush-log-time-before-hour}")
+    private Integer flushLogTimeBeforeHour;
 
     @Autowired
     protected CatalogService catalogService;
@@ -127,7 +138,8 @@ public class ListMethodsActor extends XRoadCatalogActor {
             log.info("{} Handling subsystem {} ", COUNTER, subsystem);
             log.info("Fetching methods for the client with listMethods -service...");
 
-            List<XRoadServiceIdentifierType> restServices = MethodListUtil.methodListFromResponse(clientType, xroadSecurityServerHost);
+            List<XRoadServiceIdentifierType> restServices = MethodListUtil.methodListFromResponse(clientType,
+                    xroadSecurityServerHost, catalogService);
             log.info("Received all REST methods for client {} ", ClientTypeUtil.toString(clientType));
 
             // fetch the methods
@@ -165,10 +177,16 @@ public class ListMethodsActor extends XRoadCatalogActor {
             }
 
             // Fetch companies only during a limited period if not unlimited
-            if (MethodListUtil.shouldFetchCompanies(fetchCompaniesUnlimited,
-                                                    fetchCompaniesTimeAfterHour,
-                                                    fetchCompaniesTimeBeforeHour)) {
+            if (!companiesFetched && MethodListUtil.shouldFetchCompanies(fetchCompaniesUnlimited,
+                    fetchCompaniesTimeAfterHour, fetchCompaniesTimeBeforeHour)) {
                 fetchCompaniesPoolRef.tell(clientType, getSelf());
+                companiesFetched = true;
+            }
+
+            // Flush errorLog entries only during a limited period
+            if (!logsFlushed && MethodListUtil.shouldFlushLogEntries(flushLogTimeAfterHour, flushLogTimeBeforeHour)) {
+                catalogService.deleteOldErrorLogEntries(errorLogLengthInDays);
+                logsFlushed = true;
             }
 
             return true;
