@@ -138,7 +138,8 @@ public class ListMethodsActor extends XRoadCatalogActor {
             log.info("{} Handling subsystem {} ", COUNTER, subsystem);
             log.info("Fetching methods for the client with listMethods -service...");
 
-            List<XRoadServiceIdentifierType> restServices = MethodListUtil.methodListFromResponse(clientType, xroadSecurityServerHost);
+            List<XRoadServiceIdentifierType> restServices = MethodListUtil.methodListFromResponse(clientType,
+                    xroadSecurityServerHost, catalogService);
             log.info("Received all REST methods for client {} ", ClientTypeUtil.toString(clientType));
 
             // fetch the methods

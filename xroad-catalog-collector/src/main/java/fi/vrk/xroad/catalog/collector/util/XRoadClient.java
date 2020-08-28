@@ -24,12 +24,14 @@ package fi.vrk.xroad.catalog.collector.util;
 
 import fi.vrk.xroad.catalog.collector.wsimport.*;
 
+import fi.vrk.xroad.catalog.persistence.CatalogService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.frontend.ClientProxy;
 import org.apache.cxf.message.Attachment;
 import org.apache.cxf.message.Message;
 import org.apache.cxf.transport.http.HTTPConduit;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.activation.DataHandler;
 import javax.xml.ws.BindingProvider;
@@ -51,6 +53,9 @@ public class XRoadClient {
 
     final MetaServicesPort metaServicesPort;
     final XRoadClientIdentifierType clientId;
+
+    @Autowired
+    protected CatalogService catalogService;
 
     public XRoadClient(XRoadClientIdentifierType clientId, URL serverUrl) {
         this.metaServicesPort = getMetaServicesPort(serverUrl);
@@ -151,7 +156,7 @@ public class XRoadClient {
         xRoadClientIdentifierType.setObjectType(service.getObjectType());
         clientType.setId(xRoadClientIdentifierType);
 
-        return MethodListUtil.openApiFromResponse(clientType, host);
+        return MethodListUtil.openApiFromResponse(clientType, host, catalogService);
     }
 
 

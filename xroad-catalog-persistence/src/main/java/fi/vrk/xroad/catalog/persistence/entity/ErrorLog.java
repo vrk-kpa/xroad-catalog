@@ -39,7 +39,7 @@ public class ErrorLog {
     @Id
     @Column(nullable = false)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "ERROR_LOG_GEN")
-    @SequenceGenerator(name = "ERROR_LOG_GEN", sequenceName = "ERROR_LOG_SEQ", allocationSize = 1)
+    @SequenceGenerator(name = "ERROR_LOG_GEN", sequenceName = "ERROR_LOG_ID_SEQ", allocationSize = 1)
     private long id;
     @Column(nullable = false)
     private String message;

@@ -29,6 +29,7 @@ import fi.vrk.xroad.catalog.collector.wsimport.ClientList;
 import fi.vrk.xroad.catalog.collector.wsimport.ClientType;
 import fi.vrk.xroad.catalog.collector.wsimport.XRoadObjectType;
 import fi.vrk.xroad.catalog.persistence.CatalogService;
+import fi.vrk.xroad.catalog.persistence.entity.ErrorLog;
 import fi.vrk.xroad.catalog.persistence.entity.Member;
 import fi.vrk.xroad.catalog.persistence.entity.MemberId;
 import fi.vrk.xroad.catalog.persistence.entity.Subsystem;
@@ -43,6 +44,7 @@ import org.springframework.web.client.RestOperations;
 import java.security.KeyManagementException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
+import java.time.LocalDateTime;
 import java.util.*;
 
 /**
@@ -87,7 +89,7 @@ public class ListClientsActor extends XRoadCatalogActor {
             String listClientsUrl = host + "/listClients";
 
             log.info("Getting client list from {}", listClientsUrl);
-            ClientList clientList = ClientListUtil.clientListFromResponse(listClientsUrl);
+            ClientList clientList = ClientListUtil.clientListFromResponse(listClientsUrl, catalogService);
 
             int counter = 1;
             HashMap<MemberId, Member> m = new HashMap();

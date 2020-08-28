@@ -31,7 +31,6 @@ import fi.vrk.xroad.catalog.persistence.CatalogService;
 import fi.vrk.xroad.catalog.persistence.entity.ErrorLog;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.web.client.RestTemplate;
 
@@ -42,14 +41,12 @@ import java.time.LocalDateTime;
  */
 public class ClientListUtil {
 
-    @Autowired
-    private static CatalogService catalogService;
 
     private ClientListUtil() {
         // Private empty constructor
     }
 
-    public static ClientList clientListFromResponse(String url) {
+    public static ClientList clientListFromResponse(String url, CatalogService catalogService) {
         RestTemplate restTemplate = new RestTemplate();
         JSONArray members = new JSONArray();
         try {
@@ -57,7 +54,9 @@ public class ClientListUtil {
             JSONObject json = new JSONObject(response.getBody());
             members = json.getJSONArray("member");
         } catch (Exception e) {
-            ErrorLog errorLog = ErrorLog.builder().created(LocalDateTime.now()).message(e.getMessage()).code("500").build();
+            ErrorLog errorLog = ErrorLog.builder()
+                    .created(LocalDateTime.now()).message("Error when fetching listClients(url: " + url + "): "
+                            + e.getMessage()).code("500").build();
             catalogService.saveErrorLog(errorLog);
         }
 
