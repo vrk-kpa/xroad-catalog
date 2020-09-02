@@ -218,11 +218,14 @@ public class ServiceEndpoint {
     @PayloadRoot(namespace = NAMESPACE_URI, localPart = "GetErrors")
     @ResponsePayload
     public GetErrorsResponse getErrors(@RequestPayload GetErrors request) {
+        if ((request.getSince() == null || request.getSince().toString().isEmpty())) {
+            throw new ErrorLogNotFoundException("Since is a required parameter");
+        }
         GetErrorsResponse response = new GetErrorsResponse();
         response.setErrorLogList(new ErrorLogList());
         Iterable<ErrorLog> errorLogEntries = jaxbCatalogService.getErrorLog(request.getSince());
-        if (!errorLogEntries.iterator().hasNext()) {
-            throw new ErrorLogNotFoundException("ErrorLog entries not found");
+        if (errorLogEntries != null && !errorLogEntries.iterator().hasNext()) {
+            throw new ErrorLogNotFoundException("ErrorLog entries since " + request.getSince().toString() + " not found");
         }
         response.getErrorLogList().getErrorLog().addAll(Lists.newArrayList(errorLogEntries));
         return response;

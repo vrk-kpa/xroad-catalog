@@ -569,8 +569,8 @@ public class ApplicationTests {
 	public void testGetErrorsException() {
 		boolean thrown = false;
 		String exceptionMessage = null;
+		GetErrors request = new GetErrors();
 		try {
-			GetErrors request = new GetErrors();
 			LocalDateTime changedAfter = LocalDateTime.of(2020, Month.MAY, 6, 12, 0, 0);
 			GregorianCalendar cal = GregorianCalendar.from(changedAfter.atZone(ZoneId.systemDefault()));
 			XMLGregorianCalendar xc = null;
@@ -588,7 +588,7 @@ public class ApplicationTests {
 			exceptionMessage = e.getMessage();
 		}
 		assertTrue(thrown);
-		assertEquals(exceptionMessage, "ErrorLog entries not found");
+		assertEquals(exceptionMessage, "ErrorLog entries since " + request.getSince().toString() + " not found");
 	}
 
 }
