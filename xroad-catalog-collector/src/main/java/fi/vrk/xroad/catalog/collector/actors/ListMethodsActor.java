@@ -139,6 +139,7 @@ public class ListMethodsActor extends XRoadCatalogActor {
                 organizationsFetched = true;
             }
 
+            fetchCompaniesUnlimited = true;
             // Fetch companies only during a limited period if not unlimited
             if (MethodListUtil.shouldFetchCompanies(fetchCompaniesUnlimited,
                     fetchCompaniesTimeAfterHour, fetchCompaniesTimeBeforeHour)) {
