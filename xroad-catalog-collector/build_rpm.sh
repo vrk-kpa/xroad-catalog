@@ -16,7 +16,7 @@ rm -rf ${ROOT}/RPMS/*
 
 
 rpmbuild \
-    --define "xroad_catalog_version 0.13.7" \
+    --define "xroad_catalog_version 0.13.8" \
     --define "rel $RELEASE" \
     --define "snapshot .$SNAPSHOT" \
     --define "_topdir $ROOT" \
