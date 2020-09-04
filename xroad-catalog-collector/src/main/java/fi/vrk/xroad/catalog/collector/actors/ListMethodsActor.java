@@ -133,6 +133,24 @@ public class ListMethodsActor extends XRoadCatalogActor {
                             clientType.getId().getMemberCode(), clientType.getName()),
                     clientType.getId().getSubsystemCode());
 
+            // Fetch organizations only once, not for each client
+            if (!organizationsFetched) {
+                fetchOrganizationsPoolRef.tell(clientType, getSelf());
+                organizationsFetched = true;
+            }
+
+            // Fetch companies only during a limited period if not unlimited
+            if (MethodListUtil.shouldFetchCompanies(fetchCompaniesUnlimited,
+                    fetchCompaniesTimeAfterHour, fetchCompaniesTimeBeforeHour)) {
+                fetchCompaniesPoolRef.tell(clientType, getSelf());
+            }
+
+            // Flush errorLog entries only during a limited period
+            if (MethodListUtil.shouldFlushLogEntries(flushLogTimeAfterHour, flushLogTimeBeforeHour)) {
+                log.info("Deleting old ErrorLog entries...");
+                catalogService.deleteOldErrorLogEntries(errorLogLengthInDays);
+            }
+
             log.info("{} Handling subsystem {} ", COUNTER, subsystem);
             log.info("Fetching methods for the client with listMethods -service...");
 
@@ -166,23 +184,6 @@ public class ListMethodsActor extends XRoadCatalogActor {
             for (XRoadServiceIdentifierType service : restServices) {
                 log.info("{} Sending service {} to new MethodActor ", COUNTER, service.getServiceCode());
                 fetchOpenApiPoolRef.tell(service, getSender());
-            }
-
-            // Fetch organizations only once, not for each client
-            if (!organizationsFetched) {
-                fetchOrganizationsPoolRef.tell(clientType, getSelf());
-                organizationsFetched = true;
-            }
-
-            // Fetch companies only during a limited period if not unlimited
-            if (MethodListUtil.shouldFetchCompanies(fetchCompaniesUnlimited,
-                    fetchCompaniesTimeAfterHour, fetchCompaniesTimeBeforeHour)) {
-                fetchCompaniesPoolRef.tell(clientType, getSelf());
-            }
-
-            // Flush errorLog entries only during a limited period
-            if (MethodListUtil.shouldFlushLogEntries(flushLogTimeAfterHour, flushLogTimeBeforeHour)) {
-                catalogService.deleteOldErrorLogEntries(errorLogLengthInDays);
             }
 
             return true;
