@@ -29,7 +29,6 @@ import fi.vrk.xroad.catalog.collector.wsimport.ClientList;
 import fi.vrk.xroad.catalog.collector.wsimport.ClientType;
 import fi.vrk.xroad.catalog.collector.wsimport.XRoadObjectType;
 import fi.vrk.xroad.catalog.persistence.CatalogService;
-import fi.vrk.xroad.catalog.persistence.entity.ErrorLog;
 import fi.vrk.xroad.catalog.persistence.entity.Member;
 import fi.vrk.xroad.catalog.persistence.entity.MemberId;
 import fi.vrk.xroad.catalog.persistence.entity.Subsystem;
@@ -44,7 +43,6 @@ import org.springframework.web.client.RestOperations;
 import java.security.KeyManagementException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
-import java.time.LocalDateTime;
 import java.util.*;
 
 /**
@@ -113,9 +111,7 @@ public class ListClientsActor extends XRoadCatalogActor {
             // Save members
             catalogService.saveAllMembersAndSubsystems(m.values());
             for (ClientType clientType : clientList.getMember()) {
-                if (XRoadObjectType.SUBSYSTEM.equals(clientType.getId().getObjectType())) {
-                    listMethodsPoolRef.tell(clientType, getSelf());
-                }
+                listMethodsPoolRef.tell(clientType, getSelf());
             }
 
             log.info("all clients (" + (counter - 1) + ") sent to actor");

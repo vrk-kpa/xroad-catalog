@@ -65,7 +65,6 @@ public class FetchCompaniesActor extends XRoadCatalogActor {
         if (message instanceof ClientType) {
             ClientType clientType = (ClientType) message;
             XRoadClientIdentifierType client = clientType.getId();
-            log.info("FetchCompaniesActor: client with memberClass {}", client.getMemberClass());
             if (client.getMemberClass().equalsIgnoreCase(COMMERCIAL_MEMBER_CLASS)) {
                 log.info("Fetching data for company with businessCode {}", client.getMemberCode());
                 String businessCode = clientType.getId().getMemberCode();
