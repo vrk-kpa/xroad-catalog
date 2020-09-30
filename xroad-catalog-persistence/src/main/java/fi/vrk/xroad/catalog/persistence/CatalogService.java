@@ -22,10 +22,14 @@
  */
 package fi.vrk.xroad.catalog.persistence;
 
+import fi.vrk.xroad.catalog.persistence.dto.MemberData;
+import fi.vrk.xroad.catalog.persistence.dto.MemberDataList;
+import fi.vrk.xroad.catalog.persistence.dto.ServiceStatistics;
 import fi.vrk.xroad.catalog.persistence.entity.*;
 
 import java.time.LocalDateTime;
 import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -113,6 +117,15 @@ public interface CatalogService {
                        String serviceCode,
                        String subsystemCode,
                        String serviceVersion);
+
+    /**
+     * Returns a list of service statistics
+     * @return List of ServiceStatistics, null if not found
+     */
+    List<ServiceStatistics> getServiceStatistics(Long historyInDays);
+
+    List<MemberDataList> getMemberData(Long historyInDays);
+
 
     /**
      * Returns the full Organization object.

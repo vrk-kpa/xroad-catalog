@@ -29,7 +29,6 @@ import fi.vrk.xroad.xroad_catalog_lister.Member;
 import fi.vrk.xroad.xroad_catalog_lister.Organization;
 
 import javax.xml.datatype.XMLGregorianCalendar;
-import java.time.LocalDateTime;
 
 /**
  * Service which talks in JAXB objects.

@@ -22,14 +22,25 @@
  */
 package fi.vrk.xroad.catalog.lister;
 
+import fi.vrk.xroad.catalog.persistence.CatalogService;
+import fi.vrk.xroad.catalog.persistence.dto.ListOfServicesRequest;
+import fi.vrk.xroad.catalog.persistence.dto.ServiceStatisticsRequest;
 import fi.vrk.xroad.xroad_catalog_lister.*;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.embedded.LocalServerPort;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.http.ResponseEntity;
 import org.springframework.oxm.jaxb.Jaxb2Marshaller;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.util.ClassUtils;
 import org.springframework.ws.client.core.WebServiceTemplate;
@@ -45,13 +56,21 @@ import java.time.ZoneId;
 import java.util.GregorianCalendar;
 
 import static org.junit.Assert.*;
+import static org.mockito.BDDMockito.given;
 
 /**
  * Http tests for lister interface
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = ListerApplication.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@TestPropertySource(properties = {"xroad-catalog.max-history-length-in-days=90"})
 public class ApplicationTests {
+
+	@Autowired
+	TestRestTemplate restTemplate;
+
+	@MockBean
+	CatalogService catalogService;
 
 	private Jaxb2Marshaller marshaller = new Jaxb2Marshaller();
 
@@ -589,6 +608,135 @@ public class ApplicationTests {
 		}
 		assertTrue(thrown);
 		assertEquals(exceptionMessage, "ErrorLog entries since " + request.getSince().toString() + " not found");
+	}
+
+	@Test
+	public void testGetServiceStatistics() throws JSONException {
+		ServiceStatisticsRequest serviceStatisticsRequest = ServiceStatisticsRequest.builder().historyAmountInDays(60L).build();
+		ResponseEntity<String> response =
+				restTemplate.postForEntity("/api/getServiceStatistics", serviceStatisticsRequest, String.class);
+		assertNotNull(response.getBody());
+		assertEquals(200, response.getStatusCodeValue());
+
+		JSONObject json = new JSONObject(response.getBody());
+		JSONArray serviceStatisticsList = json.getJSONArray("serviceStatisticsList");
+		assertEquals(60, serviceStatisticsList.length());
+
+		for (int i = 0; i < serviceStatisticsList.length(); i++) {
+			assertTrue(serviceStatisticsList.optJSONObject(i).optLong("numberOfSoapServices") > 0);
+			assertTrue(serviceStatisticsList.optJSONObject(i).optLong("numberOfRestServices") > 0);
+			assertTrue(serviceStatisticsList.optJSONObject(i).optLong("totalNumberOfDistinctServices") > 0);
+		}
+	}
+
+	@Test
+	public void testGetServiceStatisticsHistoryParameterZeroException() {
+		ServiceStatisticsRequest serviceStatisticsRequest = ServiceStatisticsRequest.builder().historyAmountInDays(0L).build();
+		ResponseEntity<String> response =
+				restTemplate.postForEntity("/api/getServiceStatistics", serviceStatisticsRequest, String.class);
+		String errMsg = "Input parameter historyAmountInDays must be greater than zero and less than the required maximum of 90 days";
+		assertEquals(400, response.getStatusCodeValue());
+		assertEquals(errMsg, response.getBody());
+	}
+
+	@Test
+	public void testGetServiceStatisticsHistoryParameterMoreThanMaximumException() {
+		ServiceStatisticsRequest serviceStatisticsRequest = ServiceStatisticsRequest.builder().historyAmountInDays(91L).build();
+		ResponseEntity<String> response =
+				restTemplate.postForEntity("/api/getServiceStatistics", serviceStatisticsRequest, String.class);
+		String errMsg = "Input parameter historyAmountInDays must be greater than zero and less than the required maximum of 90 days";
+		assertEquals(400, response.getStatusCodeValue());
+		assertEquals(errMsg, response.getBody());
+	}
+
+	@Test
+	public void testGetServiceStatisticsHistoryParameterNullException() {
+		ServiceStatisticsRequest serviceStatisticsRequest = ServiceStatisticsRequest.builder().historyAmountInDays(null).build();
+		ResponseEntity<String> response =
+				restTemplate.postForEntity("/api/getServiceStatistics", serviceStatisticsRequest, String.class);
+		String errMsg = "Input parameter historyAmountInDays must be greater than zero and less than the required maximum of 90 days";
+		assertEquals(400, response.getStatusCodeValue());
+		assertEquals(errMsg, response.getBody());
+	}
+
+	@Test
+	public void testGetServiceStatisticsNotFound() {
+		ServiceStatisticsRequest serviceStatisticsRequest = ServiceStatisticsRequest.builder().historyAmountInDays(60L).build();
+		given(catalogService.getServiceStatistics(60L)).willReturn(null);
+		ResponseEntity<String> response =
+				restTemplate.postForEntity("/api/getServiceStatistics", serviceStatisticsRequest, String.class);
+		assertEquals(204, response.getStatusCodeValue());
+	}
+
+	@Test
+	public void testGetListOfServices() throws JSONException {
+		ListOfServicesRequest listOfServicesRequest = ListOfServicesRequest.builder().historyAmountInDays(60L).build();
+		ResponseEntity<String> response =
+				restTemplate.postForEntity("/api/getListOfServices", listOfServicesRequest, String.class);
+		assertNotNull(response.getBody());
+		assertEquals(200, response.getStatusCodeValue());
+
+		JSONObject json = new JSONObject(response.getBody());
+		JSONArray memberData = json.getJSONArray("memberData");
+		assertEquals(60, memberData.length());
+
+		for (int i = 0; i < memberData.length(); i++) {
+			JSONArray memberDataListJson = memberData.optJSONObject(i).optJSONArray("memberDataList");
+			assertEquals(3, memberDataListJson.length());
+			assertEquals(1, memberDataListJson.optJSONObject(0).optJSONArray("subsystemList").length());
+
+			assertEquals("TestSubSystem", memberDataListJson.optJSONObject(0).optJSONArray("subsystemList")
+					.optJSONObject(0).optString("subsystemCode"));
+			assertEquals(2, memberDataListJson.optJSONObject(0).optJSONArray("subsystemList")
+					.optJSONObject(0).optJSONArray("serviceList").length());
+
+			assertEquals(0, memberDataListJson.optJSONObject(1).optJSONArray("subsystemList").length());
+
+			assertEquals(1, memberDataListJson.optJSONObject(2).optJSONArray("subsystemList").length());
+			assertEquals("TestSubSystem12345", memberDataListJson.optJSONObject(2).optJSONArray("subsystemList")
+					.optJSONObject(0).optString("subsystemCode"));
+			assertEquals(15, memberDataListJson.optJSONObject(2).optJSONArray("subsystemList")
+					.optJSONObject(0).optJSONArray("serviceList").length());
+		}
+	}
+
+	@Test
+	public void testGetListOfServicesHistoryParameterZeroException() {
+		ListOfServicesRequest listOfServicesRequest = ListOfServicesRequest.builder().historyAmountInDays(0L).build();
+		ResponseEntity<String> response =
+				restTemplate.postForEntity("/api/getListOfServices", listOfServicesRequest, String.class);
+		String errMsg = "Input parameter historyAmountInDays must be greater than zero and less than the required maximum of 90 days";
+		assertEquals(400, response.getStatusCodeValue());
+		assertEquals(errMsg, response.getBody());
+	}
+
+	@Test
+	public void testGetListOfServicesHistoryParameterMoreThanMaximumException() {
+		ListOfServicesRequest listOfServicesRequest = ListOfServicesRequest.builder().historyAmountInDays(91L).build();
+		ResponseEntity<String> response =
+				restTemplate.postForEntity("/api/getListOfServices", listOfServicesRequest, String.class);
+		String errMsg = "Input parameter historyAmountInDays must be greater than zero and less than the required maximum of 90 days";
+		assertEquals(400, response.getStatusCodeValue());
+		assertEquals(errMsg, response.getBody());
+	}
+
+	@Test
+	public void testGetListOfServicesHistoryParameterNullException() {
+		ListOfServicesRequest listOfServicesRequest = ListOfServicesRequest.builder().historyAmountInDays(null).build();
+		ResponseEntity<String> response =
+				restTemplate.postForEntity("/api/getListOfServices", listOfServicesRequest, String.class);
+		String errMsg = "Input parameter historyAmountInDays must be greater than zero and less than the required maximum of 90 days";
+		assertEquals(400, response.getStatusCodeValue());
+		assertEquals(errMsg, response.getBody());
+	}
+
+	@Test
+	public void testGetListOfServicesNotFound() {
+		ListOfServicesRequest listOfServicesRequest = ListOfServicesRequest.builder().historyAmountInDays(60L).build();
+		given(catalogService.getMemberData(60L)).willReturn(null);
+		ResponseEntity<String> response =
+				restTemplate.postForEntity("/api/getListOfServices", listOfServicesRequest, String.class);
+		assertEquals(204, response.getStatusCodeValue());
 	}
 
 }
