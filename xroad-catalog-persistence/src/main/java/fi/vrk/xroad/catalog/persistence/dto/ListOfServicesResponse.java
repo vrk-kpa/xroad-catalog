@@ -21,4 +21,6 @@ public class ListOfServicesResponse implements Serializable {
     private static final long serialVersionUID = 4049861366368846281L;
 
     private List<MemberDataList> memberData;
+
+    private List<SecurityServerInfo> securityServerData;
 }

@@ -25,13 +25,11 @@ package fi.vrk.xroad.catalog.lister;
 import fi.vrk.xroad.catalog.persistence.CatalogService;
 import org.springframework.boot.SpringApplication;
 import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.PropertySource;
 
 /**
  * Main spring boot app for lister interface
  */
 @ComponentScan(basePackageClasses = {ListerApplication.class, CatalogService.class})
-@PropertySource("classpath:lister.properties")
 public class ListerApplication {
 
     public static void main(String[] args) {
