@@ -124,8 +124,11 @@ public interface CatalogService {
      */
     List<ServiceStatistics> getServiceStatistics(Long historyInDays);
 
+    /**
+     * Returns a list of memberDataLists
+     * @return List of memberDataLists, null if not found
+     */
     List<MemberDataList> getMemberData(Long historyInDays);
-
 
     /**
      * Returns the full Organization object.

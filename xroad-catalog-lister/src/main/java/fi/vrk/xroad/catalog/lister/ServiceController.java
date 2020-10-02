@@ -14,7 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.io.ByteArrayResource;
-import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -23,13 +22,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.xml.sax.SAXException;
 
-import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.StringWriter;
-import java.nio.file.Files;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -73,8 +67,15 @@ public class ServiceController {
         }
     }
 
-    @PostMapping(path = "/getServiceStatisticsCSV", consumes = "application/json", produces = "application/octet-stream")
-    public ResponseEntity<Resource> getServiceStatisticsCSV(@Valid @RequestBody ServiceStatisticsRequest request) {
+    @PostMapping(path = "/getServiceStatisticsCSV", consumes = "application/json", produces = "text/csv")
+    public ResponseEntity<?> getServiceStatisticsCSV(@Valid @RequestBody ServiceStatisticsRequest request) {
+        if (request.getHistoryAmountInDays() == null
+                || request.getHistoryAmountInDays() < 1 || request.getHistoryAmountInDays() > maxHistoryLengthInDays) {
+            return new ResponseEntity<>(
+                    "Input parameter historyAmountInDays must be greater "
+                            + "than zero and less than the required maximum of " + maxHistoryLengthInDays + " days",
+                    HttpStatus.BAD_REQUEST);
+        }
         List<ServiceStatistics> serviceStatisticsList = catalogService.getServiceStatistics(request.getHistoryAmountInDays());
         if (serviceStatisticsList != null && !serviceStatisticsList.isEmpty()) {
             try {
@@ -86,16 +87,11 @@ public class ServiceController {
                         serviceStatistics.getNumberOfRestServices().toString(),
                         serviceStatistics.getNumberOfSoapServices().toString(),
                         serviceStatistics.getTotalNumberOfDistinctServices().toString())));
-                File file = createCSVFile("ServiceStatistics");
-                FileWriter fw = new FileWriter(file);
-                fw.write(sw.toString());
                 sw.close();
-                fw.close();
                 csvPrinter.close();
                 return ResponseEntity.ok()
-                        .contentType(org.springframework.http.MediaType.valueOf(MediaType.APPLICATION_OCTET_STREAM))
-                        .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + file.getName() + "\"")
-                        .body(new ByteArrayResource(Files.readAllBytes(file.toPath())));
+                        .contentType(org.springframework.http.MediaType.valueOf(MediaType.TEXT_PLAIN))
+                        .body(new ByteArrayResource(sw.toString().getBytes()));
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -125,8 +121,15 @@ public class ServiceController {
         }
     }
 
-    @PostMapping(path = "/getListOfServicesCSV", consumes = "application/json", produces = "application/octet-stream")
-    public ResponseEntity<Resource> getListOfServicesCSV(@Valid @RequestBody ListOfServicesRequest request) {
+    @PostMapping(path = "/getListOfServicesCSV", consumes = "application/json", produces = "text/csv")
+    public ResponseEntity<?> getListOfServicesCSV(@Valid @RequestBody ListOfServicesRequest request) {
+        if (request.getHistoryAmountInDays() == null
+                || request.getHistoryAmountInDays() < 1 || request.getHistoryAmountInDays() > maxHistoryLengthInDays) {
+            return new ResponseEntity<>(
+                    "Input parameter historyAmountInDays must be greater "
+                            + "than zero and less than the required maximum of " + maxHistoryLengthInDays + " days",
+                    HttpStatus.BAD_REQUEST);
+        }
         List<SecurityServerInfo> securityServerList = getSecurityServerData();
         List<MemberDataList> memberDataList = catalogService.getMemberData(request.getHistoryAmountInDays());
         if (memberDataList != null && !memberDataList.isEmpty()) {
@@ -137,16 +140,11 @@ public class ServiceController {
                                     "Member name", "Member created", "Subsystem code", "Subsystem created",
                                     "Service code", "Service version", "Service created"));
                 printListOfServicesCSV(csvPrinter, memberDataList, securityServerList);
-                File file = createCSVFile("ListOfServices");
-                FileWriter fw = new FileWriter(file);
-                fw.write(sw.toString());
                 sw.close();
-                fw.close();
                 csvPrinter.close();
                 return ResponseEntity.ok()
-                        .contentType(org.springframework.http.MediaType.valueOf(MediaType.APPLICATION_OCTET_STREAM))
-                        .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + file.getName() + "\"")
-                        .body(new ByteArrayResource(Files.readAllBytes(file.toPath())));
+                        .contentType(org.springframework.http.MediaType.valueOf(MediaType.TEXT_PLAIN))
+                        .body(new ByteArrayResource(sw.toString().getBytes()));
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -160,12 +158,6 @@ public class ServiceController {
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
-
-    private File createCSVFile(String fileName) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd-HH-mm-ss");
-        String fileCreationTime = LocalDateTime.now().format(formatter);
-        return new File(fileName + fileCreationTime + ".csv");
     }
 
     private void printListOfServicesCSV(CSVPrinter csvPrinter, List<MemberDataList> memberDataList, List<SecurityServerInfo> securityServerList) {
@@ -199,14 +191,12 @@ public class ServiceController {
         });
 
         if (securityServerList != null && !securityServerList.isEmpty()) {
-            printCSVRecord(csvPrinter, Arrays.asList("", "", "", "", "", "", "", "", "", "", ""));
-            printCSVRecord(csvPrinter, Arrays.asList("", "", "", "", "", "", "", "", "", "", ""));
             printCSVRecord(csvPrinter, Arrays.asList("", "Security server (SS) info:", "", "", "", "", "", "", "", "", ""));
-            printCSVRecord(csvPrinter, Arrays.asList("", "", "member class", "member code", "server code", "address", "", "", "", "", ""));
+            printCSVRecord(csvPrinter, Arrays.asList("member class", "member code", "server code", "address", "", "", "", "", "","", ""));
 
-            securityServerList.forEach(securityServerInfo -> printCSVRecord(csvPrinter, Arrays.asList("", "", securityServerInfo.getMemberClass(),
+            securityServerList.forEach(securityServerInfo -> printCSVRecord(csvPrinter, Arrays.asList(securityServerInfo.getMemberClass(),
                     securityServerInfo.getMemberCode(), securityServerInfo.getServerCode(), securityServerInfo.getAddress()
-                    , "", "", "", "", "")));
+                    , "", "", "", "", "", "", "")));
         }
     }
 

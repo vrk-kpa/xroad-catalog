@@ -16,6 +16,7 @@ Requires(postun):   systemd
 
 %define src %{_topdir}
 %define jlib /usr/lib/xroad-catalog
+%define conf /etc/xroad/xroad-catalog
 
 %description
 X-Road service listing
@@ -27,11 +28,14 @@ X-Road service listing
 %install
 mkdir -p %{buildroot}%{jlib}
 mkdir -p %{buildroot}%{_unitdir}
+mkdir -p %{buildroot}%{conf}
 mkdir -p %{buildroot}/usr/share/xroad/bin
 mkdir -p %{buildroot}/var/log/xroad/
 cp -p %{src}/../../../build/libs/xroad-catalog-lister-%{version}.jar %{buildroot}%{jlib}/%{name}.jar
 cp -p %{src}/SOURCES/%{name}.service %{buildroot}%{_unitdir}
 cp -p %{src}/SOURCES/%{name} %{buildroot}/usr/share/xroad/bin
+
+cp -p %{src}/../../../build/resources/main/lister-production.properties %{buildroot}%{conf}
 
 %clean
 rm -rf %{buildroot}

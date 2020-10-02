@@ -14,6 +14,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.util.Arrays;
+import java.util.List;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -71,6 +74,62 @@ public class ServiceControllerTests {
         ServiceStatisticsRequest serviceStatisticsRequest = ServiceStatisticsRequest.builder().historyAmountInDays(null).build();
         ResponseEntity<String> response =
                 restTemplate.postForEntity("/api/getServiceStatistics", serviceStatisticsRequest, String.class);
+        String errMsg = "Input parameter historyAmountInDays must be greater than zero and less than the required maximum of 90 days";
+        assertEquals(400, response.getStatusCodeValue());
+        assertEquals(errMsg, response.getBody());
+    }
+
+    @Test
+    public void testGetServiceStatisticsCSV() {
+        ServiceStatisticsRequest serviceStatisticsRequest = ServiceStatisticsRequest.builder().historyAmountInDays(60L).build();
+        ResponseEntity<String> response =
+                restTemplate.postForEntity("/api/getServiceStatisticsCSV", serviceStatisticsRequest, String.class);
+        assertNotNull(response.getBody());
+        assertEquals(200, response.getStatusCodeValue());
+        List<String> csvContent = Arrays.asList(response.getBody().split("\r\n"));
+        assertEquals(61, csvContent.size());
+        List<String> csvHeader = Arrays.asList(csvContent.get(0).split(","));
+        assertEquals(4, csvHeader.size());
+        assertEquals("Date", csvHeader.get(0));
+        assertEquals("Number of REST services", csvHeader.get(1));
+        assertEquals("Number of SOAP services", csvHeader.get(2));
+        assertEquals("Total distinct services", csvHeader.get(3));
+
+        for (int i = 1; i < csvContent.size() - 1; i++) {
+            List<String> csvRowContent = Arrays.asList(csvContent.get(i).split(","));
+            assertEquals(4, csvRowContent.size());
+            assertEquals(23, csvRowContent.get(0).length());
+            assertTrue(Integer.parseInt(csvRowContent.get(1)) > 0);
+            assertTrue(Integer.parseInt(csvRowContent.get(2)) > 0);
+            assertTrue(Integer.parseInt(csvRowContent.get(3)) > 0);
+        }
+    }
+
+    @Test
+    public void testGetServiceStatisticsCSVHistoryParameterZeroException() {
+        ServiceStatisticsRequest serviceStatisticsRequest = ServiceStatisticsRequest.builder().historyAmountInDays(0L).build();
+        ResponseEntity<String> response =
+                restTemplate.postForEntity("/api/getServiceStatisticsCSV", serviceStatisticsRequest, String.class);
+        String errMsg = "Input parameter historyAmountInDays must be greater than zero and less than the required maximum of 90 days";
+        assertEquals(400, response.getStatusCodeValue());
+        assertEquals(errMsg, response.getBody());
+    }
+
+    @Test
+    public void testGetServiceStatisticsCSVHistoryParameterMoreThanMaximumException() {
+        ServiceStatisticsRequest serviceStatisticsRequest = ServiceStatisticsRequest.builder().historyAmountInDays(91L).build();
+        ResponseEntity<String> response =
+                restTemplate.postForEntity("/api/getServiceStatisticsCSV", serviceStatisticsRequest, String.class);
+        String errMsg = "Input parameter historyAmountInDays must be greater than zero and less than the required maximum of 90 days";
+        assertEquals(400, response.getStatusCodeValue());
+        assertEquals(errMsg, response.getBody());
+    }
+
+    @Test
+    public void testGetServiceStatisticsCSVHistoryParameterNullException() {
+        ServiceStatisticsRequest serviceStatisticsRequest = ServiceStatisticsRequest.builder().historyAmountInDays(null).build();
+        ResponseEntity<String> response =
+                restTemplate.postForEntity("/api/getServiceStatisticsCSV", serviceStatisticsRequest, String.class);
         String errMsg = "Input parameter historyAmountInDays must be greater than zero and less than the required maximum of 90 days";
         assertEquals(400, response.getStatusCodeValue());
         assertEquals(errMsg, response.getBody());
@@ -140,6 +199,66 @@ public class ServiceControllerTests {
         ListOfServicesRequest listOfServicesRequest = ListOfServicesRequest.builder().historyAmountInDays(null).build();
         ResponseEntity<String> response =
                 restTemplate.postForEntity("/api/getListOfServices", listOfServicesRequest, String.class);
+        String errMsg = "Input parameter historyAmountInDays must be greater than zero and less than the required maximum of 90 days";
+        assertEquals(400, response.getStatusCodeValue());
+        assertEquals(errMsg, response.getBody());
+    }
+
+    @Test
+    public void testGetListOfServicesCSV() {
+        ServiceStatisticsRequest serviceStatisticsRequest = ServiceStatisticsRequest.builder().historyAmountInDays(60L).build();
+        ResponseEntity<String> response =
+                restTemplate.postForEntity("/api/getListOfServicesCSV", serviceStatisticsRequest, String.class);
+        assertNotNull(response.getBody());
+        assertEquals(200, response.getStatusCodeValue());
+        List<String> csvContent = Arrays.asList(response.getBody().split("\r\n"));
+        assertEquals(1144, csvContent.size());
+        List<String> csvHeader = Arrays.asList(csvContent.get(0).split(","));
+        assertEquals(11, csvHeader.size());
+        assertEquals("Date", csvHeader.get(0));
+        assertEquals("XRoad instance", csvHeader.get(1));
+        assertEquals("Member class", csvHeader.get(2));
+        assertEquals("Member code", csvHeader.get(3));
+        assertEquals("Member name", csvHeader.get(4));
+        assertEquals("Member created", csvHeader.get(5));
+        assertEquals("Subsystem code", csvHeader.get(6));
+        assertEquals("Subsystem created", csvHeader.get(7));
+        assertEquals("Service code", csvHeader.get(8));
+        assertEquals("Service version", csvHeader.get(9));
+        assertEquals("Service created", csvHeader.get(10));
+
+        for (int i = 1; i < csvContent.size() - 1; i++) {
+            List<String> csvRowContent = Arrays.asList(csvContent.get(i).split(","));
+            assertTrue(csvRowContent.size() >= 1);
+            assertTrue(csvRowContent.get(0).length() >= 3 || csvRowContent.get(1).length() >= 3);
+        }
+    }
+
+    @Test
+    public void testGetListOfServicesCSVHistoryParameterZeroException() {
+        ListOfServicesRequest listOfServicesRequest = ListOfServicesRequest.builder().historyAmountInDays(0L).build();
+        ResponseEntity<String> response =
+                restTemplate.postForEntity("/api/getListOfServicesCSV", listOfServicesRequest, String.class);
+        String errMsg = "Input parameter historyAmountInDays must be greater than zero and less than the required maximum of 90 days";
+        assertEquals(400, response.getStatusCodeValue());
+        assertEquals(errMsg, response.getBody());
+    }
+
+    @Test
+    public void testGetListOfServicesCSVHistoryParameterMoreThanMaximumException() {
+        ListOfServicesRequest listOfServicesRequest = ListOfServicesRequest.builder().historyAmountInDays(91L).build();
+        ResponseEntity<String> response =
+                restTemplate.postForEntity("/api/getListOfServicesCSV", listOfServicesRequest, String.class);
+        String errMsg = "Input parameter historyAmountInDays must be greater than zero and less than the required maximum of 90 days";
+        assertEquals(400, response.getStatusCodeValue());
+        assertEquals(errMsg, response.getBody());
+    }
+
+    @Test
+    public void testGetListOfServicesCSVHistoryParameterNullException() {
+        ListOfServicesRequest listOfServicesRequest = ListOfServicesRequest.builder().historyAmountInDays(null).build();
+        ResponseEntity<String> response =
+                restTemplate.postForEntity("/api/getListOfServicesCSV", listOfServicesRequest, String.class);
         String errMsg = "Input parameter historyAmountInDays must be greater than zero and less than the required maximum of 90 days";
         assertEquals(400, response.getStatusCodeValue());
         assertEquals(errMsg, response.getBody());
