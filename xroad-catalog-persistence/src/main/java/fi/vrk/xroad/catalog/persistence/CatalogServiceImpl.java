@@ -22,6 +22,11 @@
  */
 package fi.vrk.xroad.catalog.persistence;
 
+import fi.vrk.xroad.catalog.persistence.dto.MemberData;
+import fi.vrk.xroad.catalog.persistence.dto.MemberDataList;
+import fi.vrk.xroad.catalog.persistence.dto.ServiceData;
+import fi.vrk.xroad.catalog.persistence.dto.ServiceStatistics;
+import fi.vrk.xroad.catalog.persistence.dto.SubsystemData;
 import fi.vrk.xroad.catalog.persistence.entity.*;
 import fi.vrk.xroad.catalog.persistence.entity.Subsystem;
 import fi.vrk.xroad.catalog.persistence.repository.*;
@@ -31,9 +36,11 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
-import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicLong;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 /**
@@ -226,6 +233,95 @@ public class CatalogServiceImpl implements CatalogService {
         }
         return serviceRepository.findAllByMemberServiceAndSubsystemAndVersion(xRoadInstance,
                 memberClass, memberCode, serviceCode, subsystemCode, serviceVersion);
+    }
+
+    @Override
+    public List<ServiceStatistics> getServiceStatistics(Long historyInDays) {
+        List<ServiceStatistics> serviceStatisticsList = new ArrayList<>();
+        List<Service> services = serviceRepository.findAllActive();
+        LocalDateTime today = LocalDateTime.now();
+        LocalDateTime dateInPast = today.minusDays(historyInDays - 1);
+        while (dateInPast.isBefore(today) || dateInPast.isEqual(today)) {
+            AtomicLong numberOfSoapServices = new AtomicLong();
+            AtomicLong numberOfRestServices = new AtomicLong();
+            AtomicLong totalDistinctServices = new AtomicLong();
+
+            LocalDateTime finalDateInPast = dateInPast;
+            services.forEach(service -> {
+                LocalDateTime creationDate = service.getStatusInfo().getCreated();
+                if (creationDate.isBefore(finalDateInPast) || creationDate.isEqual(finalDateInPast)) {
+                    if (service.hasOpenApi()) {
+                        numberOfRestServices.getAndIncrement();
+                    }
+                    if (service.hasWsdl()) {
+                        numberOfSoapServices.getAndIncrement();
+                    }
+                }
+            });
+
+            totalDistinctServices.set(services.stream()
+                    .filter(p -> p.getStatusInfo().getCreated().isBefore(finalDateInPast) || p.getStatusInfo().getCreated().isEqual(finalDateInPast))
+                    .map(Service::getServiceCode).collect(Collectors.toList())
+                    .stream().distinct().collect(Collectors.toList()).size());
+
+            ServiceStatistics serviceStatistics = ServiceStatistics.builder()
+                    .created(dateInPast)
+                    .numberOfRestServices(numberOfRestServices.longValue())
+                    .numberOfSoapServices(numberOfSoapServices.longValue())
+                    .totalNumberOfDistinctServices(totalDistinctServices.longValue()).build();
+
+            serviceStatisticsList.add(serviceStatistics);
+            dateInPast = dateInPast.plusDays(1);
+        }
+        return serviceStatisticsList;
+    }
+
+    @Override
+    public List<MemberDataList> getMemberData(Long historyInDays) {
+        List<MemberDataList> listOfMemberDataLists = new ArrayList<>();
+        Set<Member> members = memberRepository.findAll();
+        LocalDateTime today = LocalDateTime.now();
+        LocalDateTime dateInPast = today.minusDays(historyInDays - 1);
+        while (dateInPast.isBefore(today) || dateInPast.isEqual(today)) {
+            LocalDateTime finalDateInPast = dateInPast;
+            List<MemberData> memberDataList = new ArrayList<>();
+            members.forEach(member -> {
+                LocalDateTime creationDate = member.getStatusInfo().getCreated();
+                if (creationDate.isBefore(finalDateInPast) || creationDate.isEqual(finalDateInPast)) {
+                    Set<Subsystem> subsystems = member.getActiveSubsystems();
+                    List<SubsystemData> subsystemDataList = new ArrayList<>();
+                    subsystems.forEach(subsystem -> {
+                        List<ServiceData> serviceDataList = new ArrayList<>();
+                        Set<Service> services = subsystem.getActiveServices();
+                        services.forEach(service -> {
+                            ServiceData serviceData = ServiceData.builder()
+                                    .created(service.getStatusInfo().getCreated())
+                                    .serviceCode(service.getServiceCode())
+                                    .serviceVersion(service.getServiceVersion()).build();
+                            serviceDataList.add(serviceData);
+                        });
+                        SubsystemData subsystemData = SubsystemData.builder()
+                                .created(subsystem.getStatusInfo().getCreated())
+                                .subsystemCode(subsystem.getSubsystemCode())
+                                .serviceList(serviceDataList).build();
+                        subsystemDataList.add(subsystemData);
+                    });
+
+                    MemberData memberData = MemberData.builder()
+                            .created(creationDate)
+                            .memberClass(member.getMemberClass())
+                            .memberCode(member.getMemberCode())
+                            .name(member.getName())
+                            .xRoadInstance(member.getXRoadInstance())
+                            .subsystemList(subsystemDataList).build();
+                    memberDataList.add(memberData);
+                }
+            });
+            listOfMemberDataLists.add(MemberDataList.builder().date(finalDateInPast).memberDataList(memberDataList).build());
+            dateInPast = dateInPast.plusDays(1);
+        }
+
+        return listOfMemberDataLists;
     }
 
     @Override

@@ -27,6 +27,9 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 
+import java.time.LocalDateTime;
+import java.util.List;
+
 
 public interface ServiceRepository extends CrudRepository<Service, Long> {
     /**
@@ -46,6 +49,12 @@ public interface ServiceRepository extends CrudRepository<Service, Long> {
                                    @Param("subsystemCode") String subsystemCode,
                                    @Param("serviceCode") String serviceCode,
                                    @Param("serviceVersion") String serviceVersion);
+
+    /**
+     * Only returns non-removed services
+     */
+    @Query("SELECT s FROM Service s WHERE s.statusInfo.removed IS NULL")
+    List<Service> findAllActive();
 
     /**
      * Only returns non-removed services

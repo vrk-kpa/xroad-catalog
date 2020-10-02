@@ -590,5 +590,4 @@ public class ApplicationTests {
 		assertTrue(thrown);
 		assertEquals(exceptionMessage, "ErrorLog entries since " + request.getSince().toString() + " not found");
 	}
-
 }

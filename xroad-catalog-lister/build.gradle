@@ -84,6 +84,9 @@ targetCompatibility = 1.8
 dependencies {
     compile project(':xroad-catalog-persistence')
 
+    compile group: 'javax.ws.rs', name: 'javax.ws.rs-api', version: '2.0'
+
+    compile ("org.apache.commons:commons-csv:1.5")
     compile("org.springframework.boot:spring-boot-starter-web-services")
     compile("com.fasterxml.jackson.core:jackson-databind:$jacksonVersion")
     compile("wsdl4j:wsdl4j:1.6.3")

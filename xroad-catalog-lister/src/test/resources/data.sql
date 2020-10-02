@@ -148,3 +148,67 @@ VALUES (1, 1, 0, 0, 0, '', 'FI', '2001-06-11 00:00:00+02',
 
 INSERT INTO error_log(id, message, code, created)
 VALUES (1, 'Service not found', '500', '2020-05-04 11:41:24.792+03');
+
+INSERT INTO subsystem (id, member_id, subsystem_code, created, changed, fetched,  removed)
+VALUES (2, 3, 'TestSubSystem12345', '2020-01-01 00:00:00+02', '2020-01-01 00:00:00+02', '2020-01-01 00:00:00+02', NULL);
+INSERT INTO service (id, subsystem_id, service_code, service_version, created, changed, fetched,  removed)
+VALUES (3, 2, 'testService1', 'v1', '2020-01-01 00:00:00+02', '2020-01-01 00:00:00+02', '2020-01-01 00:00:00+02', NULL);
+INSERT INTO service (id, subsystem_id, service_code, service_version, created, changed, fetched,  removed)
+VALUES (4, 2, 'testService2', 'v1', '2020-02-01 00:00:00+02', '2020-02-01 00:00:00+02', '2020-02-01 00:00:00+02', NULL);
+INSERT INTO service (id, subsystem_id, service_code, service_version, created, changed, fetched,  removed)
+VALUES (5, 2, 'testService3', 'v1', '2020-03-01 00:00:00+02', '2020-03-01 00:00:00+02', '2020-03-01 00:00:00+02', NULL);
+INSERT INTO service (id, subsystem_id, service_code, service_version, created, changed, fetched,  removed)
+VALUES (6, 2, 'testService4', 'v1', '2020-04-01 00:00:00+02', '2020-04-01 00:00:00+02', '2020-04-01 00:00:00+02', NULL);
+INSERT INTO service (id, subsystem_id, service_code, service_version, created, changed, fetched,  removed)
+VALUES (7, 2, 'testService5', 'v1', '2020-05-01 00:00:00+02', '2020-05-01 00:00:00+02', '2020-05-01 00:00:00+02', NULL);
+INSERT INTO service (id, subsystem_id, service_code, service_version, created, changed, fetched,  removed)
+VALUES (8, 2, 'testService6', 'v1', '2020-06-01 00:00:00+02', '2020-06-01 00:00:00+02', '2020-06-01 00:00:00+02', NULL);
+INSERT INTO service (id, subsystem_id, service_code, service_version, created, changed, fetched,  removed)
+VALUES (9, 2, 'testService7', 'v1', '2020-07-01 00:00:00+02', '2020-07-01 00:00:00+02', '2020-07-01 00:00:00+02', NULL);
+INSERT INTO service (id, subsystem_id, service_code, service_version, created, changed, fetched,  removed)
+VALUES (10, 2, 'testService8', 'v1', '2020-08-01 00:00:00+02', '2020-08-01 00:00:00+02', '2020-08-01 00:00:00+02', NULL);
+INSERT INTO service (id, subsystem_id, service_code, service_version, created, changed, fetched,  removed)
+VALUES (11, 2, 'testService9', 'v1', '2020-09-01 00:00:00+02', '2020-09-01 00:00:00+02', '2020-09-01 00:00:00+02', NULL);
+INSERT INTO service (id, subsystem_id, service_code, service_version, created, changed, fetched,  removed)
+VALUES (12, 2, 'testService10', 'v1', '2020-09-02 00:00:00+02', '2020-09-02 00:00:00+02', '2020-09-02 00:00:00+02', NULL);
+INSERT INTO service (id, subsystem_id, service_code, service_version, created, changed, fetched,  removed)
+VALUES (13, 2, 'testService11', 'v1', '2020-09-03 00:00:00+02', '2020-09-03 00:00:00+02', '2020-09-03 00:00:00+02', NULL);
+INSERT INTO service (id, subsystem_id, service_code, service_version, created, changed, fetched,  removed)
+VALUES (14, 2, 'testService12', 'v1', '2020-09-04 00:00:00+02', '2020-09-04 00:00:00+02', '2020-09-04 00:00:00+02', NULL);
+INSERT INTO service (id, subsystem_id, service_code, service_version, created, changed, fetched,  removed)
+VALUES (15, 2, 'testService13', 'v1', '2020-09-05 00:00:00+02', '2020-09-05 00:00:00+02', '2020-09-05 00:00:00+02', NULL);
+INSERT INTO service (id, subsystem_id, service_code, service_version, created, changed, fetched,  removed)
+VALUES (16, 2, 'testService14', 'v1', '2020-09-06 00:00:00+02', '2020-09-06 00:00:00+02', '2020-09-06 00:00:00+02', NULL);
+INSERT INTO service (id, subsystem_id, service_code, service_version, created, changed, fetched,  removed)
+VALUES (17, 2, 'testService15', 'v1', '2020-09-07 00:00:00+02', '2020-09-07 00:00:00+02', '2020-09-07 00:00:00+02', NULL);
+
+INSERT INTO wsdl (id, service_id, data, external_id, created, changed, fetched,  removed)
+VALUES (3, 3, '<?xml version="1.0" standalone="no"?><wsdl/>', '100012', '2020-01-01 00:00:00+02', '2020-01-02 00:00:00+02', '2020-01-02 00:00:00+02', NULL);
+INSERT INTO wsdl (id, service_id, data, external_id, created, changed, fetched,  removed)
+VALUES (4, 4, '<?xml version="1.0" standalone="no"?><wsdl/>', '100012', '2020-01-01 00:00:00+02', '2020-01-02 00:00:00+02', '2020-01-02 00:00:00+02', NULL);
+INSERT INTO wsdl (id, service_id, data, external_id, created, changed, fetched,  removed)
+VALUES (5, 5, '<?xml version="1.0" standalone="no"?><wsdl/>', '100012', '2020-01-01 00:00:00+02', '2020-01-02 00:00:00+02', '2020-01-02 00:00:00+02', NULL);
+INSERT INTO wsdl (id, service_id, data, external_id, created, changed, fetched,  removed)
+VALUES (6, 6, '<?xml version="1.0" standalone="no"?><wsdl/>', '100012', '2020-01-01 00:00:00+02', '2020-01-02 00:00:00+02', '2020-01-02 00:00:00+02', NULL);
+INSERT INTO wsdl (id, service_id, data, external_id, created, changed, fetched,  removed)
+VALUES (7, 7, '<?xml version="1.0" standalone="no"?><wsdl/>', '100012', '2020-01-01 00:00:00+02', '2020-01-02 00:00:00+02', '2020-01-02 00:00:00+02', NULL);
+INSERT INTO wsdl (id, service_id, data, external_id, created, changed, fetched,  removed)
+VALUES (8, 12, '<?xml version="1.0" standalone="no"?><wsdl/>', '100012', '2020-01-01 00:00:00+02', '2020-01-02 00:00:00+02', '2020-01-02 00:00:00+02', NULL);
+INSERT INTO wsdl (id, service_id, data, external_id, created, changed, fetched,  removed)
+VALUES (9, 13, '<?xml version="1.0" standalone="no"?><wsdl/>', '100012', '2020-01-01 00:00:00+02', '2020-01-02 00:00:00+02', '2020-01-02 00:00:00+02', NULL);
+INSERT INTO wsdl (id, service_id, data, external_id, created, changed, fetched,  removed)
+VALUES (10, 14, '<?xml version="1.0" standalone="no"?><wsdl/>', '100012', '2020-01-01 00:00:00+02', '2020-01-02 00:00:00+02', '2020-01-02 00:00:00+02', NULL);
+INSERT INTO open_api (id, service_id, data, external_id, created, changed, fetched, removed)
+VALUES (2, 8, '<openapi>', '30030', '2020-01-01 00:00:00+02', '2020-01-01 00:00:00+02', '2020-01-01 00:00:00+02', NULL);
+INSERT INTO open_api (id, service_id, data, external_id, created, changed, fetched, removed)
+VALUES (3, 9, '<openapi>', '30030', '2020-01-01 00:00:00+02', '2020-01-01 00:00:00+02', '2020-01-01 00:00:00+02', NULL);
+INSERT INTO open_api (id, service_id, data, external_id, created, changed, fetched, removed)
+VALUES (4, 10, '<openapi>', '30030', '2020-01-01 00:00:00+02', '2020-01-01 00:00:00+02', '2020-01-01 00:00:00+02', NULL);
+INSERT INTO open_api (id, service_id, data, external_id, created, changed, fetched, removed)
+VALUES (5, 11, '<openapi>', '30030', '2020-01-01 00:00:00+02', '2020-01-01 00:00:00+02', '2020-01-01 00:00:00+02', NULL);
+INSERT INTO open_api (id, service_id, data, external_id, created, changed, fetched, removed)
+VALUES (6, 15, '<openapi>', '30030', '2020-01-01 00:00:00+02', '2020-01-01 00:00:00+02', '2020-01-01 00:00:00+02', NULL);
+INSERT INTO open_api (id, service_id, data, external_id, created, changed, fetched, removed)
+VALUES (7, 16, '<openapi>', '30030', '2020-01-01 00:00:00+02', '2020-01-01 00:00:00+02', '2020-01-01 00:00:00+02', NULL);
+INSERT INTO open_api (id, service_id, data, external_id, created, changed, fetched, removed)
+VALUES (8, 17, '<openapi>', '30030', '2020-01-01 00:00:00+02', '2020-01-01 00:00:00+02', '2020-01-01 00:00:00+02', NULL);
