@@ -34,7 +34,6 @@ mkdir -p %{buildroot}/var/log/xroad/
 cp -p %{src}/../../../build/libs/xroad-catalog-lister-%{version}.jar %{buildroot}%{jlib}/%{name}.jar
 cp -p %{src}/SOURCES/%{name}.service %{buildroot}%{_unitdir}
 cp -p %{src}/SOURCES/%{name} %{buildroot}/usr/share/xroad/bin
-
 cp -p %{src}/../../../build/resources/main/lister-production.properties %{buildroot}%{conf}
 
 %clean
@@ -44,6 +43,7 @@ rm -rf %{buildroot}
 %attr(644,root,root) %{_unitdir}/%{name}.service
 %attr(755,xroad-catalog,xroad-catalog) %{jlib}/%{name}.jar
 %attr(744,xroad-catalog,xroad-catalog) /usr/share/xroad/bin/%{name}
+%config(noreplace) %{conf}/lister-production.properties
 
 %pre
 if ! id xroad-catalog > /dev/null 2>&1 ; then
