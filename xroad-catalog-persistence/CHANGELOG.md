@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
+## 1.0.0 - 2020-10-06
+- new endpoint for statistics
+- new endpoint for statistics in CSV format
+- new endpoint for members with related subsystems, services and security servers
+- new endpoint for members with related subsystems, services and security servers in CSV format
+- update license and file headers
+- update changelogs and documentation
+
 ## 0.13.6 - 2020-08-27
 - new endpoint for errors
 - update changelogs and documentation

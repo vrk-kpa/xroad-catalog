@@ -7,17 +7,21 @@ WebService to produce list of xroad clients
 The purpose of this piece of software is to provide a webservice which lists all the XRoad members and the services they provide together with services descriptions
 
 The main endpoints this software provides: 
-* ListMembers - endpoint to list all the members the Catalog Collector has stored to the db
-* GetWsdl - endpoint to retrieve a WSDL description for a given service
-* GetOpenAPI - endpoint to retrieve an OpenAPI description for a given service
-* IsSoapService - endpoint for requesting whether a given service is a SOAP service
-* IsRestService - endpoint for requesting whether a given service is a REST service
-* IsProvider - endpoint for requesting whether a given member is a provider
-* GetOrganizations - endpoint for requesting public organization details
-* HasOrganizationChanged - endpoint for requesting whether given public organization has some of its details changed
-* GetCompanies - endpoint for requesting private company details
-* HasCompanyChanged - endpoint for requesting whether given private company has some of its details changed
-* GetErrors - endpoint for requesting a list of errors related to fetching data from different apis and security servers
+* ListMembers - SOAP endpoint to list all the members the Catalog Collector has stored to the db
+* GetWsdl - SOAP endpoint to retrieve a WSDL description for a given service
+* GetOpenAPI - SOAP endpoint to retrieve an OpenAPI description for a given service
+* IsSoapService - SOAP endpoint for requesting whether a given service is a SOAP service
+* IsRestService - SOAP endpoint for requesting whether a given service is a REST service
+* IsProvider - SOAP endpoint for requesting whether a given member is a provider
+* GetOrganizations - SOAP endpoint for requesting public organization details
+* HasOrganizationChanged - SOAP endpoint for requesting whether given public organization has some of its details changed
+* GetCompanies - SOAP endpoint for requesting private company details
+* HasCompanyChanged - SOAP endpoint for requesting whether given private company has some of its details changed
+* GetErrors - SOAP endpoint for requesting a list of errors related to fetching data from different apis and security servers
+* GetServiceStatistics - REST endpoint for requesting a list of statistics, consisting of numbers of SOAP/REST services over time
+* GetServiceStatisticsCSV - REST endpoint for requesting a list of statistics in CSV format, consisting of numbers of SOAP/REST services over time
+* GetListOfServices - REST endpoint for requesting a list of members and related subsystems, services and security servers over time
+* GetListOfServicesCSV - REST endpoint for requesting a list of members and related subsystems, services and security servers in CSV format
 
 A sequence diagram illustrating flow between XRoad-Catalog service layer and XRoad-Catalog Lister
 
@@ -1591,6 +1595,78 @@ Response
       </ns2:GetErrorsResponse>
    </SOAP-ENV:Body>
 </SOAP-ENV:Envelope>
+```
+
+### 12. GetServiceStatistics
+
+Request
+
+curl -X POST "http://localhost:8080/api/getServiceStatistics" -H "accept: application/json" -H "Content-Type: application/json" -d "{\"historyAmountInDays\":\"2\"}"
+
+Response
+
+```json
+{"serviceStatisticsList":[{"created":{"hour":11,"minute":53,"second":34,"nano":225000000,"dayOfYear":279,"dayOfWeek":"MONDAY","month":"OCTOBER","dayOfMonth":5,"year":2020,"monthValue":10,"chronology":{"calendarType":"iso8601","id":"ISO"}},"numberOfSoapServices":4,"numberOfRestServices":1,"totalNumberOfDistinctServices":5},{"created":{"hour":11,"minute":53,"second":34,"nano":225000000,"dayOfYear":280,"dayOfWeek":"TUESDAY","month":"OCTOBER","dayOfMonth":6,"year":2020,"monthValue":10,"chronology":{"calendarType":"iso8601","id":"ISO"}},"numberOfSoapServices":4,"numberOfRestServices":1,"totalNumberOfDistinctServices":5}]}
+```
+
+### 13. GetServiceStatisticsCSV
+
+Request
+
+curl -X POST "http://localhost:8080/api/getServiceStatisticsCSV" -H "accept: text/csv" 
+-H "Content-Type: application/json" -d "{\"historyAmountInDays\":\"2\"}"
+
+Response
+
+```text/csv
+Date,Number of REST services,Number of SOAP services,Total distinct services
+2020-10-05T11:54:23.649,1,4,5
+2020-10-06T11:54:23.649,1,4,5
+```
+
+### 14. GetListOfServices
+
+Request
+
+curl -X POST "http://localhost:8080/api/getListOfServices" -H "accept: application/json" 
+-H "Content-Type: application/json" -d "{\"historyAmountInDays\":\"2\"}"
+
+Response
+
+```json
+{"memberData":[{"date":{"hour":11,"minute":55,"second":54,"nano":66000000,"dayOfYear":279,"dayOfWeek":"MONDAY","month":"OCTOBER","dayOfMonth":5,"year":2020,"monthValue":10,"chronology":{"calendarType":"iso8601","id":"ISO"}},"memberDataList":[{"created":{"hour":10,"minute":44,"second":30,"nano":896000000,"dayOfYear":248,"dayOfWeek":"FRIDAY","month":"SEPTEMBER","dayOfMonth":4,"year":2020,"monthValue":9,"chronology":{"calendarType":"iso8601","id":"ISO"}},"memberClass":"GOV","memberCode":"1234","name":"ACME","subsystemList":[{"created":{"hour":10,"minute":44,"second":30,"nano":896000000,"dayOfYear":248,"dayOfWeek":"FRIDAY","month":"SEPTEMBER","dayOfMonth":4,"year":2020,"monthValue":9,"chronology":{"calendarType":"iso8601","id":"ISO"}},"subsystemCode":"MANAGEMENT","serviceList":[{"created":{"hour":10,"minute":44,"second":33,"nano":871000000,"dayOfYear":248,"dayOfWeek":"FRIDAY","month":"SEPTEMBER","dayOfMonth":4,"year":2020,"monthValue":9,"chronology":{"calendarType":"iso8601","id":"ISO"}},"serviceCode":"authCertDeletion","serviceVersion":null},{"created":{"hour":10,"minute":44,"second":33,"nano":871000000,"dayOfYear":248,"dayOfWeek":"FRIDAY","month":"SEPTEMBER","dayOfMonth":4,"year":2020,"monthValue":9,"chronology":{"calendarType":"iso8601","id":"ISO"}},"serviceCode":"clientReg","serviceVersion":null},{"created":{"hour":10,"minute":44,"second":33,"nano":871000000,"dayOfYear":248,"dayOfWeek":"FRIDAY","month":"SEPTEMBER","dayOfMonth":4,"year":2020,"monthValue":9,"chronology":{"calendarType":"iso8601","id":"ISO"}},"serviceCode":"clientDeletion","serviceVersion":null},{"created":{"hour":10,"minute":44,"second":33,"nano":871000000,"dayOfYear":248,"dayOfWeek":"FRIDAY","month":"SEPTEMBER","dayOfMonth":4,"year":2020,"monthValue":9,"chronology":{"calendarType":"iso8601","id":"ISO"}},"serviceCode":"ownerChange","serviceVersion":null},{"created":{"hour":10,"minute":44,"second":33,"nano":871000000,"dayOfYear":248,"dayOfWeek":"FRIDAY","month":"SEPTEMBER","dayOfMonth":4,"year":2020,"monthValue":9,"chronology":{"calendarType":"iso8601","id":"ISO"}},"serviceCode":"PetStore","serviceVersion":""}]}],"xroadInstance":"DEV"},{"created":{"hour":10,"minute":44,"second":30,"nano":896000000,"dayOfYear":248,"dayOfWeek":"FRIDAY","month":"SEPTEMBER","dayOfMonth":4,"year":2020,"monthValue":9,"chronology":{"calendarType":"iso8601","id":"ISO"}},"memberClass":"COM","memberCode":"1710128-9","name":"GOFORE","subsystemList":[],"xroadInstance":"DEV"},{"created":{"hour":13,"minute":30,"second":1,"nano":896000000,"dayOfYear":255,"dayOfWeek":"FRIDAY","month":"SEPTEMBER","dayOfMonth":11,"year":2020,"monthValue":9,"chronology":{"calendarType":"iso8601","id":"ISO"}},"memberClass":"COM","memberCode":"1951458-9","name":"HKScan","subsystemList":[],"xroadInstance":"DEV"}]},{"date":{"hour":11,"minute":55,"second":54,"nano":66000000,"dayOfYear":280,"dayOfWeek":"TUESDAY","month":"OCTOBER","dayOfMonth":6,"year":2020,"monthValue":10,"chronology":{"calendarType":"iso8601","id":"ISO"}},"memberDataList":[{"created":{"hour":10,"minute":44,"second":30,"nano":896000000,"dayOfYear":248,"dayOfWeek":"FRIDAY","month":"SEPTEMBER","dayOfMonth":4,"year":2020,"monthValue":9,"chronology":{"calendarType":"iso8601","id":"ISO"}},"memberClass":"GOV","memberCode":"1234","name":"ACME","subsystemList":[{"created":{"hour":10,"minute":44,"second":30,"nano":896000000,"dayOfYear":248,"dayOfWeek":"FRIDAY","month":"SEPTEMBER","dayOfMonth":4,"year":2020,"monthValue":9,"chronology":{"calendarType":"iso8601","id":"ISO"}},"subsystemCode":"MANAGEMENT","serviceList":[{"created":{"hour":10,"minute":44,"second":33,"nano":871000000,"dayOfYear":248,"dayOfWeek":"FRIDAY","month":"SEPTEMBER","dayOfMonth":4,"year":2020,"monthValue":9,"chronology":{"calendarType":"iso8601","id":"ISO"}},"serviceCode":"authCertDeletion","serviceVersion":null},{"created":{"hour":10,"minute":44,"second":33,"nano":871000000,"dayOfYear":248,"dayOfWeek":"FRIDAY","month":"SEPTEMBER","dayOfMonth":4,"year":2020,"monthValue":9,"chronology":{"calendarType":"iso8601","id":"ISO"}},"serviceCode":"clientReg","serviceVersion":null},{"created":{"hour":10,"minute":44,"second":33,"nano":871000000,"dayOfYear":248,"dayOfWeek":"FRIDAY","month":"SEPTEMBER","dayOfMonth":4,"year":2020,"monthValue":9,"chronology":{"calendarType":"iso8601","id":"ISO"}},"serviceCode":"clientDeletion","serviceVersion":null},{"created":{"hour":10,"minute":44,"second":33,"nano":871000000,"dayOfYear":248,"dayOfWeek":"FRIDAY","month":"SEPTEMBER","dayOfMonth":4,"year":2020,"monthValue":9,"chronology":{"calendarType":"iso8601","id":"ISO"}},"serviceCode":"ownerChange","serviceVersion":null},{"created":{"hour":10,"minute":44,"second":33,"nano":871000000,"dayOfYear":248,"dayOfWeek":"FRIDAY","month":"SEPTEMBER","dayOfMonth":4,"year":2020,"monthValue":9,"chronology":{"calendarType":"iso8601","id":"ISO"}},"serviceCode":"PetStore","serviceVersion":""}]}],"xroadInstance":"DEV"},{"created":{"hour":10,"minute":44,"second":30,"nano":896000000,"dayOfYear":248,"dayOfWeek":"FRIDAY","month":"SEPTEMBER","dayOfMonth":4,"year":2020,"monthValue":9,"chronology":{"calendarType":"iso8601","id":"ISO"}},"memberClass":"COM","memberCode":"1710128-9","name":"GOFORE","subsystemList":[],"xroadInstance":"DEV"},{"created":{"hour":13,"minute":30,"second":1,"nano":896000000,"dayOfYear":255,"dayOfWeek":"FRIDAY","month":"SEPTEMBER","dayOfMonth":11,"year":2020,"monthValue":9,"chronology":{"calendarType":"iso8601","id":"ISO"}},"memberClass":"COM","memberCode":"1951458-9","name":"HKScan","subsystemList":[],"xroadInstance":"DEV"}]}],"securityServerData":[{"serverCode":"SS1","address":"10.18.150.48","memberClass":"GOV","memberCode":"1234"}]}
+```
+
+### 15. GetListOfServicesCSV
+
+Request
+
+curl -X POST "http://localhost:8080/api/getListOfServicesCSV" -H "accept: text/csv" 
+-H "Content-Type: application/json" -d "{\"historyAmountInDays\":\"2\"}"
+
+Response
+
+```text/csv
+Date,XRoad instance,Member class,Member code,Member name,Member created,Subsystem code,Subsystem created,Service code,Service version,Service created
+2020-10-05T11:57:05.072,,,,,,,,,,
+"",DEV,GOV,1234,ACME,2020-09-04T10:44:30.896,MANAGEMENT,2020-09-04T10:44:30.896,clientDeletion,,2020-09-04T10:44:33.871
+"",DEV,GOV,1234,ACME,2020-09-04T10:44:30.896,MANAGEMENT,2020-09-04T10:44:30.896,clientReg,,2020-09-04T10:44:33.871
+"",DEV,GOV,1234,ACME,2020-09-04T10:44:30.896,MANAGEMENT,2020-09-04T10:44:30.896,ownerChange,,2020-09-04T10:44:33.871
+"",DEV,GOV,1234,ACME,2020-09-04T10:44:30.896,MANAGEMENT,2020-09-04T10:44:30.896,PetStore,,2020-09-04T10:44:33.871
+"",DEV,GOV,1234,ACME,2020-09-04T10:44:30.896,MANAGEMENT,2020-09-04T10:44:30.896,authCertDeletion,,2020-09-04T10:44:33.871
+"",DEV,COM,1710128-9,GOFORE,2020-09-04T10:44:30.896,,,,,
+"",DEV,COM,1951458-9,HKScan,2020-09-11T13:30:01.896,,,,,
+2020-10-06T11:57:05.072,,,,,,,,,,
+"",DEV,GOV,1234,ACME,2020-09-04T10:44:30.896,MANAGEMENT,2020-09-04T10:44:30.896,clientDeletion,,2020-09-04T10:44:33.871
+"",DEV,GOV,1234,ACME,2020-09-04T10:44:30.896,MANAGEMENT,2020-09-04T10:44:30.896,clientReg,,2020-09-04T10:44:33.871
+"",DEV,GOV,1234,ACME,2020-09-04T10:44:30.896,MANAGEMENT,2020-09-04T10:44:30.896,ownerChange,,2020-09-04T10:44:33.871
+"",DEV,GOV,1234,ACME,2020-09-04T10:44:30.896,MANAGEMENT,2020-09-04T10:44:30.896,PetStore,,2020-09-04T10:44:33.871
+"",DEV,GOV,1234,ACME,2020-09-04T10:44:30.896,MANAGEMENT,2020-09-04T10:44:30.896,authCertDeletion,,2020-09-04T10:44:33.871
+"",DEV,COM,1710128-9,GOFORE,2020-09-04T10:44:30.896,,,,,
+"",DEV,COM,1951458-9,HKScan,2020-09-11T13:30:01.896,,,,,
+"",Security server (SS) info:,,,,,,,,,
+member class,member code,server code,address,,,,,,,
+GOV,1234,SS1,10.18.150.48,,,,,,,
 ```
 
 ## Build RPM Packages on Non-RedHat Platform
