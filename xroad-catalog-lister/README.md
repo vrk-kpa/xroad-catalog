@@ -1601,7 +1601,7 @@ Response
 
 Request
 
-curl -X POST "http://localhost:8080/api/getServiceStatistics" -H "accept: application/json" -H "Content-Type: application/json" -d "{\"historyAmountInDays\":\"2\"}"
+curl "http://localhost:8080/api/getServiceStatistics/2" -H "Content-Type: application/json"
 
 Response
 
@@ -1613,12 +1613,12 @@ Response
 
 Request
 
-curl -X POST "http://localhost:8080/api/getServiceStatisticsCSV" -H "accept: text/csv" 
--H "Content-Type: application/json" -d "{\"historyAmountInDays\":\"2\"}"
+curl "http://localhost:8080/api/getServiceStatisticsCSV/2" -H "Content-Type: text/csv" --output service_statistics.csv
 
 Response
 
-```text/csv
+```
+service_statistcs.csv file with content:
 Date,Number of REST services,Number of SOAP services,Total distinct services
 2020-10-05T11:54:23.649,1,4,5
 2020-10-06T11:54:23.649,1,4,5
@@ -1628,8 +1628,7 @@ Date,Number of REST services,Number of SOAP services,Total distinct services
 
 Request
 
-curl -X POST "http://localhost:8080/api/getListOfServices" -H "accept: application/json" 
--H "Content-Type: application/json" -d "{\"historyAmountInDays\":\"2\"}"
+curl "http://localhost:8080/api/getListOfServices/2" -H "Content-Type: application/json"
 
 Response
 
@@ -1641,12 +1640,11 @@ Response
 
 Request
 
-curl -X POST "http://localhost:8080/api/getListOfServicesCSV" -H "accept: text/csv" 
--H "Content-Type: application/json" -d "{\"historyAmountInDays\":\"2\"}"
+curl "http://localhost:8080/api/getListOfServicesCSV/2" -H "Content-Type: text/csv" --output list_of_services.csv
 
 Response
 
-```text/csv
+```list_of_services.csv file with content:
 Date,XRoad instance,Member class,Member code,Member name,Member created,Subsystem code,Subsystem created,Service code,Service version,Service created
 2020-10-05T11:57:05.072,,,,,,,,,,
 "",DEV,GOV,1234,ACME,2020-09-04T10:44:30.896,MANAGEMENT,2020-09-04T10:44:30.896,clientDeletion,,2020-09-04T10:44:33.871

@@ -24,11 +24,9 @@ package fi.vrk.xroad.catalog.lister;
 
 import fi.vrk.xroad.catalog.persistence.dto.SecurityServerInfo;
 import fi.vrk.xroad.catalog.persistence.CatalogService;
-import fi.vrk.xroad.catalog.persistence.dto.ListOfServicesRequest;
 import fi.vrk.xroad.catalog.persistence.dto.ListOfServicesResponse;
 import fi.vrk.xroad.catalog.persistence.dto.MemberDataList;
 import fi.vrk.xroad.catalog.persistence.dto.ServiceStatistics;
-import fi.vrk.xroad.catalog.persistence.dto.ServiceStatisticsRequest;
 import fi.vrk.xroad.catalog.persistence.dto.ServiceStatisticsResponse;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
@@ -38,20 +36,20 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.xml.sax.SAXException;
 
 import java.io.IOException;
 import java.io.StringWriter;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
-import javax.validation.Valid;
 import javax.ws.rs.core.*;
 import javax.xml.parsers.ParserConfigurationException;
 
@@ -72,47 +70,48 @@ public class ServiceController {
     @Autowired
     private SharedParamsParser sharedParamsParser;
 
-    @PostMapping(path = "/getServiceStatistics", consumes = "application/json", produces = "application/json")
-    public ResponseEntity<?> getServiceStatistics(@Valid @RequestBody ServiceStatisticsRequest request) {
-        if (request.getHistoryAmountInDays() == null
-                || request.getHistoryAmountInDays() < 1 || request.getHistoryAmountInDays() > maxHistoryLengthInDays) {
+
+    @GetMapping(path = "/getServiceStatistics/{historyAmountInDays}", produces = "application/json")
+    public ResponseEntity<?> getServiceStatistics(@PathVariable Long historyAmountInDays) {
+        if (historyAmountInDays < 1 || historyAmountInDays > maxHistoryLengthInDays) {
             return new ResponseEntity<>(
                     "Input parameter historyAmountInDays must be greater "
                             + "than zero and less than the required maximum of " + maxHistoryLengthInDays + " days",
                     HttpStatus.BAD_REQUEST);
         }
-        List<ServiceStatistics> serviceStatisticsList = catalogService.getServiceStatistics(request.getHistoryAmountInDays());
-        if (serviceStatisticsList != null && !serviceStatisticsList.isEmpty()) {
-            return ResponseEntity.ok(ServiceStatisticsResponse.builder().serviceStatisticsList(serviceStatisticsList).build());
-        } else {
+        List<ServiceStatistics> serviceStatisticsList = catalogService.getServiceStatistics(historyAmountInDays);
+        if (serviceStatisticsList == null || serviceStatisticsList.isEmpty()) {
             return ResponseEntity.noContent().build();
+        } else {
+            return ResponseEntity.ok(ServiceStatisticsResponse.builder().serviceStatisticsList(serviceStatisticsList).build());
         }
     }
 
-    @PostMapping(path = "/getServiceStatisticsCSV", consumes = "application/json", produces = "text/csv")
-    public ResponseEntity<?> getServiceStatisticsCSV(@Valid @RequestBody ServiceStatisticsRequest request) {
-        if (request.getHistoryAmountInDays() == null
-                || request.getHistoryAmountInDays() < 1 || request.getHistoryAmountInDays() > maxHistoryLengthInDays) {
+    @GetMapping(path = "/getServiceStatisticsCSV/{historyAmountInDays}", produces = "text/csv")
+    public ResponseEntity<?> getServiceStatisticsCSV(@PathVariable Long historyAmountInDays) {
+        if (historyAmountInDays < 1 || historyAmountInDays > maxHistoryLengthInDays) {
             return new ResponseEntity<>(
                     "Input parameter historyAmountInDays must be greater "
                             + "than zero and less than the required maximum of " + maxHistoryLengthInDays + " days",
                     HttpStatus.BAD_REQUEST);
         }
-        List<ServiceStatistics> serviceStatisticsList = catalogService.getServiceStatistics(request.getHistoryAmountInDays());
-        if (serviceStatisticsList != null && !serviceStatisticsList.isEmpty()) {
+        List<ServiceStatistics> serviceStatisticsList = catalogService.getServiceStatistics(historyAmountInDays);
+        if (serviceStatisticsList != null) {
             try {
                 StringWriter sw = new StringWriter();
                 CSVPrinter csvPrinter = new CSVPrinter(sw, CSVFormat.DEFAULT
                         .withHeader("Date", "Number of REST services", "Number of SOAP services", "Total distinct services"));
                 serviceStatisticsList.forEach(serviceStatistics -> printCSVRecord(csvPrinter,
                         Arrays.asList(serviceStatistics.getCreated().toString(),
-                        serviceStatistics.getNumberOfRestServices().toString(),
-                        serviceStatistics.getNumberOfSoapServices().toString(),
-                        serviceStatistics.getTotalNumberOfDistinctServices().toString())));
+                                serviceStatistics.getNumberOfRestServices().toString(),
+                                serviceStatistics.getNumberOfSoapServices().toString(),
+                                serviceStatistics.getTotalNumberOfDistinctServices().toString())));
+                String reportName = "service_statistics_" + LocalDateTime.now().toString();
                 sw.close();
                 csvPrinter.close();
                 return ResponseEntity.ok()
-                        .contentType(org.springframework.http.MediaType.valueOf(MediaType.TEXT_PLAIN))
+                        .header("Content-Disposition", "attachment; filename=" + reportName + ".csv")
+                        .contentType(org.springframework.http.MediaType.parseMediaType("text/csv"))
                         .body(new ByteArrayResource(sw.toString().getBytes()));
             } catch (IOException e) {
                 e.printStackTrace();
@@ -121,19 +120,17 @@ public class ServiceController {
         return ResponseEntity.noContent().build();
     }
 
-    @PostMapping(path = "/getListOfServices", consumes = "application/json", produces = "application/json")
-    public ResponseEntity<?> getListOfServices(@Valid @RequestBody ListOfServicesRequest request) {
-        if (request.getHistoryAmountInDays() == null
-                || request.getHistoryAmountInDays() < 1 || request.getHistoryAmountInDays() > maxHistoryLengthInDays) {
+    @GetMapping(path = "/getListOfServices/{historyAmountInDays}", produces = "application/json")
+    public ResponseEntity<?> getListOfServices(@PathVariable Long historyAmountInDays) {
+        if (historyAmountInDays < 1 || historyAmountInDays > maxHistoryLengthInDays) {
             return new ResponseEntity<>(
                     "Input parameter historyAmountInDays must be greater "
                             + "than zero and less than the required maximum of " + maxHistoryLengthInDays + " days",
                     HttpStatus.BAD_REQUEST);
         }
-
         List<SecurityServerInfo> securityServerList = getSecurityServerData();
-        List<MemberDataList> memberDataList = catalogService.getMemberData(request.getHistoryAmountInDays());
-        if (memberDataList != null && !memberDataList.isEmpty()) {
+        List<MemberDataList> memberDataList = catalogService.getMemberData(historyAmountInDays);
+        if (memberDataList != null) {
             return ResponseEntity.ok(ListOfServicesResponse.builder()
                     .memberData(memberDataList)
                     .securityServerData(securityServerList)
@@ -143,28 +140,29 @@ public class ServiceController {
         }
     }
 
-    @PostMapping(path = "/getListOfServicesCSV", consumes = "application/json", produces = "text/csv")
-    public ResponseEntity<?> getListOfServicesCSV(@Valid @RequestBody ListOfServicesRequest request) {
-        if (request.getHistoryAmountInDays() == null
-                || request.getHistoryAmountInDays() < 1 || request.getHistoryAmountInDays() > maxHistoryLengthInDays) {
+    @GetMapping(path = "/getListOfServicesCSV/{historyAmountInDays}", produces = "text/csv")
+    public ResponseEntity<?> getListOfServicesCSV(@PathVariable Long historyAmountInDays) {
+        if (historyAmountInDays < 1 || historyAmountInDays > maxHistoryLengthInDays) {
             return new ResponseEntity<>(
                     "Input parameter historyAmountInDays must be greater "
                             + "than zero and less than the required maximum of " + maxHistoryLengthInDays + " days",
                     HttpStatus.BAD_REQUEST);
         }
         List<SecurityServerInfo> securityServerList = getSecurityServerData();
-        List<MemberDataList> memberDataList = catalogService.getMemberData(request.getHistoryAmountInDays());
-        if (memberDataList != null && !memberDataList.isEmpty()) {
+        List<MemberDataList> memberDataList = catalogService.getMemberData(historyAmountInDays);
+        if (memberDataList != null) {
             try {
                 StringWriter sw = new StringWriter();
                 CSVPrinter csvPrinter = new CSVPrinter(sw, CSVFormat.DEFAULT
                         .withHeader("Date", "XRoad instance", "Member class", "Member code",
-                                    "Member name", "Member created", "Subsystem code", "Subsystem created",
-                                    "Service code", "Service version", "Service created"));
+                                "Member name", "Member created", "Subsystem code", "Subsystem created",
+                                "Service code", "Service version", "Service created"));
                 printListOfServicesCSV(csvPrinter, memberDataList, securityServerList);
+                String reportName = "list_of_services_" + LocalDateTime.now().toString();
                 sw.close();
                 csvPrinter.close();
                 return ResponseEntity.ok()
+                        .header("Content-Disposition", "attachment; filename=" + reportName + ".csv")
                         .contentType(org.springframework.http.MediaType.valueOf(MediaType.TEXT_PLAIN))
                         .body(new ByteArrayResource(sw.toString().getBytes()));
             } catch (IOException e) {
