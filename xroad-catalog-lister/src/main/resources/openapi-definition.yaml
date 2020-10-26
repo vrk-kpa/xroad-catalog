@@ -1,0 +1,262 @@
+openapi: "3.0.0"
+info:
+  description: X-Road Catalog API
+  version: "1.0.1"
+  title: X-Road Catalog API
+  contact:
+    name: Population Register Centre (VRK)
+    url: https://github.com/vrk-kpa/xroad-catalog
+    email: info@dvv.fi
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+tags:
+  - name: getServiceStatistics
+    description: service statistics
+  - name: getServiceStatisticsCSV
+    description: service statistics in CSV format
+  - name: getListOfServices
+    description: list of members, subsystems, services and security servers
+  - name: getListOfServicesCSV
+    description: list of members, subsystems, services and security servers in CSV format
+paths:
+  /getServiceStatistics/{historyAmountInDays}:
+    get: # ok
+      tags:
+        - getServiceStatistics
+      summary: get service statistics
+      operationId: getServiceStatistics
+      description: show statistics about number of services
+      parameters:
+        - name: historyAmountInDays
+          in: path
+          required: true
+          description: The amount of history in days to go back in time
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 90
+      responses:
+        '200':
+          description: list of service statistics
+          content:
+            application/json:
+              schema:
+                type: array
+                description: array of service statistics objects
+                uniqueItems: true
+                items:
+                  $ref: '#/components/schemas/ServiceStatisticsList'
+        '204':
+          description: response is empty
+        '400':
+          description: request was invalid
+        '404':
+          description: resource requested does not exists
+        '406':
+          description: request specified an invalid format
+        '500':
+          description: internal server error
+  /getServiceStatisticsCSV/{historyAmountInDays}:
+    get: # ok
+      tags:
+        - getServiceStatisticsCSV
+      summary: get service statistics in CSV format
+      operationId: getServiceStatisticsCSV
+      description: show statistics about number of services in CSV format
+      parameters:
+        - name: historyAmountInDays
+          in: path
+          required: true
+          description: The amount of history in days to go back in time
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 90
+      responses:
+        '200':
+          description: list of service statistics
+          content:
+            text/csv:
+              schema:
+                type: array
+                description: array of service statistics objects
+                uniqueItems: true
+                items:
+                  $ref: '#/components/schemas/ServiceStatisticsList'
+        '204':
+          description: response is empty
+        '400':
+          description: request was invalid
+        '404':
+          description: resource requested does not exists
+        '406':
+          description: request specified an invalid format
+        '500':
+          description: internal server error
+  /getListOfServices/{historyAmountInDays}:
+    get: # ok
+      tags:
+        - getListOfServices
+      summary: get list of members, subsystems, services and security servers
+      operationId: getListOfServices
+      description: show list of members, subsystems, services and security servers
+      parameters:
+        - name: historyAmountInDays
+          in: path
+          required: true
+          description: The amount of history in days to go back in time
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 90
+      responses:
+        '200':
+          description: list of members, subsystems, services and security servers
+          content:
+            application/json:
+              schema:
+                type: array
+                description: array of list of members, subsystems, services and security servers
+                uniqueItems: true
+                items:
+                  $ref: '#/components/schemas/MemberDataList'
+        '204':
+          description: response is empty
+        '400':
+          description: request was invalid
+        '404':
+          description: resource requested does not exists
+        '406':
+          description: request specified an invalid format
+        '500':
+          description: internal server error
+  /getListOfServicesCSV/{historyAmountInDays}:
+    get: # ok
+      tags:
+        - getListOfServicesCSV
+      summary: get list of members, subsystems, services and security servers in CSV format
+      operationId: getListOfServicesCSV
+      description: show list of members, subsystems, services and security servers in CSV format
+      parameters:
+        - name: historyAmountInDays
+          in: path
+          required: true
+          description: The amount of history in days to go back in time
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 90
+      responses:
+        '200':
+          description: list of members, subsystems, services and security servers
+          content:
+            text/csv:
+              schema:
+                type: array
+                description: array of list of members, subsystems, services and security servers
+                uniqueItems: true
+                items:
+                  $ref: '#/components/schemas/MemberDataList'
+        '204':
+          description: response is empty
+        '400':
+          description: request was invalid
+        '404':
+          description: resource requested does not exists
+        '406':
+          description: request specified an invalid format
+        '500':
+          description: internal server error
+components:
+  schemas:
+    ServiceStatistics:
+      type: object
+      required:
+        - created
+        - numberOfSoapServices
+        - numberOfRestServices
+        - totalNumberOfDistinctServices
+      properties:
+        created:
+          type: string
+          format: date-time
+        numberOfSoapServices:
+          type: number
+          format: int64
+        numberOfRestServices:
+          type: number
+          format: int64
+        totalNumberOfDistinctServices:
+          type: number
+          format: int64
+    ServiceStatisticsList:
+      type: array
+      items:
+        $ref: "#/components/schemas/ServiceStatistics"
+    MemberData:
+      type: object
+      required:
+        - created
+        - xRoadInstance
+        - memberClass
+        - memberCode
+        - name
+        - subsystemList
+      properties:
+        created:
+          type: string
+          format: date-time
+        xRoadInstance:
+          type: string
+          format: text
+        memberClass:
+          type: string
+          format: text
+        memberCode:
+          type: string
+          format: text
+        name:
+          type: string
+          format: text
+        subsystemList:
+          type: array
+          items:
+            $ref: "#/components/schemas/SubsystemData"
+    MemberDataList:
+      type: array
+      items:
+        $ref: "#/components/schemas/MemberData"
+    SubsystemData:
+      type: object
+      required:
+        - created
+        - subsystemCode
+        - serviceList
+      properties:
+        created:
+          type: string
+          format: date-time
+        subsystemCode:
+          type: string
+          format: text
+        serviceList:
+          type: array
+          items:
+            $ref: "#/components/schemas/ServiceData"
+    ServiceData:
+      type: object
+      required:
+        - created
+        - serviceCode
+        - serviceVersion
+      properties:
+        created:
+          type: string
+          format: date-time
+        serviceCode:
+          type: string
+          format: text
+        serviceVersion:
+          type: string
+          format: text

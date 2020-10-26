@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file.
 
+## 1.0.1 - 2020-10-25
+- OpenAPI description for REST endpoints
+- new endpoint for statistics
+- refactored getServiceStatistics endpoint from POST to GET
+- refactored getServiceStatisticsCSV endpoint from POST to GET
+- refactored getListOfServices endpoint from POST to GET
+- refactored getListOfServicesCSV endpoint from POST to GET
+- update changelogs and documentation
+
 ## 1.0.0 - 2020-10-06
 - new endpoint for statistics
 - new endpoint for statistics in CSV format
