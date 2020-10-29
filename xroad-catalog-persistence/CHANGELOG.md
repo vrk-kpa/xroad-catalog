@@ -2,6 +2,9 @@
 
 All notable changes to this project will be documented in this file.
 
+## 1.0.2 - 2020-10-29
+- Update changelogs and build version
+
 ## 1.0.1 - 2020-10-25
 - OpenAPI description for REST endpoints
 - new endpoint for statistics

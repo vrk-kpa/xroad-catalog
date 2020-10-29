@@ -1,7 +1,7 @@
 openapi: "3.0.0"
 info:
   description: X-Road Catalog API
-  version: "1.0.1"
+  version: "1.0.2"
   title: X-Road Catalog API
   contact:
     name: Population Register Centre (VRK)
