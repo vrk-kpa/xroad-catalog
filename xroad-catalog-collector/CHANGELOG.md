@@ -6,6 +6,7 @@ All notable changes to this project will be documented in this file.
 
 ### Changed
 - update changelogs and build version
+- Ignore fetchCompanies integration test due to service unavailable
 
 ## [1.0.1] - 2020-10-25
 
