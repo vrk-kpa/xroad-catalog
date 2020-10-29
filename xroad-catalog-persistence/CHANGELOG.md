@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## 1.0.3 - 2020-10-29
+- Update changelogs and build version
+- Unignore fetchCompanies integration test due to service unavailable
+
 ## 1.0.2 - 2020-10-29
 - Update changelogs and build version
 - Ignore fetchCompanies integration test due to service unavailable

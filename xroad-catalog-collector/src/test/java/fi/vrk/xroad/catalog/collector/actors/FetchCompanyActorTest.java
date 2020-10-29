@@ -32,7 +32,6 @@ import fi.vrk.xroad.catalog.persistence.CatalogService;
 import akka.actor.ActorRef;
 import akka.actor.ActorSystem;
 import akka.testkit.TestActorRef;
-import fi.vrk.xroad.catalog.persistence.entity.Member;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -65,7 +64,6 @@ public class FetchCompanyActorTest {
     SpringExtension springExtension;
 
     @Test
-    @Ignore
     public void testBasicPlumbing() {
         TestActorRef fetchCompanyActor = TestActorRef.create(actorSystem, springExtension.props("fetchCompaniesActor"));
         ClientType clientType = new ClientType();
