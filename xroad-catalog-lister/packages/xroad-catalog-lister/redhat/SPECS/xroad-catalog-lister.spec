@@ -41,8 +41,8 @@ rm -rf %{buildroot}
 
 %files
 %attr(644,root,root) %{_unitdir}/%{name}.service
-%attr(755,xroad-catalog,xroad-catalog) %{jlib}/%{name}.jar
-%attr(744,xroad-catalog,xroad-catalog) /usr/share/xroad/bin/%{name}
+%attr(755,xroad,xroad) %{jlib}/%{name}.jar
+%attr(744,xroad,xroad) /usr/share/xroad/bin/%{name}
 %config(noreplace) %{conf}/lister-production.properties
 
 %pre
