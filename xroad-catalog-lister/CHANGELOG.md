@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file.
 
-## [1.0.6] - 2020-11-23
+## [1.0.7] - 2020-11-23
 
 ### Changed
 - Changed username of xroad-catalog-collector and xroad-catalog-lister services
