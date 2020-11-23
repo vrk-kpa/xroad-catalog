@@ -51,6 +51,9 @@ rm -rf %{buildroot}
 %config(noreplace) %{conf}/collector-production.properties
 %config(noreplace) %{conf}/catalogdb-production.properties
 
+%attr(644,root,root) %{conf}/application.conf
+%attr(644,root,root) %{conf}/collector-production.properties
+%attr(644,root,root) %{conf}/catalogdb-production.properties
 %attr(644,root,root) /usr/share/xroad/sql/init_database.sql
 %attr(644,root,root) /usr/share/xroad/sql/create_tables.sql
 #%attr(755,root,root) /etc/cron.d/%{name}
