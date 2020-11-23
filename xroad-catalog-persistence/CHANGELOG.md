@@ -2,6 +2,9 @@
 
 All notable changes to this project will be documented in this file.
 
+## 1.0.5 - 2020-11-23
+- Changed username of xroad-catalog-collector and xroad-catalog-lister services
+
 ## 1.0.4 - 2020-11-23
 - New method to check if db is working
 - Add bash script to automate update of project version
