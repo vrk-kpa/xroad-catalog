@@ -35,6 +35,7 @@ import lombok.ToString;
 @EqualsAndHashCode
 @RequiredArgsConstructor
 public class SecurityServerInfo {
+    private final String xRoadInstance;
     private final String serverCode;
     private final String address;
     private final String memberClass;

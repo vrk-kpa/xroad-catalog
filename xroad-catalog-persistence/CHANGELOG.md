@@ -2,6 +2,9 @@
 
 All notable changes to this project will be documented in this file.
 
+## 1.0.8 - 2020-11-23
+- new field to GetListOfServices response to show XRoadInstance
+
 ## 1.0.7 - 2020-11-23
 - Changed username of xroad-catalog-collector and xroad-catalog-lister services
 
