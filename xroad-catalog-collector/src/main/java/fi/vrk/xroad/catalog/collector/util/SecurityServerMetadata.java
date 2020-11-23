@@ -20,12 +20,17 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package fi.vrk.xroad.catalog.persistence.entity;
+package fi.vrk.xroad.catalog.collector.util;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 
-import javax.persistence.*;
-import java.time.LocalDateTime;
+import javax.persistence.Entity;
 
 @Entity
 @Getter
@@ -33,36 +38,14 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-@EqualsAndHashCode(exclude = {"id"})
+@EqualsAndHashCode
 @Builder
-public class ErrorLog {
-    @Id
-    @Column(nullable = false)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "ERROR_LOG_GEN")
-    @SequenceGenerator(name = "ERROR_LOG_GEN", sequenceName = "ERROR_LOG_ID_SEQ", allocationSize = 1)
-    private long id;
-    @Column(nullable = false)
-    private String message;
-    @Column(nullable = false)
-    private String code;
-    @Column(nullable = false)
-    private LocalDateTime created;
-    @Column
+public class SecurityServerMetadata {
+
     private String xRoadInstance;
-    @Column
+
     private String memberClass;
-    @Column
+
     private String memberCode;
-    @Column
-    private String subsystemCode;
-    @Column
-    private String groupCode;
-    @Column
-    private String serviceCode;
-    @Column
-    private String serviceVersion;
-    @Column
-    private String securityCategoryCode;
-    @Column
-    private String serverCode;
+
 }

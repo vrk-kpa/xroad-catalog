@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.4] - 2020-11-23
+
+### Added
+- bash script to automate update of project version
+
+### Changed
+- new field to GetServiceStatistics response to show number of services, which are neither REST or Soap
+- refacto error_log to have additional fields like xRoadInstance, memberClass, memberCode etc.
+- update changelogs and documentation
+
 ## [1.0.3] - 2020-10-29
 
 ### Changed

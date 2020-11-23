@@ -64,6 +64,7 @@ public class ServiceControllerTests {
         for (int i = 0; i < serviceStatisticsList.length(); i++) {
             assertTrue(serviceStatisticsList.optJSONObject(i).optLong("numberOfSoapServices") > 0);
             assertTrue(serviceStatisticsList.optJSONObject(i).optLong("numberOfRestServices") > 0);
+            assertTrue(serviceStatisticsList.optJSONObject(i).optLong("numberOfOtherServices") > 0);
             assertTrue(serviceStatisticsList.optJSONObject(i).optLong("totalNumberOfDistinctServices") > 0);
         }
     }
@@ -103,19 +104,21 @@ public class ServiceControllerTests {
         List<String> csvContent = Arrays.asList(response.getBody().split("\r\n"));
         assertEquals(61, csvContent.size());
         List<String> csvHeader = Arrays.asList(csvContent.get(0).split(","));
-        assertEquals(4, csvHeader.size());
+        assertEquals(5, csvHeader.size());
         assertEquals("Date", csvHeader.get(0));
         assertEquals("Number of REST services", csvHeader.get(1));
         assertEquals("Number of SOAP services", csvHeader.get(2));
-        assertEquals("Total distinct services", csvHeader.get(3));
+        assertEquals("Number of other services", csvHeader.get(3));
+        assertEquals("Total distinct services", csvHeader.get(4));
 
         for (int i = 1; i < csvContent.size() - 1; i++) {
             List<String> csvRowContent = Arrays.asList(csvContent.get(i).split(","));
-            assertEquals(4, csvRowContent.size());
+            assertEquals(5, csvRowContent.size());
             assertEquals(23, csvRowContent.get(0).length());
             assertTrue(Integer.parseInt(csvRowContent.get(1)) > 0);
             assertTrue(Integer.parseInt(csvRowContent.get(2)) > 0);
             assertTrue(Integer.parseInt(csvRowContent.get(3)) > 0);
+            assertTrue(Integer.parseInt(csvRowContent.get(4)) > 0);
         }
     }
 
@@ -165,7 +168,7 @@ public class ServiceControllerTests {
 
             assertEquals("TestSubSystem", memberDataListJson.optJSONObject(0).optJSONArray("subsystemList")
                     .optJSONObject(0).optString("subsystemCode"));
-            assertEquals(2, memberDataListJson.optJSONObject(0).optJSONArray("subsystemList")
+            assertEquals(3, memberDataListJson.optJSONObject(0).optJSONArray("subsystemList")
                     .optJSONObject(0).optJSONArray("serviceList").length());
 
             assertEquals(0, memberDataListJson.optJSONObject(1).optJSONArray("subsystemList").length());
@@ -216,9 +219,9 @@ public class ServiceControllerTests {
         assertNotNull(response.getBody());
         assertEquals(200, response.getStatusCodeValue());
         List<String> csvContent = Arrays.asList(response.getBody().split("\r\n"));
-        assertEquals(1144, csvContent.size());
+        assertEquals(1204, csvContent.size());
         List<String> csvHeader = Arrays.asList(csvContent.get(0).split(","));
-        assertEquals(11, csvHeader.size());
+        assertEquals(13, csvHeader.size());
         assertEquals("Date", csvHeader.get(0));
         assertEquals("XRoad instance", csvHeader.get(1));
         assertEquals("Member class", csvHeader.get(2));
@@ -227,9 +230,11 @@ public class ServiceControllerTests {
         assertEquals("Member created", csvHeader.get(5));
         assertEquals("Subsystem code", csvHeader.get(6));
         assertEquals("Subsystem created", csvHeader.get(7));
-        assertEquals("Service code", csvHeader.get(8));
-        assertEquals("Service version", csvHeader.get(9));
-        assertEquals("Service created", csvHeader.get(10));
+        assertEquals("Subsystem active", csvHeader.get(8));
+        assertEquals("Service code", csvHeader.get(9));
+        assertEquals("Service version", csvHeader.get(10));
+        assertEquals("Service created", csvHeader.get(11));
+        assertEquals("Service active", csvHeader.get(12));
 
         for (int i = 1; i < csvContent.size() - 1; i++) {
             List<String> csvRowContent = Arrays.asList(csvContent.get(i).split(","));

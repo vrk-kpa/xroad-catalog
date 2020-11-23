@@ -100,11 +100,12 @@ public class ServiceController {
             try {
                 StringWriter sw = new StringWriter();
                 CSVPrinter csvPrinter = new CSVPrinter(sw, CSVFormat.DEFAULT
-                        .withHeader("Date", "Number of REST services", "Number of SOAP services", "Total distinct services"));
+                        .withHeader("Date", "Number of REST services", "Number of SOAP services", "Number of other services", "Total distinct services"));
                 serviceStatisticsList.forEach(serviceStatistics -> printCSVRecord(csvPrinter,
                         Arrays.asList(serviceStatistics.getCreated().toString(),
                                 serviceStatistics.getNumberOfRestServices().toString(),
                                 serviceStatistics.getNumberOfSoapServices().toString(),
+                                serviceStatistics.getNumberOfOtherServices().toString(),
                                 serviceStatistics.getTotalNumberOfDistinctServices().toString())));
                 String reportName = "service_statistics_" + LocalDateTime.now().toString();
                 sw.close();
@@ -155,8 +156,8 @@ public class ServiceController {
                 StringWriter sw = new StringWriter();
                 CSVPrinter csvPrinter = new CSVPrinter(sw, CSVFormat.DEFAULT
                         .withHeader("Date", "XRoad instance", "Member class", "Member code",
-                                "Member name", "Member created", "Subsystem code", "Subsystem created",
-                                "Service code", "Service version", "Service created"));
+                                "Member name", "Member created", "Subsystem code", "Subsystem created", "Subsystem active",
+                                "Service code", "Service version", "Service created", "Service active"));
                 printListOfServicesCSV(csvPrinter, memberDataList, securityServerList);
                 String reportName = "list_of_services_" + LocalDateTime.now().toString();
                 sw.close();
@@ -182,7 +183,7 @@ public class ServiceController {
 
     private void printListOfServicesCSV(CSVPrinter csvPrinter, List<MemberDataList> memberDataList, List<SecurityServerInfo> securityServerList) {
         memberDataList.forEach(memberList -> {
-            printCSVRecord(csvPrinter, Arrays.asList(memberList.getDate().toString(), "", "", "", "", "", "", "", "", "", ""));
+            printCSVRecord(csvPrinter, Arrays.asList(memberList.getDate().toString(), "", "", "", "", "", "", "", "", "", "", "", ""));
             memberList.getMemberDataList().forEach(memberData -> {
                 String memberCreated = memberData.getCreated().toString();
                 String xRoadInstance = memberData.getXRoadInstance();
@@ -192,31 +193,32 @@ public class ServiceController {
 
                 if (memberData.getSubsystemList().isEmpty() || memberData.getSubsystemList() == null) {
                     printCSVRecord(csvPrinter, Arrays.asList("", xRoadInstance, memberClass, memberCode, memberName,
-                            memberCreated, "", "", "", "", ""));
+                            memberCreated, "", "", "", "", "", "", ""));
                 }
 
                 memberData.getSubsystemList().forEach(subsystemData -> {
 
                     if (subsystemData.getServiceList().isEmpty() || subsystemData.getServiceList() == null) {
                         printCSVRecord(csvPrinter, Arrays.asList("", xRoadInstance, memberClass, memberCode, memberName, memberCreated,
-                                subsystemData.getSubsystemCode(), subsystemData.getCreated().toString(), "", "", ""));
+                                subsystemData.getSubsystemCode(), subsystemData.getCreated().toString(), subsystemData.getActive().toString(),
+                                "", "", "", ""));
                     }
 
                     subsystemData.getServiceList().forEach(serviceData -> printCSVRecord(csvPrinter, Arrays.asList(
                             "", xRoadInstance, memberClass, memberCode, memberName, memberCreated, subsystemData.getSubsystemCode(),
-                            subsystemData.getCreated().toString(), serviceData.getServiceCode(), serviceData.getServiceVersion(),
-                            serviceData.getCreated().toString())));
+                            subsystemData.getCreated().toString(), subsystemData.getActive().toString(), serviceData.getServiceCode(),
+                            serviceData.getServiceVersion(), serviceData.getCreated().toString(), serviceData.getActive().toString())));
                 });
             });
         });
 
         if (securityServerList != null && !securityServerList.isEmpty()) {
-            printCSVRecord(csvPrinter, Arrays.asList("", "Security server (SS) info:", "", "", "", "", "", "", "", "", ""));
-            printCSVRecord(csvPrinter, Arrays.asList("member class", "member code", "server code", "address", "", "", "", "", "","", ""));
+            printCSVRecord(csvPrinter, Arrays.asList("", "Security server (SS) info:", "", "", "", "", "", "", "", "", "", "", ""));
+            printCSVRecord(csvPrinter, Arrays.asList("member class", "member code", "server code", "address", "", "", "", "", "","", "", "", ""));
 
             securityServerList.forEach(securityServerInfo -> printCSVRecord(csvPrinter, Arrays.asList(securityServerInfo.getMemberClass(),
                     securityServerInfo.getMemberCode(), securityServerInfo.getServerCode(), securityServerInfo.getAddress()
-                    , "", "", "", "", "", "", "")));
+                    , "", "", "", "", "", "", "", "", "")));
         }
     }
 

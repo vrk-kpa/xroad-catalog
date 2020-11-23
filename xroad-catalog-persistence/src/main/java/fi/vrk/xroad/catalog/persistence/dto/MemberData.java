@@ -53,5 +53,7 @@ public class MemberData implements Serializable {
 
     private String name;
 
+    private Boolean provider;
+
     private List<SubsystemData> subsystemList;
 }

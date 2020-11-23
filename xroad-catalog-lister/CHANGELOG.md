@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.4] - 2020-11-23
+
+### Added
+- SpringDoc OpenAPI UI support to generate and serve OpenAPI documentation
+- new endpoint to show heartbeat of X-Road-Catalog Lister
+- bash script to automate update of project version
+
+### Changed
+- new field to GetListOfServices response to indicate if subsystem is active
+- new field to GetListOfServices response to indicate if service is active
+- new field to GetListOfServices response to indicate if member is provider
+- new field to GetServiceStatistics response to show number of services, which are neither REST or Soap
+- refacto error_log to have additional fields like xRoadInstance, memberClass, memberCode etc.
+- update changelogs and documentation
+
 ## [1.0.3] - 2020-10-29
 
 ### Changed

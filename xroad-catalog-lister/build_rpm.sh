@@ -12,10 +12,10 @@ CMD="-ba"
 
 rm -rf ${ROOT}/RPMS/*
 
-
+app_version=1.0.4
 
 rpmbuild \
-    --define "xroad_catalog_version 1.0.3" \
+    --define "xroad_catalog_version $app_version" \
     --define "rel $RELEASE" \
     --define "snapshot .$SNAPSHOT" \
     --define "_topdir $ROOT" \

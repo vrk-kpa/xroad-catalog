@@ -47,4 +47,6 @@ public class ServiceData implements Serializable {
     private String serviceCode;
 
     private String serviceVersion;
+
+    private Boolean active;
 }
