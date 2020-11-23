@@ -329,6 +329,12 @@ public interface CatalogService {
     Company saveCompany(Company company);
 
     /**
+     * Checks if database is alive
+     * @return databaseConnection
+     */
+    Boolean checkDatabaseConnection();
+
+    /**
      * Saves given BusinessName data.
      * @param businessName the BusinessName
      */

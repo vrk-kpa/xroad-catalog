@@ -39,7 +39,7 @@ import org.springframework.util.Assert;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;
-import java.util.function.Predicate;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -244,6 +244,7 @@ public class CatalogServiceImpl implements CatalogService {
         while (dateInPast.isBefore(today) || dateInPast.isEqual(today)) {
             AtomicLong numberOfSoapServices = new AtomicLong();
             AtomicLong numberOfRestServices = new AtomicLong();
+            AtomicLong numberOfOtherServices = new AtomicLong();
             AtomicLong totalDistinctServices = new AtomicLong();
 
             LocalDateTime finalDateInPast = dateInPast;
@@ -255,6 +256,9 @@ public class CatalogServiceImpl implements CatalogService {
                     }
                     if (service.hasWsdl()) {
                         numberOfSoapServices.getAndIncrement();
+                    }
+                    if (!service.hasOpenApi() & !service.hasWsdl()) {
+                        numberOfOtherServices.getAndIncrement();
                     }
                 }
             });
@@ -268,6 +272,7 @@ public class CatalogServiceImpl implements CatalogService {
                     .created(dateInPast)
                     .numberOfRestServices(numberOfRestServices.longValue())
                     .numberOfSoapServices(numberOfSoapServices.longValue())
+                    .numberOfOtherServices(numberOfOtherServices.longValue())
                     .totalNumberOfDistinctServices(totalDistinctServices.longValue()).build();
 
             serviceStatisticsList.add(serviceStatistics);
@@ -288,27 +293,35 @@ public class CatalogServiceImpl implements CatalogService {
             members.forEach(member -> {
                 LocalDateTime creationDate = member.getStatusInfo().getCreated();
                 if (creationDate.isBefore(finalDateInPast) || creationDate.isEqual(finalDateInPast)) {
-                    Set<Subsystem> subsystems = member.getActiveSubsystems();
+                    AtomicReference<Boolean> isProvider = new AtomicReference<>();
+                    isProvider.set(Boolean.FALSE);
+                    Set<Subsystem> subsystems = member.getAllSubsystems();
                     List<SubsystemData> subsystemDataList = new ArrayList<>();
                     subsystems.forEach(subsystem -> {
                         List<ServiceData> serviceDataList = new ArrayList<>();
-                        Set<Service> services = subsystem.getActiveServices();
+                        Set<Service> services = subsystem.getAllServices();
                         services.forEach(service -> {
                             ServiceData serviceData = ServiceData.builder()
                                     .created(service.getStatusInfo().getCreated())
                                     .serviceCode(service.getServiceCode())
+                                    .active(!service.getStatusInfo().isRemoved())
                                     .serviceVersion(service.getServiceVersion()).build();
                             serviceDataList.add(serviceData);
+                            if (service.hasWsdl() || service.hasOpenApi()) {
+                                isProvider.set(Boolean.TRUE);
+                            }
                         });
                         SubsystemData subsystemData = SubsystemData.builder()
                                 .created(subsystem.getStatusInfo().getCreated())
                                 .subsystemCode(subsystem.getSubsystemCode())
+                                .active(!subsystem.getStatusInfo().isRemoved())
                                 .serviceList(serviceDataList).build();
                         subsystemDataList.add(subsystemData);
                     });
 
                     MemberData memberData = MemberData.builder()
                             .created(creationDate)
+                            .provider(isProvider.get())
                             .memberClass(member.getMemberClass())
                             .memberCode(member.getMemberCode())
                             .name(member.getName())
@@ -705,6 +718,11 @@ public class CatalogServiceImpl implements CatalogService {
     public void deleteOldErrorLogEntries(Integer daysBefore) {
         LocalDateTime oldDate = LocalDateTime.now().minusDays(daysBefore);
         errorLogRepository.deleteEntriesOlderThan(oldDate);
+    }
+
+    @Override
+    public Boolean checkDatabaseConnection() {
+        return Integer.valueOf(1).equals(memberRepository.checkConnection());
     }
 
     private void handleOldMember(LocalDateTime now, Member member, Member oldMember) {

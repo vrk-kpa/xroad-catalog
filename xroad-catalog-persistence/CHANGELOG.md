@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
+## 1.0.4 - 2020-11-23
+- New method to check if db is working
+- Add bash script to automate update of project version
+- refacto GetListOfServices to have new fields to indicate if subsystem is active, service is active and member is provider
+- refacto GetServiceStatistics to have a new field to show number of services, which are neither REST or Soap
+- refacto error_log to have additional fields like xRoadInstance, memberClass, memberCode etc.
+- Update changelogs and build version
+
 ## 1.0.3 - 2020-10-29
 - Update changelogs and build version
 - Unignore fetchCompanies integration test due to service unavailable

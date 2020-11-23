@@ -823,6 +823,15 @@ CREATE TABLE IF NOT EXISTS error_log (
     id BIGSERIAL PRIMARY KEY NOT NULL,
     message TEXT NOT NULL,
     code TEXT NOT NULL,
+    x_road_instance TEXT,
+    member_class TEXT,
+    member_code TEXT,
+    subsystem_code TEXT,
+    group_code TEXT,
+    service_code TEXT,
+    service_version TEXT,
+    security_category_code TEXT,
+    server_code TEXT,
     created TIMESTAMP WITH TIME ZONE NOT NULL
 );
 

@@ -72,7 +72,7 @@ public class FetchOrganizationsActor extends XRoadCatalogActor {
 
             log.info("Fetching organizations from {}", fetchOrganizationsUrl);
 
-            List<String> organizationIds = OrganizationUtil.getOrganizationIdsList(fetchOrganizationsUrl,
+            List<String> organizationIds = OrganizationUtil.getOrganizationIdsList((ClientType)message, fetchOrganizationsUrl,
                     fetchOrganizationsLimit, catalogService);
             int numberOfOrganizations = organizationIds.size();
             log.info("Fetched {} organization GUIDs from {}", numberOfOrganizations, fetchOrganizationsUrl);
@@ -87,14 +87,14 @@ public class FetchOrganizationsActor extends XRoadCatalogActor {
                     batchCount.getAndIncrement();
                     log.info("Saving {}. batch of {} organizations out of total {}",
                             batchCount.get(), guidsList.size(), numberOfOrganizations);
-                    saveBatch(OrganizationUtil.getDataByIds(guidsList, fetchOrganizationsUrl, catalogService));
+                    saveBatch(OrganizationUtil.getDataByIds((ClientType) message, guidsList, fetchOrganizationsUrl, catalogService));
                     guidsList.clear();
                 }
                 if (elementCount.get() == organizationIds.size()) {
                     batchCount.getAndIncrement();
                     log.info("Saving {}. batch of {} organizations out of total {}",
                             batchCount.get(), guidsList.size(), numberOfOrganizations);
-                    saveBatch(OrganizationUtil.getDataByIds(guidsList, fetchOrganizationsUrl, catalogService));
+                    saveBatch(OrganizationUtil.getDataByIds((ClientType) message, guidsList, fetchOrganizationsUrl, catalogService));
                 }
             });
             log.info("Saved data of {} organizations successfully", numberOfOrganizations);

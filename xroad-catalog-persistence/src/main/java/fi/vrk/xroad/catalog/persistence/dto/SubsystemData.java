@@ -47,6 +47,8 @@ public class SubsystemData implements Serializable {
 
     private String subsystemCode;
 
+    private Boolean active;
+
     private List<ServiceData> serviceList;
 
 }

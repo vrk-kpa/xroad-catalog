@@ -42,6 +42,8 @@ import java.util.List;
 @Slf4j
 public class MethodListUtil {
 
+    private static SecurityServerMetadata securityServerMetadata;
+
     private MethodListUtil() {
         // Private empty constructor
     }
@@ -98,6 +100,26 @@ public class MethodListUtil {
         return json.toString();
     }
 
+    public static ErrorLog createErrorLog(ClientType clientType, String message, String code) {
+        if (clientType != null) {
+            return ErrorLog.builder()
+                    .created(LocalDateTime.now())
+                    .message(message)
+                    .code(code)
+                    .xRoadInstance(clientType.getId().getXRoadInstance())
+                    .memberClass(clientType.getId().getMemberClass())
+                    .memberCode(clientType.getId().getMemberCode())
+                    .groupCode(clientType.getId().getGroupCode())
+                    .securityCategoryCode(clientType.getId().getSecurityCategoryCode())
+                    .serverCode(clientType.getId().getServerCode())
+                    .serviceCode(clientType.getId().getServiceCode())
+                    .serviceVersion(clientType.getId().getServiceVersion())
+                    .subsystemCode(clientType.getId().getSubsystemCode())
+                    .build();
+        }
+        return ErrorLog.builder().created(LocalDateTime.now()).message(message).code(code).build();
+    }
+
     private static boolean isTimeBetweenHours(int fetchHourAfter, int fetchHourBefore) {
         LocalDateTime today = LocalDateTime.now();
         LocalDateTime fetchTimeFrom = LocalDate.now().atTime(fetchHourAfter, 0);
@@ -126,13 +148,24 @@ public class MethodListUtil {
             JSONObject json = new JSONObject(response.getBody());
             return json;
         } catch (Exception e) {
-            log.error("Fetch of REST services failed: " + e.getMessage());
-            ErrorLog errorLog = ErrorLog.builder()
-                    .created(LocalDateTime.now()).message("Fetch of REST services failed(url: " + url + ", clientType: "
-                            + ClientTypeUtil.toString(clientType) + "): " + e.getMessage()).code("500").build();
-            catalogService.saveErrorLog(errorLog);
+            SecurityServerMetadata newSecurityServerMetadata = SecurityServerMetadata.builder()
+                    .xRoadInstance(clientType.getId().getXRoadInstance())
+                    .memberClass(clientType.getId().getMemberClass())
+                    .memberCode(clientType.getId().getMemberCode())
+                    .build();
+            if (!newSecurityServerMetadata.equals(securityServerMetadata)) {
+                log.error("Fetch of REST services failed: " + e.getMessage());
+                ErrorLog errorLog = createErrorLog(clientType,
+                        "Fetch of REST services failed(url: " + url + "): " + e.getMessage(),
+                        "500");
+                catalogService.saveErrorLog(errorLog);
+                securityServerMetadata = SecurityServerMetadata.builder()
+                        .xRoadInstance(clientType.getId().getXRoadInstance())
+                        .memberClass(clientType.getId().getMemberClass())
+                        .memberCode(clientType.getId().getMemberCode())
+                        .build();
+            }
             return null;
         }
     }
-
 }

@@ -34,7 +34,6 @@ import org.json.JSONObject;
 import org.springframework.http.*;
 import org.springframework.web.client.RestTemplate;
 
-import java.time.LocalDateTime;
 
 /**
  * Helper for client list
@@ -54,9 +53,9 @@ public class ClientListUtil {
             JSONObject json = new JSONObject(response.getBody());
             members = json.getJSONArray("member");
         } catch (Exception e) {
-            ErrorLog errorLog = ErrorLog.builder()
-                    .created(LocalDateTime.now()).message("Error when fetching listClients(url: " + url + "): "
-                            + e.getMessage()).code("500").build();
+            ErrorLog errorLog = MethodListUtil.createErrorLog(null,
+                    "Error when fetching listClients(url: " + url + "): " + e.getMessage(),
+                    "500");
             catalogService.saveErrorLog(errorLog);
         }
 

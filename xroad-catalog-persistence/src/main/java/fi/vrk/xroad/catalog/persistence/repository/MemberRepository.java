@@ -69,4 +69,7 @@ public interface MemberRepository extends CrudRepository<Member, Long> {
                                   @Param("memberClass") String memberClass,
                                   @Param("memberCode") String memberCode);
 
+    @Query(value = "SELECT 1", nativeQuery = true)
+    Integer checkConnection();
+
 }

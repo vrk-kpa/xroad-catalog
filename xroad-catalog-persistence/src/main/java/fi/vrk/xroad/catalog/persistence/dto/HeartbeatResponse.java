@@ -20,49 +20,29 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package fi.vrk.xroad.catalog.persistence.entity;
+package fi.vrk.xroad.catalog.persistence.dto;
 
 import lombok.*;
 
-import javax.persistence.*;
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
-@Entity
-@Getter
-@Setter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@ToString
-@EqualsAndHashCode(exclude = {"id"})
-@Builder
-public class ErrorLog {
-    @Id
-    @Column(nullable = false)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "ERROR_LOG_GEN")
-    @SequenceGenerator(name = "ERROR_LOG_GEN", sequenceName = "ERROR_LOG_ID_SEQ", allocationSize = 1)
-    private long id;
-    @Column(nullable = false)
-    private String message;
-    @Column(nullable = false)
-    private String code;
-    @Column(nullable = false)
-    private LocalDateTime created;
-    @Column
-    private String xRoadInstance;
-    @Column
-    private String memberClass;
-    @Column
-    private String memberCode;
-    @Column
-    private String subsystemCode;
-    @Column
-    private String groupCode;
-    @Column
-    private String serviceCode;
-    @Column
-    private String serviceVersion;
-    @Column
-    private String securityCategoryCode;
-    @Column
-    private String serverCode;
+@Data
+public class HeartbeatResponse implements Serializable {
+
+    private static final long serialVersionUID = 4048861576368846345L;
+
+    private Boolean appWorking;
+
+    private Boolean dbWorking;
+
+    private String appName;
+
+    private String appVersion;
+
+    private LocalDateTime systemTime;
+
 }
