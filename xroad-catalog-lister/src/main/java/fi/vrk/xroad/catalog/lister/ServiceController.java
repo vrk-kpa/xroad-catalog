@@ -214,11 +214,12 @@ public class ServiceController {
 
         if (securityServerList != null && !securityServerList.isEmpty()) {
             printCSVRecord(csvPrinter, Arrays.asList("", "Security server (SS) info:", "", "", "", "", "", "", "", "", "", "", ""));
-            printCSVRecord(csvPrinter, Arrays.asList("member class", "member code", "server code", "address", "", "", "", "", "","", "", "", ""));
+            printCSVRecord(csvPrinter, Arrays.asList("instance", "member class", "member code", "server code", "address", "", "", "", "", "","", "", ""));
 
-            securityServerList.forEach(securityServerInfo -> printCSVRecord(csvPrinter, Arrays.asList(securityServerInfo.getMemberClass(),
-                    securityServerInfo.getMemberCode(), securityServerInfo.getServerCode(), securityServerInfo.getAddress()
-                    , "", "", "", "", "", "", "", "", "")));
+            securityServerList.forEach(securityServerInfo -> printCSVRecord(csvPrinter, Arrays.asList(securityServerInfo.getXRoadInstance(),
+                    securityServerInfo.getMemberClass(), securityServerInfo.getMemberCode(),
+                    securityServerInfo.getServerCode(), securityServerInfo.getAddress()
+                    , "", "", "", "", "", "", "", "")));
         }
     }
 

@@ -27,6 +27,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
+import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -70,7 +71,7 @@ public class SharedParamsParser {
         document.setXmlVersion("1.0");
         document.getDocumentElement().normalize();
         Element root = document.getDocumentElement();
-
+        String xRoadInstance = root.getChildNodes().item(1).getFirstChild().getNodeValue();
         NodeList members = root.getElementsByTagName("member");
         NodeList securityServers = root.getElementsByTagName("securityServer");
         Set<SecurityServerInfo> securityServerInfos = new HashSet<>();
@@ -94,7 +95,7 @@ public class SharedParamsParser {
                             String memberCode =
                                     memberElement.getElementsByTagName("memberCode").item(0).getTextContent();
                             SecurityServerInfo info =
-                                    new SecurityServerInfo(serverCode, address, memberClass, memberCode);
+                                    new SecurityServerInfo(xRoadInstance, serverCode, address, memberClass, memberCode);
                             log.debug("SecurityServerInfo: {}", info);
                             securityServerInfos.add(info);
                             break;
