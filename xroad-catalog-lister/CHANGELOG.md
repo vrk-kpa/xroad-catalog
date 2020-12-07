@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file.
 
-## [1.0.10] - 2020-12-07
+## [1.0.11] - 2020-12-07
 
 ### Changed
 - fixed GetErrorLog response to have information about security server, xRoadInstance etc
