@@ -1122,9 +1122,17 @@ public class JaxbConverter {
             er.setCreated(toXmlGregorianCalendar(errorLog.getCreated()));
             er.setMessage(errorLog.getMessage());
             er.setCode(errorLog.getCode());
+            er.setXRoadInstance(errorLog.getXRoadInstance());
+            er.setMemberClass(errorLog.getMemberClass());
+            er.setMemberCode(errorLog.getMemberCode());
+            er.setSubsystemCode(errorLog.getSubsystemCode());
+            er.setGroupCode(errorLog.getGroupCode());
+            er.setServiceCode(errorLog.getServiceCode());
+            er.setServiceVersion(errorLog.getServiceVersion());
+            er.setSecurityCategoryCode(errorLog.getSecurityCategoryCode());
+            er.setServerCode(errorLog.getServerCode());
             converted.add(er);
         }
         return converted;
     }
-
 }
