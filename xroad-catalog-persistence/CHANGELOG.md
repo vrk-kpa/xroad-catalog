@@ -2,6 +2,9 @@
 
 All notable changes to this project will be documented in this file.
 
+## 1.0.10 - 2020-12-07
+- fixed GetErrorLog response to have information about security server, xRoadInstance etc
+
 ## 1.0.9 - 2020-11-24
 - new field to GetListOfServices response to show XRoadInstance
 

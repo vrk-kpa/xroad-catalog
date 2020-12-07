@@ -956,6 +956,15 @@ http://x-road.eu/xsd/identifiers ">
                 <xs:sequence>
                     <xs:element name="message" type="xs:string"/>
                     <xs:element name="code" type="xs:string"/>
+                    <xs:element name="xRoadInstance" type="xs:string"/>
+                    <xs:element name="memberClass" type="xs:string"/>
+                    <xs:element name="memberCode" type="xs:string"/>
+                    <xs:element name="subsystemCode" type="xs:string"/>
+                    <xs:element name="groupCode" type="xs:string"/>
+                    <xs:element name="serviceCode" type="xs:string"/>
+                    <xs:element name="serviceVersion" type="xs:string"/>
+                    <xs:element name="securityCategoryCode" type="xs:string"/>
+                    <xs:element name="serverCode" type="xs:string"/>
                     <xs:element name="created" type="xs:dateTime"/>
                 </xs:sequence>
             </xs:complexType>
