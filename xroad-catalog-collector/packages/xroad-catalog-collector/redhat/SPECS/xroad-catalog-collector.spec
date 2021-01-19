@@ -58,7 +58,7 @@ rm -rf %{buildroot}
 %attr(644,root,root) /usr/share/xroad/sql/create_tables.sql
 #%attr(755,root,root) /etc/cron.d/%{name}
 %attr(644,root,root) %{_unitdir}/%{name}.service
-%attr(744,xroad,xroad) %{jlib}/%{name}.jar
+%attr(755,xroad,xroad) %{jlib}/%{name}.jar
 %attr(744,xroad,xroad) /usr/share/xroad/bin/%{name}
 
 %pre
