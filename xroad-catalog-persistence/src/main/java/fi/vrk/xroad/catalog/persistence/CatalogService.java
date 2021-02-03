@@ -22,7 +22,6 @@
  */
 package fi.vrk.xroad.catalog.persistence;
 
-import fi.vrk.xroad.catalog.persistence.dto.MemberData;
 import fi.vrk.xroad.catalog.persistence.dto.MemberDataList;
 import fi.vrk.xroad.catalog.persistence.dto.ServiceStatistics;
 import fi.vrk.xroad.catalog.persistence.entity.*;

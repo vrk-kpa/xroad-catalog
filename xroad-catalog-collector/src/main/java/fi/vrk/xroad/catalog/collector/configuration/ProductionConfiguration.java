@@ -23,14 +23,8 @@
 package fi.vrk.xroad.catalog.collector.configuration;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
-import org.springframework.core.env.Environment;
-import org.springframework.http.client.SimpleClientHttpRequestFactory;
-import org.springframework.web.client.RestOperations;
-import org.springframework.web.client.RestTemplate;
 
 /**
  * Configuration for production environment.
