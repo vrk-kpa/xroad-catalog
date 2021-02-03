@@ -35,7 +35,7 @@ import java.time.LocalDateTime;
 
 @RestController
 @RequestMapping("/api")
-@PropertySource("classpath:lister.properties")
+@PropertySource("classpath:version.properties")
 public class HeartbeatController {
 
     @Value("${xroad-catalog.app-name}")
