@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.1.0] - 2021-02-09
+
+### Changed
+- fixed XRoad-Catalog Collector properties files access rights
+- updated license in file headers
+- substituted IsSoapService and IsRestService with GetServiceType
+- refacto of GetServiceStatistics and GetServiceStatisticsCSV related to having REST services instead of OTHER services
+- updated documentation
+
 ## [1.0.11] - 2020-12-07
 
 ### Changed
