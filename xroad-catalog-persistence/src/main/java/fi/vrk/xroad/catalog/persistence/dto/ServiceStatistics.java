@@ -1,6 +1,6 @@
 /**
  * The MIT License
- * Copyright (c) 2020, Population Register Centre (VRK)
+ * Copyright (c) 2021, Population Register Centre (VRK)
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -48,14 +48,14 @@ public class ServiceStatistics implements Serializable {
 
     private Long numberOfRestServices;
 
-    private Long numberOfOtherServices;
+    private Long numberOfOpenApiServices;
 
     private Long totalNumberOfDistinctServices;
 
     @Override
     public String toString() {
         return "{\"created\":" + created + ",\"numberOfSoapServices\":\"" + numberOfSoapServices
-                + "\",\"numberOfRestServices\":\"" + numberOfRestServices + "\",\"numberOfOtherServices\":\"" + numberOfOtherServices +
+                + "\",\"numberOfRestServices\":\"" + numberOfRestServices + "\",\"numberOfOpenApiServices\":\"" + numberOfOpenApiServices +
                 "\",\"totalNumberOfDistinctServices\":" + totalNumberOfDistinctServices + "}";
     }
 }

@@ -1,6 +1,6 @@
 /**
  * The MIT License
- * Copyright (c) 2020, Population Register Centre (VRK)
+ * Copyright (c) 2021, Population Register Centre (VRK)
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,8 +24,6 @@ package fi.vrk.xroad.catalog.persistence.repository;
 
 import fi.vrk.xroad.catalog.persistence.entity.StreetAddressMunicipality;
 import org.springframework.data.repository.CrudRepository;
-
-import java.util.List;
 
 public interface StreetAddressMunicipalityRepository extends CrudRepository<StreetAddressMunicipality, Long> {
 

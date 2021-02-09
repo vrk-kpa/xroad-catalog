@@ -1,6 +1,6 @@
 /**
  * The MIT License
- * Copyright (c) 2020, Population Register Centre (VRK)
+ * Copyright (c) 2021, Population Register Centre (VRK)
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -64,7 +64,7 @@ public class ServiceControllerTests {
         for (int i = 0; i < serviceStatisticsList.length(); i++) {
             assertTrue(serviceStatisticsList.optJSONObject(i).optLong("numberOfSoapServices") > 0);
             assertTrue(serviceStatisticsList.optJSONObject(i).optLong("numberOfRestServices") > 0);
-            assertTrue(serviceStatisticsList.optJSONObject(i).optLong("numberOfOtherServices") > 0);
+            assertTrue(serviceStatisticsList.optJSONObject(i).optLong("numberOfOpenApiServices") > 0);
             assertTrue(serviceStatisticsList.optJSONObject(i).optLong("totalNumberOfDistinctServices") > 0);
         }
     }
@@ -108,7 +108,7 @@ public class ServiceControllerTests {
         assertEquals("Date", csvHeader.get(0));
         assertEquals("Number of REST services", csvHeader.get(1));
         assertEquals("Number of SOAP services", csvHeader.get(2));
-        assertEquals("Number of other services", csvHeader.get(3));
+        assertEquals("Number of OpenApi services", csvHeader.get(3));
         assertEquals("Total distinct services", csvHeader.get(4));
 
         for (int i = 1; i < csvContent.size() - 1; i++) {
@@ -168,7 +168,7 @@ public class ServiceControllerTests {
 
             assertEquals("TestSubSystem", memberDataListJson.optJSONObject(0).optJSONArray("subsystemList")
                     .optJSONObject(0).optString("subsystemCode"));
-            assertEquals(3, memberDataListJson.optJSONObject(0).optJSONArray("subsystemList")
+            assertEquals(4, memberDataListJson.optJSONObject(0).optJSONArray("subsystemList")
                     .optJSONObject(0).optJSONArray("serviceList").length());
 
             assertEquals(0, memberDataListJson.optJSONObject(1).optJSONArray("subsystemList").length());
@@ -219,7 +219,7 @@ public class ServiceControllerTests {
         assertNotNull(response.getBody());
         assertEquals(200, response.getStatusCodeValue());
         List<String> csvContent = Arrays.asList(response.getBody().split("\r\n"));
-        assertEquals(1204, csvContent.size());
+        assertEquals(1264, csvContent.size());
         List<String> csvHeader = Arrays.asList(csvContent.get(0).split(","));
         assertEquals(13, csvHeader.size());
         assertEquals("Date", csvHeader.get(0));

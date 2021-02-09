@@ -1,6 +1,6 @@
 /**
  * The MIT License
- * Copyright (c) 2020, Population Register Centre (VRK)
+ * Copyright (c) 2021, Population Register Centre (VRK)
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -27,14 +27,12 @@ import fi.vrk.xroad.catalog.collector.util.ClientTypeUtil;
 import fi.vrk.xroad.catalog.collector.util.ClientListUtil;
 import fi.vrk.xroad.catalog.collector.wsimport.ClientList;
 import fi.vrk.xroad.catalog.collector.wsimport.ClientType;
-import fi.vrk.xroad.catalog.collector.wsimport.XRoadClientIdentifierType;
 import fi.vrk.xroad.catalog.collector.wsimport.XRoadObjectType;
 import fi.vrk.xroad.catalog.persistence.CatalogService;
 import fi.vrk.xroad.catalog.persistence.entity.Member;
 import fi.vrk.xroad.catalog.persistence.entity.MemberId;
 import fi.vrk.xroad.catalog.persistence.entity.Subsystem;
 import lombok.extern.slf4j.Slf4j;
-import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -110,21 +108,6 @@ public class ListClientsActor extends XRoadCatalogActor {
                 }
             }
 
-            ClientType clientType2 = new ClientType();
-            XRoadClientIdentifierType xRoadClientIdentifierType = new XRoadClientIdentifierType();
-            xRoadClientIdentifierType.setXRoadInstance("DEV");
-            xRoadClientIdentifierType.setMemberClass("GOV");
-            xRoadClientIdentifierType.setMemberCode("1234");
-            xRoadClientIdentifierType.setSubsystemCode("TEST123");
-            xRoadClientIdentifierType.setGroupCode(null);
-            xRoadClientIdentifierType.setServiceCode(null);
-            xRoadClientIdentifierType.setServiceVersion(null);
-            xRoadClientIdentifierType.setSecurityCategoryCode(null);
-            xRoadClientIdentifierType.setServerCode(null);
-            xRoadClientIdentifierType.setObjectType(XRoadObjectType.SUBSYSTEM);
-            clientType2.setId(xRoadClientIdentifierType);
-            clientType2.setName("name");
-            clientList.getMember().add(clientType2);
             // Save members
             catalogService.saveAllMembersAndSubsystems(m.values());
             for (ClientType clientType : clientList.getMember()) {

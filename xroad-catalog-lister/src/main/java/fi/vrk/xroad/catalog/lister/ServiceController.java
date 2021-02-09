@@ -1,6 +1,6 @@
 /**
  * The MIT License
- * Copyright (c) 2020, Population Register Centre (VRK)
+ * Copyright (c) 2021, Population Register Centre (VRK)
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -100,12 +100,12 @@ public class ServiceController {
             try {
                 StringWriter sw = new StringWriter();
                 CSVPrinter csvPrinter = new CSVPrinter(sw, CSVFormat.DEFAULT
-                        .withHeader("Date", "Number of REST services", "Number of SOAP services", "Number of other services", "Total distinct services"));
+                        .withHeader("Date", "Number of REST services", "Number of SOAP services", "Number of OpenApi services", "Total distinct services"));
                 serviceStatisticsList.forEach(serviceStatistics -> printCSVRecord(csvPrinter,
                         Arrays.asList(serviceStatistics.getCreated().toString(),
                                 serviceStatistics.getNumberOfRestServices().toString(),
                                 serviceStatistics.getNumberOfSoapServices().toString(),
-                                serviceStatistics.getNumberOfOtherServices().toString(),
+                                serviceStatistics.getNumberOfOpenApiServices().toString(),
                                 serviceStatistics.getTotalNumberOfDistinctServices().toString())));
                 String reportName = "service_statistics_" + LocalDateTime.now().toString();
                 sw.close();

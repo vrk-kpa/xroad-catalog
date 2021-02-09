@@ -14,9 +14,7 @@ update_version() {
   buildRpmKey="app_version"
   buildGradleKey="project_version"
   newvalue=$1
-  sed -i "s/^[#]*\s*$propertiesKey=.*/$propertiesKey=$newvalue/" xroad-catalog-lister/src/main/resources/lister.properties
-  sed -i "s/^[#]*\s*$propertiesKey=.*/$propertiesKey=$newvalue/" xroad-catalog-lister/src/main/resources/lister-production.properties
-  sed -i "s/^[#]*\s*$propertiesKey=.*/$propertiesKey=$newvalue/" xroad-catalog-lister/src/main/resources/lister-production.properties
+  sed -i "s/^[#]*\s*$propertiesKey=.*/$propertiesKey=$newvalue/" xroad-catalog-lister/src/main/resources/version.properties
   sed -i "s/^[#]*\s*$buildRpmKey=.*/$buildRpmKey=$newvalue/" xroad-catalog-lister/build_rpm.sh
   sed -i "s/^[#]*\s*$buildRpmKey=.*/$buildRpmKey=$newvalue/" xroad-catalog-collector/build_rpm.sh
   sed -i "s/^[#]*\s*$buildGradleKey=.*/    $buildGradleKey=\'$newvalue\'/" build.gradle

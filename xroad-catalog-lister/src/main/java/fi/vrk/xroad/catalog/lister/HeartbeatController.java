@@ -1,6 +1,6 @@
 /**
  * The MIT License
- * Copyright (c) 2020, Population Register Centre (VRK)
+ * Copyright (c) 2021, Population Register Centre (VRK)
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -35,7 +35,7 @@ import java.time.LocalDateTime;
 
 @RestController
 @RequestMapping("/api")
-@PropertySource("classpath:lister.properties")
+@PropertySource("classpath:version.properties")
 public class HeartbeatController {
 
     @Value("${xroad-catalog.app-name}")
