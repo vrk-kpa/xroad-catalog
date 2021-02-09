@@ -10,8 +10,7 @@ The main endpoints this software provides:
 * ListMembers - SOAP endpoint to list all the members the Catalog Collector has stored to the db
 * GetWsdl - SOAP endpoint to retrieve a WSDL description for a given service
 * GetOpenAPI - SOAP endpoint to retrieve an OpenAPI description for a given service
-* IsSoapService - SOAP endpoint for requesting whether a given service is a SOAP service
-* IsRestService - SOAP endpoint for requesting whether a given service is a REST service
+* GetServiceType - SOAP endpoint for requesting whether a given service is of type SOAP, REST or OPENAPI
 * IsProvider - SOAP endpoint for requesting whether a given member is a provider
 * GetOrganizations - SOAP endpoint for requesting public organization details
 * HasOrganizationChanged - SOAP endpoint for requesting whether given public organization has some of its details changed
@@ -22,6 +21,7 @@ The main endpoints this software provides:
 * GetServiceStatisticsCSV - REST endpoint for requesting a list of statistics in CSV format, consisting of numbers of SOAP/REST services over time
 * GetListOfServices - REST endpoint for requesting a list of members and related subsystems, services and security servers over time
 * GetListOfServicesCSV - REST endpoint for requesting a list of members and related subsystems, services and security servers in CSV format
+* heartbeat - REST endpoint for requesting the heartbeat of X-Road Catalog
 
 A sequence diagram illustrating flow between XRoad-Catalog service layer and XRoad-Catalog Lister
 
@@ -704,10 +704,10 @@ Response
 </SOAP-ENV:Envelope>
 ```
 
-### 4. IsRestService
+### 4. GetServiceType
 Request
 
-curl -k -d @RestServiceRequest.xml --header "Content-Type: text/xml" -X POST http://localhost:8080/ws/IsRestService
+curl -k -d @GetServiceTypeRequest.xml --header "Content-Type: text/xml" -X POST http://localhost:8080/ws/GetServiceType
 ```xml
 <soapenv:Envelope 
 xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" 
@@ -733,88 +733,17 @@ xmlns:xrcl="http://xroad.vrk.fi/xroad-catalog-lister">
       </xro:service>
    </soapenv:Header>
    <soapenv:Body>
-      <xrcl:IsRestService>
-         <xrcl:xRoadInstance>DEV</xrcl:xRoadInstance>
-         <xrcl:memberClass>GOV</xrcl:memberClass>
-         <xrcl:memberCode>1234</xrcl:memberCode>
-         <xrcl:serviceCode>PetStoreNew</xrcl:serviceCode>
-         <xrcl:subsystemCode>MANAGEMENT</xrcl:subsystemCode>
-         <xrcl:serviceVersion>v1</xrcl:serviceVersion>
-      </xrcl:IsRestService>
-   </soapenv:Body>
-</soapenv:Envelope>
-
-```
-
-Response
-```xml
-<?xml version="1.0" encoding="UTF-8"?>
-<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/">
-  <SOAP-ENV:Header>
-    <xro:protocolVersion xmlns:xro="http://x-road.eu/xsd/xroad.xsd">4.x</xro:protocolVersion>
-    <xro:id xmlns:xro="http://x-road.eu/xsd/xroad.xsd">ID11234</xro:id>
-    <xro:userId xmlns:xro="http://x-road.eu/xsd/xroad.xsd">EE1234567890</xro:userId>
-    <xro:client xmlns:xro="http://x-road.eu/xsd/xroad.xsd" xmlns:iden="http://x-road.eu/xsd/identifiers" iden:objectType="MEMBER">
-      <iden:xRoadInstance>FI</iden:xRoadInstance>
-      <iden:memberClass>GOV</iden:memberClass>
-      <iden:memberCode>1710128-9</iden:memberCode>
-    </xro:client>
-    <xro:service xmlns:xro="http://x-road.eu/xsd/xroad.xsd" xmlns:iden="http://x-road.eu/xsd/identifiers" iden:objectType="SERVICE">
-      <iden:xRoadInstance>FI</iden:xRoadInstance>
-      <iden:memberClass>GOV</iden:memberClass>
-      <iden:memberCode>1710128-9</iden:memberCode>
-      <iden:subsystemCode>SS1</iden:subsystemCode>
-      <iden:serviceCode>ListMembers</iden:serviceCode>
-      <iden:serviceVersion>v1</iden:serviceVersion>
-    </xro:service>
-  </SOAP-ENV:Header>
-  <SOAP-ENV:Body>
-    <ns2:IsRestServiceResponse xmlns:ns2="http://xroad.vrk.fi/xroad-catalog-lister">
-      <ns2:rest>true</ns2:rest>
-    </ns2:IsRestServiceResponse>
-  </SOAP-ENV:Body>
-</SOAP-ENV:Envelope>
-```
-
-### 5. IsSoapService
-Request
-
-curl -k -d @SoapServiceRequest.xml --header "Content-Type: text/xml" -X POST http://localhost:8080/ws/IsSoapService
-```xml
-<soapenv:Envelope 
-xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" 
-xmlns:xro="http://x-road.eu/xsd/xroad.xsd" 
-xmlns:iden="http://x-road.eu/xsd/identifiers" 
-xmlns:xrcl="http://xroad.vrk.fi/xroad-catalog-lister">
-   <soapenv:Header>
-      <xro:protocolVersion>4.x</xro:protocolVersion>
-      <xro:id>ID11234</xro:id>
-      <xro:userId>EE1234567890</xro:userId>
-      <xro:client iden:objectType="MEMBER">
-         <iden:xRoadInstance>FI</iden:xRoadInstance>
-         <iden:memberClass>GOV</iden:memberClass>
-         <iden:memberCode>1710128-9</iden:memberCode>
-      </xro:client>
-      <xro:service iden:objectType="SERVICE">
-         <iden:xRoadInstance>FI</iden:xRoadInstance>
-         <iden:memberClass>GOV</iden:memberClass>
-         <iden:memberCode>1710128-9</iden:memberCode>
-         <iden:subsystemCode>SS1</iden:subsystemCode>
-         <iden:serviceCode>ListMembers</iden:serviceCode>
-         <iden:serviceVersion>v1</iden:serviceVersion>
-      </xro:service>
-   </soapenv:Header>
-   <soapenv:Body>
-      <xrcl:IsSoapService>
+      <xrcl:GetServiceType>
          <xrcl:xRoadInstance>DEV</xrcl:xRoadInstance>
          <xrcl:memberClass>GOV</xrcl:memberClass>
          <xrcl:memberCode>1234</xrcl:memberCode>
          <xrcl:serviceCode>authCertDeletion</xrcl:serviceCode>
          <xrcl:subsystemCode>MANAGEMENT</xrcl:subsystemCode>
          <xrcl:serviceVersion>v1</xrcl:serviceVersion>
-      </xrcl:IsSoapService>
+      </xrcl:GetServiceType>
    </soapenv:Body>
 </soapenv:Envelope>
+
 
 ```
 
@@ -841,14 +770,14 @@ Response
     </xro:service>
   </SOAP-ENV:Header>
   <SOAP-ENV:Body>
-    <ns2:IsSoapServiceResponse xmlns:ns2="http://xroad.vrk.fi/xroad-catalog-lister">
-      <ns2:soap>true</ns2:soap>
-    </ns2:IsSoapServiceResponse>
+    <ns2:GetServiceTypeResponse xmlns:ns2="http://xroad.vrk.fi/xroad-catalog-lister">
+      <ns2:type>REST</ns2:type>
+    </ns2:GetServiceTypeResponse>
   </SOAP-ENV:Body>
 </SOAP-ENV:Envelope>
 ```
 
-### 6. IsProvider
+### 5. IsProvider
 Request
 
 curl -k -d @IsProviderRequest.xml --header "Content-Type: text/xml" -X POST http://localhost:8080/ws/IsProvider
@@ -917,7 +846,7 @@ Response
 </SOAP-ENV:Envelope>
 ```
 
-### 7. GetOrganizations
+### 6. GetOrganizations
 Request
 
 curl -k -d @GetOrganizationsRequest.xml --header "Content-Type: text/xml" -X POST http://localhost:8080/ws/GetOrganizations
@@ -1116,7 +1045,7 @@ Response
 </SOAP-ENV:Envelope>
 ```
 
-### 8. HasOrganizationChanged
+### 7. HasOrganizationChanged
 Request
 
 curl -k -d @HasOrganizationChangedRequest.xml --header "Content-Type: text/xml" -X POST http://localhost:8080/ws/HasOrganizationChanged
@@ -1226,7 +1155,7 @@ Response
 </SOAP-ENV:Envelope>
 ```
 
-### 9. GetCompanies
+### 8. GetCompanies
 
 Request
 
@@ -1418,7 +1347,7 @@ Response
 </SOAP-ENV:Envelope>
 ```
 
-### 10. HasCompanyChanged
+### 9. HasCompanyChanged
 
 Request
 
@@ -1517,7 +1446,7 @@ Response
 </SOAP-ENV:Envelope>
 ```
 
-### 11. GetErrors
+### 10. GetErrors
 
 Request
 
@@ -1597,7 +1526,7 @@ Response
 </SOAP-ENV:Envelope>
 ```
 
-### 12. GetServiceStatistics
+### 11. GetServiceStatistics
 
 Request
 
@@ -1609,7 +1538,7 @@ Response
 {"serviceStatisticsList":[{"created":{"hour":11,"minute":53,"second":34,"nano":225000000,"dayOfYear":279,"dayOfWeek":"MONDAY","month":"OCTOBER","dayOfMonth":5,"year":2020,"monthValue":10,"chronology":{"calendarType":"iso8601","id":"ISO"}},"numberOfSoapServices":4,"numberOfRestServices":1,"totalNumberOfDistinctServices":5},{"created":{"hour":11,"minute":53,"second":34,"nano":225000000,"dayOfYear":280,"dayOfWeek":"TUESDAY","month":"OCTOBER","dayOfMonth":6,"year":2020,"monthValue":10,"chronology":{"calendarType":"iso8601","id":"ISO"}},"numberOfSoapServices":4,"numberOfRestServices":1,"totalNumberOfDistinctServices":5}]}
 ```
 
-### 13. GetServiceStatisticsCSV
+### 12. GetServiceStatisticsCSV
 
 Request
 
@@ -1624,7 +1553,7 @@ Date,Number of REST services,Number of SOAP services,Total distinct services
 2020-10-06T11:54:23.649,1,4,5
 ```
 
-### 14. GetListOfServices
+### 13. GetListOfServices
 
 Request
 
@@ -1636,7 +1565,7 @@ Response
 {"memberData":[{"date":{"hour":11,"minute":55,"second":54,"nano":66000000,"dayOfYear":279,"dayOfWeek":"MONDAY","month":"OCTOBER","dayOfMonth":5,"year":2020,"monthValue":10,"chronology":{"calendarType":"iso8601","id":"ISO"}},"memberDataList":[{"created":{"hour":10,"minute":44,"second":30,"nano":896000000,"dayOfYear":248,"dayOfWeek":"FRIDAY","month":"SEPTEMBER","dayOfMonth":4,"year":2020,"monthValue":9,"chronology":{"calendarType":"iso8601","id":"ISO"}},"memberClass":"GOV","memberCode":"1234","name":"ACME","subsystemList":[{"created":{"hour":10,"minute":44,"second":30,"nano":896000000,"dayOfYear":248,"dayOfWeek":"FRIDAY","month":"SEPTEMBER","dayOfMonth":4,"year":2020,"monthValue":9,"chronology":{"calendarType":"iso8601","id":"ISO"}},"subsystemCode":"MANAGEMENT","serviceList":[{"created":{"hour":10,"minute":44,"second":33,"nano":871000000,"dayOfYear":248,"dayOfWeek":"FRIDAY","month":"SEPTEMBER","dayOfMonth":4,"year":2020,"monthValue":9,"chronology":{"calendarType":"iso8601","id":"ISO"}},"serviceCode":"authCertDeletion","serviceVersion":null},{"created":{"hour":10,"minute":44,"second":33,"nano":871000000,"dayOfYear":248,"dayOfWeek":"FRIDAY","month":"SEPTEMBER","dayOfMonth":4,"year":2020,"monthValue":9,"chronology":{"calendarType":"iso8601","id":"ISO"}},"serviceCode":"clientReg","serviceVersion":null},{"created":{"hour":10,"minute":44,"second":33,"nano":871000000,"dayOfYear":248,"dayOfWeek":"FRIDAY","month":"SEPTEMBER","dayOfMonth":4,"year":2020,"monthValue":9,"chronology":{"calendarType":"iso8601","id":"ISO"}},"serviceCode":"clientDeletion","serviceVersion":null},{"created":{"hour":10,"minute":44,"second":33,"nano":871000000,"dayOfYear":248,"dayOfWeek":"FRIDAY","month":"SEPTEMBER","dayOfMonth":4,"year":2020,"monthValue":9,"chronology":{"calendarType":"iso8601","id":"ISO"}},"serviceCode":"ownerChange","serviceVersion":null},{"created":{"hour":10,"minute":44,"second":33,"nano":871000000,"dayOfYear":248,"dayOfWeek":"FRIDAY","month":"SEPTEMBER","dayOfMonth":4,"year":2020,"monthValue":9,"chronology":{"calendarType":"iso8601","id":"ISO"}},"serviceCode":"PetStore","serviceVersion":""}]}],"xroadInstance":"DEV"},{"created":{"hour":10,"minute":44,"second":30,"nano":896000000,"dayOfYear":248,"dayOfWeek":"FRIDAY","month":"SEPTEMBER","dayOfMonth":4,"year":2020,"monthValue":9,"chronology":{"calendarType":"iso8601","id":"ISO"}},"memberClass":"COM","memberCode":"1710128-9","name":"GOFORE","subsystemList":[],"xroadInstance":"DEV"},{"created":{"hour":13,"minute":30,"second":1,"nano":896000000,"dayOfYear":255,"dayOfWeek":"FRIDAY","month":"SEPTEMBER","dayOfMonth":11,"year":2020,"monthValue":9,"chronology":{"calendarType":"iso8601","id":"ISO"}},"memberClass":"COM","memberCode":"1951458-9","name":"HKScan","subsystemList":[],"xroadInstance":"DEV"}]},{"date":{"hour":11,"minute":55,"second":54,"nano":66000000,"dayOfYear":280,"dayOfWeek":"TUESDAY","month":"OCTOBER","dayOfMonth":6,"year":2020,"monthValue":10,"chronology":{"calendarType":"iso8601","id":"ISO"}},"memberDataList":[{"created":{"hour":10,"minute":44,"second":30,"nano":896000000,"dayOfYear":248,"dayOfWeek":"FRIDAY","month":"SEPTEMBER","dayOfMonth":4,"year":2020,"monthValue":9,"chronology":{"calendarType":"iso8601","id":"ISO"}},"memberClass":"GOV","memberCode":"1234","name":"ACME","subsystemList":[{"created":{"hour":10,"minute":44,"second":30,"nano":896000000,"dayOfYear":248,"dayOfWeek":"FRIDAY","month":"SEPTEMBER","dayOfMonth":4,"year":2020,"monthValue":9,"chronology":{"calendarType":"iso8601","id":"ISO"}},"subsystemCode":"MANAGEMENT","serviceList":[{"created":{"hour":10,"minute":44,"second":33,"nano":871000000,"dayOfYear":248,"dayOfWeek":"FRIDAY","month":"SEPTEMBER","dayOfMonth":4,"year":2020,"monthValue":9,"chronology":{"calendarType":"iso8601","id":"ISO"}},"serviceCode":"authCertDeletion","serviceVersion":null},{"created":{"hour":10,"minute":44,"second":33,"nano":871000000,"dayOfYear":248,"dayOfWeek":"FRIDAY","month":"SEPTEMBER","dayOfMonth":4,"year":2020,"monthValue":9,"chronology":{"calendarType":"iso8601","id":"ISO"}},"serviceCode":"clientReg","serviceVersion":null},{"created":{"hour":10,"minute":44,"second":33,"nano":871000000,"dayOfYear":248,"dayOfWeek":"FRIDAY","month":"SEPTEMBER","dayOfMonth":4,"year":2020,"monthValue":9,"chronology":{"calendarType":"iso8601","id":"ISO"}},"serviceCode":"clientDeletion","serviceVersion":null},{"created":{"hour":10,"minute":44,"second":33,"nano":871000000,"dayOfYear":248,"dayOfWeek":"FRIDAY","month":"SEPTEMBER","dayOfMonth":4,"year":2020,"monthValue":9,"chronology":{"calendarType":"iso8601","id":"ISO"}},"serviceCode":"ownerChange","serviceVersion":null},{"created":{"hour":10,"minute":44,"second":33,"nano":871000000,"dayOfYear":248,"dayOfWeek":"FRIDAY","month":"SEPTEMBER","dayOfMonth":4,"year":2020,"monthValue":9,"chronology":{"calendarType":"iso8601","id":"ISO"}},"serviceCode":"PetStore","serviceVersion":""}]}],"xroadInstance":"DEV"},{"created":{"hour":10,"minute":44,"second":30,"nano":896000000,"dayOfYear":248,"dayOfWeek":"FRIDAY","month":"SEPTEMBER","dayOfMonth":4,"year":2020,"monthValue":9,"chronology":{"calendarType":"iso8601","id":"ISO"}},"memberClass":"COM","memberCode":"1710128-9","name":"GOFORE","subsystemList":[],"xroadInstance":"DEV"},{"created":{"hour":13,"minute":30,"second":1,"nano":896000000,"dayOfYear":255,"dayOfWeek":"FRIDAY","month":"SEPTEMBER","dayOfMonth":11,"year":2020,"monthValue":9,"chronology":{"calendarType":"iso8601","id":"ISO"}},"memberClass":"COM","memberCode":"1951458-9","name":"HKScan","subsystemList":[],"xroadInstance":"DEV"}]}],"securityServerData":[{"serverCode":"SS1","address":"10.18.150.48","memberClass":"GOV","memberCode":"1234"}]}
 ```
 
-### 15. GetListOfServicesCSV
+### 14. GetListOfServicesCSV
 
 Request
 
@@ -1665,6 +1594,18 @@ Date,XRoad instance,Member class,Member code,Member name,Member created,Subsyste
 "",Security server (SS) info:,,,,,,,,,
 member class,member code,server code,address,,,,,,,
 GOV,1234,SS1,10.18.150.48,,,,,,,
+```
+
+### 15. heartbeat
+
+Request
+
+curl "http://localhost:8080/api/heartbeat" -H "Content-Type: application/json"
+
+Response
+
+```
+{"appWorking":true,"dbWorking":true,"appName":"X-Road Catalog Lister","appVersion":"1.0.12","systemTime":[2021,2,9,12,52,47,993000000]}
 ```
 
 ## Build RPM Packages on Non-RedHat Platform

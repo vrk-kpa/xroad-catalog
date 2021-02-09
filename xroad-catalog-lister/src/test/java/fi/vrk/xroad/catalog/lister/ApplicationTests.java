@@ -75,41 +75,57 @@ public class ApplicationTests {
 	}
 
 	@Test
-	public void testIsSoapService() {
-		IsSoapService request = new IsSoapService();
+	public void testGetServiceTypeSOAP() {
+		GetServiceType request = new GetServiceType();
 		request.setXRoadInstance("dev-cs");
 		request.setMemberClass("PUB");
 		request.setMemberCode("14151328");
 		request.setServiceCode("testService");
 		request.setSubsystemCode("TestSubSystem");
 		request.setServiceVersion("v1");
-		IsSoapServiceResponse result = (IsSoapServiceResponse)new WebServiceTemplate(marshaller).marshalSendAndReceive(
-				"http://localhost:" + port + "/ws/IsSoapService/", request);
+		GetServiceTypeResponse result = (GetServiceTypeResponse)new WebServiceTemplate(marshaller).marshalSendAndReceive(
+				"http://localhost:" + port + "/ws/GetServiceType/", request);
 		assertNotNull(result);
-		assertEquals("Is given service a SOAP service", true, result.isSoap());
+		assertEquals("Is given service a SOAP service", "SOAP", result.getType());
+	}
+
+
+	@Test
+	public void testGetServiceTypeREST() {
+		GetServiceType request = new GetServiceType();
+		request.setXRoadInstance("dev-cs");
+		request.setMemberClass("PUB");
+		request.setMemberCode("14151328");
+		request.setServiceCode("getAnotherRandom");
+		request.setSubsystemCode("TestSubSystem");
+		request.setServiceVersion("v1");
+		GetServiceTypeResponse result = (GetServiceTypeResponse)new WebServiceTemplate(marshaller).marshalSendAndReceive(
+				"http://localhost:" + port + "/ws/GetServiceType/", request);
+		assertNotNull(result);
+		assertEquals("Is given service a SOAP service", "REST", result.getType());
 	}
 
 	@Test
-	public void testIsSoapServiceFalse() {
-		IsSoapService request = new IsSoapService();
+	public void testGetServiceTypeOPENAPI() {
+		GetServiceType request = new GetServiceType();
 		request.setXRoadInstance("dev-cs");
 		request.setMemberClass("PUB");
 		request.setMemberCode("14151328");
 		request.setServiceCode("getRandom");
 		request.setSubsystemCode("TestSubSystem");
 		request.setServiceVersion("v1");
-		IsSoapServiceResponse result = (IsSoapServiceResponse)new WebServiceTemplate(marshaller).marshalSendAndReceive(
-				"http://localhost:" + port + "/ws/IsSoapService/", request);
+		GetServiceTypeResponse result = (GetServiceTypeResponse)new WebServiceTemplate(marshaller).marshalSendAndReceive(
+				"http://localhost:" + port + "/ws/GetServiceType/", request);
 		assertNotNull(result);
-		assertEquals("Is given service a SOAP service", false, result.isSoap());
+		assertEquals("Is given service a SOAP service", "OPENAPI", result.getType());
 	}
 
 	@Test
-	public void testIsSoapServiceException() {
+	public void testGetServiceTypeException() {
 		boolean thrown = false;
 		String exceptionMessage = null;
 		try {
-			IsSoapService request = new IsSoapService();
+			GetServiceType request = new GetServiceType();
 			request.setXRoadInstance("dev-cs");
 			request.setMemberClass("PUB");
 			request.setMemberCode("14151328");
@@ -117,7 +133,7 @@ public class ApplicationTests {
 			request.setSubsystemCode("TestSubSystem");
 			request.setServiceVersion("v1");
 			new WebServiceTemplate(marshaller).marshalSendAndReceive(
-					"http://localhost:" + port + "/ws/IsSoapService/", request);
+					"http://localhost:" + port + "/ws/GetServiceType/", request);
 		} catch (SoapFaultClientException e) {
 			thrown = true;
 			exceptionMessage = e.getMessage();
@@ -125,60 +141,6 @@ public class ApplicationTests {
 		assertTrue(thrown);
 		assertEquals(exceptionMessage, "Service with xRoadInstance \"dev-cs\", " +
 				"memberClass \"PUB\", memberCode \"14151328\", serviceCode \"testService123\", subsystemCode \"TestSubSystem\" " +
-				"and serviceVersion \"v1\" not found");
-	}
-
-	@Test
-	public void testIsRestService() {
-		IsRestService request = new IsRestService();
-		request.setXRoadInstance("dev-cs");
-		request.setMemberClass("PUB");
-		request.setMemberCode("14151328");
-		request.setServiceCode("getRandom");
-		request.setSubsystemCode("TestSubSystem");
-		request.setServiceVersion("v1");
-		IsRestServiceResponse result = (IsRestServiceResponse)new WebServiceTemplate(marshaller).marshalSendAndReceive(
-				"http://localhost:" + port + "/ws/IsRestService/", request);
-		assertNotNull(result);
-		assertEquals("Is given service a REST service", true, result.isRest());
-	}
-
-	@Test
-	public void testIsRestServiceFalse() {
-		IsRestService request = new IsRestService();
-		request.setXRoadInstance("dev-cs");
-		request.setMemberClass("PUB");
-		request.setMemberCode("14151328");
-		request.setServiceCode("testService");
-		request.setSubsystemCode("TestSubSystem");
-		request.setServiceVersion("v1");
-		IsRestServiceResponse result = (IsRestServiceResponse)new WebServiceTemplate(marshaller).marshalSendAndReceive(
-				"http://localhost:" + port + "/ws/IsRestService/", request);
-		assertNotNull(result);
-		assertEquals("Is given service a REST service", false, result.isRest());
-	}
-
-	@Test
-	public void testIsRestServiceException() {
-		boolean thrown = false;
-		String exceptionMessage = null;
-		try {
-			IsRestService request = new IsRestService();
-			request.setXRoadInstance("dev-cs");
-			request.setMemberClass("PUB");
-			request.setMemberCode("14151328");
-			request.setServiceCode("getRandom123");
-			request.setSubsystemCode("TestSubSystem");
-			request.setServiceVersion("v1");
-			new WebServiceTemplate(marshaller).marshalSendAndReceive(
-					"http://localhost:" + port + "/ws/IsSoapService/", request);
-		} catch (SoapFaultClientException e) {
-			thrown = true;
-			exceptionMessage = e.getMessage();
-		}
-		assertTrue(thrown);
-		assertEquals(exceptionMessage, "Service with xRoadInstance \"dev-cs\", " +
-				"memberClass \"PUB\", memberCode \"14151328\", serviceCode \"getRandom123\", subsystemCode \"TestSubSystem\" " +
 				"and serviceVersion \"v1\" not found");
 	}
 

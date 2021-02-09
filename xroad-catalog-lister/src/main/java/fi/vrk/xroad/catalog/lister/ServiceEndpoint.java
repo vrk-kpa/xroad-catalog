@@ -62,10 +62,10 @@ public class ServiceEndpoint {
         return response;
     }
 
-    @PayloadRoot(namespace = NAMESPACE_URI, localPart = "IsSoapService")
+    @PayloadRoot(namespace = NAMESPACE_URI, localPart = "GetServiceType")
     @ResponsePayload
-    public IsSoapServiceResponse IsSoapService(@RequestPayload IsSoapService request) {
-        IsSoapServiceResponse response = new IsSoapServiceResponse();
+    public GetServiceTypeResponse getServiceType(@RequestPayload GetServiceType request) {
+        GetServiceTypeResponse response = new GetServiceTypeResponse();
         Service service = catalogService.getService(request.getXRoadInstance(),
                 request.getMemberClass(),
                 request.getMemberCode(),
@@ -80,29 +80,13 @@ public class ServiceEndpoint {
                     + "\", subsystemCode \"" + request.getSubsystemCode()
                     + "\" and serviceVersion \"" + request.getServiceVersion() + "\" not found");
         }
-        response.setSoap(service.hasWsdl());
-        return response;
-    }
-
-    @PayloadRoot(namespace = NAMESPACE_URI, localPart = "IsRestService")
-    @ResponsePayload
-    public IsRestServiceResponse IsRestService(@RequestPayload IsRestService request) {
-        IsRestServiceResponse response = new IsRestServiceResponse();
-        Service service = catalogService.getService(request.getXRoadInstance(),
-                                                    request.getMemberClass(),
-                                                    request.getMemberCode(),
-                                                    request.getServiceCode(),
-                                                    request.getSubsystemCode(),
-                                                    request.getServiceVersion());
-        if (service == null) {
-            throw new ServiceNotFoundException("Service with xRoadInstance \"" + request.getXRoadInstance()
-                    + "\", memberClass \"" + request.getMemberClass()
-                    + "\", memberCode \"" + request.getMemberCode()
-                    + "\", serviceCode \"" + request.getServiceCode()
-                    + "\", subsystemCode \"" + request.getSubsystemCode()
-                    + "\" and serviceVersion \"" + request.getServiceVersion() + "\" not found");
+        if (service.hasWsdl()) {
+            response.setType("SOAP");
+        } else if (service.hasOpenApi()) {
+            response.setType("OPENAPI");
+        } else {
+            response.setType("REST");
         }
-        response.setRest(service.hasOpenApi());
         return response;
     }
 

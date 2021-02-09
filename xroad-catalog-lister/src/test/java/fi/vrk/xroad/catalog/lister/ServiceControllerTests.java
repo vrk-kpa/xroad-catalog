@@ -168,7 +168,7 @@ public class ServiceControllerTests {
 
             assertEquals("TestSubSystem", memberDataListJson.optJSONObject(0).optJSONArray("subsystemList")
                     .optJSONObject(0).optString("subsystemCode"));
-            assertEquals(3, memberDataListJson.optJSONObject(0).optJSONArray("subsystemList")
+            assertEquals(4, memberDataListJson.optJSONObject(0).optJSONArray("subsystemList")
                     .optJSONObject(0).optJSONArray("serviceList").length());
 
             assertEquals(0, memberDataListJson.optJSONObject(1).optJSONArray("subsystemList").length());
@@ -219,7 +219,7 @@ public class ServiceControllerTests {
         assertNotNull(response.getBody());
         assertEquals(200, response.getStatusCodeValue());
         List<String> csvContent = Arrays.asList(response.getBody().split("\r\n"));
-        assertEquals(1204, csvContent.size());
+        assertEquals(1264, csvContent.size());
         List<String> csvHeader = Arrays.asList(csvContent.get(0).split(","));
         assertEquals(13, csvHeader.size());
         assertEquals("Date", csvHeader.get(0));
