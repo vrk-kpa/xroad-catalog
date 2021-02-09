@@ -45,7 +45,6 @@ rm -rf %{buildroot}
 %attr(755,xroad,xroad) %{jlib}/%{name}.jar
 %attr(744,xroad,xroad) /usr/share/xroad/bin/%{name}
 %config(noreplace) %{conf}/lister-production.properties
-%attr(644,root,root) %{conf}/lister-production.properties
 %attr(644,root,root) %{conf}/version.properties
 
 %pre
