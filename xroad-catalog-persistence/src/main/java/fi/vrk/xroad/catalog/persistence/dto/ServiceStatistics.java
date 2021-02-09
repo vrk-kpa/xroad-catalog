@@ -48,14 +48,14 @@ public class ServiceStatistics implements Serializable {
 
     private Long numberOfRestServices;
 
-    private Long numberOfOtherServices;
+    private Long numberOfOpenApiServices;
 
     private Long totalNumberOfDistinctServices;
 
     @Override
     public String toString() {
         return "{\"created\":" + created + ",\"numberOfSoapServices\":\"" + numberOfSoapServices
-                + "\",\"numberOfRestServices\":\"" + numberOfRestServices + "\",\"numberOfOtherServices\":\"" + numberOfOtherServices +
+                + "\",\"numberOfRestServices\":\"" + numberOfRestServices + "\",\"numberOfOpenApiServices\":\"" + numberOfOpenApiServices +
                 "\",\"totalNumberOfDistinctServices\":" + totalNumberOfDistinctServices + "}";
     }
 }

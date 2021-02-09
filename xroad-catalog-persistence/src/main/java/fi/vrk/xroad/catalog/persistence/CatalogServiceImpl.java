@@ -244,7 +244,7 @@ public class CatalogServiceImpl implements CatalogService {
         while (dateInPast.isBefore(today) || dateInPast.isEqual(today)) {
             AtomicLong numberOfSoapServices = new AtomicLong();
             AtomicLong numberOfRestServices = new AtomicLong();
-            AtomicLong numberOfOtherServices = new AtomicLong();
+            AtomicLong numberOfOpenApiServices = new AtomicLong();
             AtomicLong totalDistinctServices = new AtomicLong();
 
             LocalDateTime finalDateInPast = dateInPast;
@@ -252,13 +252,13 @@ public class CatalogServiceImpl implements CatalogService {
                 LocalDateTime creationDate = service.getStatusInfo().getCreated();
                 if (creationDate.isBefore(finalDateInPast) || creationDate.isEqual(finalDateInPast)) {
                     if (service.hasOpenApi()) {
-                        numberOfRestServices.getAndIncrement();
+                        numberOfOpenApiServices.getAndIncrement();
                     }
                     if (service.hasWsdl()) {
                         numberOfSoapServices.getAndIncrement();
                     }
                     if (!service.hasOpenApi() & !service.hasWsdl()) {
-                        numberOfOtherServices.getAndIncrement();
+                        numberOfRestServices.getAndIncrement();
                     }
                 }
             });
@@ -272,7 +272,7 @@ public class CatalogServiceImpl implements CatalogService {
                     .created(dateInPast)
                     .numberOfRestServices(numberOfRestServices.longValue())
                     .numberOfSoapServices(numberOfSoapServices.longValue())
-                    .numberOfOtherServices(numberOfOtherServices.longValue())
+                    .numberOfOpenApiServices(numberOfOpenApiServices.longValue())
                     .totalNumberOfDistinctServices(totalDistinctServices.longValue()).build();
 
             serviceStatisticsList.add(serviceStatistics);

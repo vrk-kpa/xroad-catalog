@@ -1535,7 +1535,7 @@ curl "http://localhost:8080/api/getServiceStatistics/2" -H "Content-Type: applic
 Response
 
 ```json
-{"serviceStatisticsList":[{"created":{"hour":11,"minute":53,"second":34,"nano":225000000,"dayOfYear":279,"dayOfWeek":"MONDAY","month":"OCTOBER","dayOfMonth":5,"year":2020,"monthValue":10,"chronology":{"calendarType":"iso8601","id":"ISO"}},"numberOfSoapServices":4,"numberOfRestServices":1,"totalNumberOfDistinctServices":5},{"created":{"hour":11,"minute":53,"second":34,"nano":225000000,"dayOfYear":280,"dayOfWeek":"TUESDAY","month":"OCTOBER","dayOfMonth":6,"year":2020,"monthValue":10,"chronology":{"calendarType":"iso8601","id":"ISO"}},"numberOfSoapServices":4,"numberOfRestServices":1,"totalNumberOfDistinctServices":5}]}
+{"serviceStatisticsList":[{"created":[2021,2,8,13,24,43,734000000],"numberOfSoapServices":0,"numberOfRestServices":0,"numberOfOpenApiServices":0,"totalNumberOfDistinctServices":0},{"created":[2021,2,9,13,24,43,734000000],"numberOfSoapServices":0,"numberOfRestServices":0,"numberOfOpenApiServices":0,"totalNumberOfDistinctServices":0}]}
 ```
 
 ### 12. GetServiceStatisticsCSV
@@ -1548,9 +1548,9 @@ Response
 
 ```
 service_statistcs.csv file with content:
-Date,Number of REST services,Number of SOAP services,Total distinct services
-2020-10-05T11:54:23.649,1,4,5
-2020-10-06T11:54:23.649,1,4,5
+Date,Number of REST services,Number of SOAP services,Number of OpenApi services,Total distinct services
+2021-02-08T13:23:46.062,0,0,0,0
+2021-02-09T13:23:46.062,0,0,0,0
 ```
 
 ### 13. GetListOfServices

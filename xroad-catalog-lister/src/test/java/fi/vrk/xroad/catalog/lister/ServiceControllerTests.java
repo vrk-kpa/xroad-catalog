@@ -64,7 +64,7 @@ public class ServiceControllerTests {
         for (int i = 0; i < serviceStatisticsList.length(); i++) {
             assertTrue(serviceStatisticsList.optJSONObject(i).optLong("numberOfSoapServices") > 0);
             assertTrue(serviceStatisticsList.optJSONObject(i).optLong("numberOfRestServices") > 0);
-            assertTrue(serviceStatisticsList.optJSONObject(i).optLong("numberOfOtherServices") > 0);
+            assertTrue(serviceStatisticsList.optJSONObject(i).optLong("numberOfOpenApiServices") > 0);
             assertTrue(serviceStatisticsList.optJSONObject(i).optLong("totalNumberOfDistinctServices") > 0);
         }
     }
@@ -108,7 +108,7 @@ public class ServiceControllerTests {
         assertEquals("Date", csvHeader.get(0));
         assertEquals("Number of REST services", csvHeader.get(1));
         assertEquals("Number of SOAP services", csvHeader.get(2));
-        assertEquals("Number of other services", csvHeader.get(3));
+        assertEquals("Number of OpenApi services", csvHeader.get(3));
         assertEquals("Total distinct services", csvHeader.get(4));
 
         for (int i = 1; i < csvContent.size() - 1; i++) {
