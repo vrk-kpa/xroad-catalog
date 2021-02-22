@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.1.1] - 2021-02-22
+
+### Changed
+- fixed GetService in CatalogService to also work when service_version is not null but empty
+
 ## [1.1.0] - 2021-02-09
 
 ### Changed
