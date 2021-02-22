@@ -227,7 +227,7 @@ public class CatalogServiceImpl implements CatalogService {
                               String serviceCode,
                               String subsystemCode,
                               String serviceVersion) {
-        if (serviceVersion == null || serviceVersion.isEmpty()) {
+        if (serviceVersion == null) {
             return serviceRepository.findAllByMemberServiceAndSubsystemVersionNull(xRoadInstance,
                     memberClass, memberCode, serviceCode, subsystemCode);
         }
