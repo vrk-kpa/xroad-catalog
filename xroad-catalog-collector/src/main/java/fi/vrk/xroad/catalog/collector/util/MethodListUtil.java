@@ -77,7 +77,7 @@ public class MethodListUtil {
                 xRoadServiceIdentifierType.setSubsystemCode(service.optString("subsystem_code"));
                 xRoadServiceIdentifierType.setMemberClass(service.optString("member_class"));
                 xRoadServiceIdentifierType.setServiceCode(service.optString("service_code"));
-                xRoadServiceIdentifierType.setServiceVersion(service.optString("service_version"));
+                xRoadServiceIdentifierType.setServiceVersion(service.has("service_version") ? service.optString("service_version") : null);
                 xRoadServiceIdentifierType.setXRoadInstance(service.optString("xroad_instance"));
                 xRoadServiceIdentifierType.setObjectType(XRoadObjectType.fromValue(service.optString("object_type")));
                 restServices.add(xRoadServiceIdentifierType);
