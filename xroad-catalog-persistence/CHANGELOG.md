@@ -2,6 +2,9 @@
 
 All notable changes to this project will be documented in this file.
 
+## 1.1.3 - 2021-07-23
+- added user guide and reduced logging on INFO level
+
 ## 1.1.2 - 2021-02-22
 - fixed GetService in CatalogService to also work when service_version is not null but empty
 
