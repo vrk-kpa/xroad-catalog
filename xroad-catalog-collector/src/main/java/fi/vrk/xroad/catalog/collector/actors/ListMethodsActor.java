@@ -143,7 +143,6 @@ public class ListMethodsActor extends XRoadCatalogActor {
 
             // Flush errorLog entries only during a limited period
             if (MethodListUtil.shouldFlushLogEntries(flushLogTimeAfterHour, flushLogTimeBeforeHour)) {
-                log.info("Deleting old ErrorLog entries...");
                 catalogService.deleteOldErrorLogEntries(errorLogLengthInDays);
             }
 
@@ -155,14 +154,12 @@ public class ListMethodsActor extends XRoadCatalogActor {
                         clientType.getId().getSubsystemCode());
 
                 log.info("{} Handling subsystem {} ", COUNTER, subsystem);
-                log.info("Fetching methods for the client with listMethods -service...");
 
                 List<XRoadServiceIdentifierType> restServices = MethodListUtil.methodListFromResponse(clientType,
                         xroadSecurityServerHost, catalogService);
                 log.info("Received all REST methods for client {} ", ClientTypeUtil.toString(clientType));
 
                 // fetch the methods
-                log.info("calling web service at {}", webservicesEndpoint);
                 List<XRoadServiceIdentifierType> soapServices = xroadClient.getMethods(clientType.getId());
                 log.info("Received all SOAP methods for client {} ", ClientTypeUtil.toString(clientType));
 
@@ -179,13 +176,11 @@ public class ListMethodsActor extends XRoadCatalogActor {
 
                 // get wsdls
                 for (XRoadServiceIdentifierType service : soapServices) {
-                    log.info("{} Sending service {} to new MethodActor ", COUNTER, service.getServiceCode());
                     fetchWsdlPoolRef.tell(service, getSender());
                 }
 
                 // get openApis
                 for (XRoadServiceIdentifierType service : restServices) {
-                    log.info("{} Sending service {} to new MethodActor ", COUNTER, service.getServiceCode());
                     fetchOpenApiPoolRef.tell(service, getSender());
                 }
             }

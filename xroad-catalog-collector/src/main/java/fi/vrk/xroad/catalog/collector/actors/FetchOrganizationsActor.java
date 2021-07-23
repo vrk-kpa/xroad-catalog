@@ -69,9 +69,6 @@ public class FetchOrganizationsActor extends XRoadCatalogActor {
     @Override
     protected boolean handleMessage(Object message) throws NoSuchAlgorithmException, KeyStoreException, KeyManagementException {
         if (message instanceof ClientType) {
-
-            log.info("Fetching organizations from {}", fetchOrganizationsUrl);
-
             List<String> organizationIds = OrganizationUtil.getOrganizationIdsList((ClientType)message, fetchOrganizationsUrl,
                     fetchOrganizationsLimit, catalogService);
             int numberOfOrganizations = organizationIds.size();
@@ -85,15 +82,11 @@ public class FetchOrganizationsActor extends XRoadCatalogActor {
                 elementCount.getAndIncrement();
                 if (elementCount.get() % maxOrganizationsPerRequest == 0) {
                     batchCount.getAndIncrement();
-                    log.info("Saving {}. batch of {} organizations out of total {}",
-                            batchCount.get(), guidsList.size(), numberOfOrganizations);
                     saveBatch(OrganizationUtil.getDataByIds((ClientType) message, guidsList, fetchOrganizationsUrl, catalogService));
                     guidsList.clear();
                 }
                 if (elementCount.get() == organizationIds.size()) {
                     batchCount.getAndIncrement();
-                    log.info("Saving {}. batch of {} organizations out of total {}",
-                            batchCount.get(), guidsList.size(), numberOfOrganizations);
                     saveBatch(OrganizationUtil.getDataByIds((ClientType) message, guidsList, fetchOrganizationsUrl, catalogService));
                 }
             });
@@ -108,7 +101,6 @@ public class FetchOrganizationsActor extends XRoadCatalogActor {
     private void saveBatch(JSONArray data) {
         for (int i = 0; i < data.length(); i++) {
             Organization organization = OrganizationUtil.createOrganization(data.optJSONObject(i));
-            log.info("Saving {}.organization with guid {}", i+1, organization.getGuid());
             JSONObject dataJson = data.optJSONObject(i);
             Organization savedOrganization = catalogService.saveOrganization(organization);
             saveOrganizationNames(dataJson, savedOrganization);
