@@ -54,7 +54,6 @@ public class JaxbCatalogServiceImpl implements JaxbCatalogService {
 
     @Override
     public Iterable<Member> getAllMembers(XMLGregorianCalendar changedAfter)  {
-        log.info("getAllMembers changedAfter:{}", changedAfter);
         Iterable<fi.vrk.xroad.catalog.persistence.entity.Member> entities;
         if (changedAfter != null) {
             entities = catalogService.getAllMembers(jaxbConverter.toLocalDateTime(changedAfter));
@@ -67,7 +66,6 @@ public class JaxbCatalogServiceImpl implements JaxbCatalogService {
 
     @Override
     public Iterable<Organization> getOrganizations(String businessCode) {
-        log.info("get organizations with businessCode:{}", businessCode);
         Iterable<fi.vrk.xroad.catalog.persistence.entity.Organization> entities;
         entities = catalogService.getOrganizations(businessCode);
 
@@ -76,7 +74,6 @@ public class JaxbCatalogServiceImpl implements JaxbCatalogService {
 
     @Override
     public Iterable<ChangedValue> getChangedOrganizationValues(String guid, XMLGregorianCalendar changedAfter) {
-        log.info("get changed values for organization with guid {} and changedAfter {}", guid, changedAfter);
         Optional<fi.vrk.xroad.catalog.persistence.entity.Organization> organization = catalogService.getOrganization(guid);
         if (organization.isPresent()) {
             return getAllChangedValuesForOrganization(organization.get(), jaxbConverter.toLocalDateTime(changedAfter));
@@ -87,7 +84,6 @@ public class JaxbCatalogServiceImpl implements JaxbCatalogService {
 
     @Override
     public Iterable<ChangedValue> getChangedCompanyValues(String businessId, XMLGregorianCalendar changedAfter) {
-        log.info("get changed values for company with businessId {} and changedAfter {}", businessId, changedAfter);
         Iterable<fi.vrk.xroad.catalog.persistence.entity.Company> companies = catalogService.getCompanies(businessId);
         List<ChangedValue> changedValueList = new ArrayList<>();
         if (companies.iterator().hasNext()) {
@@ -100,7 +96,6 @@ public class JaxbCatalogServiceImpl implements JaxbCatalogService {
 
     @Override
     public Iterable<Company> getCompanies(String businessId) {
-        log.info("get companies with businessId:{}", businessId);
         Iterable<fi.vrk.xroad.catalog.persistence.entity.Company> entities;
         entities = catalogService.getCompanies(businessId);
 
@@ -109,7 +104,6 @@ public class JaxbCatalogServiceImpl implements JaxbCatalogService {
 
     @Override
     public Iterable<fi.vrk.xroad.xroad_catalog_lister.ErrorLog> getErrorLog(XMLGregorianCalendar since) {
-        log.info("get errorLog entries since {}", since);
         Iterable<fi.vrk.xroad.catalog.persistence.entity.ErrorLog> entities;
         entities = catalogService.getErrorLog(jaxbConverter.toLocalDateTime(since));
         return jaxbConverter.convertErrorLog(entities);
