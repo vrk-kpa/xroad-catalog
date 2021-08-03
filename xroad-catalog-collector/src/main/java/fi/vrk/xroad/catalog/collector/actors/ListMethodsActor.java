@@ -146,7 +146,8 @@ public class ListMethodsActor extends XRoadCatalogActor {
                 catalogService.deleteOldErrorLogEntries(errorLogLengthInDays);
             }
 
-            if (XRoadObjectType.SUBSYSTEM.equals(clientType.getId().getObjectType())) {
+            boolean fetchServices = false;
+            if (fetchServices && XRoadObjectType.SUBSYSTEM.equals(clientType.getId().getObjectType())) {
 
                 Subsystem subsystem = new Subsystem(
                         new Member(clientType.getId().getXRoadInstance(), clientType.getId().getMemberClass(),
