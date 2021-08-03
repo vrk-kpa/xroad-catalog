@@ -146,8 +146,7 @@ public class ListMethodsActor extends XRoadCatalogActor {
                 catalogService.deleteOldErrorLogEntries(errorLogLengthInDays);
             }
 
-            boolean fetchServices = false;
-            if (fetchServices && XRoadObjectType.SUBSYSTEM.equals(clientType.getId().getObjectType())) {
+            if (XRoadObjectType.SUBSYSTEM.equals(clientType.getId().getObjectType())) {
 
                 Subsystem subsystem = new Subsystem(
                         new Member(clientType.getId().getXRoadInstance(), clientType.getId().getMemberClass(),
@@ -156,9 +155,9 @@ public class ListMethodsActor extends XRoadCatalogActor {
 
                 log.info("{} Handling subsystem {} ", COUNTER, subsystem);
 
-                List<XRoadServiceIdentifierType> restServices = MethodListUtil.methodListFromResponse(clientType,
-                        xroadSecurityServerHost, catalogService);
-                log.info("Received all REST methods for client {} ", ClientTypeUtil.toString(clientType));
+                //List<XRoadServiceIdentifierType> restServices = MethodListUtil.methodListFromResponse(clientType,
+                //        xroadSecurityServerHost, catalogService);
+                //log.info("Received all REST methods for client {} ", ClientTypeUtil.toString(clientType));
 
                 // fetch the methods
                 List<XRoadServiceIdentifierType> soapServices = xroadClient.getMethods(clientType.getId());
@@ -166,9 +165,9 @@ public class ListMethodsActor extends XRoadCatalogActor {
 
                 // Save services for subsystems
                 List<Service> services = new ArrayList<>();
-                for (XRoadServiceIdentifierType service : restServices) {
-                    services.add(new Service(subsystem, service.getServiceCode(), service.getServiceVersion()));
-                }
+                //for (XRoadServiceIdentifierType service : restServices) {
+                //    services.add(new Service(subsystem, service.getServiceCode(), service.getServiceVersion()));
+                //}
                 for (XRoadServiceIdentifierType service : soapServices) {
                     services.add(new Service(subsystem, service.getServiceCode(), service.getServiceVersion()));
                 }
@@ -181,9 +180,9 @@ public class ListMethodsActor extends XRoadCatalogActor {
                 }
 
                 // get openApis
-                for (XRoadServiceIdentifierType service : restServices) {
-                    fetchOpenApiPoolRef.tell(service, getSender());
-                }
+                //for (XRoadServiceIdentifierType service : restServices) {
+                //    fetchOpenApiPoolRef.tell(service, getSender());
+                //}
             }
 
             return true;
