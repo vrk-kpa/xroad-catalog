@@ -158,7 +158,7 @@ public class MethodListUtil {
                 ErrorLog errorLog = createErrorLog(clientType,
                         "Fetch of REST services failed(url: " + url + "): " + e.getMessage(),
                         "500");
-                catalogService.saveErrorLog(errorLog);
+                //catalogService.saveErrorLog(errorLog);
                 securityServerMetadata = SecurityServerMetadata.builder()
                         .xRoadInstance(clientType.getId().getXRoadInstance())
                         .memberClass(clientType.getId().getMemberClass())
