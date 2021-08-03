@@ -155,34 +155,34 @@ public class ListMethodsActor extends XRoadCatalogActor {
 
                 log.info("{} Handling subsystem {} ", COUNTER, subsystem);
 
-                //List<XRoadServiceIdentifierType> restServices = MethodListUtil.methodListFromResponse(clientType,
-                //        xroadSecurityServerHost, catalogService);
-                //log.info("Received all REST methods for client {} ", ClientTypeUtil.toString(clientType));
+                List<XRoadServiceIdentifierType> restServices = MethodListUtil.methodListFromResponse(clientType,
+                        xroadSecurityServerHost, catalogService);
+                log.info("Received all REST methods for client {} ", ClientTypeUtil.toString(clientType));
 
                 // fetch the methods
-                List<XRoadServiceIdentifierType> soapServices = xroadClient.getMethods(clientType.getId());
-                log.info("Received all SOAP methods for client {} ", ClientTypeUtil.toString(clientType));
+                //List<XRoadServiceIdentifierType> soapServices = xroadClient.getMethods(clientType.getId());
+                //log.info("Received all SOAP methods for client {} ", ClientTypeUtil.toString(clientType));
 
                 // Save services for subsystems
                 List<Service> services = new ArrayList<>();
-                //for (XRoadServiceIdentifierType service : restServices) {
-                //    services.add(new Service(subsystem, service.getServiceCode(), service.getServiceVersion()));
-                //}
-                for (XRoadServiceIdentifierType service : soapServices) {
+                for (XRoadServiceIdentifierType service : restServices) {
                     services.add(new Service(subsystem, service.getServiceCode(), service.getServiceVersion()));
                 }
+                //for (XRoadServiceIdentifierType service : soapServices) {
+                //    services.add(new Service(subsystem, service.getServiceCode(), service.getServiceVersion()));
+                //}
 
                 catalogService.saveServices(subsystem.createKey(), services);
 
                 // get wsdls
-                for (XRoadServiceIdentifierType service : soapServices) {
-                    fetchWsdlPoolRef.tell(service, getSender());
-                }
+                //for (XRoadServiceIdentifierType service : soapServices) {
+                //    fetchWsdlPoolRef.tell(service, getSender());
+                //}
 
                 // get openApis
-                //for (XRoadServiceIdentifierType service : restServices) {
-                //    fetchOpenApiPoolRef.tell(service, getSender());
-                //}
+                for (XRoadServiceIdentifierType service : restServices) {
+                    fetchOpenApiPoolRef.tell(service, getSender());
+                }
             }
 
             return true;
