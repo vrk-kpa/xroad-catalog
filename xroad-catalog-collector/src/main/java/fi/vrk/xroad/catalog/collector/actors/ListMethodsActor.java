@@ -180,9 +180,9 @@ public class ListMethodsActor extends XRoadCatalogActor {
                 //}
 
                 // get openApis
-                //for (XRoadServiceIdentifierType service : restServices) {
-                //    fetchOpenApiPoolRef.tell(service, getSender());
-                //}
+                for (XRoadServiceIdentifierType service : restServices) {
+                    fetchOpenApiPoolRef.tell(service, getSender());
+                }
             }
 
             return true;
