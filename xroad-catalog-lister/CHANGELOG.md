@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.2.0] - 2021-08-26
+
+### Added
+- new endpoint for distinct services statistics
+
 ## [1.1.3] - 2021-07-23
 
 ### Added

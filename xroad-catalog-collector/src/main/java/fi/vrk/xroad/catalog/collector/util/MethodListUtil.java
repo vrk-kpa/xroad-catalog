@@ -144,7 +144,9 @@ public class MethodListUtil {
         headers.set("X-Road-Client", MethodListUtil.createHeader(clientType));
         final HttpEntity<String> entity = new HttpEntity<>(headers);
         try {
+            log.debug("Starting to fetch JSON for REST services from url {} for entity {}", url, entity.toString());
             ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, entity, String.class);
+            log.debug("JSON response for REST services from url {} for entity {} = {}", url, entity.toString(), response.toString());
             JSONObject json = new JSONObject(response.getBody());
             return json;
         } catch (Exception e) {

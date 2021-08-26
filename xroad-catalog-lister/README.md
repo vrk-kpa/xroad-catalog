@@ -1,6 +1,6 @@
 # xroad-catalog-lister
 
-WebService to produce list of xroad clients
+WebService to produce list of X-Road clients
 
 ## Introduction to X-Road Catalog Collector
 
@@ -21,6 +21,7 @@ The main endpoints this software provides:
 * GetServiceStatisticsCSV - REST endpoint for requesting a list of statistics in CSV format, consisting of numbers of SOAP/REST services over time
 * GetListOfServices - REST endpoint for requesting a list of members and related subsystems, services and security servers over time
 * GetListOfServicesCSV - REST endpoint for requesting a list of members and related subsystems, services and security servers in CSV format
+* GetDistinctServiceStatistics - REST endpoint for requesting a list of statistics, consisting of numbers of distinct services over time
 * heartbeat - REST endpoint for requesting the heartbeat of X-Road Catalog
 
 A sequence diagram illustrating flow between XRoad-Catalog service layer and XRoad-Catalog Lister
@@ -1535,7 +1536,7 @@ curl "http://localhost:8080/api/getServiceStatistics/2" -H "Content-Type: applic
 Response
 
 ```json
-{"serviceStatisticsList":[{"created":[2021,2,8,13,24,43,734000000],"numberOfSoapServices":0,"numberOfRestServices":0,"numberOfOpenApiServices":0,"totalNumberOfDistinctServices":0},{"created":[2021,2,9,13,24,43,734000000],"numberOfSoapServices":0,"numberOfRestServices":0,"numberOfOpenApiServices":0,"totalNumberOfDistinctServices":0}]}
+{"serviceStatisticsList":[{"created":[2021,8,24,14,56,24,413000000],"numberOfSoapServices":4,"numberOfRestServices":0,"numberOfOpenApiServices":1},{"created":[2021,8,25,14,56,24,413000000],"numberOfSoapServices":4,"numberOfRestServices":1,"numberOfOpenApiServices":1}]}
 ```
 
 ### 12. GetServiceStatisticsCSV
@@ -1548,7 +1549,7 @@ Response
 
 ```
 service_statistcs.csv file with content:
-Date,Number of REST services,Number of SOAP services,Number of OpenApi services,Total distinct services
+Date,Number of REST services,Number of SOAP services,Number of OpenApi services
 2021-02-08T13:23:46.062,0,0,0,0
 2021-02-09T13:23:46.062,0,0,0,0
 ```
@@ -1596,7 +1597,19 @@ member class,member code,server code,address,,,,,,,
 GOV,1234,SS1,10.18.150.48,,,,,,,
 ```
 
-### 15. heartbeat
+### 15. GetDistinctServiceStatistics
+
+Request
+
+curl "http://localhost:8080/api/getDistinctServiceStatistics/2" -H "Content-Type: application/json"
+
+Response
+
+```json
+{"distinctServiceStatisticsList":[{"created":[2021,8,24,14,58,11,165000000],"numberOfDistinctServices":5},{"created":[2021,8,25,14,58,11,165000000],"numberOfDistinctServices":6}]}
+```
+
+### 16. heartbeat
 
 Request
 

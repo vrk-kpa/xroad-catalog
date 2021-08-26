@@ -38,21 +38,16 @@ import java.time.LocalDateTime;
 @EqualsAndHashCode
 @Getter
 @Setter
-public class ServiceStatistics implements Serializable {
+public class DistinctServiceStatistics implements Serializable {
 
     private static final long serialVersionUID = 4049961366368846485L;
 
     private LocalDateTime created;
 
-    private Long numberOfSoapServices;
-
-    private Long numberOfRestServices;
-
-    private Long numberOfOpenApiServices;
+    private Long numberOfDistinctServices;
 
     @Override
     public String toString() {
-        return "{\"created\":" + created + ",\"numberOfSoapServices\":\"" + numberOfSoapServices
-                + "\",\"numberOfRestServices\":\"" + numberOfRestServices + "\",\"numberOfOpenApiServices\":\"" + numberOfOpenApiServices + "}";
+        return "{\"created\":" + created + ",\"numberOfDistinctServices\":\"" + numberOfDistinctServices + "}";
     }
 }

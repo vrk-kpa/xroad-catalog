@@ -30,7 +30,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.io.Serializable;
-import java.time.LocalDateTime;
+import java.util.List;
 
 @Builder
 @NoArgsConstructor
@@ -38,21 +38,9 @@ import java.time.LocalDateTime;
 @EqualsAndHashCode
 @Getter
 @Setter
-public class ServiceStatistics implements Serializable {
+public class DistinctServiceStatisticsResponse implements Serializable {
 
-    private static final long serialVersionUID = 4049961366368846485L;
+    private static final long serialVersionUID = 4049861366378846285L;
 
-    private LocalDateTime created;
-
-    private Long numberOfSoapServices;
-
-    private Long numberOfRestServices;
-
-    private Long numberOfOpenApiServices;
-
-    @Override
-    public String toString() {
-        return "{\"created\":" + created + ",\"numberOfSoapServices\":\"" + numberOfSoapServices
-                + "\",\"numberOfRestServices\":\"" + numberOfRestServices + "\",\"numberOfOpenApiServices\":\"" + numberOfOpenApiServices + "}";
-    }
+    private List<DistinctServiceStatistics> distinctServiceStatisticsList;
 }
