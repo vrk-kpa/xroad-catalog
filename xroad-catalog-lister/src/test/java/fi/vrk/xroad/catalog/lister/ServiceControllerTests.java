@@ -153,12 +153,11 @@ public class ServiceControllerTests {
 
         for (int i = 1; i < csvContent.size() - 1; i++) {
             List<String> csvRowContent = Arrays.asList(csvContent.get(i).split(","));
-            assertEquals(5, csvRowContent.size());
+            assertEquals(4, csvRowContent.size());
             assertEquals(23, csvRowContent.get(0).length());
             assertTrue(Integer.parseInt(csvRowContent.get(1)) > 0);
             assertTrue(Integer.parseInt(csvRowContent.get(2)) > 0);
             assertTrue(Integer.parseInt(csvRowContent.get(3)) > 0);
-            assertTrue(Integer.parseInt(csvRowContent.get(4)) > 0);
         }
     }
 
