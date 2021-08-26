@@ -22,6 +22,7 @@
  */
 package fi.vrk.xroad.catalog.persistence;
 
+import fi.vrk.xroad.catalog.persistence.dto.DistinctServiceStatistics;
 import fi.vrk.xroad.catalog.persistence.dto.MemberData;
 import fi.vrk.xroad.catalog.persistence.dto.MemberDataList;
 import fi.vrk.xroad.catalog.persistence.dto.ServiceData;
@@ -272,8 +273,32 @@ public class CatalogServiceImpl implements CatalogService {
                     .created(dateInPast)
                     .numberOfRestServices(numberOfRestServices.longValue())
                     .numberOfSoapServices(numberOfSoapServices.longValue())
-                    .numberOfOpenApiServices(numberOfOpenApiServices.longValue())
-                    .totalNumberOfDistinctServices(totalDistinctServices.longValue()).build();
+                    .numberOfOpenApiServices(numberOfOpenApiServices.longValue()).build();
+
+            serviceStatisticsList.add(serviceStatistics);
+            dateInPast = dateInPast.plusDays(1);
+        }
+        return serviceStatisticsList;
+    }
+
+    @Override
+    public List<DistinctServiceStatistics> getDistinctServiceStatistics(Long historyInDays) {
+        List<DistinctServiceStatistics> serviceStatisticsList = new ArrayList<>();
+        List<Service> services = serviceRepository.findAllActive();
+        LocalDateTime today = LocalDateTime.now();
+        LocalDateTime dateInPast = today.minusDays(historyInDays - 1);
+        while (dateInPast.isBefore(today) || dateInPast.isEqual(today)) {
+            AtomicLong totalDistinctServices = new AtomicLong();
+
+            LocalDateTime finalDateInPast = dateInPast;
+            totalDistinctServices.set(services.stream()
+                    .filter(p -> p.getStatusInfo().getCreated().isBefore(finalDateInPast) || p.getStatusInfo().getCreated().isEqual(finalDateInPast))
+                    .map(Service::getServiceCode).collect(Collectors.toList())
+                    .stream().distinct().collect(Collectors.toList()).size());
+
+            DistinctServiceStatistics serviceStatistics = DistinctServiceStatistics.builder()
+                    .created(dateInPast)
+                    .numberOfDistinctServices(totalDistinctServices.longValue()).build();
 
             serviceStatisticsList.add(serviceStatistics);
             dateInPast = dateInPast.plusDays(1);

@@ -132,17 +132,20 @@ public class ListMethodsActor extends XRoadCatalogActor {
             // Fetch organizations only once, not for each client
             if (!organizationsFetched) {
                 fetchOrganizationsPoolRef.tell(clientType, getSelf());
+                log.debug("Starting to fetch organizations");
                 organizationsFetched = true;
             }
 
             // Fetch companies only during a limited period if not unlimited
             if (MethodListUtil.shouldFetchCompanies(fetchCompaniesUnlimited,
                     fetchCompaniesTimeAfterHour, fetchCompaniesTimeBeforeHour)) {
+                log.debug("Starting to fetch companies");
                 fetchCompaniesPoolRef.tell(clientType, getSelf());
             }
 
             // Flush errorLog entries only during a limited period
             if (MethodListUtil.shouldFlushLogEntries(flushLogTimeAfterHour, flushLogTimeBeforeHour)) {
+                log.debug("Deleting old error logs");
                 catalogService.deleteOldErrorLogEntries(errorLogLengthInDays);
             }
 
@@ -175,12 +178,14 @@ public class ListMethodsActor extends XRoadCatalogActor {
                 catalogService.saveServices(subsystem.createKey(), services);
 
                 // get wsdls
-                //for (XRoadServiceIdentifierType service : soapServices) {
-                //    fetchWsdlPoolRef.tell(service, getSender());
-                //}
+                for (XRoadServiceIdentifierType service : soapServices) {
+                    log.debug("Fetching WSDLs for service, serviceCode = {} ", service.getServiceCode());
+                    fetchWsdlPoolRef.tell(service, getSender());
+                }
 
                 // get openApis
                 for (XRoadServiceIdentifierType service : restServices) {
+                    log.debug("Fetching OpenAPIs for service, serviceCode = {} ", service.getServiceCode());
                     fetchOpenApiPoolRef.tell(service, getSender());
                 }
             }

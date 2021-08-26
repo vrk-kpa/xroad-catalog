@@ -1,5 +1,5 @@
 # X-Road Catalog User Guide
-Version: 1.0.4
+Version: 1.0.5
 Doc. ID: XRDCAT-CONF
 
 ---
@@ -12,6 +12,7 @@ Doc. ID: XRDCAT-CONF
 | 22.07.2021 | 1.0.2       | Add X-Road Catalog Collector section                                         | Bert Viikmäe       |
 | 23.07.2021 | 1.0.3       | Add X-Road Catalog Lister section                                            | Bert Viikmäe       |
 | 23.07.2021 | 1.0.4       | Add X-Road Catalog Persistence section                                       | Bert Viikmäe       |
+| 25.08.2021 | 1.0.5       | Add list distinct services endpoint description                              | Bert Viikmäe       |
 
 ## Table of Contents <!-- omit in toc -->
 
@@ -52,6 +53,7 @@ Doc. ID: XRDCAT-CONF
             * [3.2.3.13 List services](#32313-list-services)  
             * [3.2.3.14 List services in CSV format](#32314-list-services-in-csv-format)  
             * [3.2.3.15 Check heartbeat](#32315-check-heartbeat)  
+            * [3.2.3.16 List distinct service statistics](#32316-list-distinct-service-statistics)  
     * [3.3 X-Road Catalog Persistence](#33-x-road-catalog-persistence)  
         * [3.3.1 Create database](#331-create-database) 
         * [3.3.2 Build](#332-build)   
@@ -1227,7 +1229,7 @@ In order to fetch information about service statistics in the X-Road Catalog, an
 
 Response in JSON:
 ```json
-{"serviceStatisticsList":[{"created":[2021,2,8,13,24,43,734000000],"numberOfSoapServices":0,"numberOfRestServices":0,"numberOfOpenApiServices":0,"totalNumberOfDistinctServices":0},{"created":[2021,2,9,13,24,43,734000000],"numberOfSoapServices":0,"numberOfRestServices":0,"numberOfOpenApiServices":0,"totalNumberOfDistinctServices":0}]}
+{"serviceStatisticsList":[{"created":[2021,2,8,13,24,43,734000000],"numberOfSoapServices":0,"numberOfRestServices":0,"numberOfOpenApiServices":0},{"created":[2021,2,9,13,24,43,734000000],"numberOfSoapServices":0,"numberOfRestServices":0,"numberOfOpenApiServices":0}]}
 ```
 
 The response has the following fields:
@@ -1237,7 +1239,6 @@ The response has the following fields:
   * numberOfSoapServices
   * numberOfRestServices
   * numberOfOpenApiServices 
-  * totalNumberOfDistinctServices
 
 ### 3.2.3.12 List service statistics in CSV format
 
@@ -1250,7 +1251,7 @@ In order to fetch information about service statistics in the X-Road Catalog, an
 
 Response is a file ```service_statistics.csv``` with the following content:
 ```
-Date,Number of REST services,Number of SOAP services,Number of OpenApi services,Total distinct services
+Date,Number of REST services,Number of SOAP services,Number of OpenApi services
 2021-02-08T13:23:46.062,0,0,0,0
 2021-02-09T13:23:46.062,0,0,0,0
 ```
@@ -1350,6 +1351,26 @@ The response has the following fields:
 * appVersion
 * systemTime
 
+### 3.2.3.16 List distinct service statistics
+
+In order to fetch information about distinct service statistics in the X-Road Catalog, an HTTP request has to be sent to a respective REST endpoint:
+
+``` $ curl "http://<SERVER_ADDRESS>:8080/api/getDistinctServiceStatistics/<HISTORY_AMOUNT_IN_DAYS>" -H "Content-Type: application/json" ```
+
+* SERVER_ADDRESS please use the server address, on which the X-Road Catalog Lister is running on, e.g. localhost
+* HISTORY_AMOUNT_IN_DAYS length of the statistics to show in days, e.g. 2
+
+Response in JSON:
+```json
+{"distinctServiceStatisticsList":[{"created":[2021,8,24,14,58,11,165000000],"numberOfDistinctServices":5},{"created":[2021,8,25,14,58,11,165000000],"numberOfDistinctServices":6}]}
+```
+
+The response has the following fields:
+
+* serviceStatisticsList
+  * created
+  * numberOfDistinctServices
+  
 ### 3.3 X-Road Catalog Persistence
 
 The purpose of this piece of software is to persist and read persisted data. Used by the Collector and Lister

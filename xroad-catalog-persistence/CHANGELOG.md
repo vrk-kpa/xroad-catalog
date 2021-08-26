@@ -2,6 +2,9 @@
 
 All notable changes to this project will be documented in this file.
 
+## 1.2.0 - 2021-08-26
+- added new endpoint for distinct services statistics
+
 ## 1.1.3 - 2021-07-23
 - added user guide and reduced logging on INFO level
 

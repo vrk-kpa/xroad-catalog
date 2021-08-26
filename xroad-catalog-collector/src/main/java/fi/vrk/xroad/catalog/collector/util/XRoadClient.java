@@ -79,6 +79,7 @@ public class XRoadClient {
         serviceIdentifierType.setServiceVersion("v1");
         serviceIdentifierType.setObjectType(XRoadObjectType.SERVICE);
 
+        log.debug("Starting to call listMethods through MetaServices for member {}", member.toString());
         ListMethodsResponse response = metaServicesPort.listMethods(new ListMethods(),
                 holder(tmpClientId),
                 holder(serviceIdentifierType),
@@ -86,6 +87,7 @@ public class XRoadClient {
                 queryId(),
                 protocolVersion());
 
+        log.debug("Called listMethods through MetaServices for member {}", member.toString());
         return response.getService();
     }
 

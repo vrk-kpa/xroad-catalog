@@ -22,6 +22,8 @@
  */
 package fi.vrk.xroad.catalog.lister;
 
+import fi.vrk.xroad.catalog.persistence.dto.DistinctServiceStatistics;
+import fi.vrk.xroad.catalog.persistence.dto.DistinctServiceStatisticsResponse;
 import fi.vrk.xroad.catalog.persistence.dto.SecurityServerInfo;
 import fi.vrk.xroad.catalog.persistence.CatalogService;
 import fi.vrk.xroad.catalog.persistence.dto.ListOfServicesResponse;
@@ -70,6 +72,21 @@ public class ServiceController {
     @Autowired
     private SharedParamsParser sharedParamsParser;
 
+    @GetMapping(path = "/getDistinctServiceStatistics/{historyAmountInDays}", produces = "application/json")
+    public ResponseEntity<?> getDistinctServiceStatistics(@PathVariable Long historyAmountInDays) {
+        if (historyAmountInDays < 1 || historyAmountInDays > maxHistoryLengthInDays) {
+            return new ResponseEntity<>(
+                    "Input parameter historyAmountInDays must be greater "
+                            + "than zero and less than the required maximum of " + maxHistoryLengthInDays + " days",
+                    HttpStatus.BAD_REQUEST);
+        }
+        List<DistinctServiceStatistics> serviceStatisticsList = catalogService.getDistinctServiceStatistics(historyAmountInDays);
+        if (serviceStatisticsList == null || serviceStatisticsList.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        } else {
+            return ResponseEntity.ok(DistinctServiceStatisticsResponse.builder().distinctServiceStatisticsList(serviceStatisticsList).build());
+        }
+    }
 
     @GetMapping(path = "/getServiceStatistics/{historyAmountInDays}", produces = "application/json")
     public ResponseEntity<?> getServiceStatistics(@PathVariable Long historyAmountInDays) {
@@ -100,13 +117,12 @@ public class ServiceController {
             try {
                 StringWriter sw = new StringWriter();
                 CSVPrinter csvPrinter = new CSVPrinter(sw, CSVFormat.DEFAULT
-                        .withHeader("Date", "Number of REST services", "Number of SOAP services", "Number of OpenApi services", "Total distinct services"));
+                        .withHeader("Date", "Number of REST services", "Number of SOAP services", "Number of OpenApi services"));
                 serviceStatisticsList.forEach(serviceStatistics -> printCSVRecord(csvPrinter,
                         Arrays.asList(serviceStatistics.getCreated().toString(),
                                 serviceStatistics.getNumberOfRestServices().toString(),
                                 serviceStatistics.getNumberOfSoapServices().toString(),
-                                serviceStatistics.getNumberOfOpenApiServices().toString(),
-                                serviceStatistics.getTotalNumberOfDistinctServices().toString())));
+                                serviceStatistics.getNumberOfOpenApiServices().toString())));
                 String reportName = "service_statistics_" + LocalDateTime.now().toString();
                 sw.close();
                 csvPrinter.close();

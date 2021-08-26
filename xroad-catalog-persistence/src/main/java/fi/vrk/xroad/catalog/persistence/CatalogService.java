@@ -22,6 +22,7 @@
  */
 package fi.vrk.xroad.catalog.persistence;
 
+import fi.vrk.xroad.catalog.persistence.dto.DistinctServiceStatistics;
 import fi.vrk.xroad.catalog.persistence.dto.MemberDataList;
 import fi.vrk.xroad.catalog.persistence.dto.ServiceStatistics;
 import fi.vrk.xroad.catalog.persistence.entity.*;
@@ -122,6 +123,12 @@ public interface CatalogService {
      * @return List of ServiceStatistics, null if not found
      */
     List<ServiceStatistics> getServiceStatistics(Long historyInDays);
+
+    /**
+     * Returns a list of distinct service statistics
+     * @return List of DistinctServiceStatistics, null if not found
+     */
+    List<DistinctServiceStatistics> getDistinctServiceStatistics(Long historyInDays);
 
     /**
      * Returns a list of memberDataLists

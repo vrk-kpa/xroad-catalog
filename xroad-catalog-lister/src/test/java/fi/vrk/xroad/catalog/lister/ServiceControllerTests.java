@@ -51,6 +51,48 @@ public class ServiceControllerTests {
     TestRestTemplate restTemplate;
 
     @Test
+    public void testGetDistinctServiceStatistics() throws JSONException {
+        ResponseEntity<String> response =
+                restTemplate.getForEntity("/api/getDistinctServiceStatistics/60", String.class);
+        assertNotNull(response.getBody());
+        assertEquals(200, response.getStatusCodeValue());
+
+        JSONObject json = new JSONObject(response.getBody());
+        JSONArray serviceStatisticsList = json.getJSONArray("distinctServiceStatisticsList");
+        assertEquals(60, serviceStatisticsList.length());
+
+        for (int i = 0; i < serviceStatisticsList.length(); i++) {
+            assertTrue(serviceStatisticsList.optJSONObject(i).optLong("numberOfDistinctServices") > 0);
+        }
+    }
+
+    @Test
+    public void testGetDistinctServiceStatisticsHistoryParameterZeroException() {
+        ResponseEntity<String> response =
+                restTemplate.getForEntity("/api/getDistinctServiceStatistics/0", String.class);
+        String errMsg = "Input parameter historyAmountInDays must be greater than zero and less than the required maximum of 90 days";
+        assertEquals(400, response.getStatusCodeValue());
+        assertEquals(errMsg, response.getBody());
+    }
+
+    @Test
+    public void testGetDistinctServiceStatisticsHistoryParameterMoreThanMaximumException() {
+        ResponseEntity<String> response =
+                restTemplate.getForEntity("/api/getDistinctServiceStatistics/91", String.class);
+        String errMsg = "Input parameter historyAmountInDays must be greater than zero and less than the required maximum of 90 days";
+        assertEquals(400, response.getStatusCodeValue());
+        assertEquals(errMsg, response.getBody());
+    }
+
+    @Test
+    public void testGetDistinctServiceStatisticsHistoryParameterNullException() {
+        ResponseEntity<String> response =
+                restTemplate.getForEntity("/api/getDistinctServiceStatistics", String.class);
+        String errMsg = "Input parameter historyAmountInDays must be greater than zero and less than the required maximum of 90 days";
+        assertEquals(404, response.getStatusCodeValue());
+    }
+
+    @Test
     public void testGetServiceStatistics() throws JSONException {
         ResponseEntity<String> response =
                 restTemplate.getForEntity("/api/getServiceStatistics/60", String.class);
@@ -65,7 +107,6 @@ public class ServiceControllerTests {
             assertTrue(serviceStatisticsList.optJSONObject(i).optLong("numberOfSoapServices") > 0);
             assertTrue(serviceStatisticsList.optJSONObject(i).optLong("numberOfRestServices") > 0);
             assertTrue(serviceStatisticsList.optJSONObject(i).optLong("numberOfOpenApiServices") > 0);
-            assertTrue(serviceStatisticsList.optJSONObject(i).optLong("totalNumberOfDistinctServices") > 0);
         }
     }
 
@@ -104,12 +145,11 @@ public class ServiceControllerTests {
         List<String> csvContent = Arrays.asList(response.getBody().split("\r\n"));
         assertEquals(61, csvContent.size());
         List<String> csvHeader = Arrays.asList(csvContent.get(0).split(","));
-        assertEquals(5, csvHeader.size());
+        assertEquals(4, csvHeader.size());
         assertEquals("Date", csvHeader.get(0));
         assertEquals("Number of REST services", csvHeader.get(1));
         assertEquals("Number of SOAP services", csvHeader.get(2));
         assertEquals("Number of OpenApi services", csvHeader.get(3));
-        assertEquals("Total distinct services", csvHeader.get(4));
 
         for (int i = 1; i < csvContent.size() - 1; i++) {
             List<String> csvRowContent = Arrays.asList(csvContent.get(i).split(","));
