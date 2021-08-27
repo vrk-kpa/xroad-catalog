@@ -109,10 +109,10 @@ public class ListClientsActor extends XRoadCatalogActor {
             }
 
             // Save members
-            log.debug("Saving members and subsystems, size = {}", m.size());
+            log.info("REMOVE LATER:Saving members and subsystems, size = {}", m.size());
             catalogService.saveAllMembersAndSubsystems(m.values());
             for (ClientType clientType : clientList.getMember()) {
-                log.debug("Calling listMethodsActor");
+                log.info("REMOVE LATER:Calling listMethodsActor");
                 listMethodsPoolRef.tell(clientType, getSelf());
             }
 
