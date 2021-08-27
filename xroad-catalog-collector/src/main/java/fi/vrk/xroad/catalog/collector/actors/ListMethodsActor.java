@@ -141,13 +141,13 @@ public class ListMethodsActor extends XRoadCatalogActor {
             }
 
             // Fetch companies only during a limited period if not unlimited
-            if (!companiesFetched && MethodListUtil.shouldFetchCompanies(fetchCompaniesUnlimited, fetchCompaniesTimeAfterHour, fetchCompaniesTimeBeforeHour)) {
+            if (!companiesFetched & MethodListUtil.shouldFetchCompanies(fetchCompaniesUnlimited, fetchCompaniesTimeAfterHour, fetchCompaniesTimeBeforeHour)) {
                 log.info("REMOVE LATER:Starting to fetch companies");
                 fetchCompaniesPoolRef.tell(clientType, getSelf());
             }
 
             // Flush errorLog entries only during a limited period
-            if (!errorLogsDeleted && MethodListUtil.shouldFlushLogEntries(flushLogTimeAfterHour, flushLogTimeBeforeHour)) {
+            if (!errorLogsDeleted & MethodListUtil.shouldFlushLogEntries(flushLogTimeAfterHour, flushLogTimeBeforeHour)) {
                 log.info("REMOVE LATER:Deleting old error logs");
                 catalogService.deleteOldErrorLogEntries(errorLogLengthInDays);
             }
