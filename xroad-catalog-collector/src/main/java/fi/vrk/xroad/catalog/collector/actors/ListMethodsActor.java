@@ -141,17 +141,21 @@ public class ListMethodsActor extends XRoadCatalogActor {
             }
 
             // Fetch companies only during a limited period if not unlimited
-            if (!companiesFetched & MethodListUtil.shouldFetchCompanies(fetchCompaniesUnlimited, fetchCompaniesTimeAfterHour, fetchCompaniesTimeBeforeHour)) {
-                log.info("REMOVE LATER:Starting to fetch companies");
-                fetchCompaniesPoolRef.tell(clientType, getSelf());
-                companiesFetched = true;
+            if (MethodListUtil.shouldFetchCompanies(fetchCompaniesUnlimited, fetchCompaniesTimeAfterHour, fetchCompaniesTimeBeforeHour)) {
+                if (!companiesFetched) {
+                    log.info("REMOVE LATER:Starting to fetch companies");
+                    fetchCompaniesPoolRef.tell(clientType, getSelf());
+                    companiesFetched = true;
+                }
             }
 
             // Flush errorLog entries only during a limited period
-            if (!errorLogsDeleted & MethodListUtil.shouldFlushLogEntries(flushLogTimeAfterHour, flushLogTimeBeforeHour)) {
-                log.info("REMOVE LATER:Deleting old error logs");
-                catalogService.deleteOldErrorLogEntries(errorLogLengthInDays);
-                errorLogsDeleted = true;
+            if (MethodListUtil.shouldFlushLogEntries(flushLogTimeAfterHour, flushLogTimeBeforeHour)) {
+                if (!errorLogsDeleted) {
+                    log.info("REMOVE LATER:Deleting old error logs");
+                    catalogService.deleteOldErrorLogEntries(errorLogLengthInDays);
+                    errorLogsDeleted = true;
+                }
             }
 
             if (XRoadObjectType.SUBSYSTEM.equals(clientType.getId().getObjectType())) {
