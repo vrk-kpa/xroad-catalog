@@ -58,10 +58,6 @@ public class ListMethodsActor extends XRoadCatalogActor {
 
     private static boolean organizationsFetched = false;
 
-    private static boolean errorLogsDeleted = false;
-
-    private static boolean companiesFetched = false;
-
     @Value("${xroad-catalog.security-server-host}")
     private String xroadSecurityServerHost;
 
@@ -136,26 +132,17 @@ public class ListMethodsActor extends XRoadCatalogActor {
             // Fetch organizations only once, not for each client
             if (!organizationsFetched) {
                 fetchOrganizationsPoolRef.tell(clientType, getSelf());
-                log.info("REMOVE LATER:Starting to fetch organizations");
                 organizationsFetched = true;
             }
 
             // Fetch companies only during a limited period if not unlimited
             if (MethodListUtil.shouldFetchCompanies(fetchCompaniesUnlimited, fetchCompaniesTimeAfterHour, fetchCompaniesTimeBeforeHour)) {
-                if (!companiesFetched) {
-                    log.info("REMOVE LATER:Starting to fetch companies");
-                    fetchCompaniesPoolRef.tell(clientType, getSelf());
-                    companiesFetched = true;
-                }
+                fetchCompaniesPoolRef.tell(clientType, getSelf());
             }
 
             // Flush errorLog entries only during a limited period
             if (MethodListUtil.shouldFlushLogEntries(flushLogTimeAfterHour, flushLogTimeBeforeHour)) {
-                if (!errorLogsDeleted) {
-                    log.info("REMOVE LATER:Deleting old error logs");
-                    catalogService.deleteOldErrorLogEntries(errorLogLengthInDays);
-                    errorLogsDeleted = true;
-                }
+                catalogService.deleteOldErrorLogEntries(errorLogLengthInDays);
             }
 
             if (XRoadObjectType.SUBSYSTEM.equals(clientType.getId().getObjectType())) {
@@ -188,13 +175,11 @@ public class ListMethodsActor extends XRoadCatalogActor {
 
                 // get wsdls
                 for (XRoadServiceIdentifierType service : soapServices) {
-                    log.info("REMOVE LATER:Fetching WSDLs for service, serviceCode = {} ", service.getServiceCode());
                     fetchWsdlPoolRef.tell(service, getSender());
                 }
 
                 // get openApis
                 for (XRoadServiceIdentifierType service : restServices) {
-                    log.info("REMOVE LATER:Fetching OpenAPIs for service, serviceCode = {} ", service.getServiceCode());
                     fetchOpenApiPoolRef.tell(service, getSender());
                 }
             }

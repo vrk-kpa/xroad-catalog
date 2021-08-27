@@ -83,10 +83,10 @@ public class FetchOpenApiActor extends XRoadCatalogActor {
             XRoadServiceIdentifierType service = (XRoadServiceIdentifierType) message;
             log.info("Fetching openApi [{}] {}", COUNTER.addAndGet(1), ClientTypeUtil.toString(service));
             String openApi = xroadClient.getOpenApi(service, xroadSecurityServerHost);
-            log.info("REMOVE LATER:Fetched openAPI {} for service {}", openApi, service.toString());
+            log.info("REMOVE LATER:Fetched openAPI for service {}", service.toString());
             catalogService.saveOpenApi(createSubsystemId(service), createServiceId(service), openApi);
             log.info("Saved openApi successfully");
-            log.info("REMOVE LATER:Saved openAPI {} for service {}", openApi, service.toString());
+            log.info("REMOVE LATER:Saved openAPI for service {}", service.toString());
             return true;
         } else {
             return false;

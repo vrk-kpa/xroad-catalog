@@ -95,7 +95,6 @@ public class SharedParamsParser {
                                     memberElement.getElementsByTagName("memberCode").item(0).getTextContent();
                             SecurityServerInfo info =
                                     new SecurityServerInfo(xRoadInstance, serverCode, address, memberClass, memberCode);
-                            log.info("REMOVE LATER:SecurityServerInfo: {}", info);
                             securityServerInfos.add(info);
                             break;
                         }
