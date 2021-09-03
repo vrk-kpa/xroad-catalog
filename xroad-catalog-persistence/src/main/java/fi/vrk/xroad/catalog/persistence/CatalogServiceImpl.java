@@ -282,6 +282,13 @@ public class CatalogServiceImpl implements CatalogService {
     }
 
     @Override
+    public List<ErrorLog> getErrors(String xRoadInstance, String memberClass, String memberCode, String subsystemCode, Long historyAmountInDays) {
+        LocalDateTime since = LocalDateTime.now().minusDays(historyAmountInDays);
+        Optional<List<ErrorLog>> errorLogList = errorLogRepository.findAnyByClientParameters(since, xRoadInstance, memberClass, memberCode, subsystemCode);
+        return errorLogList.isPresent() ? errorLogList.get() : null;
+    }
+
+    @Override
     public List<DistinctServiceStatistics> getDistinctServiceStatistics(Long historyInDays) {
         List<DistinctServiceStatistics> serviceStatisticsList = new ArrayList<>();
         List<Service> services = serviceRepository.findAllActive();

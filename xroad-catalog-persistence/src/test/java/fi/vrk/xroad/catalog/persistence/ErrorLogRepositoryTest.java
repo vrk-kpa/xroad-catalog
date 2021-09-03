@@ -34,6 +34,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.time.Month;
+import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 import static org.junit.Assert.*;
@@ -51,10 +53,21 @@ public class ErrorLogRepositoryTest {
     public void testFindAnySince() {
         LocalDateTime changedAfter = LocalDateTime.of(2020, Month.JANUARY, 1, 0, 0, 0);
         Set<ErrorLog> errorLogEntries = errorLogRepository.findAny(changedAfter);
-        assertEquals(1, errorLogEntries.size());
+        assertEquals(2, errorLogEntries.size());
         assertEquals("Service not found", errorLogEntries.iterator().next().getMessage());
     }
 
+    @Test
+    public void testFindAnyByClientParameters() {
+        LocalDateTime changedAfter = LocalDateTime.of(2020, Month.JANUARY, 1, 0, 0, 0);
+        Optional<List<ErrorLog>> errorLogEntries = errorLogRepository.findAnyByClientParameters(changedAfter,
+                "DEV",
+                "GOV",
+                "1234",
+                "TestSubsystem");
+        assertEquals(1, errorLogEntries.get().size());
+        assertEquals("Service not found", errorLogEntries.get().get(0).getMessage());
+    }
 
 
 }

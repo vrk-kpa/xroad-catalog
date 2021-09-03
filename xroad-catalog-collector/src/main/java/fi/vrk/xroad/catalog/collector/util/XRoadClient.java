@@ -25,6 +25,7 @@ package fi.vrk.xroad.catalog.collector.util;
 import fi.vrk.xroad.catalog.collector.wsimport.*;
 
 import fi.vrk.xroad.catalog.persistence.CatalogService;
+import fi.vrk.xroad.catalog.persistence.entity.ErrorLog;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.frontend.ClientProxy;
@@ -41,6 +42,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
@@ -79,13 +81,32 @@ public class XRoadClient {
         serviceIdentifierType.setServiceVersion("v1");
         serviceIdentifierType.setObjectType(XRoadObjectType.SERVICE);
 
-        ListMethodsResponse response = metaServicesPort.listMethods(new ListMethods(),
-                holder(tmpClientId),
-                holder(serviceIdentifierType),
-                userId(),
-                queryId(),
-                protocolVersion());
-
+        ListMethodsResponse response = null;
+        try {
+            response = metaServicesPort.listMethods(new ListMethods(),
+                    holder(tmpClientId),
+                    holder(serviceIdentifierType),
+                    userId(),
+                    queryId(),
+                    protocolVersion());
+        } catch(Exception e) {
+            log.error("Fetch of SOAP services failed: " + e.getMessage());
+            ErrorLog errorLog = ErrorLog.builder()
+                    .created(LocalDateTime.now())
+                    .message("Fetch of SOAP services failed: " + e.getMessage())
+                    .code("500")
+                    .xRoadInstance(member.getXRoadInstance())
+                    .memberClass(member.getMemberClass())
+                    .memberCode(member.getMemberCode())
+                    .groupCode(member.getGroupCode())
+                    .securityCategoryCode(member.getSecurityCategoryCode())
+                    .serverCode(member.getServerCode())
+                    .serviceCode(member.getServiceCode())
+                    .serviceVersion(member.getServiceVersion())
+                    .subsystemCode(member.getSubsystemCode())
+                    .build();
+            catalogService.saveErrorLog(errorLog);
+        }
         return response.getService();
     }
 
@@ -108,14 +129,34 @@ public class XRoadClient {
         final Holder<GetWsdlResponse> response = new Holder<>();
         final Holder<byte[]> wsdl = new Holder<>();
 
-        metaServicesPort.getWsdl(getWsdl,
-                holder(tmpClientId),
-                holder(serviceIdentifierType),
-                userId(),
-                queryId(),
-                protocolVersion(),
-                response,
-                wsdl);
+        try {
+            metaServicesPort.getWsdl(getWsdl,
+                    holder(tmpClientId),
+                    holder(serviceIdentifierType),
+                    userId(),
+                    queryId(),
+                    protocolVersion(),
+                    response,
+                    wsdl);
+        } catch(Exception e) {
+            log.error("Fetch of WSDL failed: " + e.getMessage());
+            ErrorLog errorLog = ErrorLog.builder()
+                    .created(LocalDateTime.now())
+                    .message("Fetch of WSDL failed: " + e.getMessage())
+                    .code("500")
+                    .xRoadInstance(service.getXRoadInstance())
+                    .memberClass(service.getMemberClass())
+                    .memberCode(service.getMemberCode())
+                    .groupCode(service.getGroupCode())
+                    .securityCategoryCode(service.getSecurityCategoryCode())
+                    .serverCode(service.getServerCode())
+                    .serviceCode(service.getServiceCode())
+                    .serviceVersion(service.getServiceVersion())
+                    .subsystemCode(service.getSubsystemCode())
+                    .build();
+            catalogService.saveErrorLog(errorLog);
+        }
+
 
         if (!(wsdl.value instanceof byte[])) {
             // Apache CXF does not map the attachment returned by the security server to the wsdl

@@ -153,6 +153,8 @@ VALUES (1, 1, 0, 0, 0, '', 'FI', '2001-06-11 00:00:00+02',
 
 INSERT INTO error_log(id, message, code, created)
 VALUES (1, 'Service not found', '500', '2020-05-04 11:41:24.792+03');
+INSERT INTO error_log(id, message, code, created, x_road_instance, member_class, member_code, subsystem_code)
+VALUES (2, 'Service not found', '500', '2021-01-01 11:41:24.792+03', 'DEV', 'GOV', '1234', 'TestSubsystem');
 
 INSERT INTO subsystem (id, member_id, subsystem_code, created, changed, fetched,  removed)
 VALUES (2, 3, 'TestSubSystem12345', '2020-01-01 00:00:00+02', '2020-01-01 00:00:00+02', '2020-01-01 00:00:00+02', NULL);

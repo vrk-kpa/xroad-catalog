@@ -523,7 +523,7 @@ public class ApplicationTests {
 		GetErrorsResponse result = (GetErrorsResponse)new WebServiceTemplate(marshaller).marshalSendAndReceive(
 				"http://localhost:" + port + "/ws/GetErrors/", request);
 		assertNotNull(result);
-		assertEquals("ErrorLogList size", 1, result.getErrorLogList().getErrorLog().size());
+		assertEquals("ErrorLogList size", 2, result.getErrorLogList().getErrorLog().size());
 		assertEquals("ErrorLog message", "Service not found", result.getErrorLogList().getErrorLog().get(0).getMessage());
 	}
 
@@ -533,7 +533,7 @@ public class ApplicationTests {
 		String exceptionMessage = null;
 		GetErrors request = new GetErrors();
 		try {
-			LocalDateTime changedAfter = LocalDateTime.of(2020, Month.MAY, 6, 12, 0, 0);
+			LocalDateTime changedAfter = LocalDateTime.of(2021, Month.JANUARY, 6, 12, 0, 0);
 			GregorianCalendar cal = GregorianCalendar.from(changedAfter.atZone(ZoneId.systemDefault()));
 			XMLGregorianCalendar xc = null;
 			try {

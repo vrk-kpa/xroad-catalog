@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.2.1] - 2021-09-03
+
+### Added
+- new endpoint for listing errors for a given subsystem
+
 ## [1.2.0] - 2021-08-26
 
 ### Added

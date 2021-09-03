@@ -29,12 +29,25 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 public interface ErrorLogRepository extends CrudRepository<ErrorLog, Long> {
 
     @Query("SELECT e FROM ErrorLog e WHERE e.created >= :created")
     Set<ErrorLog> findAny(@Param("created") LocalDateTime created);
+
+    @Query("SELECT e FROM ErrorLog e WHERE e.created >= :created "
+            + "AND e.xRoadInstance = :xRoadInstance "
+            + "AND e.memberClass = :memberClass "
+            + "AND e.memberCode = :memberCode "
+            + "AND e.subsystemCode = :subsystemCode")
+    Optional<List<ErrorLog>> findAnyByClientParameters(@Param("created") LocalDateTime created,
+                                                       @Param("xRoadInstance") String xRoadInstance,
+                                                       @Param("memberClass") String memberClass,
+                                                       @Param("memberCode") String memberCode,
+                                                       @Param("subsystemCode") String subsystemCode);
 
     @Modifying
     @Query("DELETE FROM ErrorLog e WHERE e.created < :oldDate")

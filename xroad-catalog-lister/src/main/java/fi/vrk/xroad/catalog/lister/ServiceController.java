@@ -24,12 +24,14 @@ package fi.vrk.xroad.catalog.lister;
 
 import fi.vrk.xroad.catalog.persistence.dto.DistinctServiceStatistics;
 import fi.vrk.xroad.catalog.persistence.dto.DistinctServiceStatisticsResponse;
+import fi.vrk.xroad.catalog.persistence.dto.ErrorLogResponse;
 import fi.vrk.xroad.catalog.persistence.dto.SecurityServerInfo;
 import fi.vrk.xroad.catalog.persistence.CatalogService;
 import fi.vrk.xroad.catalog.persistence.dto.ListOfServicesResponse;
 import fi.vrk.xroad.catalog.persistence.dto.MemberDataList;
 import fi.vrk.xroad.catalog.persistence.dto.ServiceStatistics;
 import fi.vrk.xroad.catalog.persistence.dto.ServiceStatisticsResponse;
+import fi.vrk.xroad.catalog.persistence.entity.ErrorLog;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -71,6 +73,26 @@ public class ServiceController {
 
     @Autowired
     private SharedParamsParser sharedParamsParser;
+
+    @GetMapping(path = "/listErrors/{xRoadInstance}/{memberClass}/{memberCode}/{subsystemCode}/{historyAmountInDays}", produces = "application/json")
+    public ResponseEntity<?> listErrors(@PathVariable String xRoadInstance,
+                                        @PathVariable String memberClass,
+                                        @PathVariable String memberCode,
+                                        @PathVariable String subsystemCode,
+                                        @PathVariable Long historyAmountInDays) {
+        if (historyAmountInDays < 1 || historyAmountInDays > maxHistoryLengthInDays) {
+            return new ResponseEntity<>(
+                    "Input parameter historyAmountInDays must be greater "
+                            + "than zero and less than the required maximum of " + maxHistoryLengthInDays + " days",
+                    HttpStatus.BAD_REQUEST);
+        }
+        List<ErrorLog> errors = catalogService.getErrors(xRoadInstance, memberClass, memberCode, subsystemCode, historyAmountInDays);
+        if (errors == null || errors.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        } else {
+            return ResponseEntity.ok(ErrorLogResponse.builder().errorLogList(errors).build());
+        }
+    }
 
     @GetMapping(path = "/getDistinctServiceStatistics/{historyAmountInDays}", produces = "application/json")
     public ResponseEntity<?> getDistinctServiceStatistics(@PathVariable Long historyAmountInDays) {

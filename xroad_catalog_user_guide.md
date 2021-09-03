@@ -1,5 +1,5 @@
 # X-Road Catalog User Guide
-Version: 1.0.5
+Version: 1.0.6
 Doc. ID: XRDCAT-CONF
 
 ---
@@ -13,6 +13,7 @@ Doc. ID: XRDCAT-CONF
 | 23.07.2021 | 1.0.3       | Add X-Road Catalog Lister section                                            | Bert Viikmäe       |
 | 23.07.2021 | 1.0.4       | Add X-Road Catalog Persistence section                                       | Bert Viikmäe       |
 | 25.08.2021 | 1.0.5       | Add list distinct services endpoint description                              | Bert Viikmäe       |
+| 02.09.2021 | 1.0.6       | Add list distinct services endpoint description                              | Bert Viikmäe       |
 
 ## Table of Contents <!-- omit in toc -->
 
@@ -54,6 +55,7 @@ Doc. ID: XRDCAT-CONF
             * [3.2.3.14 List services in CSV format](#32314-list-services-in-csv-format)  
             * [3.2.3.15 Check heartbeat](#32315-check-heartbeat)  
             * [3.2.3.16 List distinct service statistics](#32316-list-distinct-service-statistics)  
+            * [3.2.3.17 List errors](#32317-list-errors)  
     * [3.3 X-Road Catalog Persistence](#33-x-road-catalog-persistence)  
         * [3.3.1 Create database](#331-create-database) 
         * [3.3.2 Build](#332-build)   
@@ -1370,7 +1372,42 @@ The response has the following fields:
 * serviceStatisticsList
   * created
   * numberOfDistinctServices
-  
+
+### 3.2.3.17 List errors
+
+In order to fetch information about errors related to fetch of data for a given subsystem in the X-Road Catalog, an HTTP request has to be sent to a respective REST endpoint:
+
+``` $ curl "http://<SERVER_ADDRESS>:8080/api/listErrors/<INSTANCE>/<MEMBER_CLASS>/<MEMBER_CODE>/<SUBSYSTEM_CODE>/<HISTORY_AMOUNT_IN_DAYS>" -H "Content-Type: application/json" ```
+
+* SERVER_ADDRESS please use the server address, on which the X-Road Catalog Lister is running on, e.g. localhost
+* INSTANCE name of X-Road instance, e.g. DEV
+* MEMBER_CLASS member class, e.g. GOV
+* MEMBER_CODE member code, e.g. 1234
+* SUBSYSTEM_CODE subsystem code, e.g. TEST
+* HISTORY_AMOUNT_IN_DAYS length of the statistics to show in days, e.g. 2
+
+Response in JSON:
+```json
+{"errorLogList":[{"id":41,"message":"Fetch of REST services failed(url: http://ss3/r1/DEV/GOV/1234/MANAGEMENT/listMethods): 500 Server Error","code":"500","created":[2021,8,24,16,31,39,548000000],"memberClass":"GOV","memberCode":"1234","subsystemCode":"MANAGEMENT","groupCode":"","serviceCode":"","serviceVersion":null,"securityCategoryCode":"","serverCode":"","xroadInstance":"DEV"},{"id":43,"message":"Fetch of REST services failed(url: http://ss3/r1/DEV/GOV/1234/MANAGEMENT/listMethods): 500 Server Error","code":"500","created":[2021,8,24,16,34,46,378000000],"memberClass":"GOV","memberCode":"1234","subsystemCode":"MANAGEMENT","groupCode":"","serviceCode":"","serviceVersion":null,"securityCategoryCode":"","serverCode":"","xroadInstance":"DEV"}]}
+```
+
+The response has the following fields:
+
+* errorLogList
+  * id
+  * message
+  * code
+  * created
+  * memberClass
+  * memberCode
+  * subsystemCode
+  * groupCode
+  * serviceCode
+  * serviceVersion
+  * securityCategoryCode
+  * serverCode
+  * xroadInstance 
+    
 ### 3.3 X-Road Catalog Persistence
 
 The purpose of this piece of software is to persist and read persisted data. Used by the Collector and Lister

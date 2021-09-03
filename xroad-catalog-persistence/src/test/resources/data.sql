@@ -214,6 +214,9 @@ VALUES (1, 1, 0, 0, 0, '', 'FI', '2001-06-11 00:00:00+02',
 INSERT INTO error_log(id, message, code, created)
 VALUES (1, 'Service not found', '500', '2020-05-04 11:41:24.792+03');
 
+INSERT INTO error_log(id, message, code, created, x_road_instance, member_class, member_code, subsystem_code)
+VALUES (2, 'Service not found', '500', '2020-05-04 11:41:24.792+03', 'DEV', 'GOV', '1234', 'TestSubsystem');
+
 INSERT INTO wsdl (id, service_id, data, external_id, created, changed, fetched,  removed)
 VALUES (1, 1, '<?xml version="1.0" standalone="no"?>
 <wsdl:definitions xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
