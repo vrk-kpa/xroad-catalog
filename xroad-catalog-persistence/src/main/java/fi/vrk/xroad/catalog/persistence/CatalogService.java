@@ -119,6 +119,12 @@ public interface CatalogService {
                        String serviceVersion);
 
     /**
+     * Returns a list of error logs
+     * @return List of ErrorLog, null if not found
+     */
+    List<ErrorLog> getErrors(String xRoadInstance, String memberClass, String memberCode, String subsystemCode, Long historyAmountInDays);
+
+    /**
      * Returns a list of service statistics
      * @return List of ServiceStatistics, null if not found
      */

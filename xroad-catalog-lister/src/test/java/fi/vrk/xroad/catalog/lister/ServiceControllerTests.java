@@ -43,12 +43,50 @@ import static org.junit.Assert.assertTrue;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = ListerApplication.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@TestPropertySource(properties = {"xroad-catalog.max-history-length-in-days=90",
+@TestPropertySource(properties = {"xroad-catalog.max-history-length-in-days=4000",
                                   "xroad-catalog.shared-params-file=src/test/resources/shared-params.xml"})
 public class ServiceControllerTests {
 
     @Autowired
     TestRestTemplate restTemplate;
+
+    @Test
+    public void testListErrors() throws JSONException {
+        ResponseEntity<String> response =
+                restTemplate.getForEntity("/api/listErrors/DEV/GOV/1234/TestSubsystem/4000", String.class);
+        assertNotNull(response.getBody());
+        assertEquals(200, response.getStatusCodeValue());
+
+        JSONObject json = new JSONObject(response.getBody());
+        JSONArray errorList = json.getJSONArray("errorLogList");
+        assertEquals(1, errorList.length());
+
+        for (int i = 0; i < errorList.length(); i++) {
+            assertEquals(errorList.optJSONObject(i).optString("message"), "Service not found");
+            assertEquals(errorList.optJSONObject(i).optString("xroadInstance"), "DEV");
+            assertEquals(errorList.optJSONObject(i).optString("memberClass"), "GOV");
+            assertEquals(errorList.optJSONObject(i).optString("memberCode"), "1234");
+            assertEquals(errorList.optJSONObject(i).optString("subsystemCode"), "TestSubsystem");
+        }
+    }
+
+    @Test
+    public void testListErrorsHistoryParameterZeroException() {
+        ResponseEntity<String> response =
+                restTemplate.getForEntity("/api/listErrors/DEV/GOV/1234/TestSubsystem/0", String.class);
+        String errMsg = "Input parameter historyAmountInDays must be greater than zero and less than the required maximum of 4000 days";
+        assertEquals(400, response.getStatusCodeValue());
+        assertEquals(errMsg, response.getBody());
+    }
+
+    @Test
+    public void testListErrorsHistoryParameterMoreThanMaximumException() {
+        ResponseEntity<String> response =
+                restTemplate.getForEntity("/api/listErrors/DEV/GOV/1234/TestSubsystem/4001", String.class);
+        String errMsg = "Input parameter historyAmountInDays must be greater than zero and less than the required maximum of 4000 days";
+        assertEquals(400, response.getStatusCodeValue());
+        assertEquals(errMsg, response.getBody());
+    }
 
     @Test
     public void testGetDistinctServiceStatistics() throws JSONException {
@@ -70,7 +108,7 @@ public class ServiceControllerTests {
     public void testGetDistinctServiceStatisticsHistoryParameterZeroException() {
         ResponseEntity<String> response =
                 restTemplate.getForEntity("/api/getDistinctServiceStatistics/0", String.class);
-        String errMsg = "Input parameter historyAmountInDays must be greater than zero and less than the required maximum of 90 days";
+        String errMsg = "Input parameter historyAmountInDays must be greater than zero and less than the required maximum of 4000 days";
         assertEquals(400, response.getStatusCodeValue());
         assertEquals(errMsg, response.getBody());
     }
@@ -78,8 +116,8 @@ public class ServiceControllerTests {
     @Test
     public void testGetDistinctServiceStatisticsHistoryParameterMoreThanMaximumException() {
         ResponseEntity<String> response =
-                restTemplate.getForEntity("/api/getDistinctServiceStatistics/91", String.class);
-        String errMsg = "Input parameter historyAmountInDays must be greater than zero and less than the required maximum of 90 days";
+                restTemplate.getForEntity("/api/getDistinctServiceStatistics/4001", String.class);
+        String errMsg = "Input parameter historyAmountInDays must be greater than zero and less than the required maximum of 4000 days";
         assertEquals(400, response.getStatusCodeValue());
         assertEquals(errMsg, response.getBody());
     }
@@ -88,7 +126,7 @@ public class ServiceControllerTests {
     public void testGetDistinctServiceStatisticsHistoryParameterNullException() {
         ResponseEntity<String> response =
                 restTemplate.getForEntity("/api/getDistinctServiceStatistics", String.class);
-        String errMsg = "Input parameter historyAmountInDays must be greater than zero and less than the required maximum of 90 days";
+        String errMsg = "Input parameter historyAmountInDays must be greater than zero and less than the required maximum of 4000 days";
         assertEquals(404, response.getStatusCodeValue());
     }
 
@@ -114,7 +152,7 @@ public class ServiceControllerTests {
     public void testGetServiceStatisticsHistoryParameterZeroException() {
         ResponseEntity<String> response =
                 restTemplate.getForEntity("/api/getServiceStatistics/0", String.class);
-        String errMsg = "Input parameter historyAmountInDays must be greater than zero and less than the required maximum of 90 days";
+        String errMsg = "Input parameter historyAmountInDays must be greater than zero and less than the required maximum of 4000 days";
         assertEquals(400, response.getStatusCodeValue());
         assertEquals(errMsg, response.getBody());
     }
@@ -122,8 +160,8 @@ public class ServiceControllerTests {
     @Test
     public void testGetServiceStatisticsHistoryParameterMoreThanMaximumException() {
         ResponseEntity<String> response =
-                restTemplate.getForEntity("/api/getServiceStatistics/91", String.class);
-        String errMsg = "Input parameter historyAmountInDays must be greater than zero and less than the required maximum of 90 days";
+                restTemplate.getForEntity("/api/getServiceStatistics/4001", String.class);
+        String errMsg = "Input parameter historyAmountInDays must be greater than zero and less than the required maximum of 4000 days";
         assertEquals(400, response.getStatusCodeValue());
         assertEquals(errMsg, response.getBody());
     }
@@ -132,7 +170,7 @@ public class ServiceControllerTests {
     public void testGetServiceStatisticsHistoryParameterNullException() {
         ResponseEntity<String> response =
                 restTemplate.getForEntity("/api/getServiceStatistics", String.class);
-        String errMsg = "Input parameter historyAmountInDays must be greater than zero and less than the required maximum of 90 days";
+        String errMsg = "Input parameter historyAmountInDays must be greater than zero and less than the required maximum of 4000 days";
         assertEquals(404, response.getStatusCodeValue());
     }
 
@@ -165,7 +203,7 @@ public class ServiceControllerTests {
     public void testGetServiceStatisticsCSVHistoryParameterZeroException() {
         ResponseEntity<String> response =
                 restTemplate.getForEntity("/api/getServiceStatisticsCSV/0", String.class);
-        String errMsg = "Input parameter historyAmountInDays must be greater than zero and less than the required maximum of 90 days";
+        String errMsg = "Input parameter historyAmountInDays must be greater than zero and less than the required maximum of 4000 days";
         assertEquals(400, response.getStatusCodeValue());
         assertEquals(errMsg, response.getBody());
     }
@@ -173,8 +211,8 @@ public class ServiceControllerTests {
     @Test
     public void testGetServiceStatisticsCSVHistoryParameterMoreThanMaximumException() {
         ResponseEntity<String> response =
-                restTemplate.getForEntity("/api/getServiceStatisticsCSV/91", String.class);
-        String errMsg = "Input parameter historyAmountInDays must be greater than zero and less than the required maximum of 90 days";
+                restTemplate.getForEntity("/api/getServiceStatisticsCSV/4001", String.class);
+        String errMsg = "Input parameter historyAmountInDays must be greater than zero and less than the required maximum of 4000 days";
         assertEquals(400, response.getStatusCodeValue());
         assertEquals(errMsg, response.getBody());
     }
@@ -183,7 +221,7 @@ public class ServiceControllerTests {
     public void testGetServiceStatisticsCSVHistoryParameterNullException() {
         ResponseEntity<String> response =
                 restTemplate.getForEntity("/api/getServiceStatisticsCSV", String.class);
-        String errMsg = "Input parameter historyAmountInDays must be greater than zero and less than the required maximum of 90 days";
+        String errMsg = "Input parameter historyAmountInDays must be greater than zero and less than the required maximum of 4000 days";
         assertEquals(404, response.getStatusCodeValue());
     }
 
@@ -229,7 +267,7 @@ public class ServiceControllerTests {
     public void testGetListOfServicesHistoryParameterZeroException() {
         ResponseEntity<String> response =
                 restTemplate.getForEntity("/api/getListOfServices/0", String.class);
-        String errMsg = "Input parameter historyAmountInDays must be greater than zero and less than the required maximum of 90 days";
+        String errMsg = "Input parameter historyAmountInDays must be greater than zero and less than the required maximum of 4000 days";
         assertEquals(400, response.getStatusCodeValue());
         assertEquals(errMsg, response.getBody());
     }
@@ -237,8 +275,8 @@ public class ServiceControllerTests {
     @Test
     public void testGetListOfServicesHistoryParameterMoreThanMaximumException() {
         ResponseEntity<String> response =
-                restTemplate.getForEntity("/api/getListOfServices/91", String.class);
-        String errMsg = "Input parameter historyAmountInDays must be greater than zero and less than the required maximum of 90 days";
+                restTemplate.getForEntity("/api/getListOfServices/4001", String.class);
+        String errMsg = "Input parameter historyAmountInDays must be greater than zero and less than the required maximum of 4000 days";
         assertEquals(400, response.getStatusCodeValue());
         assertEquals(errMsg, response.getBody());
     }
@@ -247,7 +285,7 @@ public class ServiceControllerTests {
     public void testGetListOfServicesHistoryParameterNullException() {
         ResponseEntity<String> response =
                 restTemplate.getForEntity("/api/getListOfServices", String.class);
-        String errMsg = "Input parameter historyAmountInDays must be greater than zero and less than the required maximum of 90 days";
+        String errMsg = "Input parameter historyAmountInDays must be greater than zero and less than the required maximum of 4000 days";
         assertEquals(404, response.getStatusCodeValue());
     }
 
@@ -286,7 +324,7 @@ public class ServiceControllerTests {
     public void testGetListOfServicesCSVHistoryParameterZeroException() {
         ResponseEntity<String> response =
                 restTemplate.getForEntity("/api/getListOfServicesCSV/0", String.class);
-        String errMsg = "Input parameter historyAmountInDays must be greater than zero and less than the required maximum of 90 days";
+        String errMsg = "Input parameter historyAmountInDays must be greater than zero and less than the required maximum of 4000 days";
         assertEquals(400, response.getStatusCodeValue());
         assertEquals(errMsg, response.getBody());
     }
@@ -294,8 +332,8 @@ public class ServiceControllerTests {
     @Test
     public void testGetListOfServicesCSVHistoryParameterMoreThanMaximumException() {
         ResponseEntity<String> response =
-                restTemplate.getForEntity("/api/getListOfServicesCSV/91", String.class);
-        String errMsg = "Input parameter historyAmountInDays must be greater than zero and less than the required maximum of 90 days";
+                restTemplate.getForEntity("/api/getListOfServicesCSV/4001", String.class);
+        String errMsg = "Input parameter historyAmountInDays must be greater than zero and less than the required maximum of 4000 days";
         assertEquals(400, response.getStatusCodeValue());
         assertEquals(errMsg, response.getBody());
     }
@@ -304,7 +342,7 @@ public class ServiceControllerTests {
     public void testGetListOfServicesCSVHistoryParameterNullException() {
         ResponseEntity<String> response =
                 restTemplate.getForEntity("/api/getListOfServicesCSV", String.class);
-        String errMsg = "Input parameter historyAmountInDays must be greater than zero and less than the required maximum of 90 days";
+        String errMsg = "Input parameter historyAmountInDays must be greater than zero and less than the required maximum of 4000 days";
         assertEquals(404, response.getStatusCodeValue());
     }
 

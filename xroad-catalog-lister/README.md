@@ -22,6 +22,7 @@ The main endpoints this software provides:
 * GetListOfServices - REST endpoint for requesting a list of members and related subsystems, services and security servers over time
 * GetListOfServicesCSV - REST endpoint for requesting a list of members and related subsystems, services and security servers in CSV format
 * GetDistinctServiceStatistics - REST endpoint for requesting a list of statistics, consisting of numbers of distinct services over time
+* ListErrors - REST endpoint for listing errors for a given subsystem
 * heartbeat - REST endpoint for requesting the heartbeat of X-Road Catalog
 
 A sequence diagram illustrating flow between XRoad-Catalog service layer and XRoad-Catalog Lister
@@ -1609,7 +1610,21 @@ Response
 {"distinctServiceStatisticsList":[{"created":[2021,8,24,14,58,11,165000000],"numberOfDistinctServices":5},{"created":[2021,8,25,14,58,11,165000000],"numberOfDistinctServices":6}]}
 ```
 
-### 16. heartbeat
+### 16. ListErrors
+
+Request
+
+curl "http://<SERVER_ADDRESS>:8080/api/listErrors/<INSTANCE>/<MEMBER_CLASS>/<MEMBER_CODE>/<SUBSYSTEM_CODE>/<HISTORY_AMOUNT_IN_DAYS>" -H "Content-Type: application/json"
+
+
+Response
+
+```json
+{"errorLogList":[{"id":41,"message":"Fetch of REST services failed(url: http://ss3/r1/DEV/GOV/1234/MANAGEMENT/listMethods): 500 Server Error","code":"500","created":[2021,8,24,16,31,39,548000000],"memberClass":"GOV","memberCode":"1234","subsystemCode":"MANAGEMENT","groupCode":"","serviceCode":"","serviceVersion":null,"securityCategoryCode":"","serverCode":"","xroadInstance":"DEV"},{"id":43,"message":"Fetch of REST services failed(url: http://ss3/r1/DEV/GOV/1234/MANAGEMENT/listMethods): 500 Server Error","code":"500","created":[2021,8,24,16,34,46,378000000],"memberClass":"GOV","memberCode":"1234","subsystemCode":"MANAGEMENT","groupCode":"","serviceCode":"","serviceVersion":null,"securityCategoryCode":"","serverCode":"","xroadInstance":"DEV"}]}
+```
+
+
+### 17. heartbeat
 
 Request
 

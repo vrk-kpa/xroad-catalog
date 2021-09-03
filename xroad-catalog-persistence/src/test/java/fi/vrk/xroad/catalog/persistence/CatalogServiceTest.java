@@ -233,6 +233,17 @@ public class CatalogServiceTest {
     }
 
     @Test
+    public void testGetErrors() {
+        List<ErrorLog> errorLogEntries = catalogService.getErrors("DEV",
+                "GOV",
+                "1234",
+                "TestSubsystem",
+                1000L);
+        assertNotNull(errorLogEntries);
+        assertEquals(1, errorLogEntries.size());
+    }
+
+    @Test
     public void testSaveErrorLog() {
         ErrorLog errorLog = ErrorLog.builder().message("Error").code("500")
                 .created(LocalDateTime.now()).build();

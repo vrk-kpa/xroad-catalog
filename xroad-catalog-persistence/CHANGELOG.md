@@ -2,6 +2,9 @@
 
 All notable changes to this project will be documented in this file.
 
+## 1.2.1 - 2021-00-03
+- added new endpoint for listing errors for a given subsystem
+
 ## 1.2.0 - 2021-08-26
 - added new endpoint for distinct services statistics
 
