@@ -80,7 +80,7 @@ public class FetchWsdlActor extends XRoadCatalogActor {
         if (message instanceof XRoadServiceIdentifierType) {
             XRoadServiceIdentifierType service = (XRoadServiceIdentifierType) message;
             log.info("Fetching wsdl [{}] {}", COUNTER.addAndGet(1), ClientTypeUtil.toString(service));
-            String wsdl = xroadClient.getWsdl(service);
+            String wsdl = xroadClient.getWsdl(service, catalogService);
             catalogService.saveWsdl(createSubsystemId(service), createServiceId(service), wsdl);
             log.info("Saved wsdl successfully");
             return true;
