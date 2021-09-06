@@ -159,7 +159,7 @@ public class ListMethodsActor extends XRoadCatalogActor {
                 log.info("Received all REST methods for client {} ", ClientTypeUtil.toString(clientType));
 
                 // fetch the methods
-                List<XRoadServiceIdentifierType> soapServices = xroadClient.getMethods(clientType.getId());
+                List<XRoadServiceIdentifierType> soapServices = xroadClient.getMethods(clientType.getId(), catalogService);
                 log.info("Received all SOAP methods for client {} ", ClientTypeUtil.toString(clientType));
 
                 // Save services for subsystems

@@ -32,7 +32,6 @@ import org.apache.cxf.frontend.ClientProxy;
 import org.apache.cxf.message.Attachment;
 import org.apache.cxf.message.Message;
 import org.apache.cxf.transport.http.HTTPConduit;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.activation.DataHandler;
 import javax.xml.ws.BindingProvider;
@@ -56,9 +55,6 @@ public class XRoadClient {
     final MetaServicesPort metaServicesPort;
     final XRoadClientIdentifierType clientId;
 
-    @Autowired
-    protected CatalogService catalogService;
-
     public XRoadClient(XRoadClientIdentifierType clientId, URL serverUrl) {
         this.metaServicesPort = getMetaServicesPort(serverUrl);
 
@@ -70,7 +66,7 @@ public class XRoadClient {
     /**
      * Calls the service using JAX-WS endpoints that have been generated from wsdl
      */
-    public List<XRoadServiceIdentifierType> getMethods(XRoadClientIdentifierType member) {
+    public List<XRoadServiceIdentifierType> getMethods(XRoadClientIdentifierType member, CatalogService catalogService) {
         XRoadServiceIdentifierType serviceIdentifierType = new XRoadServiceIdentifierType();
         copyIdentifierType(serviceIdentifierType, member);
 
@@ -110,7 +106,7 @@ public class XRoadClient {
         return response.getService();
     }
 
-    public String getWsdl(XRoadServiceIdentifierType service) {
+    public String getWsdl(XRoadServiceIdentifierType service, CatalogService catalogService) {
 
         XRoadServiceIdentifierType serviceIdentifierType = new XRoadServiceIdentifierType();
         copyIdentifierType(serviceIdentifierType, service);
@@ -182,7 +178,7 @@ public class XRoadClient {
         }
     }
 
-    public String getOpenApi(XRoadServiceIdentifierType service, String host) {
+    public String getOpenApi(XRoadServiceIdentifierType service, String host, CatalogService catalogService) {
         ClientType clientType = new ClientType();
         XRoadClientIdentifierType xRoadClientIdentifierType = new XRoadClientIdentifierType();
         xRoadClientIdentifierType.setXRoadInstance(service.getXRoadInstance());
