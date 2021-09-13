@@ -83,6 +83,13 @@ public class OrganizationUtil {
             catalogService.saveErrorLog(errorLog);
             log.error("KeyManagementException occurred when fetching companies from url {} with businessCode {}", url, businessCode);
         }
+        catch (Exception e) {
+            ErrorLog errorLog = MethodListUtil.createErrorLog(clientType,
+                    "Exception occurred when fetching companies from url " + url + " with businessCode "+businessCode,
+                    "500");
+            catalogService.saveErrorLog(errorLog);
+            log.error("Exception occurred when fetching companies from url {} with businessCode {}", url, businessCode);
+        }
         return jsonObject;
     }
 
@@ -117,6 +124,23 @@ public class OrganizationUtil {
                     "500");
             catalogService.saveErrorLog(errorLog);
             log.error("KeyManagementException occurred when fetching organizations with from url {}", url);
+        } catch (Exception e) {
+            log.error("Exception occurred when fetching organization ids: " + e.getMessage());
+            ErrorLog errorLog = ErrorLog.builder()
+                    .created(LocalDateTime.now())
+                    .message("Exception occurred when fetching organization ids: " + e.getMessage())
+                    .code("500")
+                    .xRoadInstance(clientType.getId().getXRoadInstance())
+                    .memberClass(clientType.getId().getMemberClass())
+                    .memberCode(clientType.getId().getMemberCode())
+                    .groupCode(clientType.getId().getGroupCode())
+                    .securityCategoryCode(clientType.getId().getSecurityCategoryCode())
+                    .serverCode(clientType.getId().getServerCode())
+                    .serviceCode(clientType.getId().getServiceCode())
+                    .serviceVersion(clientType.getId().getServiceVersion())
+                    .subsystemCode(clientType.getId().getSubsystemCode())
+                    .build();
+            catalogService.saveErrorLog(errorLog);
         }
         return idsList;
     }
@@ -540,6 +564,23 @@ public class OrganizationUtil {
                     "500");
             catalogService.saveErrorLog(errorLog);
             log.error("KeyManagementException occurred when fetching organizations with from url {}", url);
+        } catch (Exception e) {
+            log.error("Exception occurred when fetching organization data: " + e.getMessage());
+            ErrorLog errorLog = ErrorLog.builder()
+                    .created(LocalDateTime.now())
+                    .message("Exception occurred when fetching organization data: " + e.getMessage())
+                    .code("500")
+                    .xRoadInstance(clientType.getId().getXRoadInstance())
+                    .memberClass(clientType.getId().getMemberClass())
+                    .memberCode(clientType.getId().getMemberCode())
+                    .groupCode(clientType.getId().getGroupCode())
+                    .securityCategoryCode(clientType.getId().getSecurityCategoryCode())
+                    .serverCode(clientType.getId().getServerCode())
+                    .serviceCode(clientType.getId().getServiceCode())
+                    .serviceVersion(clientType.getId().getServiceVersion())
+                    .subsystemCode(clientType.getId().getSubsystemCode())
+                    .build();
+            catalogService.saveErrorLog(errorLog);
         }
         return itemList;
     }

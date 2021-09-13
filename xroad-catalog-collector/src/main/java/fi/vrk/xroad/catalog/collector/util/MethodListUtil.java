@@ -155,9 +155,20 @@ public class MethodListUtil {
                     .build();
             if (!newSecurityServerMetadata.equals(securityServerMetadata)) {
                 log.error("Fetch of REST services failed: " + e.getMessage());
-                ErrorLog errorLog = createErrorLog(clientType,
-                        "Fetch of REST services failed(url: " + url + "): " + e.getMessage(),
-                        "500");
+                ErrorLog errorLog = ErrorLog.builder()
+                        .created(LocalDateTime.now())
+                        .message("Fetch of REST services failed(url: " + url + "): " + e.getMessage())
+                        .code("500")
+                        .xRoadInstance(clientType.getId().getXRoadInstance())
+                        .memberClass(clientType.getId().getMemberClass())
+                        .memberCode(clientType.getId().getMemberCode())
+                        .groupCode(clientType.getId().getGroupCode())
+                        .securityCategoryCode(clientType.getId().getSecurityCategoryCode())
+                        .serverCode(clientType.getId().getServerCode())
+                        .serviceCode(clientType.getId().getServiceCode())
+                        .serviceVersion(clientType.getId().getServiceVersion())
+                        .subsystemCode(clientType.getId().getSubsystemCode())
+                        .build();
                 catalogService.saveErrorLog(errorLog);
                 securityServerMetadata = SecurityServerMetadata.builder()
                         .xRoadInstance(clientType.getId().getXRoadInstance())
