@@ -158,24 +158,55 @@ public class XRoadClient {
             // Apache CXF does not map the attachment returned by the security server to the wsdl
             // output parameter due to missing Content-Id header. Extract the attachment from the
             // response context.
-            DataHandler dh;
+            DataHandler dh = null;
             final Client client = ClientProxy.getClient(metaServicesPort);
             final Collection<Attachment> attachments =
                     (Collection<Attachment>)client.getResponseContext().get(Message.ATTACHMENTS);
             if (attachments != null && attachments.size() == 1) {
                 dh = attachments.iterator().next().getDataHandler();
             } else {
-                throw new CatalogCollectorRuntimeException("Expected one WSDL attachment");
+                log.error("Expected one WSDL attachment");
+                ErrorLog errorLog = ErrorLog.builder()
+                        .created(LocalDateTime.now())
+                        .message("Expected one WSDL attachment")
+                        .code("500")
+                        .xRoadInstance(service.getXRoadInstance())
+                        .memberClass(service.getMemberClass())
+                        .memberCode(service.getMemberCode())
+                        .groupCode(service.getGroupCode())
+                        .securityCategoryCode(service.getSecurityCategoryCode())
+                        .serverCode(service.getServerCode())
+                        .serviceCode(service.getServiceCode())
+                        .serviceVersion(service.getServiceVersion())
+                        .subsystemCode(service.getSubsystemCode())
+                        .build();
+                catalogService.saveErrorLog(errorLog);
             }
             try (ByteArrayOutputStream buf = new ByteArrayOutputStream()) {
                 dh.writeTo(buf);
                 return buf.toString(StandardCharsets.UTF_8.name());
             } catch (IOException e) {
-                throw new CatalogCollectorRuntimeException("Error downloading wsdl", e);
+                log.error("Error downloading WSDL: ", e.getMessage());
+                ErrorLog errorLog = ErrorLog.builder()
+                        .created(LocalDateTime.now())
+                        .message("Error downloading WSDL: " + e.getMessage())
+                        .code("500")
+                        .xRoadInstance(service.getXRoadInstance())
+                        .memberClass(service.getMemberClass())
+                        .memberCode(service.getMemberCode())
+                        .groupCode(service.getGroupCode())
+                        .securityCategoryCode(service.getSecurityCategoryCode())
+                        .serverCode(service.getServerCode())
+                        .serviceCode(service.getServiceCode())
+                        .serviceVersion(service.getServiceVersion())
+                        .subsystemCode(service.getSubsystemCode())
+                        .build();
+                catalogService.saveErrorLog(errorLog);
             }
         } else {
             return new String(wsdl.value, StandardCharsets.UTF_8);
         }
+        return null;
     }
 
     public String getOpenApi(XRoadServiceIdentifierType service, String host, CatalogService catalogService) {

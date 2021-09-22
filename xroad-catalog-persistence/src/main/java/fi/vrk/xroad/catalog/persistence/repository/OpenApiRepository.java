@@ -23,8 +23,10 @@
 package fi.vrk.xroad.catalog.persistence.repository;
 
 import fi.vrk.xroad.catalog.persistence.entity.OpenApi;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 public interface OpenApiRepository extends CrudRepository<OpenApi, Long> {
@@ -32,4 +34,7 @@ public interface OpenApiRepository extends CrudRepository<OpenApi, Long> {
      * Returns also removed items
      */
     List<OpenApi> findAnyByExternalId(String externalId);
+
+    @Query(value = "SELECT MAX(fetched) FROM open_api", nativeQuery = true)
+    LocalDateTime findLatestFetched();
 }

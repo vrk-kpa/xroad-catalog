@@ -22,6 +22,7 @@
  */
 package fi.vrk.xroad.catalog.persistence;
 
+import fi.vrk.xroad.catalog.persistence.dto.LastCollectionData;
 import fi.vrk.xroad.catalog.persistence.dto.DistinctServiceStatistics;
 import fi.vrk.xroad.catalog.persistence.dto.MemberDataList;
 import fi.vrk.xroad.catalog.persistence.dto.ServiceStatistics;
@@ -345,6 +346,12 @@ public interface CatalogService {
      * @return databaseConnection
      */
     Boolean checkDatabaseConnection();
+
+    /**
+     * Retrieves latest collection data
+     * @return LastCollectionData
+     */
+    LastCollectionData getLastCollectionData();
 
     /**
      * Saves given BusinessName data.

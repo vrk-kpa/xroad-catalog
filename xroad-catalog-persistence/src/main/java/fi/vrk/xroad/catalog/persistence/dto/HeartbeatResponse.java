@@ -45,4 +45,6 @@ public class HeartbeatResponse implements Serializable {
 
     private LocalDateTime systemTime;
 
+    private LastCollectionData lastCollectionData;
+
 }

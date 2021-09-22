@@ -38,6 +38,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.time.Month;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -201,6 +202,15 @@ public class MemberRepositoryTest {
                 log.info(service.getWsdl() == null ? "null" : service.getWsdl().toString());
             }
         }
+    }
+
+    @Test
+    public void testFindLatestFetched() {
+        LocalDateTime latestFetched = memberRepository.findLatestFetched();
+        assertEquals(2017, latestFetched.getYear());
+        assertEquals(Month.JANUARY, latestFetched.getMonth());
+        assertEquals(2, latestFetched.getDayOfMonth());
+        assertEquals(0, latestFetched.getHour());
     }
 
 }

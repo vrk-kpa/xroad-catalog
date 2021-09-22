@@ -23,6 +23,7 @@
 package fi.vrk.xroad.catalog.persistence;
 
 import fi.vrk.xroad.catalog.persistence.dto.DistinctServiceStatistics;
+import fi.vrk.xroad.catalog.persistence.dto.LastCollectionData;
 import fi.vrk.xroad.catalog.persistence.dto.MemberData;
 import fi.vrk.xroad.catalog.persistence.dto.MemberDataList;
 import fi.vrk.xroad.catalog.persistence.dto.ServiceData;
@@ -755,6 +756,18 @@ public class CatalogServiceImpl implements CatalogService {
     @Override
     public Boolean checkDatabaseConnection() {
         return Integer.valueOf(1).equals(memberRepository.checkConnection());
+    }
+
+    @Override
+    public LastCollectionData getLastCollectionData() {
+        return LastCollectionData.builder()
+                .companiesLastFetched(companyRepository.findLatestFetched())
+                .membersLastFetched(memberRepository.findLatestFetched())
+                .openapisLastFetched(openApiRepository.findLatestFetched())
+                .organizationsLastFetched(organizationRepository.findLatestFetched())
+                .servicesLastFetched(serviceRepository.findLatestFetched())
+                .subsystemsLastFetched(subsystemRepository.findLatestFetched())
+                .wsdlsLastFetched(wsdlRepository.findLatestFetched()).build();
     }
 
     private void handleOldMember(LocalDateTime now, Member member, Member oldMember) {

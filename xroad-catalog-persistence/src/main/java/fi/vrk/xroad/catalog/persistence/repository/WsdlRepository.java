@@ -23,8 +23,10 @@
 package fi.vrk.xroad.catalog.persistence.repository;
 
 import fi.vrk.xroad.catalog.persistence.entity.Wsdl;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 public interface WsdlRepository extends CrudRepository<Wsdl, Long> {
@@ -32,4 +34,7 @@ public interface WsdlRepository extends CrudRepository<Wsdl, Long> {
      * Returns also removed items
      */
     List<Wsdl> findAnyByExternalId(String externalId);
+
+    @Query(value = "SELECT MAX(fetched) FROM wsdl", nativeQuery = true)
+    LocalDateTime findLatestFetched();
 }

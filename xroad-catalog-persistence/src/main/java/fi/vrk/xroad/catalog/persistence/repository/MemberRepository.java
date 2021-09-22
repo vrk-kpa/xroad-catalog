@@ -72,4 +72,7 @@ public interface MemberRepository extends CrudRepository<Member, Long> {
     @Query(value = "SELECT 1", nativeQuery = true)
     Integer checkConnection();
 
+    @Query(value = "SELECT MAX(fetched) FROM member", nativeQuery = true)
+    LocalDateTime findLatestFetched();
+
 }

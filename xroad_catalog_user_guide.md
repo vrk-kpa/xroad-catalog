@@ -1,5 +1,5 @@
 # X-Road Catalog User Guide
-Version: 1.0.6
+Version: 1.0.7
 Doc. ID: XRDCAT-CONF
 
 ---
@@ -13,7 +13,8 @@ Doc. ID: XRDCAT-CONF
 | 23.07.2021 | 1.0.3       | Add X-Road Catalog Lister section                                            | Bert Viikmäe       |
 | 23.07.2021 | 1.0.4       | Add X-Road Catalog Persistence section                                       | Bert Viikmäe       |
 | 25.08.2021 | 1.0.5       | Add list distinct services endpoint description                              | Bert Viikmäe       |
-| 02.09.2021 | 1.0.6       | Add list distinct services endpoint description                              | Bert Viikmäe       |
+| 02.09.2021 | 1.0.6       | Add list errors endpoint description                                         | Bert Viikmäe       |
+| 22.09.2021 | 1.0.7       | Update heartbeat endpoint description                                        | Bert Viikmäe       |
 
 ## Table of Contents <!-- omit in toc -->
 
@@ -1342,7 +1343,21 @@ In order to fetch X-Road Catalog heartbeat information, an HTTP request has to b
 
 Response in JSON:
 ```
-{"appWorking":true,"dbWorking":true,"appName":"X-Road Catalog Lister","appVersion":"1.0.12","systemTime":[2021,2,9,12,52,47,993000000]}
+{"appWorking":true,
+ "dbWorking":true,
+ "appName":"X-Road Catalog Lister",
+ "appVersion":"1.2.1",
+ "systemTime":[2021,9,20,10,12,15,132000000],
+ "lastCollectionData":
+ {"organizationsLastFetched":[2021,9,20,10,10,55,153000000],
+  "companiesLastFetched":null,
+  "membersLastFetched":[2021,9,20,10,8,51,380000000],
+  "subsystemsLastFetched":[2021,9,20,10,8,51,380000000],
+  "servicesLastFetched":[2021,9,1,15,32,51,123000000],
+  "wsdlsLastFetched":[2021,9,1,15,32,53,87000000],
+  "openapisLastFetched":[2020,11,22,22,12,32,202000000]
+ }
+}
 ```
 
 The response has the following fields:
@@ -1352,6 +1367,14 @@ The response has the following fields:
 * appName
 * appVersion
 * systemTime
+* lastCollectionData
+  * organizationsLastFetched
+  * companiesLastFetched
+  * membersLastFetched
+  * subsystemsLastFetched
+  * servicesLastFetched
+  * wsdlsLastFetched
+  * openapisLastFetched
 
 ### 3.2.3.16 List distinct service statistics
 

@@ -33,6 +33,10 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
+import java.time.Month;
+
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
@@ -118,5 +122,14 @@ public class ServiceRepositoryTest {
                 "PUB","14151329","removed-service_7-1-3",
                 "subsystem_7-1", "v1");
         assertNull(service);
+    }
+
+    @Test
+    public void testFindLatestFetched() {
+        LocalDateTime latestFetched = serviceRepository.findLatestFetched();
+        assertEquals(2017, latestFetched.getYear());
+        assertEquals(Month.JANUARY, latestFetched.getMonth());
+        assertEquals(2, latestFetched.getDayOfMonth());
+        assertEquals(0, latestFetched.getHour());
     }
 }

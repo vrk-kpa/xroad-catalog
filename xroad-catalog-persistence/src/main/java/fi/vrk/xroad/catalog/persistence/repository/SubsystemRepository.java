@@ -27,6 +27,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 
+import java.time.LocalDateTime;
+
 public interface SubsystemRepository extends CrudRepository<Subsystem, Long> {
 
     @Query("SELECT s FROM Subsystem s WHERE s.subsystemCode = :subsystemCode "
@@ -38,5 +40,8 @@ public interface SubsystemRepository extends CrudRepository<Subsystem, Long> {
                                      @Param("memberClass") String memberClass,
                                      @Param("memberCode") String memberCode,
                                      @Param("subsystemCode") String subsystemCode);
+
+    @Query(value = "SELECT MAX(fetched) FROM subsystem", nativeQuery = true)
+    LocalDateTime findLatestFetched();
 }
 
