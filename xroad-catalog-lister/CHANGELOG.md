@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.2.2] - 2021-09-22
+
+### Changed
+- updated heartbeat endpoint to return also information about last collection dates
+
 ## [1.2.1] - 2021-09-03
 
 ### Added

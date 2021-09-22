@@ -33,6 +33,10 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
+import java.time.Month;
+
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
@@ -60,5 +64,14 @@ public class SubsystemRepositoryTest {
         subsystem = subsystemRepository.findActiveByNaturalKey("dev-cs", "PUB", "14151328",
                 "N/A code");
         assertNull(subsystem);
+    }
+
+    @Test
+    public void testFindLatestFetched() {
+        LocalDateTime latestFetched = subsystemRepository.findLatestFetched();
+        assertEquals(2017, latestFetched.getYear());
+        assertEquals(Month.JANUARY, latestFetched.getMonth());
+        assertEquals(2, latestFetched.getDayOfMonth());
+        assertEquals(0, latestFetched.getHour());
     }
 }

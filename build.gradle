@@ -35,7 +35,7 @@ task wrapper(type: Wrapper) {
 }
 
 ext {
-    project_version='1.2.1'
+    project_version='1.2.2'
 }
 
 

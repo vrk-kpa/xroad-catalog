@@ -20,26 +20,40 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package fi.vrk.xroad.catalog.persistence.repository;
+package fi.vrk.xroad.catalog.persistence.dto;
 
-import fi.vrk.xroad.catalog.persistence.entity.Organization;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.CrudRepository;
-import org.springframework.data.repository.query.Param;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.Optional;
-import java.util.Set;
 
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+@EqualsAndHashCode
+@Getter
+@Setter
+public class LastCollectionData implements Serializable {
 
-public interface OrganizationRepository extends CrudRepository<Organization, LocalDateTime> {
+    private static final long serialVersionUID = 4049961366368846285L;
 
-    // uses named query Organization.findAllByBusinessCode
-    Set<Organization> findAllByBusinessCode(@Param("businessCode") String businessCode);
+    private LocalDateTime organizationsLastFetched;
 
-    @Query("SELECT o FROM Organization o WHERE o.guid = :guid")
-    Optional<Organization> findAnyByOrganizationGuid(@Param("guid") String guid);
+    private LocalDateTime companiesLastFetched;
 
-    @Query(value = "SELECT MAX(fetched) FROM organization", nativeQuery = true)
-    LocalDateTime findLatestFetched();
+    private LocalDateTime membersLastFetched;
+
+    private LocalDateTime subsystemsLastFetched;
+
+    private LocalDateTime servicesLastFetched;
+
+    private LocalDateTime wsdlsLastFetched;
+
+    private LocalDateTime openapisLastFetched;
+
 }

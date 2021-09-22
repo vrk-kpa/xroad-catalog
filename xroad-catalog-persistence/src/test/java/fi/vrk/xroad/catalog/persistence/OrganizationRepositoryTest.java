@@ -32,6 +32,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
+import java.time.Month;
 import java.util.Optional;
 import java.util.Set;
 
@@ -82,6 +84,15 @@ public class OrganizationRepositoryTest {
         assertEquals(1, organization.get().getAllAddresses().size());
         assertEquals(1, organization.get().getAllAddresses().iterator().next().getAllStreetAddresses().size());
         assertEquals(1, organization.get().getAllAddresses().iterator().next().getAllPostOfficeBoxAddresses().size());
+    }
+
+    @Test
+    public void testFindLatestFetched() {
+        LocalDateTime latestFetched = organizationRepository.findLatestFetched();
+        assertEquals(2016, latestFetched.getYear());
+        assertEquals(Month.JANUARY, latestFetched.getMonth());
+        assertEquals(1, latestFetched.getDayOfMonth());
+        assertEquals(0, latestFetched.getHour());
     }
 
 }

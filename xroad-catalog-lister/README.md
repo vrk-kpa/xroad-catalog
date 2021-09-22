@@ -1633,7 +1633,21 @@ curl "http://localhost:8080/api/heartbeat" -H "Content-Type: application/json"
 Response
 
 ```
-{"appWorking":true,"dbWorking":true,"appName":"X-Road Catalog Lister","appVersion":"1.0.12","systemTime":[2021,2,9,12,52,47,993000000]}
+{"appWorking":true,
+ "dbWorking":true,
+ "appName":"X-Road Catalog Lister",
+ "appVersion":"1.2.1",
+ "systemTime":[2021,9,20,10,12,15,132000000],
+ "lastCollectionData":
+ {"organizationsLastFetched":[2021,9,20,10,10,55,153000000],
+  "companiesLastFetched":null,
+  "membersLastFetched":[2021,9,20,10,8,51,380000000],
+  "subsystemsLastFetched":[2021,9,20,10,8,51,380000000],
+  "servicesLastFetched":[2021,9,1,15,32,51,123000000],
+  "wsdlsLastFetched":[2021,9,1,15,32,53,87000000],
+  "openapisLastFetched":[2020,11,22,22,12,32,202000000]
+ }
+}
 ```
 
 ## Build RPM Packages on Non-RedHat Platform

@@ -54,6 +54,7 @@ public class HeartbeatController {
                 .appVersion(appVersion)
                 .systemTime(LocalDateTime.now())
                 .dbWorking(catalogService.checkDatabaseConnection())
+                .lastCollectionData(catalogService.getLastCollectionData())
                 .appWorking(Boolean.TRUE).build();
     }
 }

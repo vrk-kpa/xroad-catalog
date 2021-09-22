@@ -27,6 +27,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.Set;
 
@@ -41,4 +42,7 @@ public interface CompanyRepository extends CrudRepository<Company, Long> {
     Optional<Company> findAny(@Param("businessId") String businessId,
                               @Param("companyForm") String companyForm,
                               @Param("name") String name);
+
+    @Query(value = "SELECT MAX(fetched) FROM company", nativeQuery = true)
+    LocalDateTime findLatestFetched();
 }

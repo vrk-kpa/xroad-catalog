@@ -27,6 +27,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 
@@ -122,4 +123,7 @@ public interface ServiceRepository extends CrudRepository<Service, Long> {
                                                          @Param("serviceCode") String serviceCode,
                                                          @Param("subsystemCode") String subsystemCode,
                                                          @Param("serviceVersion") String serviceVersion);
+
+    @Query(value = "SELECT MAX(fetched) FROM service", nativeQuery = true)
+    LocalDateTime findLatestFetched();
 }

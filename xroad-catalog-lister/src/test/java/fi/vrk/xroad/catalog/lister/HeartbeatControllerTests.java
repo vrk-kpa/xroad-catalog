@@ -23,6 +23,7 @@
 package fi.vrk.xroad.catalog.lister;
 
 import fi.vrk.xroad.catalog.persistence.CatalogService;
+import fi.vrk.xroad.catalog.persistence.dto.LastCollectionData;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.Test;
@@ -34,6 +35,11 @@ import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
+
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -54,16 +60,37 @@ public class HeartbeatControllerTests {
 
     @Test
     public void testGetHeartbeat() throws JSONException {
+        LastCollectionData lastCollectionData = LastCollectionData.builder()
+                .wsdlsLastFetched(LocalDateTime.of(2021, 9,1,1,1,1))
+                .subsystemsLastFetched(LocalDateTime.of(2021, 8,1,1,1, 1))
+                .servicesLastFetched(LocalDateTime.of(2021, 7,1,1,1, 1))
+                .organizationsLastFetched(LocalDateTime.of(2021, 6,1,1,1, 1))
+                .openapisLastFetched(LocalDateTime.of(2021, 5,1,1,1, 1))
+                .membersLastFetched(LocalDateTime.of(2021, 4,1,1,1, 1))
+                .companiesLastFetched(LocalDateTime.of(2021, 3,1,1,1, 1)).build();
         given(catalogService.checkDatabaseConnection()).willReturn(Boolean.TRUE);
-        ResponseEntity<String> response =
-                restTemplate.getForEntity("/api/heartbeat", String.class);
+        given(catalogService.getLastCollectionData()).willReturn(lastCollectionData);
+        ResponseEntity<String> response = restTemplate.getForEntity("/api/heartbeat", String.class);
         assertNotNull(response.getBody());
         assertEquals(200, response.getStatusCodeValue());
-
         JSONObject json = new JSONObject(response.getBody());
         assertTrue(json.getBoolean("appWorking"));
         assertTrue(json.getBoolean("dbWorking"));
         assertEquals("X-Road Catalog Lister", json.getString("appName"));
+        assertEquals(2021, json.getJSONObject("lastCollectionData").getJSONArray("wsdlsLastFetched").get(0));
+        assertEquals(9, json.getJSONObject("lastCollectionData").getJSONArray("wsdlsLastFetched").get(1));
+        assertEquals(2021, json.getJSONObject("lastCollectionData").getJSONArray("subsystemsLastFetched").get(0));
+        assertEquals(8, json.getJSONObject("lastCollectionData").getJSONArray("subsystemsLastFetched").get(1));
+        assertEquals(2021, json.getJSONObject("lastCollectionData").getJSONArray("servicesLastFetched").get(0));
+        assertEquals(7, json.getJSONObject("lastCollectionData").getJSONArray("servicesLastFetched").get(1));
+        assertEquals(2021, json.getJSONObject("lastCollectionData").getJSONArray("organizationsLastFetched").get(0));
+        assertEquals(6, json.getJSONObject("lastCollectionData").getJSONArray("organizationsLastFetched").get(1));
+        assertEquals(2021, json.getJSONObject("lastCollectionData").getJSONArray("openapisLastFetched").get(0));
+        assertEquals(5, json.getJSONObject("lastCollectionData").getJSONArray("openapisLastFetched").get(1));
+        assertEquals(2021, json.getJSONObject("lastCollectionData").getJSONArray("membersLastFetched").get(0));
+        assertEquals(4, json.getJSONObject("lastCollectionData").getJSONArray("membersLastFetched").get(1));
+        assertEquals(2021, json.getJSONObject("lastCollectionData").getJSONArray("companiesLastFetched").get(0));
+        assertEquals(3, json.getJSONObject("lastCollectionData").getJSONArray("companiesLastFetched").get(1));
         assertEquals("1.0.3", json.getString("appVersion"));
     }
 

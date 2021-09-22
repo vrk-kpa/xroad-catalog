@@ -22,6 +22,7 @@
  */
 package fi.vrk.xroad.catalog.persistence;
 
+import fi.vrk.xroad.catalog.persistence.dto.LastCollectionData;
 import fi.vrk.xroad.catalog.persistence.entity.*;
 
 import com.google.common.collect.Iterables;
@@ -1454,6 +1455,18 @@ public class CatalogServiceTest {
         } catch (Exception expected) {
             // Exception is expected }
         }
+    }
+
+    @Test
+    public void testGetLastCollectionData() {
+        LastCollectionData lastCollectionData = catalogService.getLastCollectionData();
+        assertEquals(2020, lastCollectionData.getCompaniesLastFetched().getYear());
+        assertEquals(2017, lastCollectionData.getMembersLastFetched().getYear());
+        assertEquals(2016, lastCollectionData.getOpenapisLastFetched().getYear());
+        assertEquals(2016, lastCollectionData.getOrganizationsLastFetched().getYear());
+        assertEquals(2017, lastCollectionData.getServicesLastFetched().getYear());
+        assertEquals(2017, lastCollectionData.getSubsystemsLastFetched().getYear());
+        assertEquals(2017, lastCollectionData.getWsdlsLastFetched().getYear());
     }
 
     private void verifySavedStatusInfo(StatusInfo statusInfo) {
