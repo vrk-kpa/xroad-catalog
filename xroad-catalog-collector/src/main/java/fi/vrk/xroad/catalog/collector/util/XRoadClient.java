@@ -77,32 +77,32 @@ public class XRoadClient {
         serviceIdentifierType.setServiceVersion("v1");
         serviceIdentifierType.setObjectType(XRoadObjectType.SERVICE);
 
-        ListMethodsResponse response = null;
-        try {
-            response = metaServicesPort.listMethods(new ListMethods(),
+//        ListMethodsResponse response = null;
+//        try {
+        ListMethodsResponse response = metaServicesPort.listMethods(new ListMethods(),
                     holder(tmpClientId),
                     holder(serviceIdentifierType),
                     userId(),
                     queryId(),
                     protocolVersion());
-        } catch(Exception e) {
-            log.error("Fetch of SOAP services failed: " + e.getMessage());
-            ErrorLog errorLog = ErrorLog.builder()
-                    .created(LocalDateTime.now())
-                    .message("Fetch of SOAP services failed: " + e.getMessage())
-                    .code("500")
-                    .xRoadInstance(member.getXRoadInstance())
-                    .memberClass(member.getMemberClass())
-                    .memberCode(member.getMemberCode())
-                    .groupCode(member.getGroupCode())
-                    .securityCategoryCode(member.getSecurityCategoryCode())
-                    .serverCode(member.getServerCode())
-                    .serviceCode(member.getServiceCode())
-                    .serviceVersion(member.getServiceVersion())
-                    .subsystemCode(member.getSubsystemCode())
-                    .build();
-            catalogService.saveErrorLog(errorLog);
-        }
+//        } catch(Exception e) {
+//            log.error("Fetch of SOAP services failed: " + e.getMessage());
+//            ErrorLog errorLog = ErrorLog.builder()
+//                    .created(LocalDateTime.now())
+//                    .message("Fetch of SOAP services failed: " + e.getMessage())
+//                    .code("500")
+//                    .xRoadInstance(member.getXRoadInstance())
+//                    .memberClass(member.getMemberClass())
+//                    .memberCode(member.getMemberCode())
+//                    .groupCode(member.getGroupCode())
+//                    .securityCategoryCode(member.getSecurityCategoryCode())
+//                    .serverCode(member.getServerCode())
+//                    .serviceCode(member.getServiceCode())
+//                    .serviceVersion(member.getServiceVersion())
+//                    .subsystemCode(member.getSubsystemCode())
+//                    .build();
+//            catalogService.saveErrorLog(errorLog);
+//        }
         return response.getService();
     }
 
