@@ -22,8 +22,10 @@ The main endpoints this software provides:
 * GetListOfServices - REST endpoint for requesting a list of members and related subsystems, services and security servers over time
 * GetListOfServicesCSV - REST endpoint for requesting a list of members and related subsystems, services and security servers in CSV format
 * GetDistinctServiceStatistics - REST endpoint for requesting a list of statistics, consisting of numbers of distinct services over time
-* ListErrors - REST endpoint for listing errors for a given subsystem
+* listErrors - REST endpoint for listing errors for a given member or subsystem, supports pagination
 * heartbeat - REST endpoint for requesting the heartbeat of X-Road Catalog
+* listSecurityServers - REST endpoint for listing security servers and related information
+* listDescriptors - REST endpoint for listing subsystems
 
 A sequence diagram illustrating flow between XRoad-Catalog service layer and XRoad-Catalog Lister
 
@@ -1612,15 +1614,57 @@ Response
 
 ### 16. ListErrors
 
-Request
+Requests
 
-curl "http://<SERVER_ADDRESS>:8080/api/listErrors/<INSTANCE>/<MEMBER_CLASS>/<MEMBER_CODE>/<SUBSYSTEM_CODE>/<HISTORY_AMOUNT_IN_DAYS>" -H "Content-Type: application/json"
+List errors for a given subsystem:
+curl "http://localhost:8080/api/listErrors/<INSTANCE>/<MEMBER_CLASS>/<MEMBER_CODE>/<SUBSYSTEM_CODE>/<HISTORY_AMOUNT_IN_DAYS>" -H "Content-Type: application/json"
 
+List errors for a given member:
+curl "http://localhost:8080/api/listErrors/<INSTANCE>/<MEMBER_CLASS>/<MEMBER_CODE>/<HISTORY_AMOUNT_IN_DAYS>" -H "Content-Type: application/json"
+
+List errors for a given subsystem with pagination:
+curl "http://localhost:8080/api/listErrors/<INSTANCE>/<MEMBER_CLASS>/<MEMBER_CODE>/<SUBSYSTEM_CODE>/<HISTORY_AMOUNT_IN_DAYS>?page=<PAGE_NUMBER>&limit=<NO_OF_ERRORS_PER_PAGE>" -H "Content-Type: application/json"
+
+List errors for a given member with pagination:
+curl "http://localhost:8080/api/listErrors/<INSTANCE>/<MEMBER_CLASS>/<MEMBER_CODE>/<HISTORY_AMOUNT_IN_DAYS>?page=<PAGE_NUMBER>&limit=<NO_OF_ERRORS_PER_PAGE>" -H "Content-Type: application/json"
+
+Example request
+curl "http://localhost:8080/api/listErrors/DEV/GOV/1234/TEST/29?page=0&limit=10" -H "Content-Type: application/json"
 
 Response
 
 ```json
-{"errorLogList":[{"id":41,"message":"Fetch of REST services failed(url: http://ss3/r1/DEV/GOV/1234/MANAGEMENT/listMethods): 500 Server Error","code":"500","created":[2021,8,24,16,31,39,548000000],"memberClass":"GOV","memberCode":"1234","subsystemCode":"MANAGEMENT","groupCode":"","serviceCode":"","serviceVersion":null,"securityCategoryCode":"","serverCode":"","xroadInstance":"DEV"},{"id":43,"message":"Fetch of REST services failed(url: http://ss3/r1/DEV/GOV/1234/MANAGEMENT/listMethods): 500 Server Error","code":"500","created":[2021,8,24,16,34,46,378000000],"memberClass":"GOV","memberCode":"1234","subsystemCode":"MANAGEMENT","groupCode":"","serviceCode":"","serviceVersion":null,"securityCategoryCode":"","serverCode":"","xroadInstance":"DEV"}]}
+{
+  "pageNumber": 0,
+  "pageSize": 10,
+  "numberOfPages": 3,
+  "errorLogList": [
+    {
+      "id": 158,
+      "message": "Fetch of SOAP services failed: Client (SUBSYSTEM:DEV/GOV/1234/MANAGEMENT) specifies HTTPS NO AUTH but client made  plaintext connection",
+      "code": "500",
+      "created": [
+        2021,
+        9,
+        28,
+        10,
+        35,
+        33,
+        255000000
+      ],
+      "memberClass": "GOV",
+      "memberCode": "1234",
+      "subsystemCode": "TEST",
+      "groupCode": "",
+      "serviceCode": "",
+      "serviceVersion": null,
+      "securityCategoryCode": "",
+      "serverCode": "",
+      "xroadInstance": "DEV"
+    },
+    {}
+  ]
+}
 ```
 
 
@@ -1647,6 +1691,157 @@ Response
   "wsdlsLastFetched":[2021,9,1,15,32,53,87000000],
   "openapisLastFetched":[2020,11,22,22,12,32,202000000]
  }
+}
+```
+
+### 18. listSecurityServers
+
+Request
+
+curl "http://localhost:8080/api/listSecurityServers" -H "Content-Type: application/json"
+
+Response
+
+```
+{
+  "securityServerDataList": [
+    {
+      "owner": {
+        "memberClass": "GOV",
+        "memberCode": "1234",
+        "name": "ACME",
+        "subsystemCode": null
+      },
+      "serverCode": "SS1",
+      "address": "SS1",
+      "clients": [
+        {
+          "memberClass": "GOV",
+          "memberCode": "1234",
+          "name": "ACME",
+          "subsystemCode": "MANAGEMENT"
+        }
+      ]
+    },
+    {
+      "owner": {
+        "memberClass": "GOV",
+        "memberCode": "1234",
+        "name": "ACME",
+        "subsystemCode": null
+      },
+      "serverCode": "ss4",
+      "address": "ss4",
+      "clients": [
+        {
+          "memberClass": "GOV",
+          "memberCode": "1234",
+          "name": "ACME",
+          "subsystemCode": "THESUBSYSTEM"
+        },
+        {
+          "memberClass": "COM",
+          "memberCode": "222",
+          "name": "FRUIT",
+          "subsystemCode": null
+        }
+      ]
+    }
+  ]
+}
+```
+
+**owner** indicates the owner of the security server
+
+**clients** provides a list of clients using the security server, where a client can be considered a member when their subsystemCode is null
+
+### 18. listDescriptors
+
+Request
+
+curl "http://localhost:8080/api/listDescriptors" -H "Content-Type: application/json"
+
+Response
+
+```
+{
+  "descriptorInfoList": [
+    {
+      "x_road_instance": "DEV",
+      "subsystem_name": {
+        "et": "Subsystem Name ET",
+        "en": "Subsystem Name EN"
+      },
+      "email": {
+        "name": "Firstname Lastname",
+        "email": "yourname@yourdomain"
+      },
+      "member_class": "GOV",
+      "member_code": "1234",
+      "member_name": "ACME",
+      "subsystem_code": "MANAGEMENT"
+    },
+    {
+      "x_road_instance": "DEV",
+      "subsystem_name": {
+        "et": "Subsystem Name ET",
+        "en": "Subsystem Name EN"
+      },
+      "email": {
+        "name": "Firstname Lastname",
+        "email": "yourname@yourdomain"
+      },
+      "member_class": "GOV",
+      "member_code": "1234",
+      "member_name": "ACME",
+      "subsystem_code": "TEST"
+    },
+    {
+      "x_road_instance": "DEV",
+      "subsystem_name": {
+        "et": "Subsystem Name ET",
+        "en": "Subsystem Name EN"
+      },
+      "email": {
+        "name": "Firstname Lastname",
+        "email": "yourname@yourdomain"
+      },
+      "member_class": "GOV",
+      "member_code": "1234",
+      "member_name": "ACME",
+      "subsystem_code": "MASTER"
+    },
+    {
+      "x_road_instance": "DEV",
+      "subsystem_name": {
+        "et": "Subsystem Name ET",
+        "en": "Subsystem Name EN"
+      },
+      "email": {
+        "name": "Firstname Lastname",
+        "email": "yourname@yourdomain"
+      },
+      "member_class": "GOV",
+      "member_code": "1234",
+      "member_name": "ACME",
+      "subsystem_code": "TESTCLIENT"
+    },
+    {
+      "x_road_instance": "DEV",
+      "subsystem_name": {
+        "et": "Subsystem Name ET",
+        "en": "Subsystem Name EN"
+      },
+      "email": {
+        "name": "Firstname Lastname",
+        "email": "yourname@yourdomain"
+      },
+      "member_class": "GOV",
+      "member_code": "1234",
+      "member_name": "ACME",
+      "subsystem_code": "THESUBSYSTEM"
+    }
+  ]
 }
 ```
 

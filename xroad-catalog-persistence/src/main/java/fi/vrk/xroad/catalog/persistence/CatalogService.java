@@ -27,6 +27,7 @@ import fi.vrk.xroad.catalog.persistence.dto.DistinctServiceStatistics;
 import fi.vrk.xroad.catalog.persistence.dto.MemberDataList;
 import fi.vrk.xroad.catalog.persistence.dto.ServiceStatistics;
 import fi.vrk.xroad.catalog.persistence.entity.*;
+import org.springframework.data.domain.Page;
 
 import java.time.LocalDateTime;
 import java.util.Collection;
@@ -120,10 +121,16 @@ public interface CatalogService {
                        String serviceVersion);
 
     /**
-     * Returns a list of error logs
-     * @return List of ErrorLog, null if not found
+     * Returns a list of error logs with pagination
+     * @return Page of ErrorLog, null if not found
      */
-    List<ErrorLog> getErrors(String xRoadInstance, String memberClass, String memberCode, String subsystemCode, Long historyAmountInDays);
+    Page<ErrorLog> getErrors(String xRoadInstance,
+                             String memberClass,
+                             String memberCode,
+                             String subsystemCode,
+                             Long historyAmountInDays,
+                             int page,
+                             int limit);
 
     /**
      * Returns a list of service statistics

@@ -34,6 +34,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -235,13 +236,15 @@ public class CatalogServiceTest {
 
     @Test
     public void testGetErrors() {
-        List<ErrorLog> errorLogEntries = catalogService.getErrors("DEV",
+        Page<ErrorLog> errorLogEntries = catalogService.getErrors("DEV",
                 "GOV",
                 "1234",
                 "TestSubsystem",
-                1000L);
+                1000L,
+                0,
+                100);
         assertNotNull(errorLogEntries);
-        assertEquals(1, errorLogEntries.size());
+        assertEquals(1, errorLogEntries.getTotalPages());
     }
 
     @Test

@@ -22,7 +22,14 @@
  */
 package fi.vrk.xroad.catalog.lister;
 
+import fi.vrk.xroad.catalog.persistence.dto.DescriptorInfo;
+import fi.vrk.xroad.catalog.persistence.dto.DescriptorInfoList;
+import fi.vrk.xroad.catalog.persistence.dto.Email;
+import fi.vrk.xroad.catalog.persistence.dto.MemberInfo;
+import fi.vrk.xroad.catalog.persistence.dto.SecurityServerData;
+import fi.vrk.xroad.catalog.persistence.dto.SecurityServerDataList;
 import fi.vrk.xroad.catalog.persistence.dto.SecurityServerInfo;
+import fi.vrk.xroad.catalog.persistence.dto.SubsystemName;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
@@ -38,7 +45,9 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -61,7 +70,7 @@ public class SharedParamsParser {
      * @throws IOException
      * @throws SAXException
      */
-    public Set<SecurityServerInfo> parse(String sharedParamsFile) throws ParserConfigurationException, IOException, SAXException {
+    public Set<SecurityServerInfo> parseInfo(String sharedParamsFile) throws ParserConfigurationException, IOException, SAXException {
         File inputFile = new File(sharedParamsFile);
 
         DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
@@ -104,5 +113,166 @@ public class SharedParamsParser {
         }
         log.debug("Result set: {}", securityServerInfos.toString());
         return securityServerInfos;
+    }
+
+    /**
+     * Parses security server information from X-Road global configuration shared-params.xml.
+     * Matches member elements with securityServer elements to gather the information.
+     *
+     * @return list of {@link SecurityServerInfo} objects
+     * @throws ParserConfigurationException
+     * @throws IOException
+     * @throws SAXException
+     */
+    public SecurityServerDataList parseDetails(String sharedParamsFile) throws ParserConfigurationException, IOException, SAXException {
+        File inputFile = new File(sharedParamsFile);
+
+        DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
+        DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
+        Document document = documentBuilder.parse(inputFile);
+        document.setXmlVersion("1.0");
+        document.getDocumentElement().normalize();
+        Element root = document.getDocumentElement();
+        String xRoadInstance = root.getChildNodes().item(1).getFirstChild().getNodeValue();
+        NodeList members = root.getElementsByTagName("member");
+        NodeList securityServers = root.getElementsByTagName("securityServer");
+        List<SecurityServerData> securityServerList = new ArrayList<>();
+
+        for (int i = 0; i < securityServers.getLength(); i++) {
+            Node securityServer = securityServers.item(i);
+            if (securityServer.getNodeType() == Node.ELEMENT_NODE) {
+                Element securityServerElement = (Element) securityServer;
+                String owner = securityServerElement.getElementsByTagName("owner").item(0).getTextContent();
+                String serverCode = securityServerElement.getElementsByTagName("serverCode").item(0).getTextContent();
+                String address = securityServerElement.getElementsByTagName("address").item(0).getTextContent();
+                NodeList clientNames = securityServerElement.getElementsByTagName("client");
+                MemberInfo ownerData = MemberInfo.builder().build();
+                List<MemberInfo> clients = new ArrayList<>();
+                List<String> clientNamesList = new ArrayList<>();
+                for (int j = 0; j < clientNames.getLength(); j++) {
+                    Node member = clientNames.item(j);
+                    clientNamesList.add(member.getFirstChild().getNodeValue());
+                }
+
+                for (int j = 0; j < members.getLength(); j++) {
+                    Node member = members.item(j);
+                    if (member.getNodeType() == Node.ELEMENT_NODE) {
+                        Element memberElement = (Element) member;
+                        Element memberClassElement =
+                                (Element) memberElement.getElementsByTagName("memberClass").item(0);
+                        String memberClass =
+                                memberClassElement.getElementsByTagName("code").item(0).getTextContent();
+                        String memberCode =
+                                memberElement.getElementsByTagName("memberCode").item(0).getTextContent();
+                        String name =
+                                memberElement.getElementsByTagName("name").item(0).getTextContent();
+
+                        NodeList subsystems = memberElement.getElementsByTagName("subsystem");
+                        for (int k = 0; k < subsystems.getLength(); k++) {
+                            Node subsystem = subsystems.item(k);
+                            if (member.getNodeType() == Node.ELEMENT_NODE) {
+                                Element subsystemElement = (Element) subsystem;
+                                if (clientNamesList.contains(subsystemElement.getAttribute("id"))) {
+                                    String subsystemCode =
+                                            subsystemElement.getElementsByTagName("subsystemCode").item(0).getTextContent();
+                                    clients.add(MemberInfo.builder()
+                                            .memberClass(memberClass)
+                                            .memberCode(memberCode)
+                                            .subsystemCode(subsystemCode)
+                                            .name(name).build());
+                                }
+                            }
+                        }
+                        if (clientNamesList.contains(memberElement.getAttribute("id"))) {
+                            clients.add(MemberInfo.builder()
+                                    .memberClass(memberClass)
+                                    .memberCode(memberCode)
+                                    .subsystemCode(null)
+                                    .name(name).build());
+                        }
+                        if (memberElement.getAttribute("id").equals(owner)) {
+                            ownerData = MemberInfo.builder()
+                                    .memberClass(memberClass)
+                                    .memberCode(memberCode)
+                                    .subsystemCode(null)
+                                    .name(name).build();
+                        }
+                    }
+                }
+
+                securityServerList.add(SecurityServerData.builder()
+                        .owner(ownerData)
+                        .serverCode(serverCode)
+                        .address(address)
+                        .clients(clients).build());
+            }
+        }
+
+        SecurityServerDataList securityServerDataList = SecurityServerDataList.builder()
+                .securityServerDataList(securityServerList).build();
+
+        return securityServerDataList;
+    }
+
+    /**
+     * Parses security server information from X-Road global configuration shared-params.xml.
+     * Matches member elements with securityServer elements to gather the information.
+     *
+     * @return list of {@link SecurityServerInfo} objects
+     * @throws ParserConfigurationException
+     * @throws IOException
+     * @throws SAXException
+     */
+    public DescriptorInfoList parseDescriptorInfo(String sharedParamsFile) throws ParserConfigurationException, IOException, SAXException {
+        File inputFile = new File(sharedParamsFile);
+
+        DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
+        DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
+        Document document = documentBuilder.parse(inputFile);
+        document.setXmlVersion("1.0");
+        document.getDocumentElement().normalize();
+        Element root = document.getDocumentElement();
+        String xRoadInstance = root.getChildNodes().item(1).getFirstChild().getNodeValue();
+        NodeList members = root.getElementsByTagName("member");
+        List<DescriptorInfo> descriptorInfos = new ArrayList<>();
+
+        for (int j = 0; j < members.getLength(); j++) {
+            Node member = members.item(j);
+            if (member.getNodeType() == Node.ELEMENT_NODE) {
+                Element memberElement = (Element) member;
+                Element memberClassElement =
+                        (Element) memberElement.getElementsByTagName("memberClass").item(0);
+                String memberClass =
+                        memberClassElement.getElementsByTagName("code").item(0).getTextContent();
+                String memberCode =
+                        memberElement.getElementsByTagName("memberCode").item(0).getTextContent();
+                String name =
+                        memberElement.getElementsByTagName("name").item(0).getTextContent();
+
+                NodeList subsystems = memberElement.getElementsByTagName("subsystem");
+                for (int k = 0; k < subsystems.getLength(); k++) {
+                    Node subsystem = subsystems.item(k);
+                    if (member.getNodeType() == Node.ELEMENT_NODE) {
+                        Element subsystemElement = (Element) subsystem;
+                        String subsystemCode =
+                                subsystemElement.getElementsByTagName("subsystemCode").item(0).getTextContent();
+
+                        descriptorInfos.add(DescriptorInfo.builder()
+                                .x_road_instance(xRoadInstance)
+                                .member_code(memberCode)
+                                .member_class(memberClass)
+                                .member_name(name)
+                                .subsystem_code(subsystemCode)
+                                .subsystem_name(SubsystemName.builder().en("Subsystem Name EN").et("Subsystem Name ET").build())
+                                .email(Email.builder().name("Firstname Lastname").email("yourname@yourdomain").build()).build());
+                    }
+                }
+
+            }
+        }
+
+        DescriptorInfoList descriptorInfoList = DescriptorInfoList.builder().descriptorInfoList(descriptorInfos).build();
+
+        return descriptorInfoList;
     }
 }
