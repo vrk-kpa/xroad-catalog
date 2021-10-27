@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.3.0] - 2021-10-27
+
+# Added
+- added new endpoint for listing security servers
+- added new endpoint for listing descriptors (data about subsystems)
+
+# Changed
+- updated listErrors endpoint to support requests for organizations not only subsystems and added support for pagination
+
 ## [1.2.2] - 2021-09-22
 
 ### Changed

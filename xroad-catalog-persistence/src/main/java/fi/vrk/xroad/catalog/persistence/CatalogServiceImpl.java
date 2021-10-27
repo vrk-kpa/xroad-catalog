@@ -34,6 +34,8 @@ import fi.vrk.xroad.catalog.persistence.entity.Subsystem;
 import fi.vrk.xroad.catalog.persistence.repository.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
@@ -283,10 +285,31 @@ public class CatalogServiceImpl implements CatalogService {
     }
 
     @Override
-    public List<ErrorLog> getErrors(String xRoadInstance, String memberClass, String memberCode, String subsystemCode, Long historyAmountInDays) {
+    public Page<ErrorLog> getErrors(String xRoadInstance,
+                                    String memberClass,
+                                    String memberCode,
+                                    String subsystemCode,
+                                    Long historyAmountInDays,
+                                    int page,
+                                    int limit) {
         LocalDateTime since = LocalDateTime.now().minusDays(historyAmountInDays);
-        Optional<List<ErrorLog>> errorLogList = errorLogRepository.findAnyByClientParameters(since, xRoadInstance, memberClass, memberCode, subsystemCode);
-        return errorLogList.isPresent() ? errorLogList.get() : null;
+        Page<ErrorLog> errorLogList;
+        if (subsystemCode != null) {
+            errorLogList = errorLogRepository.findAnyByClientParameters(since,
+                                                                        xRoadInstance,
+                                                                        memberClass,
+                                                                        memberCode,
+                                                                        subsystemCode,
+                                                                        new PageRequest(page, limit));
+        } else {
+            errorLogList = errorLogRepository.findAnyByOrganization(since,
+                                                                    xRoadInstance,
+                                                                    memberClass,
+                                                                    memberCode,
+                                                                    new PageRequest(page, limit));
+        }
+
+        return errorLogList;
     }
 
     @Override

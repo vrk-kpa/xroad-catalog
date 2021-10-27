@@ -22,9 +22,11 @@
  */
 package fi.vrk.xroad.catalog.lister;
 
+import fi.vrk.xroad.catalog.persistence.dto.DescriptorInfoList;
 import fi.vrk.xroad.catalog.persistence.dto.DistinctServiceStatistics;
 import fi.vrk.xroad.catalog.persistence.dto.DistinctServiceStatisticsResponse;
 import fi.vrk.xroad.catalog.persistence.dto.ErrorLogResponse;
+import fi.vrk.xroad.catalog.persistence.dto.SecurityServerDataList;
 import fi.vrk.xroad.catalog.persistence.dto.SecurityServerInfo;
 import fi.vrk.xroad.catalog.persistence.CatalogService;
 import fi.vrk.xroad.catalog.persistence.dto.ListOfServicesResponse;
@@ -38,11 +40,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.io.ByteArrayResource;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.xml.sax.SAXException;
 
@@ -74,23 +78,43 @@ public class ServiceController {
     @Autowired
     private SharedParamsParser sharedParamsParser;
 
-    @GetMapping(path = "/listErrors/{xRoadInstance}/{memberClass}/{memberCode}/{subsystemCode}/{historyAmountInDays}", produces = "application/json")
+    @GetMapping(path = {"/listErrors/{xRoadInstance}/{memberClass}/{memberCode}/{subsystemCode}/{historyAmountInDays}",
+                        "/listErrors/{xRoadInstance}/{memberClass}/{memberCode}/{historyAmountInDays}"},
+                        produces = "application/json")
     public ResponseEntity<?> listErrors(@PathVariable String xRoadInstance,
                                         @PathVariable String memberClass,
                                         @PathVariable String memberCode,
-                                        @PathVariable String subsystemCode,
-                                        @PathVariable Long historyAmountInDays) {
+                                        @PathVariable(required = false) String subsystemCode,
+                                        @PathVariable Long historyAmountInDays,
+                                        @RequestParam(required = false) Integer page,
+                                        @RequestParam(required = false) Integer limit) {
         if (historyAmountInDays < 1 || historyAmountInDays > maxHistoryLengthInDays) {
             return new ResponseEntity<>(
                     "Input parameter historyAmountInDays must be greater "
                             + "than zero and less than the required maximum of " + maxHistoryLengthInDays + " days",
                     HttpStatus.BAD_REQUEST);
         }
-        List<ErrorLog> errors = catalogService.getErrors(xRoadInstance, memberClass, memberCode, subsystemCode, historyAmountInDays);
-        if (errors == null || errors.isEmpty()) {
+        if (page == null) {
+            page = 0;
+        }
+        if (limit == null) {
+            limit = 100;
+        }
+        Page<ErrorLog> errors = catalogService.getErrors(xRoadInstance,
+                                                         memberClass,
+                                                         memberCode,
+                                                         subsystemCode,
+                                                         historyAmountInDays,
+                                                         Integer.valueOf(page),
+                                                         Integer.valueOf(limit));
+        if (errors == null | !errors.hasContent()) {
             return ResponseEntity.noContent().build();
         } else {
-            return ResponseEntity.ok(ErrorLogResponse.builder().errorLogList(errors).build());
+            return ResponseEntity.ok(ErrorLogResponse.builder()
+                    .pageNumber(page)
+                    .pageSize(limit)
+                    .numberOfPages(errors.getTotalPages())
+                    .errorLogList(errors.getContent()).build());
         }
     }
 
@@ -167,7 +191,7 @@ public class ServiceController {
                             + "than zero and less than the required maximum of " + maxHistoryLengthInDays + " days",
                     HttpStatus.BAD_REQUEST);
         }
-        List<SecurityServerInfo> securityServerList = getSecurityServerData();
+        List<SecurityServerInfo> securityServerList = getSecurityServerInfoList();
         List<MemberDataList> memberDataList = catalogService.getMemberData(historyAmountInDays);
         if (memberDataList != null) {
             return ResponseEntity.ok(ListOfServicesResponse.builder()
@@ -187,7 +211,7 @@ public class ServiceController {
                             + "than zero and less than the required maximum of " + maxHistoryLengthInDays + " days",
                     HttpStatus.BAD_REQUEST);
         }
-        List<SecurityServerInfo> securityServerList = getSecurityServerData();
+        List<SecurityServerInfo> securityServerList = getSecurityServerInfoList();
         List<MemberDataList> memberDataList = catalogService.getMemberData(historyAmountInDays);
         if (memberDataList != null) {
             try {
@@ -209,6 +233,26 @@ public class ServiceController {
             }
         }
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping(path = "/listSecurityServers", produces = "application/json")
+    public ResponseEntity<?> listSecurityServers() {
+        SecurityServerDataList securityServerDataList = getSecurityServerDataList();
+        if (securityServerDataList != null) {
+            return ResponseEntity.ok(securityServerDataList);
+        } else {
+            return ResponseEntity.noContent().build();
+        }
+    }
+
+    @GetMapping(path = "/listDescriptors", produces = "application/json")
+    public ResponseEntity<?> listDescriptors() {
+        DescriptorInfoList descriptorInfoList = getDescriptorInfoList();
+        if (descriptorInfoList != null) {
+            return ResponseEntity.ok(descriptorInfoList);
+        } else {
+            return ResponseEntity.noContent().build();
+        }
     }
 
     private void printCSVRecord(CSVPrinter csvPrinter, List<String> data) {
@@ -261,10 +305,10 @@ public class ServiceController {
         }
     }
 
-    private List<SecurityServerInfo> getSecurityServerData() {
+    private List<SecurityServerInfo> getSecurityServerInfoList() {
         List<SecurityServerInfo> securityServerList = new ArrayList<>();
         try {
-            Set<SecurityServerInfo> securityServerInfos = sharedParamsParser.parse(sharedParamsFile);
+            Set<SecurityServerInfo> securityServerInfos = sharedParamsParser.parseInfo(sharedParamsFile);
             if (securityServerInfos.iterator().hasNext()) {
                 securityServerList = new ArrayList<>(securityServerInfos);
             }
@@ -272,5 +316,25 @@ public class ServiceController {
             throw new RuntimeException(e);
         }
         return securityServerList;
+    }
+
+    private SecurityServerDataList getSecurityServerDataList() {
+        SecurityServerDataList securityServerDataList;
+        try {
+            securityServerDataList = sharedParamsParser.parseDetails(sharedParamsFile);
+        } catch (ParserConfigurationException | IOException | SAXException e) {
+            throw new RuntimeException(e);
+        }
+        return securityServerDataList;
+    }
+
+    private DescriptorInfoList getDescriptorInfoList() {
+        DescriptorInfoList descriptorInfoList;
+        try {
+            descriptorInfoList = sharedParamsParser.parseDescriptorInfo(sharedParamsFile);
+        } catch (ParserConfigurationException | IOException | SAXException e) {
+            throw new RuntimeException(e);
+        }
+        return descriptorInfoList;
     }
 }

@@ -1,5 +1,5 @@
 # X-Road Catalog User Guide
-Version: 1.0.7
+Version: 1.1.0
 Doc. ID: XRDCAT-CONF
 
 ---
@@ -15,6 +15,8 @@ Doc. ID: XRDCAT-CONF
 | 25.08.2021 | 1.0.5       | Add list distinct services endpoint description                              | Bert Viikmäe       |
 | 02.09.2021 | 1.0.6       | Add list errors endpoint description                                         | Bert Viikmäe       |
 | 22.09.2021 | 1.0.7       | Update heartbeat endpoint description                                        | Bert Viikmäe       |
+| 26.10.2021 | 1.0.8       | Update listErrors endpoint description                                       | Bert Viikmäe       |
+| 27.10.2021 | 1.1.0       | Add listSecurityServers and listDescriptors endpoint descriptions            | Bert Viikmäe       |
 
 ## Table of Contents <!-- omit in toc -->
 
@@ -56,7 +58,9 @@ Doc. ID: XRDCAT-CONF
             * [3.2.3.14 List services in CSV format](#32314-list-services-in-csv-format)  
             * [3.2.3.15 Check heartbeat](#32315-check-heartbeat)  
             * [3.2.3.16 List distinct service statistics](#32316-list-distinct-service-statistics)  
-            * [3.2.3.17 List errors](#32317-list-errors)  
+            * [3.2.3.17 List errors](#32317-list-errors) 
+            * [3.2.3.18 List security servers](#32318-list-security-servers) 
+            * [3.2.3.19 List descriptors](#32319-list-descriptors)  
     * [3.3 X-Road Catalog Persistence](#33-x-road-catalog-persistence)  
         * [3.3.1 Create database](#331-create-database) 
         * [3.3.2 Build](#332-build)   
@@ -1398,9 +1402,22 @@ The response has the following fields:
 
 ### 3.2.3.17 List errors
 
-In order to fetch information about errors related to fetch of data for a given subsystem in the X-Road Catalog, an HTTP request has to be sent to a respective REST endpoint:
+Requests
 
-``` $ curl "http://<SERVER_ADDRESS>:8080/api/listErrors/<INSTANCE>/<MEMBER_CLASS>/<MEMBER_CODE>/<SUBSYSTEM_CODE>/<HISTORY_AMOUNT_IN_DAYS>" -H "Content-Type: application/json" ```
+List errors for a given subsystem:
+curl "http://<SERVER_ADDRESS>:8080/api/listErrors/<INSTANCE>/<MEMBER_CLASS>/<MEMBER_CODE>/<SUBSYSTEM_CODE>/<HISTORY_AMOUNT_IN_DAYS>" -H "Content-Type: application/json"
+
+List errors for a given member:
+curl "http://<SERVER_ADDRESS>:8080/api/listErrors/<INSTANCE>/<MEMBER_CLASS>/<MEMBER_CODE>/<HISTORY_AMOUNT_IN_DAYS>" -H "Content-Type: application/json"
+
+List errors for a given subsystem with pagination:
+curl "http://<SERVER_ADDRESS>:8080/api/listErrors/<INSTANCE>/<MEMBER_CLASS>/<MEMBER_CODE>/<SUBSYSTEM_CODE>/<HISTORY_AMOUNT_IN_DAYS>?page=<PAGE_NUMBER>&limit=<NO_OF_ERRORS_PER_PAGE>" -H "Content-Type: application/json"
+
+List errors for a given member with pagination:
+curl "http://<SERVER_ADDRESS>:8080/api/listErrors/<INSTANCE>/<MEMBER_CLASS>/<MEMBER_CODE>/<HISTORY_AMOUNT_IN_DAYS>?page=<PAGE_NUMBER>&limit=<NO_OF_ERRORS_PER_PAGE>" -H "Content-Type: application/json"
+
+Example request
+curl "http://localhost:8080/api/listErrors/DEV/GOV/1234/TEST/29?page=0&limit=10" -H "Content-Type: application/json"
 
 * SERVER_ADDRESS please use the server address, on which the X-Road Catalog Lister is running on, e.g. localhost
 * INSTANCE name of X-Road instance, e.g. DEV
@@ -1408,14 +1425,49 @@ In order to fetch information about errors related to fetch of data for a given 
 * MEMBER_CODE member code, e.g. 1234
 * SUBSYSTEM_CODE subsystem code, e.g. TEST
 * HISTORY_AMOUNT_IN_DAYS length of the statistics to show in days, e.g. 2
+* PAGE_NUMBER the number of page of the fetched results
+* NO_OF_ERRORS_PER_PAGE number of errors per fetched page
 
 Response in JSON:
 ```json
-{"errorLogList":[{"id":41,"message":"Fetch of REST services failed(url: http://ss3/r1/DEV/GOV/1234/MANAGEMENT/listMethods): 500 Server Error","code":"500","created":[2021,8,24,16,31,39,548000000],"memberClass":"GOV","memberCode":"1234","subsystemCode":"MANAGEMENT","groupCode":"","serviceCode":"","serviceVersion":null,"securityCategoryCode":"","serverCode":"","xroadInstance":"DEV"},{"id":43,"message":"Fetch of REST services failed(url: http://ss3/r1/DEV/GOV/1234/MANAGEMENT/listMethods): 500 Server Error","code":"500","created":[2021,8,24,16,34,46,378000000],"memberClass":"GOV","memberCode":"1234","subsystemCode":"MANAGEMENT","groupCode":"","serviceCode":"","serviceVersion":null,"securityCategoryCode":"","serverCode":"","xroadInstance":"DEV"}]}
+{
+  "pageNumber": 0,
+  "pageSize": 10,
+  "numberOfPages": 3,
+  "errorLogList": [
+    {
+      "id": 158,
+      "message": "Fetch of SOAP services failed: Client (SUBSYSTEM:DEV/GOV/1234/MANAGEMENT) specifies HTTPS NO AUTH but client made  plaintext connection",
+      "code": "500",
+      "created": [
+        2021,
+        9,
+        28,
+        10,
+        35,
+        33,
+        255000000
+      ],
+      "memberClass": "GOV",
+      "memberCode": "1234",
+      "subsystemCode": "TEST",
+      "groupCode": "",
+      "serviceCode": "",
+      "serviceVersion": null,
+      "securityCategoryCode": "",
+      "serverCode": "",
+      "xroadInstance": "DEV"
+    },
+    {}
+  ]
+}
 ```
 
 The response has the following fields:
 
+* pageNumber
+* pageSize
+* numberOfPages
 * errorLogList
   * id
   * message
@@ -1430,7 +1482,198 @@ The response has the following fields:
   * securityCategoryCode
   * serverCode
   * xroadInstance 
-    
+
+### 3.2.3.18 List security servers
+
+Request
+
+curl "http://localhost:8080/api/listSecurityServers" -H "Content-Type: application/json"
+
+Response
+```json
+{
+  "securityServerDataList": [
+    {
+      "owner": {
+        "memberClass": "GOV",
+        "memberCode": "1234",
+        "name": "ACME",
+        "subsystemCode": null
+      },
+      "serverCode": "SS1",
+      "address": "SS1",
+      "clients": [
+        {
+          "memberClass": "GOV",
+          "memberCode": "1234",
+          "name": "ACME",
+          "subsystemCode": "MANAGEMENT"
+        }
+      ]
+    },
+    {
+      "owner": {
+        "memberClass": "GOV",
+        "memberCode": "1234",
+        "name": "ACME",
+        "subsystemCode": null
+      },
+      "serverCode": "ss4",
+      "address": "ss4",
+      "clients": [
+        {
+          "memberClass": "GOV",
+          "memberCode": "1234",
+          "name": "ACME",
+          "subsystemCode": "THESUBSYSTEM"
+        },
+        {
+          "memberClass": "COM",
+          "memberCode": "222",
+          "name": "FRUIT",
+          "subsystemCode": null
+        }
+      ]
+    }
+  ]
+}
+```
+
+The response has the following fields:
+
+* securityServerDataList
+    * owner
+        * memberClass
+        * memberCode
+        * name
+        * subsystemCode
+    * serverCode
+    * address
+    * clients
+        * memberClass
+        * memberCode
+        * name
+        * subsystemCode
+
+**owner** indicates the owner of the security server
+
+**clients** provides a list of clients using the security server, where a client can be considered a member when their subsystemCode is null
+
+
+### 3.2.3.19 List descriptors
+
+Request
+
+curl "http://localhost:8080/api/listDescriptors" -H "Content-Type: application/json"
+
+Response
+
+```
+{
+  "descriptorInfoList": [
+    {
+      "x_road_instance": "DEV",
+      "subsystem_name": {
+        "et": "Subsystem Name ET",
+        "en": "Subsystem Name EN"
+      },
+      "email": {
+        "name": "Firstname Lastname",
+        "email": "yourname@yourdomain"
+      },
+      "member_class": "GOV",
+      "member_code": "1234",
+      "member_name": "ACME",
+      "subsystem_code": "MANAGEMENT"
+    },
+    {
+      "x_road_instance": "DEV",
+      "subsystem_name": {
+        "et": "Subsystem Name ET",
+        "en": "Subsystem Name EN"
+      },
+      "email": {
+        "name": "Firstname Lastname",
+        "email": "yourname@yourdomain"
+      },
+      "member_class": "GOV",
+      "member_code": "1234",
+      "member_name": "ACME",
+      "subsystem_code": "TEST"
+    },
+    {
+      "x_road_instance": "DEV",
+      "subsystem_name": {
+        "et": "Subsystem Name ET",
+        "en": "Subsystem Name EN"
+      },
+      "email": {
+        "name": "Firstname Lastname",
+        "email": "yourname@yourdomain"
+      },
+      "member_class": "GOV",
+      "member_code": "1234",
+      "member_name": "ACME",
+      "subsystem_code": "MASTER"
+    },
+    {
+      "x_road_instance": "DEV",
+      "subsystem_name": {
+        "et": "Subsystem Name ET",
+        "en": "Subsystem Name EN"
+      },
+      "email": {
+        "name": "Firstname Lastname",
+        "email": "yourname@yourdomain"
+      },
+      "member_class": "GOV",
+      "member_code": "1234",
+      "member_name": "ACME",
+      "subsystem_code": "TESTCLIENT"
+    },
+    {
+      "x_road_instance": "DEV",
+      "subsystem_name": {
+        "et": "Subsystem Name ET",
+        "en": "Subsystem Name EN"
+      },
+      "email": {
+        "name": "Firstname Lastname",
+        "email": "yourname@yourdomain"
+      },
+      "member_class": "GOV",
+      "member_code": "1234",
+      "member_name": "ACME",
+      "subsystem_code": "THESUBSYSTEM"
+    }
+  ]
+}
+```
+
+
+The response has the following fields:
+
+* descriptorInfoList
+    * x_road_instance
+    * member_class
+    * member_code
+    * member_name
+    * subsystem_code
+    * subsystem_name
+        * et
+        * en
+    * email
+        * name
+        * email
+
+**subsystem_name** indicates a user-friendly name of the subsystem, in addition to not so friendly subsystem_code, 
+in the current implementation contains default values, because X-Road currently does not provide such information, but
+the fields are still required for the X-Road Metrics to operate correctly
+
+**email** indicates e-mail and name of a contact person,  
+in the current implementation contains default values, because X-Road currently does not provide such information, but
+the fields are still required for the X-Road Metrics to operate correctly
+        
 ### 3.3 X-Road Catalog Persistence
 
 The purpose of this piece of software is to persist and read persisted data. Used by the Collector and Lister

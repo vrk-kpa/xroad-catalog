@@ -22,7 +22,6 @@
  */
 package fi.vrk.xroad.catalog.persistence.dto;
 
-import fi.vrk.xroad.catalog.persistence.entity.ErrorLog;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
@@ -31,6 +30,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Builder
@@ -39,15 +39,9 @@ import java.util.List;
 @EqualsAndHashCode
 @Getter
 @Setter
-public class ErrorLogResponse implements Serializable {
+public class SecurityServerDataList implements Serializable {
 
-    private static final long serialVersionUID = 4049861366378846285L;
+    private static final long serialVersionUID = 4049561366368846285L;
 
-    private Integer pageNumber;
-
-    private Integer pageSize;
-
-    private Integer numberOfPages;
-
-    private List<ErrorLog> errorLogList;
+    private List<SecurityServerData> securityServerDataList;
 }

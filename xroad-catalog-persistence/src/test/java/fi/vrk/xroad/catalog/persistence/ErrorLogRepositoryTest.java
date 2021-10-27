@@ -29,13 +29,13 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.time.Month;
-import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 
 import static org.junit.Assert.*;
@@ -60,13 +60,26 @@ public class ErrorLogRepositoryTest {
     @Test
     public void testFindAnyByClientParameters() {
         LocalDateTime changedAfter = LocalDateTime.of(2020, Month.JANUARY, 1, 0, 0, 0);
-        Optional<List<ErrorLog>> errorLogEntries = errorLogRepository.findAnyByClientParameters(changedAfter,
+        Page<ErrorLog> errorLogEntries = errorLogRepository.findAnyByClientParameters(changedAfter,
                 "DEV",
                 "GOV",
                 "1234",
-                "TestSubsystem");
-        assertEquals(1, errorLogEntries.get().size());
-        assertEquals("Service not found", errorLogEntries.get().get(0).getMessage());
+                "TestSubsystem",
+                new PageRequest(0, 100));
+        assertEquals(1, errorLogEntries.getTotalPages());
+        assertEquals("Service not found", errorLogEntries.getContent().get(0).getMessage());
+    }
+
+    @Test
+    public void testFindAnyByOrganizationParameters() {
+        LocalDateTime changedAfter = LocalDateTime.of(2020, Month.JANUARY, 1, 0, 0, 0);
+        Page<ErrorLog> errorLogEntries = errorLogRepository.findAnyByOrganization(changedAfter,
+                "DEV",
+                "GOV",
+                "1234",
+                new PageRequest(0, 100));
+        assertEquals(1, errorLogEntries.getTotalPages());
+        assertEquals("Service not found", errorLogEntries.getContent().get(0).getMessage());
     }
 
 

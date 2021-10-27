@@ -51,9 +51,69 @@ public class ServiceControllerTests {
     TestRestTemplate restTemplate;
 
     @Test
-    public void testListErrors() throws JSONException {
+    public void testListErrorsForSubsystem() throws JSONException {
         ResponseEntity<String> response =
                 restTemplate.getForEntity("/api/listErrors/DEV/GOV/1234/TestSubsystem/4000", String.class);
+        assertNotNull(response.getBody());
+        assertEquals(200, response.getStatusCodeValue());
+
+        JSONObject json = new JSONObject(response.getBody());
+        JSONArray errorList = json.getJSONArray("errorLogList");
+        assertEquals(1, errorList.length());
+
+        for (int i = 0; i < errorList.length(); i++) {
+            assertEquals(errorList.optJSONObject(i).optString("message"), "Service not found");
+            assertEquals(errorList.optJSONObject(i).optString("xroadInstance"), "DEV");
+            assertEquals(errorList.optJSONObject(i).optString("memberClass"), "GOV");
+            assertEquals(errorList.optJSONObject(i).optString("memberCode"), "1234");
+            assertEquals(errorList.optJSONObject(i).optString("subsystemCode"), "TestSubsystem");
+        }
+    }
+
+    @Test
+    public void testListErrorsForSubsystemWithPagination() throws JSONException {
+        ResponseEntity<String> response =
+                restTemplate.getForEntity("/api/listErrors/DEV/GOV/1234/TestSubsystem/4000?page=0&limit=100", String.class);
+        assertNotNull(response.getBody());
+        assertEquals(200, response.getStatusCodeValue());
+
+        JSONObject json = new JSONObject(response.getBody());
+        JSONArray errorList = json.getJSONArray("errorLogList");
+        assertEquals(1, errorList.length());
+
+        for (int i = 0; i < errorList.length(); i++) {
+            assertEquals(errorList.optJSONObject(i).optString("message"), "Service not found");
+            assertEquals(errorList.optJSONObject(i).optString("xroadInstance"), "DEV");
+            assertEquals(errorList.optJSONObject(i).optString("memberClass"), "GOV");
+            assertEquals(errorList.optJSONObject(i).optString("memberCode"), "1234");
+            assertEquals(errorList.optJSONObject(i).optString("subsystemCode"), "TestSubsystem");
+        }
+    }
+
+    @Test
+    public void testListErrorsForOrganization() throws JSONException {
+        ResponseEntity<String> response =
+                restTemplate.getForEntity("/api/listErrors/DEV/GOV/1234/4000", String.class);
+        assertNotNull(response.getBody());
+        assertEquals(200, response.getStatusCodeValue());
+
+        JSONObject json = new JSONObject(response.getBody());
+        JSONArray errorList = json.getJSONArray("errorLogList");
+        assertEquals(1, errorList.length());
+
+        for (int i = 0; i < errorList.length(); i++) {
+            assertEquals(errorList.optJSONObject(i).optString("message"), "Service not found");
+            assertEquals(errorList.optJSONObject(i).optString("xroadInstance"), "DEV");
+            assertEquals(errorList.optJSONObject(i).optString("memberClass"), "GOV");
+            assertEquals(errorList.optJSONObject(i).optString("memberCode"), "1234");
+            assertEquals(errorList.optJSONObject(i).optString("subsystemCode"), "TestSubsystem");
+        }
+    }
+
+    @Test
+    public void testListErrorsForOrganizationWithPagination() throws JSONException {
+        ResponseEntity<String> response =
+                restTemplate.getForEntity("/api/listErrors/DEV/GOV/1234/4000?page=0&limit=100", String.class);
         assertNotNull(response.getBody());
         assertEquals(200, response.getStatusCodeValue());
 
@@ -344,6 +404,63 @@ public class ServiceControllerTests {
                 restTemplate.getForEntity("/api/getListOfServicesCSV", String.class);
         String errMsg = "Input parameter historyAmountInDays must be greater than zero and less than the required maximum of 4000 days";
         assertEquals(404, response.getStatusCodeValue());
+    }
+
+    @Test
+    public void testListSecurityServers() throws JSONException {
+        ResponseEntity<String> response =
+                restTemplate.getForEntity("/api/listSecurityServers", String.class);
+        assertNotNull(response.getBody());
+        assertEquals(200, response.getStatusCodeValue());
+        JSONObject json = new JSONObject(response.getBody());
+        JSONArray securityServerDataList = json.getJSONArray("securityServerDataList");
+        assertEquals(1, securityServerDataList.length());
+
+        for (int i = 0; i < securityServerDataList.length(); i++) {
+            assertEquals("{\"memberCode\":\"1234\",\"name\":\"ACME\",\"memberClass\":\"GOV\",\"subsystemCode\":null}", securityServerDataList.optJSONObject(i).optString("owner"));
+            assertEquals("SS1", securityServerDataList.optJSONObject(i).optString("serverCode"));
+            assertEquals("10.18.150.48", securityServerDataList.optJSONObject(i).optString("address"));
+            assertEquals("[{\"memberCode\":\"1234\",\"name\":\"ACME\",\"memberClass\":\"GOV\",\"subsystemCode\":\"MANAGEMENT\"}," +
+                            "{\"memberCode\":\"1234\",\"name\":\"ACME\",\"memberClass\":\"GOV\",\"subsystemCode\":\"TEST\"}]",
+                    securityServerDataList.optJSONObject(i).optString("clients"));
+        }
+    }
+
+    @Test
+    public void testListDescriptors() throws JSONException {
+        ResponseEntity<String> response =
+                restTemplate.getForEntity("/api/listDescriptors", String.class);
+        assertNotNull(response.getBody());
+        assertEquals(200, response.getStatusCodeValue());
+        JSONObject json = new JSONObject(response.getBody());
+        JSONArray descriptorInfoList = json.getJSONArray("descriptorInfoList");
+        assertEquals(2, descriptorInfoList.length());
+        assertEquals("GOV", descriptorInfoList.optJSONObject(0).optString("member_class"));
+        assertEquals("1234", descriptorInfoList.optJSONObject(0).optString("member_code"));
+        assertEquals("ACME", descriptorInfoList.optJSONObject(0).optString("member_name"));
+        assertEquals("MANAGEMENT", descriptorInfoList.optJSONObject(0).optString("subsystem_code"));
+        assertEquals("DEV", descriptorInfoList.optJSONObject(0).optString("x_road_instance"));
+        assertEquals("Subsystem Name EN", descriptorInfoList.optJSONObject(0)
+                .optJSONObject("subsystem_name").getString("en"));
+        assertEquals("Subsystem Name ET", descriptorInfoList.optJSONObject(0)
+                .optJSONObject("subsystem_name").getString("et"));
+        assertEquals("Firstname Lastname", descriptorInfoList.optJSONObject(0)
+                .optJSONObject("email").getString("name"));
+        assertEquals("yourname@yourdomain", descriptorInfoList.optJSONObject(0)
+                .optJSONObject("email").getString("email"));
+        assertEquals("GOV", descriptorInfoList.optJSONObject(1).optString("member_class"));
+        assertEquals("1234", descriptorInfoList.optJSONObject(1).optString("member_code"));
+        assertEquals("ACME", descriptorInfoList.optJSONObject(1).optString("member_name"));
+        assertEquals("TEST", descriptorInfoList.optJSONObject(1).optString("subsystem_code"));
+        assertEquals("DEV", descriptorInfoList.optJSONObject(1).optString("x_road_instance"));
+        assertEquals("Subsystem Name EN", descriptorInfoList.optJSONObject(1)
+                .optJSONObject("subsystem_name").getString("en"));
+        assertEquals("Subsystem Name ET", descriptorInfoList.optJSONObject(1)
+                .optJSONObject("subsystem_name").getString("et"));
+        assertEquals("Firstname Lastname", descriptorInfoList.optJSONObject(1)
+                .optJSONObject("email").getString("name"));
+        assertEquals("yourname@yourdomain", descriptorInfoList.optJSONObject(1)
+                .optJSONObject("email").getString("email"));
     }
 
 }

@@ -23,17 +23,18 @@
 package fi.vrk.xroad.catalog.persistence.repository;
 
 import fi.vrk.xroad.catalog.persistence.entity.ErrorLog;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 
-public interface ErrorLogRepository extends CrudRepository<ErrorLog, Long> {
+public interface ErrorLogRepository extends CrudRepository<ErrorLog, Long>, PagingAndSortingRepository<ErrorLog, Long> {
 
     @Query("SELECT e FROM ErrorLog e WHERE e.created >= :created")
     Set<ErrorLog> findAny(@Param("created") LocalDateTime created);
@@ -42,12 +43,25 @@ public interface ErrorLogRepository extends CrudRepository<ErrorLog, Long> {
             + "AND e.xRoadInstance = :xRoadInstance "
             + "AND e.memberClass = :memberClass "
             + "AND e.memberCode = :memberCode "
-            + "AND e.subsystemCode = :subsystemCode")
-    Optional<List<ErrorLog>> findAnyByClientParameters(@Param("created") LocalDateTime created,
+            + "AND e.subsystemCode = :subsystemCode "
+            + "ORDER BY e.created")
+    Page<ErrorLog> findAnyByClientParameters(@Param("created") LocalDateTime created,
                                                        @Param("xRoadInstance") String xRoadInstance,
                                                        @Param("memberClass") String memberClass,
                                                        @Param("memberCode") String memberCode,
-                                                       @Param("subsystemCode") String subsystemCode);
+                                                       @Param("subsystemCode") String subsystemCode,
+                                                       Pageable pageable);
+
+    @Query("SELECT e FROM ErrorLog e WHERE e.created >= :created "
+            + "AND e.xRoadInstance = :xRoadInstance "
+            + "AND e.memberClass = :memberClass "
+            + "AND e.memberCode = :memberCode "
+            + "ORDER BY e.created")
+    Page<ErrorLog> findAnyByOrganization(@Param("created") LocalDateTime created,
+                                               @Param("xRoadInstance") String xRoadInstance,
+                                               @Param("memberClass") String memberClass,
+                                               @Param("memberCode") String memberCode,
+                                               Pageable pageable);
 
     @Modifying
     @Query("DELETE FROM ErrorLog e WHERE e.created < :oldDate")
