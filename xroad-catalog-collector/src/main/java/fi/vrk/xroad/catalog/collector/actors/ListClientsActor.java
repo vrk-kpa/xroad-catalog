@@ -43,6 +43,8 @@ import org.springframework.web.client.RestOperations;
 import java.security.KeyManagementException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.*;
 
 /**
@@ -66,6 +68,15 @@ public class ListClientsActor extends XRoadCatalogActor {
     @Value("${xroad-catalog.list-clients-host}")
     private String host;
 
+    @Value("${xroad-catalog.fetch-run-unlimited}")
+    private Boolean fetchUnlimited;
+
+    @Value("${xroad-catalog.fetch-time-after-hour}")
+    private Integer fetchTimeAfterHour;
+
+    @Value("${xroad-catalog.fetch-time-before-hour}")
+    private Integer fetchTimeBeforeHour;
+
     // supervisor-created pool of list clients actors
     protected ActorRef listMethodsPoolRef;
 
@@ -84,41 +95,52 @@ public class ListClientsActor extends XRoadCatalogActor {
 
         if (START_COLLECTING.equals(message)) {
 
-            String listClientsUrl = host + "/listClients";
+            if (fetchUnlimited || isTimeBetweenHours(fetchTimeAfterHour, fetchTimeBeforeHour)) {
 
-            log.info("Getting client list from {}", listClientsUrl);
-            ClientList clientList = ClientListUtil.clientListFromResponse(listClientsUrl, catalogService);
+                String listClientsUrl = host + "/listClients";
 
-            int counter = 1;
-            HashMap<MemberId, Member> m = new HashMap();
+                log.info("Getting client list from {}", listClientsUrl);
+                ClientList clientList = ClientListUtil.clientListFromResponse(listClientsUrl, catalogService);
 
-            for (ClientType clientType : clientList.getMember()) {
-                log.info("{} - {}", counter++, ClientTypeUtil.toString(clientType));
-                Member newMember = new Member(clientType.getId().getXRoadInstance(), clientType.getId()
-                        .getMemberClass(),
-                        clientType.getId().getMemberCode(), clientType.getName());
-                newMember.setSubsystems(new HashSet<>());
-                if (m.get(newMember.createKey()) == null) {
-                    m.put(newMember.createKey(), newMember);
+                int counter = 1;
+                HashMap<MemberId, Member> m = new HashMap();
+
+                for (ClientType clientType : clientList.getMember()) {
+                    log.info("{} - {}", counter++, ClientTypeUtil.toString(clientType));
+                    Member newMember = new Member(clientType.getId().getXRoadInstance(), clientType.getId()
+                            .getMemberClass(),
+                            clientType.getId().getMemberCode(), clientType.getName());
+                    newMember.setSubsystems(new HashSet<>());
+                    if (m.get(newMember.createKey()) == null) {
+                        m.put(newMember.createKey(), newMember);
+                    }
+
+                    if (XRoadObjectType.SUBSYSTEM.equals(clientType.getId().getObjectType())) {
+                        Subsystem newSubsystem = new Subsystem(newMember, clientType.getId().getSubsystemCode());
+                        m.get(newMember.createKey()).getAllSubsystems().add(newSubsystem);
+                    }
                 }
 
-                if (XRoadObjectType.SUBSYSTEM.equals(clientType.getId().getObjectType())) {
-                    Subsystem newSubsystem = new Subsystem(newMember, clientType.getId().getSubsystemCode());
-                    m.get(newMember.createKey()).getAllSubsystems().add(newSubsystem);
+                // Save members
+                catalogService.saveAllMembersAndSubsystems(m.values());
+                for (ClientType clientType : clientList.getMember()) {
+                    listMethodsPoolRef.tell(clientType, getSelf());
                 }
+
+                log.info("all clients (" + (counter - 1) + ") sent to actor");
+
+                return true;
             }
-
-            // Save members
-            catalogService.saveAllMembersAndSubsystems(m.values());
-            for (ClientType clientType : clientList.getMember()) {
-                listMethodsPoolRef.tell(clientType, getSelf());
-            }
-
-            log.info("all clients (" + (counter - 1) + ") sent to actor");
-
             return true;
         } else {
             return false;
         }
+    }
+
+    private static boolean isTimeBetweenHours(int fetchHourAfter, int fetchHourBefore) {
+        LocalDateTime today = LocalDateTime.now();
+        LocalDateTime fetchTimeFrom = LocalDate.now().atTime(fetchHourAfter, 0);
+        LocalDateTime fetchTimeTo = LocalDate.now().atTime(fetchHourBefore, 0);
+        return (today.isAfter(fetchTimeFrom) && today.isBefore(fetchTimeTo));
     }
 }

@@ -62,6 +62,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import static org.mockito.Matchers.anyBoolean;
+import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.anyObject;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.mock;
@@ -119,6 +121,9 @@ public class ListClientsActorTest extends TestKit {
         listClientsActor = clientsRef.underlyingActor();
 
         ReflectionTestUtils.setField(listClientsActor, "host", "http://localhost");
+        ReflectionTestUtils.setField(listClientsActor, "fetchUnlimited", Boolean.TRUE);
+
+        //when(listClientsActor.shouldFetchClients(anyBoolean(), anyInt(), anyInt())).thenReturn(true);
 
         MockitoAnnotations.initMocks(this);
     }
