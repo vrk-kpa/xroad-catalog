@@ -79,11 +79,14 @@ public class ServiceController {
     private SharedParamsParser sharedParamsParser;
 
     @GetMapping(path = {"/listErrors/{xRoadInstance}/{memberClass}/{memberCode}/{subsystemCode}/{historyAmountInDays}",
-                        "/listErrors/{xRoadInstance}/{memberClass}/{memberCode}/{historyAmountInDays}"},
+                        "/listErrors/{xRoadInstance}/{memberClass}/{memberCode}/{historyAmountInDays}",
+                        "/listErrors/{xRoadInstance}/{memberClass}/{historyAmountInDays}",
+                        "/listErrors/{xRoadInstance}/{historyAmountInDays}",
+                        "/listErrors/{historyAmountInDays}"},
                         produces = "application/json")
-    public ResponseEntity<?> listErrors(@PathVariable String xRoadInstance,
-                                        @PathVariable String memberClass,
-                                        @PathVariable String memberCode,
+    public ResponseEntity<?> listErrors(@PathVariable(required = false) String xRoadInstance,
+                                        @PathVariable(required = false) String memberClass,
+                                        @PathVariable(required = false) String memberCode,
                                         @PathVariable(required = false) String subsystemCode,
                                         @PathVariable Long historyAmountInDays,
                                         @RequestParam(required = false) Integer page,

@@ -523,7 +523,7 @@ public class ApplicationTests {
 		GetErrorsResponse result = (GetErrorsResponse)new WebServiceTemplate(marshaller).marshalSendAndReceive(
 				"http://localhost:" + port + "/ws/GetErrors/", request);
 		assertNotNull(result);
-		assertEquals("ErrorLogList size", 2, result.getErrorLogList().getErrorLog().size());
+		assertEquals("ErrorLogList size", 6, result.getErrorLogList().getErrorLog().size());
 		assertEquals("ErrorLog message", "Service not found", result.getErrorLogList().getErrorLog().get(0).getMessage());
 	}
 

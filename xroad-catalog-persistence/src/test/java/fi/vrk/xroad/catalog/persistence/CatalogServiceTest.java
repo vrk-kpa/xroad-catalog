@@ -235,7 +235,7 @@ public class CatalogServiceTest {
     }
 
     @Test
-    public void testGetErrors() {
+    public void testGetErrorsForSubsystem() {
         Page<ErrorLog> errorLogEntries = catalogService.getErrors("DEV",
                 "GOV",
                 "1234",
@@ -244,6 +244,63 @@ public class CatalogServiceTest {
                 0,
                 100);
         assertNotNull(errorLogEntries);
+        assertEquals(1, errorLogEntries.getNumberOfElements());
+        assertEquals(1, errorLogEntries.getTotalPages());
+    }
+
+    @Test
+    public void testGetErrorsForMemberCode() {
+        Page<ErrorLog> errorLogEntries = catalogService.getErrors("DEV",
+                "GOV",
+                "1234",
+                null,
+                1000L,
+                0,
+                100);
+        assertNotNull(errorLogEntries);
+        assertEquals(2, errorLogEntries.getNumberOfElements());
+        assertEquals(1, errorLogEntries.getTotalPages());
+    }
+
+    @Test
+    public void testGetErrorsForMemberClass() {
+        Page<ErrorLog> errorLogEntries = catalogService.getErrors("DEV",
+                "GOV",
+                null,
+                null,
+                1000L,
+                0,
+                100);
+        assertNotNull(errorLogEntries);
+        assertEquals(3, errorLogEntries.getNumberOfElements());
+        assertEquals(1, errorLogEntries.getTotalPages());
+    }
+
+    @Test
+    public void testGetErrorsForInstance() {
+        Page<ErrorLog> errorLogEntries = catalogService.getErrors("DEV",
+                null,
+                null,
+                null,
+                1000L,
+                0,
+                100);
+        assertNotNull(errorLogEntries);
+        assertEquals(4, errorLogEntries.getNumberOfElements());
+        assertEquals(1, errorLogEntries.getTotalPages());
+    }
+
+    @Test
+    public void testGetErrorsAll() {
+        Page<ErrorLog> errorLogEntries = catalogService.getErrors(null,
+                null,
+                null,
+                null,
+                1000L,
+                0,
+                100);
+        assertNotNull(errorLogEntries);
+        assertEquals(6, errorLogEntries.getNumberOfElements());
         assertEquals(1, errorLogEntries.getTotalPages());
     }
 
