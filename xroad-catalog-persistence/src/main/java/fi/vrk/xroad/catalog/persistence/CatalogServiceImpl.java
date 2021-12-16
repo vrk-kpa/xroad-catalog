@@ -294,19 +294,28 @@ public class CatalogServiceImpl implements CatalogService {
                                     int limit) {
         LocalDateTime since = LocalDateTime.now().minusDays(historyAmountInDays);
         Page<ErrorLog> errorLogList;
-        if (subsystemCode != null) {
-            errorLogList = errorLogRepository.findAnyByClientParameters(since,
-                                                                        xRoadInstance,
-                                                                        memberClass,
-                                                                        memberCode,
-                                                                        subsystemCode,
-                                                                        new PageRequest(page, limit));
+        if (xRoadInstance != null && memberClass != null && memberCode != null && subsystemCode != null) {
+            errorLogList = errorLogRepository.findAnyByAllParameters(since,
+                                                                     xRoadInstance,
+                                                                     memberClass,
+                                                                     memberCode,
+                                                                     subsystemCode,
+                                                                     new PageRequest(page, limit));
+        } else if (xRoadInstance != null && memberClass != null && memberCode != null && subsystemCode == null) {
+            errorLogList = errorLogRepository.findAnyByMemberCode(since,
+                                                                  xRoadInstance,
+                                                                  memberClass,
+                                                                  memberCode,
+                                                                  new PageRequest(page, limit));
+        } else if (xRoadInstance != null && memberClass != null && memberCode == null && subsystemCode == null) {
+            errorLogList = errorLogRepository.findAnyByMemberClass(since,
+                                                                   xRoadInstance,
+                                                                   memberClass,
+                                                                   new PageRequest(page, limit));
+        } else if (xRoadInstance != null && memberClass == null && memberCode == null && subsystemCode == null) {
+            errorLogList = errorLogRepository.findAnyByInstance(since, xRoadInstance, new PageRequest(page, limit));
         } else {
-            errorLogList = errorLogRepository.findAnyByOrganization(since,
-                                                                    xRoadInstance,
-                                                                    memberClass,
-                                                                    memberCode,
-                                                                    new PageRequest(page, limit));
+            errorLogList = errorLogRepository.findAnyByCreated(since, new PageRequest(page, limit));
         }
 
         return errorLogList;

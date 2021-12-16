@@ -53,35 +53,58 @@ public class ErrorLogRepositoryTest {
     public void testFindAnySince() {
         LocalDateTime changedAfter = LocalDateTime.of(2020, Month.JANUARY, 1, 0, 0, 0);
         Set<ErrorLog> errorLogEntries = errorLogRepository.findAny(changedAfter);
-        assertEquals(2, errorLogEntries.size());
-        assertEquals("Service not found", errorLogEntries.iterator().next().getMessage());
+        assertEquals(6, errorLogEntries.size());
     }
 
     @Test
-    public void testFindAnyByClientParameters() {
+    public void testFindAnyByAllParameters() {
         LocalDateTime changedAfter = LocalDateTime.of(2020, Month.JANUARY, 1, 0, 0, 0);
-        Page<ErrorLog> errorLogEntries = errorLogRepository.findAnyByClientParameters(changedAfter,
+        Page<ErrorLog> errorLogEntries = errorLogRepository.findAnyByAllParameters(changedAfter,
                 "DEV",
                 "GOV",
                 "1234",
                 "TestSubsystem",
                 new PageRequest(0, 100));
         assertEquals(1, errorLogEntries.getTotalPages());
-        assertEquals("Service not found", errorLogEntries.getContent().get(0).getMessage());
+        assertEquals(1, errorLogEntries.getTotalElements());
     }
 
     @Test
-    public void testFindAnyByOrganizationParameters() {
+    public void testFindAnyByMemberCode() {
         LocalDateTime changedAfter = LocalDateTime.of(2020, Month.JANUARY, 1, 0, 0, 0);
-        Page<ErrorLog> errorLogEntries = errorLogRepository.findAnyByOrganization(changedAfter,
+        Page<ErrorLog> errorLogEntries = errorLogRepository.findAnyByMemberCode(changedAfter,
                 "DEV",
                 "GOV",
                 "1234",
                 new PageRequest(0, 100));
         assertEquals(1, errorLogEntries.getTotalPages());
-        assertEquals("Service not found", errorLogEntries.getContent().get(0).getMessage());
+        assertEquals(2, errorLogEntries.getTotalElements());
     }
 
+    @Test
+    public void testFindAnyByMemberClass() {
+        LocalDateTime changedAfter = LocalDateTime.of(2020, Month.JANUARY, 1, 0, 0, 0);
+        Page<ErrorLog> errorLogEntries = errorLogRepository.findAnyByMemberClass(changedAfter,
+                "DEV", "GOV", new PageRequest(0, 100));
+        assertEquals(1, errorLogEntries.getTotalPages());
+        assertEquals(3, errorLogEntries.getTotalElements());
+    }
+
+    @Test
+    public void testFindAnyByInstance() {
+        LocalDateTime changedAfter = LocalDateTime.of(2020, Month.JANUARY, 1, 0, 0, 0);
+        Page<ErrorLog> errorLogEntries = errorLogRepository.findAnyByInstance(changedAfter, "DEV", new PageRequest(0, 100));
+        assertEquals(1, errorLogEntries.getTotalPages());
+        assertEquals(4, errorLogEntries.getTotalElements());
+    }
+
+    @Test
+    public void testFindAll() {
+        LocalDateTime changedAfter = LocalDateTime.of(2020, Month.JANUARY, 1, 0, 0, 0);
+        Page<ErrorLog> errorLogEntries = errorLogRepository.findAnyByCreated(changedAfter, new PageRequest(0, 100));
+        assertEquals(1, errorLogEntries.getTotalPages());
+        assertEquals(6, errorLogEntries.getTotalElements());
+    }
 
 }
 

@@ -1,5 +1,5 @@
 # X-Road Catalog User Guide
-Version: 1.1.0
+Version: 1.1.1
 Doc. ID: XRDCAT-CONF
 
 ---
@@ -17,6 +17,7 @@ Doc. ID: XRDCAT-CONF
 | 22.09.2021 | 1.0.7       | Update heartbeat endpoint description                                        | Bert Viikmäe       |
 | 26.10.2021 | 1.0.8       | Update listErrors endpoint description                                       | Bert Viikmäe       |
 | 27.10.2021 | 1.1.0       | Add listSecurityServers and listDescriptors endpoint descriptions            | Bert Viikmäe       |
+| 15.12.2021 | 1.1.1       | Update listErrors endpoint description                                       | Bert Viikmäe       |
 
 ## Table of Contents <!-- omit in toc -->
 
@@ -1410,11 +1411,29 @@ curl "http://<SERVER_ADDRESS>:8080/api/listErrors/<INSTANCE>/<MEMBER_CLASS>/<MEM
 List errors for a given member:
 curl "http://<SERVER_ADDRESS>:8080/api/listErrors/<INSTANCE>/<MEMBER_CLASS>/<MEMBER_CODE>/<HISTORY_AMOUNT_IN_DAYS>" -H "Content-Type: application/json"
 
+List errors for a given member class:
+curl "http://<SERVER_ADDRESS>:8080/api/listErrors/<INSTANCE>/<MEMBER_CLASS>/<HISTORY_AMOUNT_IN_DAYS>" -H "Content-Type: application/json"
+
+List errors for a given instance:
+curl "http://<SERVER_ADDRESS>:8080/api/listErrors/<INSTANCE>/<HISTORY_AMOUNT_IN_DAYS>" -H "Content-Type: application/json"
+
+List errors for all the instances and members:
+curl "http://<SERVER_ADDRESS>:8080/api/listErrors/<HISTORY_AMOUNT_IN_DAYS>" -H "Content-Type: application/json"
+
 List errors for a given subsystem with pagination:
 curl "http://<SERVER_ADDRESS>:8080/api/listErrors/<INSTANCE>/<MEMBER_CLASS>/<MEMBER_CODE>/<SUBSYSTEM_CODE>/<HISTORY_AMOUNT_IN_DAYS>?page=<PAGE_NUMBER>&limit=<NO_OF_ERRORS_PER_PAGE>" -H "Content-Type: application/json"
 
 List errors for a given member with pagination:
 curl "http://<SERVER_ADDRESS>:8080/api/listErrors/<INSTANCE>/<MEMBER_CLASS>/<MEMBER_CODE>/<HISTORY_AMOUNT_IN_DAYS>?page=<PAGE_NUMBER>&limit=<NO_OF_ERRORS_PER_PAGE>" -H "Content-Type: application/json"
+
+List errors for a given member class with pagination:
+curl "http://<SERVER_ADDRESS>:8080/api/listErrors/<INSTANCE>/<MEMBER_CLASS>/<HISTORY_AMOUNT_IN_DAYS>?page=<PAGE_NUMBER>&limit=<NO_OF_ERRORS_PER_PAGE>" -H "Content-Type: application/json"
+
+List errors for a given instance with pagination:
+curl "http://<SERVER_ADDRESS>:8080/api/listErrors/<INSTANCE>/<HISTORY_AMOUNT_IN_DAYS>?page=<PAGE_NUMBER>&limit=<NO_OF_ERRORS_PER_PAGE>" -H "Content-Type: application/json"
+
+List errors for all the instances and members with pagination:
+curl "http://<SERVER_ADDRESS>:8080/api/listErrors/<HISTORY_AMOUNT_IN_DAYS>?page=<PAGE_NUMBER>&limit=<NO_OF_ERRORS_PER_PAGE>" -H "Content-Type: application/json"
 
 Example request
 curl "http://localhost:8080/api/listErrors/DEV/GOV/1234/TEST/29?page=0&limit=10" -H "Content-Type: application/json"

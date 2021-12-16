@@ -45,23 +45,40 @@ public interface ErrorLogRepository extends CrudRepository<ErrorLog, Long>, Pagi
             + "AND e.memberCode = :memberCode "
             + "AND e.subsystemCode = :subsystemCode "
             + "ORDER BY e.created")
-    Page<ErrorLog> findAnyByClientParameters(@Param("created") LocalDateTime created,
-                                                       @Param("xRoadInstance") String xRoadInstance,
-                                                       @Param("memberClass") String memberClass,
-                                                       @Param("memberCode") String memberCode,
-                                                       @Param("subsystemCode") String subsystemCode,
-                                                       Pageable pageable);
+    Page<ErrorLog> findAnyByAllParameters(@Param("created") LocalDateTime created,
+                                          @Param("xRoadInstance") String xRoadInstance,
+                                          @Param("memberClass") String memberClass,
+                                          @Param("memberCode") String memberCode,
+                                          @Param("subsystemCode") String subsystemCode,
+                                          Pageable pageable);
 
     @Query("SELECT e FROM ErrorLog e WHERE e.created >= :created "
             + "AND e.xRoadInstance = :xRoadInstance "
             + "AND e.memberClass = :memberClass "
             + "AND e.memberCode = :memberCode "
             + "ORDER BY e.created")
-    Page<ErrorLog> findAnyByOrganization(@Param("created") LocalDateTime created,
-                                               @Param("xRoadInstance") String xRoadInstance,
-                                               @Param("memberClass") String memberClass,
-                                               @Param("memberCode") String memberCode,
-                                               Pageable pageable);
+    Page<ErrorLog> findAnyByMemberCode(@Param("created") LocalDateTime created,
+                                       @Param("xRoadInstance") String xRoadInstance,
+                                       @Param("memberClass") String memberClass,
+                                       @Param("memberCode") String memberCode,
+                                       Pageable pageable);
+
+    @Query("SELECT e FROM ErrorLog e WHERE e.created >= :created "
+            + "AND e.xRoadInstance = :xRoadInstance "
+            + "AND e.memberClass = :memberClass "
+            + "ORDER BY e.created")
+    Page<ErrorLog> findAnyByMemberClass(@Param("created") LocalDateTime created,
+                                       @Param("xRoadInstance") String xRoadInstance,
+                                       @Param("memberClass") String memberClass,
+                                       Pageable pageable);
+
+    @Query("SELECT e FROM ErrorLog e WHERE e.created >= :created AND e.xRoadInstance = :xRoadInstance ORDER BY e.created")
+    Page<ErrorLog> findAnyByInstance(@Param("created") LocalDateTime created,
+                                     @Param("xRoadInstance") String xRoadInstance,
+                                     Pageable pageable);
+
+    @Query("SELECT e FROM ErrorLog e WHERE e.created >= :created ORDER BY e.created")
+    Page<ErrorLog> findAnyByCreated(@Param("created") LocalDateTime created, Pageable pageable);
 
     @Modifying
     @Query("DELETE FROM ErrorLog e WHERE e.created < :oldDate")

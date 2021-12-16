@@ -91,7 +91,7 @@ public class ServiceControllerTests {
     }
 
     @Test
-    public void testListErrorsForOrganization() throws JSONException {
+    public void testListErrorsForMemberCode() throws JSONException {
         ResponseEntity<String> response =
                 restTemplate.getForEntity("/api/listErrors/DEV/GOV/1234/4000", String.class);
         assertNotNull(response.getBody());
@@ -99,19 +99,11 @@ public class ServiceControllerTests {
 
         JSONObject json = new JSONObject(response.getBody());
         JSONArray errorList = json.getJSONArray("errorLogList");
-        assertEquals(1, errorList.length());
-
-        for (int i = 0; i < errorList.length(); i++) {
-            assertEquals(errorList.optJSONObject(i).optString("message"), "Service not found");
-            assertEquals(errorList.optJSONObject(i).optString("xroadInstance"), "DEV");
-            assertEquals(errorList.optJSONObject(i).optString("memberClass"), "GOV");
-            assertEquals(errorList.optJSONObject(i).optString("memberCode"), "1234");
-            assertEquals(errorList.optJSONObject(i).optString("subsystemCode"), "TestSubsystem");
-        }
+        assertEquals(2, errorList.length());
     }
 
     @Test
-    public void testListErrorsForOrganizationWithPagination() throws JSONException {
+    public void testListErrorsForMemberCodeWithPagination() throws JSONException {
         ResponseEntity<String> response =
                 restTemplate.getForEntity("/api/listErrors/DEV/GOV/1234/4000?page=0&limit=100", String.class);
         assertNotNull(response.getBody());
@@ -119,15 +111,79 @@ public class ServiceControllerTests {
 
         JSONObject json = new JSONObject(response.getBody());
         JSONArray errorList = json.getJSONArray("errorLogList");
-        assertEquals(1, errorList.length());
+        assertEquals(2, errorList.length());
+    }
 
-        for (int i = 0; i < errorList.length(); i++) {
-            assertEquals(errorList.optJSONObject(i).optString("message"), "Service not found");
-            assertEquals(errorList.optJSONObject(i).optString("xroadInstance"), "DEV");
-            assertEquals(errorList.optJSONObject(i).optString("memberClass"), "GOV");
-            assertEquals(errorList.optJSONObject(i).optString("memberCode"), "1234");
-            assertEquals(errorList.optJSONObject(i).optString("subsystemCode"), "TestSubsystem");
-        }
+    @Test
+    public void testListErrorsForMemberClass() throws JSONException {
+        ResponseEntity<String> response =
+                restTemplate.getForEntity("/api/listErrors/DEV/GOV/4000", String.class);
+        assertNotNull(response.getBody());
+        assertEquals(200, response.getStatusCodeValue());
+
+        JSONObject json = new JSONObject(response.getBody());
+        JSONArray errorList = json.getJSONArray("errorLogList");
+        assertEquals(2, errorList.length());
+    }
+
+    @Test
+    public void testListErrorsForMemberClassWithPagination() throws JSONException {
+        ResponseEntity<String> response =
+                restTemplate.getForEntity("/api/listErrors/DEV/GOV/1234/4000?page=0&limit=100", String.class);
+        assertNotNull(response.getBody());
+        assertEquals(200, response.getStatusCodeValue());
+
+        JSONObject json = new JSONObject(response.getBody());
+        JSONArray errorList = json.getJSONArray("errorLogList");
+        assertEquals(2, errorList.length());
+    }
+
+    @Test
+    public void testListErrorsForInstance() throws JSONException {
+        ResponseEntity<String> response =
+                restTemplate.getForEntity("/api/listErrors/DEV/4000", String.class);
+        assertNotNull(response.getBody());
+        assertEquals(200, response.getStatusCodeValue());
+
+        JSONObject json = new JSONObject(response.getBody());
+        JSONArray errorList = json.getJSONArray("errorLogList");
+        assertEquals(3, errorList.length());
+    }
+
+    @Test
+    public void testListErrorsForInstanceWithPagination() throws JSONException {
+        ResponseEntity<String> response =
+                restTemplate.getForEntity("/api/listErrors/DEV/4000?page=0&limit=100", String.class);
+        assertNotNull(response.getBody());
+        assertEquals(200, response.getStatusCodeValue());
+
+        JSONObject json = new JSONObject(response.getBody());
+        JSONArray errorList = json.getJSONArray("errorLogList");
+        assertEquals(3, errorList.length());
+    }
+
+    @Test
+    public void testListErrorsForAll() throws JSONException {
+        ResponseEntity<String> response =
+                restTemplate.getForEntity("/api/listErrors/4000", String.class);
+        assertNotNull(response.getBody());
+        assertEquals(200, response.getStatusCodeValue());
+
+        JSONObject json = new JSONObject(response.getBody());
+        JSONArray errorList = json.getJSONArray("errorLogList");
+        assertEquals(6, errorList.length());
+    }
+
+    @Test
+    public void testListErrorsForAllWithPagination() throws JSONException {
+        ResponseEntity<String> response =
+                restTemplate.getForEntity("/api/listErrors/4000?page=0&limit=100", String.class);
+        assertNotNull(response.getBody());
+        assertEquals(200, response.getStatusCodeValue());
+
+        JSONObject json = new JSONObject(response.getBody());
+        JSONArray errorList = json.getJSONArray("errorLogList");
+        assertEquals(6, errorList.length());
     }
 
     @Test

@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.3.2] - 2021-12-15
+
+# Changed
+- update listErrors endpoint to allow null values in parameters
+
 ## [1.3.1] - 2021-12-06
 
 # Changed
