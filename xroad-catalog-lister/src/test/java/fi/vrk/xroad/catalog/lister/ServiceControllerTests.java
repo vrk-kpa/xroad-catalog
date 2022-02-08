@@ -51,6 +51,133 @@ public class ServiceControllerTests {
     TestRestTemplate restTemplate;
 
     @Test
+    public void testGetOrganizationWithOrganizationData() throws JSONException {
+        ResponseEntity<String> response = restTemplate.getForEntity("/api/getOrganization/0123456-9", String.class);
+        assertNotNull(response.getBody());
+        assertEquals(200, response.getStatusCodeValue());
+        JSONObject json = new JSONObject(response.getBody());
+        JSONObject organizationData = json.optJSONObject("organizationData");
+        JSONObject companyData = json.optJSONObject("companyData");
+        assertEquals(null, companyData);
+        assertEquals(14, organizationData.length());
+        assertEquals("0123456-9", organizationData.optString("businessCode"));
+        assertEquals("abcdef123456", organizationData.optString("guid"));
+        assertEquals("Municipality", organizationData.optString("organizationType"));
+        assertEquals("Published", organizationData.optString("publishingStatus"));
+        assertNotNull(organizationData.opt("changed"));
+        assertNotNull(organizationData.opt("created"));
+        assertNotNull(organizationData.opt("fetched"));
+        assertNotNull(organizationData.opt("removed"));
+        assertEquals(1, organizationData.optJSONArray("organizationDescriptions").length());
+        assertEquals(1, organizationData.optJSONArray("organizationNames").length());
+        assertEquals(1, organizationData.optJSONArray("addresses").length());
+        assertEquals(1, organizationData.optJSONArray("emails").length());
+        assertEquals(1, organizationData.optJSONArray("phoneNumbers").length());
+        assertEquals(1, organizationData.optJSONArray("webPages").length());
+    }
+
+    @Test
+    public void testGetOrganizationWithCompanyData() throws JSONException {
+        ResponseEntity<String> response = restTemplate.getForEntity("/api/getOrganization/1710128-9", String.class);
+        assertNotNull(response.getBody());
+        assertEquals(200, response.getStatusCodeValue());
+        JSONObject json = new JSONObject(response.getBody());
+        JSONObject organizationData = json.optJSONObject("organizationData");
+        JSONObject companyData = json.optJSONObject("companyData");
+        assertEquals(null, organizationData);
+        assertEquals(20, companyData.length());
+        assertNotNull(companyData.opt("changed"));
+        assertNotNull(companyData.opt("created"));
+        assertNotNull(companyData.opt("fetched"));
+        assertNotNull(companyData.opt("removed"));
+        assertNotNull(companyData.opt("registrationDate"));
+        assertEquals("1710128-9", companyData.optString("businessCode"));
+        assertEquals("OYJ", companyData.optString("companyForm"));
+        assertEquals("", companyData.optString("detailsUri"));
+        assertEquals("Gofore Oyj", companyData.optString("name"));
+        assertEquals(1, companyData.optJSONArray("businessAddresses").length());
+        assertEquals(1, companyData.optJSONArray("businessAuxiliaryNames").length());
+        assertEquals(1, companyData.optJSONArray("businessIdChanges").length());
+        assertEquals(1, companyData.optJSONArray("businessLines").length());
+        assertEquals(1, companyData.optJSONArray("businessNames").length());
+        assertEquals(1, companyData.optJSONArray("companyForms").length());
+        assertEquals(1, companyData.optJSONArray("contactDetails").length());
+        assertEquals(1, companyData.optJSONArray("languages").length());
+        assertEquals(1, companyData.optJSONArray("liquidations").length());
+        assertEquals(1, companyData.optJSONArray("registeredEntries").length());
+        assertEquals(1, companyData.optJSONArray("registeredOffices").length());
+    }
+
+    @Test
+    public void testGetOrganizationNotFound() {
+        ResponseEntity<String> response = restTemplate.getForEntity("/api/getOrganization/0-12345", String.class);
+        assertEquals(204, response.getStatusCodeValue());
+        assertEquals(null, response.getBody());
+    }
+
+    @Test
+    public void testGetOrganizationChangesForCompanyDataOlderValues() throws JSONException {
+        ResponseEntity<String> response = restTemplate.getForEntity("/api/getOrganizationChanges/1710128-9/2010-01-01", String.class);
+        assertEquals(200, response.getStatusCodeValue());
+        JSONObject json = new JSONObject(response.getBody());
+        JSONArray changedValues = json.optJSONArray("changedValueList");
+        assertEquals(true, json.optBoolean("changed"));
+        assertEquals(12, changedValues.length());
+    }
+
+    @Test
+    public void testGetOrganizationChangesForOrganizationDataOlderValues() throws JSONException {
+        ResponseEntity<String> response = restTemplate.getForEntity("/api/getOrganizationChanges/0123456-9/2010-01-01", String.class);
+        assertEquals(200, response.getStatusCodeValue());
+        JSONObject json = new JSONObject(response.getBody());
+        JSONArray changedValues = json.optJSONArray("changedValueList");
+        assertEquals(true, json.optBoolean("changed"));
+        assertEquals(19, changedValues.length());
+    }
+
+    @Test
+    public void testGetOrganizationChangesForCompanyDataNewerValues() throws JSONException {
+        ResponseEntity<String> response = restTemplate.getForEntity("/api/getOrganizationChanges/1710128-9/2020-09-04", String.class);
+        assertEquals(200, response.getStatusCodeValue());
+        JSONObject json = new JSONObject(response.getBody());
+        JSONArray changedValues = json.optJSONArray("changedValueList");
+        assertEquals(true, json.optBoolean("changed"));
+        assertEquals(1, changedValues.length());
+    }
+
+    @Test
+    public void testGetOrganizationChangesForOrganizationDataNewerValues() throws JSONException {
+        ResponseEntity<String> response = restTemplate.getForEntity("/api/getOrganizationChanges/0123456-9/2019-12-31", String.class);
+        assertEquals(200, response.getStatusCodeValue());
+        JSONObject json = new JSONObject(response.getBody());
+        JSONArray changedValues = json.optJSONArray("changedValueList");
+        assertEquals(true, json.optBoolean("changed"));
+        assertEquals(1, changedValues.length());
+    }
+
+    @Test
+    public void testGetOrganizationChangesForCompanyDataNotFound() {
+        ResponseEntity<String> response = restTemplate.getForEntity("/api/getOrganizationChanges/1710128-9/2022-01-01", String.class);
+        assertEquals(204, response.getStatusCodeValue());
+        assertEquals(null, response.getBody());
+    }
+
+    @Test
+    public void testGetOrganizationChangesForOrganizationDataNotFound() {
+        ResponseEntity<String> response = restTemplate.getForEntity("/api/getOrganizationChanges/0123456-9/2022-01-01", String.class);
+        assertEquals(204, response.getStatusCodeValue());
+        assertEquals(null, response.getBody());
+    }
+
+    @Test
+    public void testGetOrganizationChangesInvalidDateException() {
+        ResponseEntity<String> response = restTemplate.getForEntity("/api/getOrganizationChanges/0123456-9/01-01-2022", String.class);
+        String errMsg = "Exception parsing since parameter: Text \'01-01-2022\' could not be parsed at index 0";
+        assertEquals(400, response.getStatusCodeValue());
+        assertEquals(errMsg, response.getBody());
+    }
+
+    @Test
     public void testListErrorsForSubsystem() throws JSONException {
         ResponseEntity<String> response =
                 restTemplate.getForEntity("/api/listErrors/DEV/GOV/1234/TestSubsystem/4000", String.class);

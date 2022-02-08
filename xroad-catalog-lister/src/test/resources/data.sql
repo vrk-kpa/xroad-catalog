@@ -139,17 +139,17 @@ VALUES (1, 1, 0, 1, 'Finska', 'SE', '2001-06-27 00:00:00+02', NULL, '2020-05-04 
 INSERT INTO liquidation(id, company_id, source, version, name, language, type, registration_date,
                         end_date, created, changed, fetched, removed)
 VALUES (1, 1, 0, 0, '', 'FI', 1, '2001-06-27 00:00:00+02', NULL,
-        '2020-05-04 11:41:24.792+03', '2020-05-04 11:41:24.792+03', '2020-05-04 11:41:24.792+03', NULL);
+        '2020-05-04 11:41:24.792+03', '2020-09-03 11:41:24.792+03', '2020-09-03 11:41:24.792+03', NULL);
 
 INSERT INTO registered_entry(id, company_id, description, status, register, language, authority,registration_date, end_date,
                              created, changed, fetched, removed)
 VALUES (1, 1, 'Unregistered', 2, 1, 'EN', 2, '2001-06-11 00:00:00+02', '2001-06-24 00:00:00+02', '2020-05-04 11:41:24.792+03',
-        '2020-05-04 11:41:24.792+03', '2020-05-04 11:41:24.792+03', NULL);
+        '2020-09-04 11:41:24.792+03', '2020-09-04 11:41:24.792+03', NULL);
 
 INSERT INTO registered_office(id, company_id, source, ordering, version, name, language, registration_date,
                               end_date, created, changed, fetched, removed)
 VALUES (1, 1, 0, 0, 0, '', 'FI', '2001-06-11 00:00:00+02',
-        NULL, '2020-05-04 11:41:24.792+03', '2020-05-04 11:41:24.792+03', '2020-05-04 11:41:24.792+03', NULL);
+        NULL, '2020-05-04 11:41:24.792+03', '2020-05-04 11:41:24.792+03', '2020-09-04 11:41:24.792+03', NULL);
 
 INSERT INTO error_log(id, message, code, created)
 VALUES (1, 'Service not found', '500', '2020-05-04 11:41:24.792+03');
