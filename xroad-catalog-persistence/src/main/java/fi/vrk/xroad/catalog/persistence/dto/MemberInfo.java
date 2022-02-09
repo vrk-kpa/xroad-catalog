@@ -1,6 +1,6 @@
 /**
  * The MIT License
- * Copyright (c) 2021, Population Register Centre (VRK)
+ * Copyright (c) 2022, Population Register Centre (VRK)
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -30,8 +30,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.io.Serializable;
-import java.time.LocalDateTime;
-import java.util.List;
 
 @Builder
 @NoArgsConstructor

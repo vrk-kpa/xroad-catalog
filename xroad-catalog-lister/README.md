@@ -26,6 +26,8 @@ The main endpoints this software provides:
 * heartbeat - REST endpoint for requesting the heartbeat of X-Road Catalog
 * listSecurityServers - REST endpoint for listing security servers and related information
 * listDescriptors - REST endpoint for listing subsystems
+* getOrganization - REST endpoint for listing organization/company data
+* getOrganizationChanges - REST endpoint for requesting whether given organization/company has some of its details changed
 
 A sequence diagram illustrating flow between XRoad-Catalog service layer and XRoad-Catalog Lister
 
@@ -1858,6 +1860,72 @@ Response
       "member_code": "1234",
       "member_name": "ACME",
       "subsystem_code": "THESUBSYSTEM"
+    }
+  ]
+}
+```
+
+### 19. getOrganization
+
+Request
+
+curl "http://localhost:8080/api/getOrganization/0130729-0" -H "Content-Type: application/json"
+
+Response
+
+```
+{
+  "organizationData": {
+    "businessCode": "0130729-0",
+    "created": [2021,8,24,16,21,53,649000000],
+    "changed": [2021,8,24,16,21,53,649000000],
+    "fetched": [2022,2,3,13,19,34,411000000],
+    "removed": null,
+    "organizationType": "Municipality",
+    "publishingStatus": "Published",
+    "guid": "37962bfb-07a1-4f07-bad8-2b5c77e85451",
+    "organizationNames": [
+      {
+        "language": "fi",
+        "type": "Name",
+        "value": "Pukkilan kunta",
+        "created": [2021,8,24,16,21,53,651000000],
+        "changed": [2021,8,24,16,21,53,651000000],
+        "fetched": [2022,2,3,13,19,34,414000000],
+        "removed": null
+      }
+    ],
+
+  ...
+
+  },
+  "companyData": null
+}
+```
+
+### 20. getOrganizationChanges
+
+Request
+
+curl "http://localhost:8080/api/getOrganizationChanges/0130729-0/2022-01-01" -H "Content-Type: application/json"
+
+Response
+
+```
+{
+  "changed": true,
+  "changedValueList": [
+    {
+      "name": "StreetAddress"
+    },
+    {
+      "name": "StreetAddress AdditionalInformation"
+    },
+    {
+      "name": "StreetAddress"
+    },
+    {
+      "name": "StreetAddress AdditionalInformation"
     }
   ]
 }

@@ -1,5 +1,5 @@
 # X-Road Catalog User Guide
-Version: 1.1.1
+Version: 1.2.0
 Doc. ID: XRDCAT-CONF
 
 ---
@@ -18,6 +18,7 @@ Doc. ID: XRDCAT-CONF
 | 26.10.2021 | 1.0.8       | Update listErrors endpoint description                                       | Bert Viikmäe       |
 | 27.10.2021 | 1.1.0       | Add listSecurityServers and listDescriptors endpoint descriptions            | Bert Viikmäe       |
 | 15.12.2021 | 1.1.1       | Update listErrors endpoint description                                       | Bert Viikmäe       |
+| 08.02.2022 | 1.2.0       | Add getOrganization and getOrganizationChanges endpoint descriptions         | Bert Viikmäe       |
 
 ## Table of Contents <!-- omit in toc -->
 
@@ -61,7 +62,9 @@ Doc. ID: XRDCAT-CONF
             * [3.2.3.16 List distinct service statistics](#32316-list-distinct-service-statistics)  
             * [3.2.3.17 List errors](#32317-list-errors) 
             * [3.2.3.18 List security servers](#32318-list-security-servers) 
-            * [3.2.3.19 List descriptors](#32319-list-descriptors)  
+            * [3.2.3.19 List descriptors](#32319-list-descriptors) 
+            * [3.2.3.20 Get Organization](#32320-get-organization) 
+            * [3.2.3.21 Get Organization changes](#32321-get-organization-changes)  
     * [3.3 X-Road Catalog Persistence](#33-x-road-catalog-persistence)  
         * [3.3.1 Create database](#331-create-database) 
         * [3.3.2 Build](#332-build)   
@@ -1692,7 +1695,363 @@ the fields are still required for the X-Road Metrics to operate correctly
 **email** indicates e-mail and name of a contact person,  
 in the current implementation contains default values, because X-Road currently does not provide such information, but
 the fields are still required for the X-Road Metrics to operate correctly
-        
+       
+### 3.2.3.20 Get Organization
+
+Request
+curl "http://localhost:8080/api/getOrganization/<BUSINESS_CODE>" -H "Content-Type: application/json"
+
+* BUSINESS_CODE businessCode of the organization
+
+Example request
+curl "http://localhost:8080/api/getOrganization/0130729-0" -H "Content-Type: application/json"
+
+Response
+
+```
+{
+  "organizationData": {
+    "businessCode": "0130729-0",
+    "created": [2021,8,24,16,21,53,649000000],
+    "changed": [2021,8,24,16,21,53,649000000],
+    "fetched": [2022,2,3,13,19,34,411000000],
+    "removed": null,
+    "organizationType": "Municipality",
+    "publishingStatus": "Published",
+    "guid": "37962bfb-07a1-4f07-bad8-2b5c77e85451",
+    "organizationNames": [
+      {
+        "language": "fi",
+        "type": "Name",
+        "value": "Pukkilan kunta",
+        "created": [2021,8,24,16,21,53,651000000],
+        "changed": [2021,8,24,16,21,53,651000000],
+        "fetched": [2022,2,3,13,19,34,414000000],
+        "removed": null
+      }
+    ],
+
+  ...
+
+  },
+  "companyData": null
+}
+```
+
+
+The response has the following fields:
+
+* organizationData
+    * organizationType
+    * publishingStatus
+    * businessCode
+    * guid
+    * organizationNames
+	    * organizationName
+        * language
+        * type
+        * value
+        * created
+        * changed
+        * fetched
+        * removed
+    * organizationDescriptions
+        * organizationDescription
+        * language
+        * type
+        * value
+        * created
+        * changed
+        * fetched
+        * removed
+    * emails
+         * email
+         * language
+         * type
+         * value
+         * created
+         * changed
+         * fetched
+         * removed
+    * phoneNumbers
+	     * phoneNumber
+       	 * language
+         * additionalInformation
+         * serviceChargeType
+         * chargeDescription
+         * prefixNumber
+         * number
+         * isFinnishServiceNumber
+         * created
+         * changed
+         * fetched
+         * removed
+    * webPages
+	     * webPage
+         * language
+         * url
+         * value
+         * created
+         * changed
+         * fetched
+         * removed
+    * addresses
+	     * address
+         * country
+         * type
+         * subType
+         * streetAddresses
+            * streetAddress
+            * postalCode
+            * latitude
+            * longitude
+            * coordinateState
+            * streets
+                * street
+        		* language
+                * value
+        		* created
+        		* changed
+        		* fetched
+        		* removed
+            * postOffices
+               	 * streetAddressPostOffice
+        		    * language
+                	* value
+        			* created
+        			* changed
+        			* fetched
+        			* removed
+            * municipalities
+                * streetAddressMunicipality
+                  * code
+                  * streetAddressMunicipalityNames
+                  * streetAddressMunicipalityName
+        		  * language
+                  * value
+        		  * created
+        		  * changed
+        		  * fetched
+        		  * removed
+        		* created
+        	    * changed
+        	    * fetched
+        	    * removed
+		      * additionalInformation
+        		  * streetAddressAdditionalInformation
+               	    * language
+                	* value
+        			* created
+        			* changed
+        			* fetched
+        			* removed
+        	* created
+        	* changed
+        	* fetched
+        	* removed
+        * created
+        * changed
+        * fetched
+        * removed
+* companyData
+    * companyForm
+    * detailsUri
+    * businessCode
+    * name
+    * registrationDate
+    * businessAddresses 
+        * businessAddress
+            * source
+            * version
+            * careOf
+            * street
+            * postCode
+            * city
+            * language
+            * type
+            * country
+            * registrationDate
+            * created
+            * changed
+            * fetched
+            * removed
+    * businessAuxiliaryNames
+        * businessAuxiliaryName
+            * source
+            * ordering
+            * version
+            * name
+            * language
+            * registrationDate
+            * created
+            * changed
+            * fetched
+            * removed
+    * businessIdChanges
+        * businessIdChange
+            * source
+            * description
+            * reason
+            * changeDate
+            * change
+            * oldBusinessId
+            * newBusinessId
+            * language
+            * created
+            * changed
+            * fetched
+            * removed
+    * businessLines
+       * businessLine
+          * source
+          * ordering
+          * version
+          * name
+          * language
+          * registrationDate
+          * created
+          * changed
+          * fetched
+          * removed
+    * businessNames
+        * businessName
+          * companyId
+          * source
+          * ordering
+          * version
+          * name
+          * language
+          * registrationDate
+          * endDate
+          * created
+          * changed
+          * fetched 
+          * removed         
+    * companyForms
+        * companyForm
+          * source
+          * version
+          * name
+          * language
+          * type
+          * registrationDate
+          * created
+          * changed
+          * fetched
+          * removed
+    * contactDetails
+        * contactDetail
+          * source
+          * version
+          * language
+          * value
+          * type
+          * registrationDate
+          * created
+          * changed
+          * fetched
+    * languages
+        * language
+          * source
+          * version
+          * name
+          * language
+          * registrationDate
+          * created
+          * changed
+          * fetched
+    * liquidations
+        * liquidation
+          * companyId
+          * source
+          * version
+          * name
+          * language
+          * registrationDate
+          * endDate
+          * created
+          * changed
+          * fetched 
+          * removed  
+    * registeredEntries
+        * registeredEntry
+          * companyId
+          * description
+          * status
+          * register
+          * language
+          * authority
+          * registrationDate
+          * endDate
+          * created
+          * changed
+          * fetched 
+          * removed 
+    * registeredOffices
+        * registeredOffice
+          * companyId
+          * source
+          * ordering
+          * version
+          * name
+          * language
+          * registrationDate
+          * endDate
+          * created
+          * changed
+          * fetched 
+          * removed
+
+**organizationData** holds values for different data related to organization fetched from an external API
+
+**companyData** holds values for different data related to company fetched from another API in case the organization
+with the given businessCode was not found among the data retrieved from the first API
+
+### 3.2.3.21 Get Organization changes
+
+Request
+
+curl "http://localhost:8080/api/getOrganizationChanges/<BUSINESS_CODE>/<SINCE>" -H "Content-Type: application/json"
+
+* BUSINESS_CODE businessCode of the organization
+* SINCE a date value after which the changes should have occurred (a string in format YYYY-MM-DD)
+
+Example request
+curl "http://localhost:8080/api/getOrganizationChanges/0130729-0/2022-01-01" -H "Content-Type: application/json"
+
+Response
+
+```
+{
+  "changed": true,
+  "changedValueList": [
+    {
+      "name": "StreetAddress"
+    },
+    {
+      "name": "StreetAddress AdditionalInformation"
+    },
+    {
+      "name": "StreetAddress"
+    },
+    {
+      "name": "StreetAddress AdditionalInformation"
+    }
+  ]
+}
+```
+
+
+The response has the following fields:
+
+* changed
+* changedValueList
+    * name
+
+**changed** is a boolean value which indicates whether there were any changes in all the data 
+**changedValueList** a list of changed data fields
+**name** the name of the data field which has changes
+
 ### 3.3 X-Road Catalog Persistence
 
 The purpose of this piece of software is to persist and read persisted data. Used by the Collector and Lister

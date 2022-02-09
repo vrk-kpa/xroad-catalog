@@ -1,6 +1,6 @@
 /**
  * The MIT License
- * Copyright (c) 2021, Population Register Centre (VRK)
+ * Copyright (c) 2022, Population Register Centre (VRK)
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -458,14 +458,14 @@ public class ApplicationTests {
 				"http://localhost:" + port + "/ws/HasCompanyChanged/", request);
 		assertNotNull(result);
 		assertEquals("Company changed", true, result.isChanged());
-		assertEquals("Company changedValueList size", 2, result.getChangedValueList().getChangedValue().size());
+		assertEquals("Company changedValueList size", 4, result.getChangedValueList().getChangedValue().size());
 	}
 
 	@Test
 	public void testHasCompanyChangedFalse() {
 		HasCompanyChanged request = new HasCompanyChanged();
 		request.setBusinessId("1710128-9");
-		LocalDateTime changedAfter = LocalDateTime.of(2020, Month.MAY, 6, 12, 0, 0);
+		LocalDateTime changedAfter = LocalDateTime.of(2021, Month.MAY, 6, 12, 0, 0);
 		GregorianCalendar cal = GregorianCalendar.from(changedAfter.atZone(ZoneId.systemDefault()));
 		XMLGregorianCalendar xc = null;
 		try {

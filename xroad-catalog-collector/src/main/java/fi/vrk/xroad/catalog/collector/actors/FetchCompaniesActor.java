@@ -1,6 +1,6 @@
 /**
  * The MIT License
- * Copyright (c) 2021, Population Register Centre (VRK)
+ * Copyright (c) 2022, Population Register Centre (VRK)
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -47,8 +47,6 @@ import java.util.List;
 @Slf4j
 public class FetchCompaniesActor extends XRoadCatalogActor {
 
-    private static final String COMMERCIAL_MEMBER_CLASS = "com";
-
     @Value("${xroad-catalog.fetch-companies-url}")
     private String fetchCompaniesUrl;
 
@@ -65,14 +63,11 @@ public class FetchCompaniesActor extends XRoadCatalogActor {
         if (message instanceof ClientType) {
             ClientType clientType = (ClientType) message;
             XRoadClientIdentifierType client = clientType.getId();
-            if (client.getMemberClass().equalsIgnoreCase(COMMERCIAL_MEMBER_CLASS)) {
-                log.info("Fetching data for company with businessCode {}", client.getMemberCode());
-                String businessCode = clientType.getId().getMemberCode();
-                JSONObject companyJson = OrganizationUtil.getCompany(clientType, fetchCompaniesUrl, businessCode, catalogService);
-                saveData(companyJson.optJSONArray("results"));
-                log.info("Successfully saved data for company with businessCode {}", businessCode);
-            }
-
+            log.info("Fetching data for company with businessCode {}", client.getMemberCode());
+            String businessCode = clientType.getId().getMemberCode();
+            JSONObject companyJson = OrganizationUtil.getCompany(clientType, fetchCompaniesUrl, businessCode, catalogService);
+            saveData(companyJson.optJSONArray("results"));
+            log.info("Successfully saved data for company with businessCode {}", businessCode);
             return true;
         } else {
             return false;

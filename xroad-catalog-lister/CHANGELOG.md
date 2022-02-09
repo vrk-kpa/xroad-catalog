@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.4.0] - 2022-02-08
+
+# Added
+- added new REST endpoint for listing organization/company information
+- added new REST endpoint for listing organization/company information changes
+
 ## [1.3.2] - 2021-12-15
 
 # Changed
