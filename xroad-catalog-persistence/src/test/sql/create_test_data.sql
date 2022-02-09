@@ -552,8 +552,7 @@ INSERT INTO wsdl (id, service_id, data, external_id, created, changed, fetched, 
             <soap:address location="http://localhost:8080/example-adapter-0.0.4-SNAPSHOT/Endpoint"/>
         </wsdl:port>
     </wsdl:service>
-</wsdl:definitions>
-', 2050', '2016-01-01 00:00:00+02', '2016-01-01 00:00:00+02', '2016-01-01 00:00:00+02', NULL);
+</wsdl:definitions>', 2050,'2016-01-01 00:00:00+02','2016-01-01 00:00:00+02','2016-01-01 00:00:00+02', NULL);
 
 
 --
