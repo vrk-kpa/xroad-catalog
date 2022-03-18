@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.4.1] - 2022-03-18
+
+# Changed
+- minor updates to listDescriptors and getOrganizations endpoints
+
 ## [1.4.0] - 2022-02-08
 
 # Added

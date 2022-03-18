@@ -111,7 +111,7 @@ public class ServiceControllerTests {
     @Test
     public void testGetOrganizationNotFound() {
         ResponseEntity<String> response = restTemplate.getForEntity("/api/getOrganization/0-12345", String.class);
-        assertEquals(204, response.getStatusCodeValue());
+        assertEquals(404, response.getStatusCodeValue());
         assertEquals(null, response.getBody());
     }
 
@@ -615,8 +615,7 @@ public class ServiceControllerTests {
                 restTemplate.getForEntity("/api/listDescriptors", String.class);
         assertNotNull(response.getBody());
         assertEquals(200, response.getStatusCodeValue());
-        JSONObject json = new JSONObject(response.getBody());
-        JSONArray descriptorInfoList = json.getJSONArray("descriptorInfoList");
+        JSONArray descriptorInfoList = new JSONArray(response.getBody());
         assertEquals(2, descriptorInfoList.length());
         assertEquals("GOV", descriptorInfoList.optJSONObject(0).optString("member_class"));
         assertEquals("1234", descriptorInfoList.optJSONObject(0).optString("member_code"));
@@ -628,9 +627,9 @@ public class ServiceControllerTests {
         assertEquals("Subsystem Name ET", descriptorInfoList.optJSONObject(0)
                 .optJSONObject("subsystem_name").getString("et"));
         assertEquals("Firstname Lastname", descriptorInfoList.optJSONObject(0)
-                .optJSONObject("email").getString("name"));
+                .optJSONArray("email").optJSONObject(0).optString("name"));
         assertEquals("yourname@yourdomain", descriptorInfoList.optJSONObject(0)
-                .optJSONObject("email").getString("email"));
+                .optJSONArray("email").optJSONObject(0).optString("email"));
         assertEquals("GOV", descriptorInfoList.optJSONObject(1).optString("member_class"));
         assertEquals("1234", descriptorInfoList.optJSONObject(1).optString("member_code"));
         assertEquals("ACME", descriptorInfoList.optJSONObject(1).optString("member_name"));
@@ -641,9 +640,9 @@ public class ServiceControllerTests {
         assertEquals("Subsystem Name ET", descriptorInfoList.optJSONObject(1)
                 .optJSONObject("subsystem_name").getString("et"));
         assertEquals("Firstname Lastname", descriptorInfoList.optJSONObject(1)
-                .optJSONObject("email").getString("name"));
+                .optJSONArray("email").optJSONObject(0).optString("name"));
         assertEquals("yourname@yourdomain", descriptorInfoList.optJSONObject(1)
-                .optJSONObject("email").getString("email"));
+                .optJSONArray("email").optJSONObject(0).optString("email"));
     }
 
 }

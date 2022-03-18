@@ -31,7 +31,7 @@ import fi.vrk.xroad.catalog.persistence.dto.BusinessNameData;
 import fi.vrk.xroad.catalog.persistence.dto.CompanyData;
 import fi.vrk.xroad.catalog.persistence.dto.CompanyFormData;
 import fi.vrk.xroad.catalog.persistence.dto.ContactDetailData;
-import fi.vrk.xroad.catalog.persistence.dto.DescriptorInfoList;
+import fi.vrk.xroad.catalog.persistence.dto.DescriptorInfo;
 import fi.vrk.xroad.catalog.persistence.dto.DistinctServiceStatistics;
 import fi.vrk.xroad.catalog.persistence.dto.DistinctServiceStatisticsResponse;
 import fi.vrk.xroad.catalog.persistence.dto.EmailData;
@@ -159,54 +159,54 @@ public class ServiceController {
     @GetMapping(path = {"/getOrganization/{businessCode}"}, produces = "application/json")
     public ResponseEntity<?> getOrganization(@PathVariable String businessCode) {
         OrganizationDTO organizationDTO = null;
-        Iterable<Organization> organizations = catalogService.getOrganizations(businessCode);
-        if (!organizations.iterator().hasNext()) {
-            Iterable<Company> companies = catalogService.getCompanies(businessCode);
-            if (companies.iterator().hasNext()) {
-                organizationDTO = OrganizationDTO.builder().companyData(CompanyData.builder()
-                                .businessCode(businessCode)
-                                .changed(companies.iterator().next().getStatusInfo().getChanged())
-                                .created(companies.iterator().next().getStatusInfo().getCreated())
-                                .fetched(companies.iterator().next().getStatusInfo().getFetched())
-                                .removed(companies.iterator().next().getStatusInfo().getRemoved())
-                                .registrationDate(companies.iterator().next().getRegistrationDate())
-                                .companyForm(companies.iterator().next().getCompanyForm())
-                                .detailsUri(companies.iterator().next().getDetailsUri())
-                                .name(companies.iterator().next().getName())
-                                .businessAddresses(getBusinessAddressData(companies))
-                                .businessAuxiliaryNames(getBusinessAuxiliaryNameData(companies))
-                                .businessIdChanges(getBusinessIdChangeData(companies))
-                                .businessLines(getBusinessLineData(companies))
-                                .businessNames(getBusinessNameData(companies))
-                                .companyForms(getCompanyFormData(companies))
-                                .contactDetails(getContactDetailData(companies))
-                                .languages(getLanguageData(companies))
-                                .liquidations(getLiquidationData(companies))
-                                .registeredEntries(getRegisteredEntryData(companies))
-                                .registeredOffices(getRegisteredOfficeData(companies))
-                                .build())
-                        .organizationData(null).build();
-            }
-        } else {
-            organizationDTO = OrganizationDTO.builder().organizationData(OrganizationData.builder()
+        Iterable<Company> companies = catalogService.getCompanies(businessCode);
+        if (companies.iterator().hasNext()) {
+            organizationDTO = OrganizationDTO.builder().companyData(CompanyData.builder()
                     .businessCode(businessCode)
-                    .changed(organizations.iterator().next().getStatusInfo().getChanged())
-                    .created(organizations.iterator().next().getStatusInfo().getCreated())
-                    .fetched(organizations.iterator().next().getStatusInfo().getFetched())
-                    .removed(organizations.iterator().next().getStatusInfo().getRemoved())
-                    .guid(organizations.iterator().next().getGuid())
-                    .organizationType(organizations.iterator().next().getOrganizationType())
-                    .publishingStatus(organizations.iterator().next().getPublishingStatus())
-                    .organizationNames(getOrganizationNameData(organizations))
-                    .organizationDescriptions(getOrganizationDescriptionData(organizations))
-                    .addresses(getAddressData(organizations))
-                    .emails(getEmailData(organizations))
-                    .webPages(getWebpageData(organizations))
-                    .phoneNumbers(getPhoneNumberData(organizations))
-                    .build()).companyData(null).build();
+                    .changed(companies.iterator().next().getStatusInfo().getChanged())
+                    .created(companies.iterator().next().getStatusInfo().getCreated())
+                    .fetched(companies.iterator().next().getStatusInfo().getFetched())
+                    .removed(companies.iterator().next().getStatusInfo().getRemoved())
+                    .registrationDate(companies.iterator().next().getRegistrationDate())
+                    .companyForm(companies.iterator().next().getCompanyForm())
+                    .detailsUri(companies.iterator().next().getDetailsUri())
+                    .name(companies.iterator().next().getName())
+                    .businessAddresses(getBusinessAddressData(companies))
+                    .businessAuxiliaryNames(getBusinessAuxiliaryNameData(companies))
+                    .businessIdChanges(getBusinessIdChangeData(companies))
+                    .businessLines(getBusinessLineData(companies))
+                    .businessNames(getBusinessNameData(companies))
+                    .companyForms(getCompanyFormData(companies))
+                    .contactDetails(getContactDetailData(companies))
+                    .languages(getLanguageData(companies))
+                    .liquidations(getLiquidationData(companies))
+                    .registeredEntries(getRegisteredEntryData(companies))
+                    .registeredOffices(getRegisteredOfficeData(companies))
+                    .build())
+                    .organizationData(null).build();
+        } else {
+            Iterable<Organization> organizations = catalogService.getOrganizations(businessCode);
+            if (organizations.iterator().hasNext()) {
+                organizationDTO = OrganizationDTO.builder().organizationData(OrganizationData.builder()
+                        .businessCode(businessCode)
+                        .changed(organizations.iterator().next().getStatusInfo().getChanged())
+                        .created(organizations.iterator().next().getStatusInfo().getCreated())
+                        .fetched(organizations.iterator().next().getStatusInfo().getFetched())
+                        .removed(organizations.iterator().next().getStatusInfo().getRemoved())
+                        .guid(organizations.iterator().next().getGuid())
+                        .organizationType(organizations.iterator().next().getOrganizationType())
+                        .publishingStatus(organizations.iterator().next().getPublishingStatus())
+                        .organizationNames(getOrganizationNameData(organizations))
+                        .organizationDescriptions(getOrganizationDescriptionData(organizations))
+                        .addresses(getAddressData(organizations))
+                        .emails(getEmailData(organizations))
+                        .webPages(getWebpageData(organizations))
+                        .phoneNumbers(getPhoneNumberData(organizations))
+                        .build()).companyData(null).build();
+            }
         }
 
-        return organizationDTO != null ? ResponseEntity.ok(organizationDTO) : ResponseEntity.noContent().build();
+        return organizationDTO != null ? ResponseEntity.ok(organizationDTO) : ResponseEntity.notFound().build();
     }
 
     @GetMapping(path = {"/getOrganizationChanges/{businessCode}/{since}"}, produces = "application/json")
@@ -216,15 +216,19 @@ public class ServiceController {
         }
 
         OrganizationChanged organizationChanged = null;
+        Iterable<ChangedValue> changedValues = null;
         try {
-            Iterable<ChangedValue> changedValues;
             LocalDateTime sinceDateTime = LocalDate.parse(since, DateTimeFormatter.ofPattern("yyyy-MM-dd")).atStartOfDay();
-            Iterable<Organization> organizations = catalogService.getOrganizations(businessCode);
-            if (organizations.iterator().hasNext()) {
-                changedValues = jaxbCatalogService.getChangedOrganizationValues(organizations.iterator().next().getGuid(),
+            Iterable<Company> companies = catalogService.getCompanies(businessCode);
+            if (companies.iterator().hasNext()) {
+                changedValues = jaxbCatalogService.getChangedCompanyValues(companies.iterator().next().getBusinessId(),
                                 jaxbConverter.toXmlGregorianCalendar(sinceDateTime));
             } else {
-                changedValues = jaxbCatalogService.getChangedCompanyValues(businessCode, jaxbConverter.toXmlGregorianCalendar(sinceDateTime));
+                Iterable<Organization> organizations = catalogService.getOrganizations(businessCode);
+                if (organizations.iterator().hasNext()) {
+                    changedValues = jaxbCatalogService.getChangedOrganizationValues(organizations.iterator().next().getGuid(),
+                            jaxbConverter.toXmlGregorianCalendar(sinceDateTime));
+                }
             }
             if (changedValues.iterator().hasNext()) {
                 List<fi.vrk.xroad.catalog.persistence.dto.ChangedValue> changedValueList = new ArrayList<>();
@@ -412,9 +416,9 @@ public class ServiceController {
 
     @GetMapping(path = "/listDescriptors", produces = "application/json")
     public ResponseEntity<?> listDescriptors() {
-        DescriptorInfoList descriptorInfoList = getDescriptorInfoList();
-        if (descriptorInfoList != null) {
-            return ResponseEntity.ok(descriptorInfoList);
+        List<DescriptorInfo> descriptorInfo = getDescriptorInfoList();
+        if (descriptorInfo != null) {
+            return ResponseEntity.ok(descriptorInfo);
         } else {
             return ResponseEntity.noContent().build();
         }
@@ -493,8 +497,8 @@ public class ServiceController {
         return securityServerDataList;
     }
 
-    private DescriptorInfoList getDescriptorInfoList() {
-        DescriptorInfoList descriptorInfoList;
+    private List<DescriptorInfo> getDescriptorInfoList() {
+        List<DescriptorInfo> descriptorInfoList;
         try {
             descriptorInfoList = sharedParamsParser.parseDescriptorInfo(sharedParamsFile);
         } catch (ParserConfigurationException | IOException | SAXException e) {
