@@ -1,5 +1,5 @@
 # X-Road Catalog User Guide
-Version: 1.2.0
+Version: 1.2.1
 Doc. ID: XRDCAT-CONF
 
 ---
@@ -1591,91 +1591,50 @@ curl "http://localhost:8080/api/listDescriptors" -H "Content-Type: application/j
 Response
 
 ```
-{
-  "descriptorInfoList": [
+[
     {
-      "x_road_instance": "DEV",
-      "subsystem_name": {
-        "et": "Subsystem Name ET",
-        "en": "Subsystem Name EN"
-      },
-      "email": {
-        "name": "Firstname Lastname",
-        "email": "yourname@yourdomain"
-      },
-      "member_class": "GOV",
-      "member_code": "1234",
-      "member_name": "ACME",
-      "subsystem_code": "MANAGEMENT"
+        "x_road_instance":"DEV",
+        "subsystem_name":{
+            "et":"Subsystem Name ET",
+            "en":"Subsystem Name EN"
+        },
+        "email":[
+            {
+                "name":"Firstname Lastname",
+                "email":"yourname@yourdomain"
+            }
+        ],
+        "member_class":"GOV",
+        "member_code":"1234",
+        "member_name":"ACME",
+        "subsystem_code":"MANAGEMENT"
     },
     {
-      "x_road_instance": "DEV",
-      "subsystem_name": {
-        "et": "Subsystem Name ET",
-        "en": "Subsystem Name EN"
-      },
-      "email": {
-        "name": "Firstname Lastname",
-        "email": "yourname@yourdomain"
-      },
-      "member_class": "GOV",
-      "member_code": "1234",
-      "member_name": "ACME",
-      "subsystem_code": "TEST"
+        "x_road_instance":"DEV",
+        "subsystem_name":{
+            "et":"Subsystem Name ET",
+            "en":"Subsystem Name EN"
+        },
+        "email":[
+            {
+                "name":"Firstname Lastname",
+                "email":"yourname@yourdomain"
+            }
+        ],
+        "member_class":"GOV",
+        "member_code":"1234",
+        "member_name":"ACME",
+        "subsystem_code":"TEST"
     },
-    {
-      "x_road_instance": "DEV",
-      "subsystem_name": {
-        "et": "Subsystem Name ET",
-        "en": "Subsystem Name EN"
-      },
-      "email": {
-        "name": "Firstname Lastname",
-        "email": "yourname@yourdomain"
-      },
-      "member_class": "GOV",
-      "member_code": "1234",
-      "member_name": "ACME",
-      "subsystem_code": "MASTER"
-    },
-    {
-      "x_road_instance": "DEV",
-      "subsystem_name": {
-        "et": "Subsystem Name ET",
-        "en": "Subsystem Name EN"
-      },
-      "email": {
-        "name": "Firstname Lastname",
-        "email": "yourname@yourdomain"
-      },
-      "member_class": "GOV",
-      "member_code": "1234",
-      "member_name": "ACME",
-      "subsystem_code": "TESTCLIENT"
-    },
-    {
-      "x_road_instance": "DEV",
-      "subsystem_name": {
-        "et": "Subsystem Name ET",
-        "en": "Subsystem Name EN"
-      },
-      "email": {
-        "name": "Firstname Lastname",
-        "email": "yourname@yourdomain"
-      },
-      "member_class": "GOV",
-      "member_code": "1234",
-      "member_name": "ACME",
-      "subsystem_code": "THESUBSYSTEM"
-    }
-  ]
-}
+    {}
+...
+]
 ```
 
 
 The response has the following fields:
 
-* descriptorInfoList
+A list of:
     * x_road_instance
     * member_class
     * member_code
@@ -1684,15 +1643,15 @@ The response has the following fields:
     * subsystem_name
         * et
         * en
-    * email
+    * A list of emails with:
         * name
-        * email
+        * email address
 
 **subsystem_name** indicates a user-friendly name of the subsystem, in addition to not so friendly subsystem_code, 
 in the current implementation contains default values, because X-Road currently does not provide such information, but
 the fields are still required for the X-Road Metrics to operate correctly
 
-**email** indicates e-mail and name of a contact person,  
+**email** A list consisting of name of a contact person and their e-mail address,  
 in the current implementation contains default values, because X-Road currently does not provide such information, but
 the fields are still required for the X-Road Metrics to operate correctly
        

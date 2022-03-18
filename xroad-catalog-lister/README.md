@@ -1784,85 +1784,44 @@ curl "http://localhost:8080/api/listDescriptors" -H "Content-Type: application/j
 Response
 
 ```
-{
-  "descriptorInfoList": [
+[
     {
-      "x_road_instance": "DEV",
-      "subsystem_name": {
-        "et": "Subsystem Name ET",
-        "en": "Subsystem Name EN"
-      },
-      "email": {
-        "name": "Firstname Lastname",
-        "email": "yourname@yourdomain"
-      },
-      "member_class": "GOV",
-      "member_code": "1234",
-      "member_name": "ACME",
-      "subsystem_code": "MANAGEMENT"
+        "x_road_instance":"DEV",
+        "subsystem_name":{
+            "et":"Subsystem Name ET",
+            "en":"Subsystem Name EN"
+        },
+        "email":[
+            {
+                "name":"Firstname Lastname",
+                "email":"yourname@yourdomain"
+            }
+        ],
+        "member_class":"GOV",
+        "member_code":"1234",
+        "member_name":"ACME",
+        "subsystem_code":"MANAGEMENT"
     },
     {
-      "x_road_instance": "DEV",
-      "subsystem_name": {
-        "et": "Subsystem Name ET",
-        "en": "Subsystem Name EN"
-      },
-      "email": {
-        "name": "Firstname Lastname",
-        "email": "yourname@yourdomain"
-      },
-      "member_class": "GOV",
-      "member_code": "1234",
-      "member_name": "ACME",
-      "subsystem_code": "TEST"
+        "x_road_instance":"DEV",
+        "subsystem_name":{
+            "et":"Subsystem Name ET",
+            "en":"Subsystem Name EN"
+        },
+        "email":[
+            {
+                "name":"Firstname Lastname",
+                "email":"yourname@yourdomain"
+            }
+        ],
+        "member_class":"GOV",
+        "member_code":"1234",
+        "member_name":"ACME",
+        "subsystem_code":"TEST"
     },
-    {
-      "x_road_instance": "DEV",
-      "subsystem_name": {
-        "et": "Subsystem Name ET",
-        "en": "Subsystem Name EN"
-      },
-      "email": {
-        "name": "Firstname Lastname",
-        "email": "yourname@yourdomain"
-      },
-      "member_class": "GOV",
-      "member_code": "1234",
-      "member_name": "ACME",
-      "subsystem_code": "MASTER"
-    },
-    {
-      "x_road_instance": "DEV",
-      "subsystem_name": {
-        "et": "Subsystem Name ET",
-        "en": "Subsystem Name EN"
-      },
-      "email": {
-        "name": "Firstname Lastname",
-        "email": "yourname@yourdomain"
-      },
-      "member_class": "GOV",
-      "member_code": "1234",
-      "member_name": "ACME",
-      "subsystem_code": "TESTCLIENT"
-    },
-    {
-      "x_road_instance": "DEV",
-      "subsystem_name": {
-        "et": "Subsystem Name ET",
-        "en": "Subsystem Name EN"
-      },
-      "email": {
-        "name": "Firstname Lastname",
-        "email": "yourname@yourdomain"
-      },
-      "member_class": "GOV",
-      "member_code": "1234",
-      "member_name": "ACME",
-      "subsystem_code": "THESUBSYSTEM"
-    }
-  ]
-}
+    {}
+...
+]
 ```
 
 ### 19. getOrganization

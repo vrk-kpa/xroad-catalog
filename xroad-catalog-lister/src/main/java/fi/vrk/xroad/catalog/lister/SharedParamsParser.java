@@ -22,6 +22,7 @@
  */
 package fi.vrk.xroad.catalog.lister;
 
+import com.google.common.collect.Lists;
 import fi.vrk.xroad.catalog.persistence.dto.DescriptorInfo;
 import fi.vrk.xroad.catalog.persistence.dto.DescriptorInfoList;
 import fi.vrk.xroad.catalog.persistence.dto.Email;
@@ -223,7 +224,7 @@ public class SharedParamsParser {
      * @throws IOException
      * @throws SAXException
      */
-    public DescriptorInfoList parseDescriptorInfo(String sharedParamsFile) throws ParserConfigurationException, IOException, SAXException {
+    public List<DescriptorInfo> parseDescriptorInfo(String sharedParamsFile) throws ParserConfigurationException, IOException, SAXException {
         File inputFile = new File(sharedParamsFile);
 
         DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
@@ -264,15 +265,17 @@ public class SharedParamsParser {
                                 .member_name(name)
                                 .subsystem_code(subsystemCode)
                                 .subsystem_name(SubsystemName.builder().en("Subsystem Name EN").et("Subsystem Name ET").build())
-                                .email(Email.builder().name("Firstname Lastname").email("yourname@yourdomain").build()).build());
+                                .email(Lists.newArrayList(
+                                        Email.builder()
+                                                .name("Firstname Lastname")
+                                                .email("yourname@yourdomain")
+                                                .build())).build());
                     }
                 }
 
             }
         }
 
-        DescriptorInfoList descriptorInfoList = DescriptorInfoList.builder().descriptorInfoList(descriptorInfos).build();
-
-        return descriptorInfoList;
+        return descriptorInfos;
     }
 }

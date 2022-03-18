@@ -30,6 +30,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.io.Serializable;
+import java.util.List;
 
 @Builder
 @NoArgsConstructor
@@ -45,7 +46,7 @@ public class DescriptorInfo implements Serializable {
 
     private SubsystemName subsystem_name;
 
-    private Email email;
+    private List<Email> email;
 
     private String member_class;
 
