@@ -26,7 +26,6 @@ import fi.vrk.xroad.catalog.persistence.entity.Member;
 import fi.vrk.xroad.catalog.persistence.entity.Service;
 import fi.vrk.xroad.catalog.persistence.entity.Subsystem;
 import fi.vrk.xroad.catalog.persistence.entity.Wsdl;
-
 import com.google.common.collect.Iterables;
 import fi.vrk.xroad.catalog.persistence.repository.MemberRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -36,7 +35,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.time.LocalDateTime;
 import java.time.Month;
 import java.util.ArrayList;

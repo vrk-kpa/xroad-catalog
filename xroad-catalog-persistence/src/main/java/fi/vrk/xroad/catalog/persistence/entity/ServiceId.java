@@ -27,9 +27,6 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
 
-/**
- * Identifiers for a service (within one subsystem - no identifiers for subsystem/member).
- */
 @EqualsAndHashCode
 @ToString
 @AllArgsConstructor

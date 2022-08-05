@@ -36,49 +36,57 @@ import java.util.Set;
 
 public interface ErrorLogRepository extends CrudRepository<ErrorLog, Long>, PagingAndSortingRepository<ErrorLog, Long> {
 
-    @Query("SELECT e FROM ErrorLog e WHERE e.created >= :created")
-    Set<ErrorLog> findAny(@Param("created") LocalDateTime created);
+    @Query("SELECT e FROM ErrorLog e WHERE e.created >= :startDate AND e.created <= :endDate")
+    Set<ErrorLog> findAny(@Param("startDate") LocalDateTime startDate,
+                          @Param("endDate") LocalDateTime endDate);
 
-    @Query("SELECT e FROM ErrorLog e WHERE e.created >= :created "
+    @Query("SELECT e FROM ErrorLog e WHERE e.created >= :startDate AND e.created <= :endDate "
             + "AND e.xRoadInstance = :xRoadInstance "
             + "AND e.memberClass = :memberClass "
             + "AND e.memberCode = :memberCode "
             + "AND e.subsystemCode = :subsystemCode "
             + "ORDER BY e.created")
-    Page<ErrorLog> findAnyByAllParameters(@Param("created") LocalDateTime created,
+    Page<ErrorLog> findAnyByAllParameters(@Param("startDate") LocalDateTime startDate,
+                                          @Param("endDate") LocalDateTime endDate,
                                           @Param("xRoadInstance") String xRoadInstance,
                                           @Param("memberClass") String memberClass,
                                           @Param("memberCode") String memberCode,
                                           @Param("subsystemCode") String subsystemCode,
                                           Pageable pageable);
 
-    @Query("SELECT e FROM ErrorLog e WHERE e.created >= :created "
+    @Query("SELECT e FROM ErrorLog e WHERE e.created >= :startDate AND e.created <= :endDate "
             + "AND e.xRoadInstance = :xRoadInstance "
             + "AND e.memberClass = :memberClass "
             + "AND e.memberCode = :memberCode "
             + "ORDER BY e.created")
-    Page<ErrorLog> findAnyByMemberCode(@Param("created") LocalDateTime created,
+    Page<ErrorLog> findAnyByMemberCode(@Param("startDate") LocalDateTime startDate,
+                                       @Param("endDate") LocalDateTime endDate,
                                        @Param("xRoadInstance") String xRoadInstance,
                                        @Param("memberClass") String memberClass,
                                        @Param("memberCode") String memberCode,
                                        Pageable pageable);
 
-    @Query("SELECT e FROM ErrorLog e WHERE e.created >= :created "
+    @Query("SELECT e FROM ErrorLog e WHERE e.created >= :startDate AND e.created <= :endDate "
             + "AND e.xRoadInstance = :xRoadInstance "
             + "AND e.memberClass = :memberClass "
             + "ORDER BY e.created")
-    Page<ErrorLog> findAnyByMemberClass(@Param("created") LocalDateTime created,
-                                       @Param("xRoadInstance") String xRoadInstance,
-                                       @Param("memberClass") String memberClass,
-                                       Pageable pageable);
+    Page<ErrorLog> findAnyByMemberClass(@Param("startDate") LocalDateTime startDate,
+                                        @Param("endDate") LocalDateTime endDate,
+                                        @Param("xRoadInstance") String xRoadInstance,
+                                        @Param("memberClass") String memberClass,
+                                        Pageable pageable);
 
-    @Query("SELECT e FROM ErrorLog e WHERE e.created >= :created AND e.xRoadInstance = :xRoadInstance ORDER BY e.created")
-    Page<ErrorLog> findAnyByInstance(@Param("created") LocalDateTime created,
+    @Query("SELECT e FROM ErrorLog e WHERE e.created >= :startDate AND e.created <= :endDate "
+            + "AND e.xRoadInstance = :xRoadInstance ORDER BY e.created")
+    Page<ErrorLog> findAnyByInstance(@Param("startDate") LocalDateTime startDate,
+                                     @Param("endDate") LocalDateTime endDate,
                                      @Param("xRoadInstance") String xRoadInstance,
                                      Pageable pageable);
 
-    @Query("SELECT e FROM ErrorLog e WHERE e.created >= :created ORDER BY e.created")
-    Page<ErrorLog> findAnyByCreated(@Param("created") LocalDateTime created, Pageable pageable);
+    @Query("SELECT e FROM ErrorLog e WHERE e.created >= :startDate AND e.created <= :endDate ORDER BY e.created")
+    Page<ErrorLog> findAnyByCreated(@Param("startDate") LocalDateTime startDate,
+                                    @Param("endDate") LocalDateTime endDate,
+                                    Pageable pageable);
 
     @Modifying
     @Query("DELETE FROM ErrorLog e WHERE e.created < :oldDate")

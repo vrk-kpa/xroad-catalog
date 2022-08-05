@@ -27,13 +27,11 @@ import fi.vrk.xroad.catalog.collector.extension.SpringExtension;
 import fi.vrk.xroad.catalog.collector.wsimport.ClientType;
 import fi.vrk.xroad.catalog.collector.wsimport.XRoadClientIdentifierType;
 import fi.vrk.xroad.catalog.collector.wsimport.XRoadObjectType;
-import fi.vrk.xroad.catalog.persistence.CatalogService;
-
+import fi.vrk.xroad.catalog.persistence.CompanyService;
 import akka.actor.ActorRef;
 import akka.actor.ActorSystem;
 import akka.testkit.TestActorRef;
 import lombok.extern.slf4j.Slf4j;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,9 +43,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
 
-/**
- * Test actorsystem actor creation and call
- */
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = DevelopmentConfiguration.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @TestPropertySource(properties = {"xroad-catalog.fetch-companies-run-unlimited=true"})
@@ -55,7 +50,7 @@ import static org.mockito.Mockito.*;
 public class FetchCompanyActorTest {
 
     @MockBean
-    CatalogService catalogService;
+    CompanyService companyService;
 
     @Autowired
     ActorSystem actorSystem;
@@ -65,7 +60,7 @@ public class FetchCompanyActorTest {
 
     @Test
     public void testBasicPlumbing() {
-        TestActorRef fetchCompanyActor = TestActorRef.create(actorSystem, springExtension.props("fetchCompaniesActor"));
+        TestActorRef fetchCompanyActor = TestActorRef.create(actorSystem, springExtension.props("fetchCompaniesActor", null));
         ClientType clientType = new ClientType();
         XRoadClientIdentifierType value = new XRoadClientIdentifierType();
         value.setXRoadInstance("INSTANCE");
@@ -77,7 +72,15 @@ public class FetchCompanyActorTest {
         value.setObjectType(XRoadObjectType.SERVICE);
         clientType.setId(value);
         fetchCompanyActor.tell(clientType, ActorRef.noSender());
-        verify(catalogService, times(1)).saveCompany(any());
+        verify(companyService, times(1)).saveCompany(any());
     }
+
+    @Test
+    public void testBasicPlumbingWithInvalidMessageType() {
+        TestActorRef fetchCompanyActor = TestActorRef.create(actorSystem, springExtension.props("fetchCompaniesActor"));
+        fetchCompanyActor.tell("", ActorRef.noSender());
+        verify(companyService, times(0)).saveCompany(any());
+    }
+
 }
 

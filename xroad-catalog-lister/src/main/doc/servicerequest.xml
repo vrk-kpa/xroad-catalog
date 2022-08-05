@@ -23,7 +23,8 @@ xmlns:xrcl="http://xroad.vrk.fi/xroad-catalog-lister">
    </soapenv:Header>
    <soapenv:Body>
       <xrcl:ListMembers>
-         <xrcl:changedAfter>2011-01-01</xrcl:changedAfter>
+         <xrcl:startDateTime>2020-01-01</xrcl:startDateTime>
+         <xrcl:endDateTime>2022-01-01</xrcl:endDateTime>
       </xrcl:ListMembers>
    </soapenv:Body>
 </soapenv:Envelope>

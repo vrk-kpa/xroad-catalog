@@ -1,24 +1,25 @@
 # X-Road Catalog User Guide
-Version: 1.2.1
+Version: 2.0.0
 Doc. ID: XRDCAT-CONF
 
 ---
 
 ## Version history <!-- omit in toc -->
-| Date       | Version     | Description                                                                  | Author             |
-|------------|-------------|------------------------------------------------------------------------------|--------------------|
-| 21.07.2021 | 1.0.0       | Initial draft                                                                | Bert Viikmäe       |
-| 21.07.2021 | 1.0.1       | Add installation section                                                     | Bert Viikmäe       |
-| 22.07.2021 | 1.0.2       | Add X-Road Catalog Collector section                                         | Bert Viikmäe       |
-| 23.07.2021 | 1.0.3       | Add X-Road Catalog Lister section                                            | Bert Viikmäe       |
-| 23.07.2021 | 1.0.4       | Add X-Road Catalog Persistence section                                       | Bert Viikmäe       |
-| 25.08.2021 | 1.0.5       | Add list distinct services endpoint description                              | Bert Viikmäe       |
-| 02.09.2021 | 1.0.6       | Add list errors endpoint description                                         | Bert Viikmäe       |
-| 22.09.2021 | 1.0.7       | Update heartbeat endpoint description                                        | Bert Viikmäe       |
-| 26.10.2021 | 1.0.8       | Update listErrors endpoint description                                       | Bert Viikmäe       |
-| 27.10.2021 | 1.1.0       | Add listSecurityServers and listDescriptors endpoint descriptions            | Bert Viikmäe       |
-| 15.12.2021 | 1.1.1       | Update listErrors endpoint description                                       | Bert Viikmäe       |
-| 08.02.2022 | 1.2.0       | Add getOrganization and getOrganizationChanges endpoint descriptions         | Bert Viikmäe       |
+| Date       | Version     | Description                                                                      | Author             |
+|------------|-------------|----------------------------------------------------------------------------------|--------------------|
+| 21.07.2021 | 1.0.0       | Initial draft                                                                    | Bert Viikmäe       |
+| 21.07.2021 | 1.0.1       | Add installation section                                                         | Bert Viikmäe       |
+| 22.07.2021 | 1.0.2       | Add X-Road Catalog Collector section                                             | Bert Viikmäe       |
+| 23.07.2021 | 1.0.3       | Add X-Road Catalog Lister section                                                | Bert Viikmäe       |
+| 23.07.2021 | 1.0.4       | Add X-Road Catalog Persistence section                                           | Bert Viikmäe       |
+| 25.08.2021 | 1.0.5       | Add list distinct services endpoint description                                  | Bert Viikmäe       |
+| 02.09.2021 | 1.0.6       | Add list errors endpoint description                                             | Bert Viikmäe       |
+| 22.09.2021 | 1.0.7       | Update heartbeat endpoint description                                            | Bert Viikmäe       |
+| 26.10.2021 | 1.0.8       | Update listErrors endpoint description                                           | Bert Viikmäe       |
+| 27.10.2021 | 1.1.0       | Add listSecurityServers and listDescriptors endpoint descriptions                | Bert Viikmäe       |
+| 15.12.2021 | 1.1.1       | Update listErrors endpoint description                                           | Bert Viikmäe       |
+| 08.02.2022 | 1.2.0       | Add getOrganization and getOrganizationChanges endpoint descriptions             | Bert Viikmäe       |
+| 29.07.2022 | 2.0.0       | Substitute since with start and end date parameter and update related chapters   | Bert Viikmäe       |
 
 ## Table of Contents <!-- omit in toc -->
 
@@ -109,7 +110,7 @@ The development environment should have at least 8GB of memory and 20GB of free 
 
 The installable software consists of xroad-catalog-collector and xroad-catalog-lister. Both are provided as RPM packages. 
 
-```sudo yum install xroad-catalog-lister xroad-catalog-collector``` or ```rpm -i install xroad-catalog-lister xroad-catalog-collector```
+``` $ sudo yum install xroad-catalog-lister xroad-catalog-collector``` or ```rpm -i install xroad-catalog-lister xroad-catalog-collector```
 
 Instructions on how to build the RPM packages using Docker can be found:
 [here](xroad-catalog-collector/README.md#build-rpm-packages-on-non-redhat-platform)
@@ -131,16 +132,16 @@ spring.datasource.password=password
 ```
 and in the DB:
 ```
-sudo -u postgres psql -U postgres -d postgres -c "alter user xroad_catalog with password 'password';"
+$ sudo -u postgres psql -U postgres -d postgres -c "alter user xroad_catalog with password 'password';"
 ```
 
 Make sure that the services are enabled on boot and restart services in order to make the changes to have effect.
 ```
 # Enable the service to start on boot
-sudo systemctl enable xroad-catalog-lister
-sudo systemctl enable xroad-catalog-collector
-sudo systemctl restart xroad-catalog-lister
-sudo systemctl restart xroad-catalog-collector
+$ sudo systemctl enable xroad-catalog-lister
+$ sudo systemctl enable xroad-catalog-collector
+$ sudo systemctl restart xroad-catalog-lister
+$ sudo systemctl restart xroad-catalog-collector
 ```
 
 ## 2.3 SSL
@@ -148,21 +149,21 @@ sudo systemctl restart xroad-catalog-collector
 If secure connection to the security server is required, add the server's cert for the JVM trust store, for example as follows.
 
 ```
-sudo cp cert.pem /etc/pki/ca-trust/source/anchors/
-sudo update-ca-trust extract
+$ sudo cp cert.pem /etc/pki/ca-trust/source/anchors/
+$ sudo update-ca-trust extract
 ```
 
 If you don't have the certificate, it can be asked as follows:
 
 ```
-openssl s_client -showcerts -connect kapvlpt02.csc.fi:443  </dev/null
+$ openssl s_client -showcerts -connect kapvlpt02.csc.fi:443  </dev/null
 ```
 
 If listMethods requires authentication, create a certificate and add it to keystore file /etc/xroad/xroad-catalog/keystore as follows:
 ```
-sudo keytool -alias xroad-catalog -genkeypair -keystore /etc/xroad/xroad-catalog/keystore -validity 7300 -keyalg RSA -keysize 2048 -sigalg SHA256withRSA -dname C=FI,CN=xroad-catalog
+$ sudo keytool -alias xroad-catalog -genkeypair -keystore /etc/xroad/xroad-catalog/keystore -validity 7300 -keyalg RSA -keysize 2048 -sigalg SHA256withRSA -dname C=FI,CN=xroad-catalog
 
-keytool -keystore /etc/xroad/xroad-catalog/keystore -exportcert -rfc -alias xroad-catalog > xroad-catalog.cer
+$ keytool -keystore /etc/xroad/xroad-catalog/keystore -exportcert -rfc -alias xroad-catalog > xroad-catalog.cer
 ```
 
 Created xroad-catalog.cer must be added to security server (Through UI: Security Server Clients > SELECT SERVICE > Internal Servers > Internal TLS Certificates > ADD)
@@ -236,7 +237,7 @@ Hint: Some lines were ellipsized, use -l to show in full.
 ## 2.5 Logs
 
 ```
-sudo journalctl -fu xroad-catalog-collector --since="2016-04-07 10:50 --output=cat"
+$ sudo journalctl -fu xroad-catalog-collector --since="2016-04-07 10:50 --output=cat"
 ```
 
 ## 3. Introduction
@@ -333,13 +334,21 @@ The main endpoints this software provides:
 * GetServiceStatisticsCSV - REST endpoint for requesting a list of statistics in CSV format, consisting of numbers of SOAP/REST services over time
 * GetListOfServices - REST endpoint for requesting a list of members and related subsystems, services and security servers over time
 * GetListOfServicesCSV - REST endpoint for requesting a list of members and related subsystems, services and security servers in CSV format
+* GetDistinctServiceStatistics - A REST endpoint for requesting a list of statistics, consisting of numbers of distinct services over time
+* ListErrors - A REST endpoint for listing errors for a given member or subsystem, supports pagination
 * heartbeat - REST endpoint for requesting the heartbeat of X-Road Catalog
+* ListSecurityServers - A REST endpoint for listing security servers and related information
+* ListDescriptors - A REST endpoint for listing subsystems
+* GetOrganization - A REST endpoint for listing organization/company data
+* GetOrganizationChanges - A REST endpoint for requesting whether given organization/company has some of its details changed
 
 ### 3.2.3.1 List all members
 
 In order to list all members and related subsystems and services, a request in XML format has to be sent to the respective SOAP endpoint:
 
-``` $ curl -k -d @servicerequest.xml --header "Content-Type: text/xml" -X POST http://localhost:8080/ws/ListMembers ```
+``` $ curl -k -d @servicerequest.xml --header "Content-Type: text/xml" -X POST http://<SERVER_ADDRESS>:8080/ws/ListMembers ```
+
+* SERVER_ADDRESS please use the server address, on which the X-Road Catalog Lister is running on, e.g. localhost
 
 Contents of the example ```servicerequest.xml``` file:
 ```xml
@@ -368,7 +377,8 @@ xmlns:xrcl="http://xroad.vrk.fi/xroad-catalog-lister">
    </soapenv:Header>
    <soapenv:Body>
       <xrcl:ListMembers>
-         <xrcl:changedAfter>2011-01-01</xrcl:changedAfter>
+         <xrcl:startDateTime>2020-01-01</xrcl:startDateTime>
+         <xrcl:endDateTime>2022-01-01</xrcl:endDateTime>
       </xrcl:ListMembers>
    </soapenv:Body>
 </soapenv:Envelope>
@@ -512,7 +522,9 @@ reflecting the creation, change, fetch and removal (when a subsystem/service/wsd
 
 In order to retrieve a WSDL service description, a request in XML format has to be sent to the respective SOAP endpoint:
 
-``` $ curl -k -d @wsdlrequest.xml --header "Content-Type: text/xml" -X POST http://localhost:8080/ws/GetWsdl ```
+``` $ curl -k -d @wsdlrequest.xml --header "Content-Type: text/xml" -X POST http://<SERVER_ADDRESS>:8080/ws/GetWsdl ```
+
+* SERVER_ADDRESS please use the server address, on which the X-Road Catalog Lister is running on, e.g. localhost
 
 Contents of the example ```wsdlrequest.xml``` file:
 ```xml
@@ -556,7 +568,9 @@ A longer example provided in [xroad-catalog-lister](xroad-catalog-lister/README.
 
 In order to retrieve an OPENAPI service descriptions, a request in XML format has to be sent to the respective SOAP endpoint:
 
-``` $ curl -k -d @openapirequest.xml --header "Content-Type: text/xml" -X POST http://localhost:8080/ws/GetOpenAPI ```
+``` $ curl -k -d @openapirequest.xml --header "Content-Type: text/xml" -X POST http://<SERVER_ADDRESS>:8080/ws/GetOpenAPI ```
+
+* SERVER_ADDRESS please use the server address, on which the X-Road Catalog Lister is running on, e.g. localhost
 
 Contents of the example ```openapirequest.xml``` file:
 ```xml
@@ -600,7 +614,9 @@ A longer example provided in [xroad-catalog-lister](xroad-catalog-lister/README.
 
 In order to retrieve service type information, a request in XML format has to be sent to the respective SOAP endpoint:
 
-``` $ curl -k -d @GetServiceTypeRequest.xml --header "Content-Type: text/xml" -X POST http://localhost:8080/ws/GetServiceType ```
+``` $ curl -k -d @GetServiceTypeRequest.xml --header "Content-Type: text/xml" -X POST http://<SERVER_ADDRESS>:8080/ws/GetServiceType ```
+
+* SERVER_ADDRESS please use the server address, on which the X-Road Catalog Lister is running on, e.g. localhost
 
 Contents of the example ```GetServiceTypeRequest.xml``` file:
 ```xml
@@ -659,7 +675,9 @@ A longer example provided in [xroad-catalog-lister](xroad-catalog-lister/README.
 
 In order to check if a given X-Road member (security server) is a provider, a request in XML format has to be sent to the respective SOAP endpoint:
 
-``` $ curl -k -d @IsProviderRequest.xml --header "Content-Type: text/xml" -X POST http://localhost:8080/ws/IsProvider ```
+``` $ curl -k -d @IsProviderRequest.xml --header "Content-Type: text/xml" -X POST http://<SERVER_ADDRESS>:8080/ws/IsProvider ```
+
+* SERVER_ADDRESS please use the server address, on which the X-Road Catalog Lister is running on, e.g. localhost
 
 Contents of the example ```IsProviderRequest.xml``` file:
 ```xml
@@ -712,7 +730,9 @@ A longer example provided in [xroad-catalog-lister](xroad-catalog-lister/README.
 
 In order to fetch information about organizations, a request in XML format has to be sent to the respective SOAP endpoint:
 
-``` $ curl -k -d @GetOrganizationsRequest.xml --header "Content-Type: text/xml" -X POST http://localhost:8080/ws/GetOrganizations ```
+``` $ curl -k -d @GetOrganizationsRequest.xml --header "Content-Type: text/xml" -X POST http://<SERVER_ADDRESS>:8080/ws/GetOrganizations ```
+
+* SERVER_ADDRESS please use the server address, on which the X-Road Catalog Lister is running on, e.g. localhost
 
 Contents of the example ```GetOrganizationsRequest.xml``` file:
 ```xml
@@ -876,7 +896,9 @@ A longer example provided in [xroad-catalog-lister](xroad-catalog-lister/README.
 
 In order to fetch information about changed organization fields, a request in XML format has to be sent to the respective SOAP endpoint:
 
-``` $ curl -k -d @HasOrganizationChangedRequest.xml --header "Content-Type: text/xml" -X POST http://localhost:8080/ws/HasOrganizationChanged ```
+``` $ curl -k -d @HasOrganizationChangedRequest.xml --header "Content-Type: text/xml" -X POST http://<SERVER_ADDRESS>:8080/ws/HasOrganizationChanged ```
+
+* SERVER_ADDRESS please use the server address, on which the X-Road Catalog Lister is running on, e.g. localhost
 
 Contents of the example ```HasOrganizationChangedRequest.xml``` file:
 ```xml
@@ -906,7 +928,8 @@ Contents of the example ```HasOrganizationChangedRequest.xml``` file:
    <soapenv:Body>
       <xrcl:HasOrganizationChanged>
          <xrcl:guid>e6b33f11-bb47-496e-98c5-6a736dae6014</xrcl:guid>
-         <xrcl:changedAfter>2011-01-01</xrcl:changedAfter>
+         <xrcl:startDateTime>2020-01-01</xrcl:startDateTime>
+         <xrcl:endDateTime>2022-01-01</xrcl:endDateTime>
       </xrcl:HasOrganizationChanged>
    </soapenv:Body>
 </soapenv:Envelope>
@@ -914,8 +937,9 @@ Contents of the example ```HasOrganizationChangedRequest.xml``` file:
 
 In the request there are the following fields that need to be filled:
  ```guid``` - unique id of the searchable organization, e.g. e6b33f11-bb47-496e-98c5-6a736dae6014
- ```changedAfter``` - date to check against after which an organization may have changed its field values, e.g. 2011-01-01
-
+ ```startDateTime``` - date to check against after which an organization may have changed its field values, e.g. 2020-01-01
+ ```endDateTime``` - date to check against before which an organization may have changed its field values, e.g. 2022-01-01
+ 
 The XML response has a ```<SOAP-ENV:Body>``` element with the following structure:
 
 * HasOrganizationChangedResponse
@@ -930,7 +954,9 @@ A longer example provided in [xroad-catalog-lister](xroad-catalog-lister/README.
 
 In order to fetch information about companies, a request in XML format has to be sent to the respective SOAP endpoint:
 
-``` $ curl -k -d @GetCompaniesRequest.xml --header "Content-Type: text/xml" -X POST http://localhost:8080/ws/GetCompanies ```
+``` $ curl -k -d @GetCompaniesRequest.xml --header "Content-Type: text/xml" -X POST http://<SERVER_ADDRESS>:8080/ws/GetCompanies ```
+
+* SERVER_ADDRESS please use the server address, on which the X-Road Catalog Lister is running on, e.g. localhost
 
 Contents of the example ```GetCompaniesRequest.xml``` file:
 ```xml
@@ -1127,7 +1153,9 @@ A longer example provided in [xroad-catalog-lister](xroad-catalog-lister/README.
 
 In order to fetch information about changed company fields, a request in XML format has to be sent to the respective SOAP endpoint:
 
-``` $ curl -k -d @HasCompanyChangedRequest.xml --header "Content-Type: text/xml" -X POST http://localhost:8080/ws/HasCompanyChanged ```
+``` $ curl -k -d @HasCompanyChangedRequest.xml --header "Content-Type: text/xml" -X POST http://<SERVER_ADDRESS>:8080/ws/HasCompanyChanged ```
+
+* SERVER_ADDRESS please use the server address, on which the X-Road Catalog Lister is running on, e.g. localhost
 
 Contents of the example ```HasCompanyChangedRequest.xml``` file:
 ```xml
@@ -1157,7 +1185,8 @@ Contents of the example ```HasCompanyChangedRequest.xml``` file:
     <soapenv:Body>
         <xrcl:HasCompanyChanged>
             <xrcl:businessId>1710128-9</xrcl:businessId>
-            <xrcl:changedAfter>2011-01-01</xrcl:changedAfter>
+            <xrcl:startDateTime>2020-01-01</xrcl:startDateTime>
+            <xrcl:endDateTime>2022-01-01</xrcl:endDateTime>
         </xrcl:HasCompanyChanged>
     </soapenv:Body>
 </soapenv:Envelope>
@@ -1165,7 +1194,8 @@ Contents of the example ```HasCompanyChangedRequest.xml``` file:
 
 In the request there are the following fields that need to be filled:
  ```businessId``` - business id of the searchable company, e.g. 1710128-9
- ```changedAfter``` - date to check against after which a company may have changed its field values, e.g. 2011-01-01
+ ```startDateTime``` - date to check against after which a company may have changed its field values, e.g. 2020-01-01
+ ```endDateTime``` - date to check against before which a company may have changed its field values, e.g. 2022-01-01
 
 The XML response has a ```<SOAP-ENV:Body>``` element with the following structure:
 
@@ -1181,7 +1211,9 @@ A longer example provided in [xroad-catalog-lister](xroad-catalog-lister/README.
 
 In order to fetch information about errors in the X-Road Catalog, a request in XML format has to be sent to the respective SOAP endpoint:
 
-``` $ curl -k -d @GetErrorsRequest.xml --header "Content-Type: text/xml" -X POST http://localhost:8080/ws/GetErrors ```
+``` $ curl -k -d @GetErrorsRequest.xml --header "Content-Type: text/xml" -X POST http://<SERVER_ADDRESS>:8080/ws/GetErrors ```
+
+* SERVER_ADDRESS please use the server address, on which the X-Road Catalog Lister is running on, e.g. localhost
 
 Contents of the example ```GetErrorsRequest.xml``` file:
 ```xml
@@ -1210,13 +1242,15 @@ Contents of the example ```GetErrorsRequest.xml``` file:
     </soapenv:Header>
     <soapenv:Body>
         <xrcl:GetErrors>
-            <xrcl:since>2020-01-01</xrcl:since>
+            <xrcl:startDateTime>2020-01-01</xrcl:startDateTime>
+            <xrcl:endDateTime>2022-01-01</xrcl:endDateTime>
         </xrcl:GetErrors>
     </soapenv:Body>
 </soapenv:Envelope>
 ```
 In the request there are the following fields that need to be filled:
- ```since``` - date after which to list errors, e.g. 2020-01-01
+ ```startDateTime``` - date after which to list errors, e.g. 2020-01-01
+ ```endDateTime``` - date before which to list errors, e.g. 2022-01-01
 
 The XML response has a ```<SOAP-ENV:Body>``` element with the following structure:
 
@@ -1233,14 +1267,42 @@ A longer example provided in [xroad-catalog-lister](xroad-catalog-lister/README.
 
 In order to fetch information about service statistics in the X-Road Catalog, an HTTP request has to be sent to a respective REST endpoint:
 
-``` $ curl "http://<SERVER_ADDRESS>:8080/api/getServiceStatistics/<HISTORY_AMOUNT_IN_DAYS>" -H "Content-Type: application/json" ```
+``` $ curl "http://<SERVER_ADDRESS>:8080/api/getServiceStatistics?startDate=<START_DATE>&endDate=<END_DATE>" -H "Content-Type: application/json" ```
 
 * SERVER_ADDRESS please use the server address, on which the X-Road Catalog Lister is running on, e.g. localhost
-* HISTORY_AMOUNT_IN_DAYS length of the statistics to show in days, e.g. 2
+* START_DATE - an optional parameter(a string in format YYYY-MM-DD), if not used, today's date will be assumed
+* END_DATE - an optional parameter(a string in format YYYY-MM-DD), if not used, today's date will be assumed
 
 Response in JSON:
 ```json
-{"serviceStatisticsList":[{"created":[2021,2,8,13,24,43,734000000],"numberOfSoapServices":0,"numberOfRestServices":0,"numberOfOpenApiServices":0},{"created":[2021,2,9,13,24,43,734000000],"numberOfSoapServices":0,"numberOfRestServices":0,"numberOfOpenApiServices":0}]}
+{
+   "serviceStatisticsList":[
+      {
+         "created":[
+            2022,
+            7,
+            1,
+            0,
+            0
+         ],
+         "numberOfSoapServices":0,
+         "numberOfRestServices":0,
+         "numberOfOpenApiServices":0
+      },
+      {
+         "created":[
+            2022,
+            7,
+            2,
+            0,
+            0
+         ],
+         "numberOfSoapServices":0,
+         "numberOfRestServices":0,
+         "numberOfOpenApiServices":0
+      }
+   ]
+}
 ```
 
 The response has the following fields:
@@ -1255,31 +1317,180 @@ The response has the following fields:
 
 In order to fetch information about service statistics in the X-Road Catalog, an HTTP request has to be sent to a respective REST endpoint:
 
-``` $ curl "http://<SERVER_ADDRESS>:8080/api/getServiceStatistics/<HISTORY_AMOUNT_IN_DAYS>" -H "Content-Type: text/csv" --output service_statistics.csv ```
+``` $ curl "http://<SERVER_ADDRESS>:8080/api/getServiceStatisticsCSV?startDate=<START_DATE>&endDate=<END_DATE>" -H "Content-Type: text/csv" --output service_statistics.csv ```
 
 * SERVER_ADDRESS please use the server address, on which the X-Road Catalog Lister is running on, e.g. localhost
-* HISTORY_AMOUNT_IN_DAYS length of the statistics to show in days, e.g. 2
+* START_DATE - an optional parameter(a string in format YYYY-MM-DD), if not used, today's date will be assumed
+* END_DATE - an optional parameter(a string in format YYYY-MM-DD), if not used, today's date will be assumed
 
 Response is a file ```service_statistics.csv``` with the following content:
-```
+```csv
 Date,Number of REST services,Number of SOAP services,Number of OpenApi services
-2021-02-08T13:23:46.062,0,0,0,0
-2021-02-09T13:23:46.062,0,0,0,0
+2022-07-01T00:00,0,0,0,0
+2022-07-02T00:00,0,0,0,0
 ```
 
 ### 3.2.3.13 List services
 
 In order to fetch information about services in the X-Road Catalog, an HTTP request has to be sent to a respective REST endpoint:
 
-``` $ curl "http://<SERVER_ADDRESS>:8080/api/getListOfServices/<HISTORY_AMOUNT_IN_DAYS>" -H "Content-Type: application/json ```
+``` $ curl "http://<SERVER_ADDRESS>:8080/api/getListOfServices?startDate=<START_DATE>&endDate=<END_DATE>" -H "Content-Type: application/json ```
 
 * SERVER_ADDRESS please use the server address, on which the X-Road Catalog Lister is running on, e.g. localhost
-* HISTORY_AMOUNT_IN_DAYS length of the statistics to show in days, e.g. 2
+* START_DATE - an optional parameter(a string in format YYYY-MM-DD), if not used, today's date will be assumed
+* END_DATE - an optional parameter(a string in format YYYY-MM-DD), if not used, today's date will be assumed
 
 Response in JSON:
 
 ```json
-{"memberData":[{"date":{"hour":11,"minute":55,"second":54,"nano":66000000,"dayOfYear":279,"dayOfWeek":"MONDAY","month":"OCTOBER","dayOfMonth":5,"year":2020,"monthValue":10,"chronology":{"calendarType":"iso8601","id":"ISO"}},"memberDataList":[{"created":{"hour":10,"minute":44,"second":30,"nano":896000000,"dayOfYear":248,"dayOfWeek":"FRIDAY","month":"SEPTEMBER","dayOfMonth":4,"year":2020,"monthValue":9,"chronology":{"calendarType":"iso8601","id":"ISO"}},"memberClass":"GOV","memberCode":"1234","name":"ACME","subsystemList":[{"created":{"hour":10,"minute":44,"second":30,"nano":896000000,"dayOfYear":248,"dayOfWeek":"FRIDAY","month":"SEPTEMBER","dayOfMonth":4,"year":2020,"monthValue":9,"chronology":{"calendarType":"iso8601","id":"ISO"}},"subsystemCode":"MANAGEMENT","serviceList":[{"created":{"hour":10,"minute":44,"second":33,"nano":871000000,"dayOfYear":248,"dayOfWeek":"FRIDAY","month":"SEPTEMBER","dayOfMonth":4,"year":2020,"monthValue":9,"chronology":{"calendarType":"iso8601","id":"ISO"}},"serviceCode":"authCertDeletion","serviceVersion":null},{"created":{"hour":10,"minute":44,"second":33,"nano":871000000,"dayOfYear":248,"dayOfWeek":"FRIDAY","month":"SEPTEMBER","dayOfMonth":4,"year":2020,"monthValue":9,"chronology":{"calendarType":"iso8601","id":"ISO"}},"serviceCode":"clientReg","serviceVersion":null},{"created":{"hour":10,"minute":44,"second":33,"nano":871000000,"dayOfYear":248,"dayOfWeek":"FRIDAY","month":"SEPTEMBER","dayOfMonth":4,"year":2020,"monthValue":9,"chronology":{"calendarType":"iso8601","id":"ISO"}},"serviceCode":"clientDeletion","serviceVersion":null},{"created":{"hour":10,"minute":44,"second":33,"nano":871000000,"dayOfYear":248,"dayOfWeek":"FRIDAY","month":"SEPTEMBER","dayOfMonth":4,"year":2020,"monthValue":9,"chronology":{"calendarType":"iso8601","id":"ISO"}},"serviceCode":"ownerChange","serviceVersion":null},{"created":{"hour":10,"minute":44,"second":33,"nano":871000000,"dayOfYear":248,"dayOfWeek":"FRIDAY","month":"SEPTEMBER","dayOfMonth":4,"year":2020,"monthValue":9,"chronology":{"calendarType":"iso8601","id":"ISO"}},"serviceCode":"PetStore","serviceVersion":""}]}],"xroadInstance":"DEV"},{"created":{"hour":10,"minute":44,"second":30,"nano":896000000,"dayOfYear":248,"dayOfWeek":"FRIDAY","month":"SEPTEMBER","dayOfMonth":4,"year":2020,"monthValue":9,"chronology":{"calendarType":"iso8601","id":"ISO"}},"memberClass":"COM","memberCode":"1710128-9","name":"GOFORE","subsystemList":[],"xroadInstance":"DEV"},{"created":{"hour":13,"minute":30,"second":1,"nano":896000000,"dayOfYear":255,"dayOfWeek":"FRIDAY","month":"SEPTEMBER","dayOfMonth":11,"year":2020,"monthValue":9,"chronology":{"calendarType":"iso8601","id":"ISO"}},"memberClass":"COM","memberCode":"1951458-9","name":"HKScan","subsystemList":[],"xroadInstance":"DEV"}]},{"date":{"hour":11,"minute":55,"second":54,"nano":66000000,"dayOfYear":280,"dayOfWeek":"TUESDAY","month":"OCTOBER","dayOfMonth":6,"year":2020,"monthValue":10,"chronology":{"calendarType":"iso8601","id":"ISO"}},"memberDataList":[{"created":{"hour":10,"minute":44,"second":30,"nano":896000000,"dayOfYear":248,"dayOfWeek":"FRIDAY","month":"SEPTEMBER","dayOfMonth":4,"year":2020,"monthValue":9,"chronology":{"calendarType":"iso8601","id":"ISO"}},"memberClass":"GOV","memberCode":"1234","name":"ACME","subsystemList":[{"created":{"hour":10,"minute":44,"second":30,"nano":896000000,"dayOfYear":248,"dayOfWeek":"FRIDAY","month":"SEPTEMBER","dayOfMonth":4,"year":2020,"monthValue":9,"chronology":{"calendarType":"iso8601","id":"ISO"}},"subsystemCode":"MANAGEMENT","serviceList":[{"created":{"hour":10,"minute":44,"second":33,"nano":871000000,"dayOfYear":248,"dayOfWeek":"FRIDAY","month":"SEPTEMBER","dayOfMonth":4,"year":2020,"monthValue":9,"chronology":{"calendarType":"iso8601","id":"ISO"}},"serviceCode":"authCertDeletion","serviceVersion":null},{"created":{"hour":10,"minute":44,"second":33,"nano":871000000,"dayOfYear":248,"dayOfWeek":"FRIDAY","month":"SEPTEMBER","dayOfMonth":4,"year":2020,"monthValue":9,"chronology":{"calendarType":"iso8601","id":"ISO"}},"serviceCode":"clientReg","serviceVersion":null},{"created":{"hour":10,"minute":44,"second":33,"nano":871000000,"dayOfYear":248,"dayOfWeek":"FRIDAY","month":"SEPTEMBER","dayOfMonth":4,"year":2020,"monthValue":9,"chronology":{"calendarType":"iso8601","id":"ISO"}},"serviceCode":"clientDeletion","serviceVersion":null},{"created":{"hour":10,"minute":44,"second":33,"nano":871000000,"dayOfYear":248,"dayOfWeek":"FRIDAY","month":"SEPTEMBER","dayOfMonth":4,"year":2020,"monthValue":9,"chronology":{"calendarType":"iso8601","id":"ISO"}},"serviceCode":"ownerChange","serviceVersion":null},{"created":{"hour":10,"minute":44,"second":33,"nano":871000000,"dayOfYear":248,"dayOfWeek":"FRIDAY","month":"SEPTEMBER","dayOfMonth":4,"year":2020,"monthValue":9,"chronology":{"calendarType":"iso8601","id":"ISO"}},"serviceCode":"PetStore","serviceVersion":""}]}],"xroadInstance":"DEV"},{"created":{"hour":10,"minute":44,"second":30,"nano":896000000,"dayOfYear":248,"dayOfWeek":"FRIDAY","month":"SEPTEMBER","dayOfMonth":4,"year":2020,"monthValue":9,"chronology":{"calendarType":"iso8601","id":"ISO"}},"memberClass":"COM","memberCode":"1710128-9","name":"GOFORE","subsystemList":[],"xroadInstance":"DEV"},{"created":{"hour":13,"minute":30,"second":1,"nano":896000000,"dayOfYear":255,"dayOfWeek":"FRIDAY","month":"SEPTEMBER","dayOfMonth":11,"year":2020,"monthValue":9,"chronology":{"calendarType":"iso8601","id":"ISO"}},"memberClass":"COM","memberCode":"1951458-9","name":"HKScan","subsystemList":[],"xroadInstance":"DEV"}]}],"securityServerData":[{"serverCode":"SS1","address":"10.18.150.48","memberClass":"GOV","memberCode":"1234"}]}
+{
+   "memberData":[
+      {
+         "date":[
+            2021,
+            8,
+            24,
+            0,
+            0
+         ],
+         "memberDataList":[
+            {
+               "created":[
+                  2021,
+                  8,
+                  24,
+                  16,
+                  20,
+                  26,
+                  830000000
+               ],
+               "memberClass":"COM",
+               "memberCode":"222",
+               "name":"ACME",
+               "provider":false,
+               "subsystemList":[
+                  {
+                     "created":[
+                        2022,
+                        2,
+                        3,
+                        14,
+                        10,
+                        25,
+                        712000000
+                     ],
+                     "subsystemCode":"FRUIT",
+                     "active":true,
+                     "serviceList":[
+                        
+                     ]
+                  }
+               ],
+               "xroadInstance":"DEV"
+            },
+            {
+               "created":[
+                  2021,
+                  8,
+                  24,
+                  16,
+                  20,
+                  26,
+                  830000000
+               ],
+               "memberClass":"COM",
+               "memberCode":"12345",
+               "name":"Company",
+               "provider":false,
+               "subsystemList":[
+                  
+               ],
+               "xroadInstance":"DEV"
+            }
+         ]
+      },
+      {
+         "date":[
+            2021,
+            8,
+            25,
+            0,
+            0
+         ],
+         "memberDataList":[
+            {
+               "created":[
+                  2021,
+                  8,
+                  24,
+                  16,
+                  20,
+                  26,
+                  830000000
+               ],
+               "memberClass":"COM",
+               "memberCode":"222",
+               "name":"ACME",
+               "provider":false,
+               "subsystemList":[
+                  {
+                     "created":[
+                        2022,
+                        2,
+                        3,
+                        14,
+                        10,
+                        25,
+                        712000000
+                     ],
+                     "subsystemCode":"FRUIT",
+                     "active":true,
+                     "serviceList":[
+                        
+                     ]
+                  }
+               ],
+               "xroadInstance":"DEV"
+            },
+            {
+               "created":[
+                  2021,
+                  8,
+                  24,
+                  16,
+                  20,
+                  26,
+                  830000000
+               ],
+               "memberClass":"COM",
+               "memberCode":"12345",
+               "name":"Company",
+               "provider":false,
+               "subsystemList":[
+                  
+               ],
+               "xroadInstance":"DEV"
+            }
+         ]
+      }
+   ],
+   "securityServerData":[
+      {
+         "serverCode":"SS1",
+         "address":"SS1",
+         "memberClass":"GOV",
+         "memberCode":"1234",
+         "xroadInstance":"DEV"
+      },
+      {
+         "serverCode":"ss4",
+         "address":"ss4",
+         "memberClass":"GOV",
+         "memberCode":"1234",
+         "xroadInstance":"DEV"
+      }
+   ]
+}
 ```
 
 The response has the following fields:
@@ -1311,34 +1522,26 @@ The response has the following fields:
 
 In order to fetch information about services in the X-Road Catalog, an HTTP request has to be sent to a respective REST endpoint:
 
-``` $ curl "http://<SERVER_ADDRESS>:8080/api/getListOfServices/<HISTORY_AMOUNT_IN_DAYS>" -H "Content-Type: text/csv" --output list_of_services.csv ```
+``` $ curl "http://<SERVER_ADDRESS>:8080/api/getListOfServicesCSV?startDate=<START_DATE>&endDate=<END_DATE>" -H "Content-Type: text/csv" --output list_of_services.csv ```
 
 * SERVER_ADDRESS please use the server address, on which the X-Road Catalog Lister is running on, e.g. localhost
-* HISTORY_AMOUNT_IN_DAYS length of the list to show in days, e.g. 2
+* START_DATE - an optional parameter(a string in format YYYY-MM-DD), if not used, today's date will be assumed
+* END_DATE - an optional parameter(a string in format YYYY-MM-DD), if not used, today's date will be assumed
 
 Response is a file ```list_of_services.csv``` with the following content:
 
 ```list_of_services.csv file with content:
-Date,XRoad instance,Member class,Member code,Member name,Member created,Subsystem code,Subsystem created,Service code,Service version,Service created
-2020-10-05T11:57:05.072,,,,,,,,,,
-"",DEV,GOV,1234,ACME,2020-09-04T10:44:30.896,MANAGEMENT,2020-09-04T10:44:30.896,clientDeletion,,2020-09-04T10:44:33.871
-"",DEV,GOV,1234,ACME,2020-09-04T10:44:30.896,MANAGEMENT,2020-09-04T10:44:30.896,clientReg,,2020-09-04T10:44:33.871
-"",DEV,GOV,1234,ACME,2020-09-04T10:44:30.896,MANAGEMENT,2020-09-04T10:44:30.896,ownerChange,,2020-09-04T10:44:33.871
-"",DEV,GOV,1234,ACME,2020-09-04T10:44:30.896,MANAGEMENT,2020-09-04T10:44:30.896,PetStore,,2020-09-04T10:44:33.871
-"",DEV,GOV,1234,ACME,2020-09-04T10:44:30.896,MANAGEMENT,2020-09-04T10:44:30.896,authCertDeletion,,2020-09-04T10:44:33.871
-"",DEV,COM,1710128-9,GOFORE,2020-09-04T10:44:30.896,,,,,
-"",DEV,COM,1951458-9,HKScan,2020-09-11T13:30:01.896,,,,,
-2020-10-06T11:57:05.072,,,,,,,,,,
-"",DEV,GOV,1234,ACME,2020-09-04T10:44:30.896,MANAGEMENT,2020-09-04T10:44:30.896,clientDeletion,,2020-09-04T10:44:33.871
-"",DEV,GOV,1234,ACME,2020-09-04T10:44:30.896,MANAGEMENT,2020-09-04T10:44:30.896,clientReg,,2020-09-04T10:44:33.871
-"",DEV,GOV,1234,ACME,2020-09-04T10:44:30.896,MANAGEMENT,2020-09-04T10:44:30.896,ownerChange,,2020-09-04T10:44:33.871
-"",DEV,GOV,1234,ACME,2020-09-04T10:44:30.896,MANAGEMENT,2020-09-04T10:44:30.896,PetStore,,2020-09-04T10:44:33.871
-"",DEV,GOV,1234,ACME,2020-09-04T10:44:30.896,MANAGEMENT,2020-09-04T10:44:30.896,authCertDeletion,,2020-09-04T10:44:33.871
-"",DEV,COM,1710128-9,GOFORE,2020-09-04T10:44:30.896,,,,,
-"",DEV,COM,1951458-9,HKScan,2020-09-11T13:30:01.896,,,,,
-"",Security server (SS) info:,,,,,,,,,
-member class,member code,server code,address,,,,,,,
-GOV,1234,SS1,10.18.150.48,,,,,,,
+Date,XRoad instance,Member class,Member code,Member name,Member created,Subsystem code,Subsystem created,Subsystem active,Service code,Service version,Service created,Service active
+2021-08-24T00:00,,,,,,,,,,,,
+"",DEV,COM,222,ACME,2021-08-24T16:20:26.830,FRUIT,2022-02-03T14:10:25.712,true,,,,
+"",DEV,COM,12345,Company,2021-08-24T16:20:26.830,,,,,,,
+2021-08-25T00:00,,,,,,,,,,,,
+"",DEV,COM,222,ACME,2021-08-24T16:20:26.830,FRUIT,2022-02-03T14:10:25.712,true,,,,
+"",DEV,COM,12345,Company,2021-08-24T16:20:26.830,,,,,,,
+"",Security server (SS) info:,,,,,,,,,,,
+instance,member class,member code,server code,address,,,,,,,,
+DEV,GOV,1234,SS1,SS1,,,,,,,,
+DEV,GOV,1234,ss4,ss4,,,,,,,,
 ```
 
 ### 3.2.3.15 Check heartbeat
@@ -1350,7 +1553,7 @@ In order to fetch X-Road Catalog heartbeat information, an HTTP request has to b
 * SERVER_ADDRESS please use the server address, on which the X-Road Catalog Lister is running on, e.g. localhost
 
 Response in JSON:
-```
+```json
 {"appWorking":true,
  "dbWorking":true,
  "appName":"X-Road Catalog Lister",
@@ -1388,14 +1591,128 @@ The response has the following fields:
 
 In order to fetch information about distinct service statistics in the X-Road Catalog, an HTTP request has to be sent to a respective REST endpoint:
 
-``` $ curl "http://<SERVER_ADDRESS>:8080/api/getDistinctServiceStatistics/<HISTORY_AMOUNT_IN_DAYS>" -H "Content-Type: application/json" ```
+``` $ curl "http://<SERVER_ADDRESS>:8080/api/getDistinctServiceStatistics?startDate=<START_DATE>&endDate=<END_DATE>" -H "Content-Type: application/json" ```
 
 * SERVER_ADDRESS please use the server address, on which the X-Road Catalog Lister is running on, e.g. localhost
-* HISTORY_AMOUNT_IN_DAYS length of the statistics to show in days, e.g. 2
+* START_DATE - an optional parameter(a string in format YYYY-MM-DD), if not used, today's date will be assumed
+* END_DATE - an optional parameter(a string in format YYYY-MM-DD), if not used, today's date will be assumed
 
 Response in JSON:
 ```json
-{"distinctServiceStatisticsList":[{"created":[2021,8,24,14,58,11,165000000],"numberOfDistinctServices":5},{"created":[2021,8,25,14,58,11,165000000],"numberOfDistinctServices":6}]}
+{
+   "distinctServiceStatisticsList":[
+      {
+         "created":[
+            2020,
+            11,
+            20,
+            0,
+            0
+         ],
+         "numberOfDistinctServices":3
+      },
+      {
+         "created":[
+            2020,
+            11,
+            21,
+            0,
+            0
+         ],
+         "numberOfDistinctServices":3
+      },
+      {
+         "created":[
+            2020,
+            11,
+            22,
+            0,
+            0
+         ],
+         "numberOfDistinctServices":3
+      },
+      {
+         "created":[
+            2020,
+            11,
+            23,
+            0,
+            0
+         ],
+         "numberOfDistinctServices":3
+      },
+      {
+         "created":[
+            2020,
+            11,
+            24,
+            0,
+            0
+         ],
+         "numberOfDistinctServices":3
+      },
+      {
+         "created":[
+            2020,
+            11,
+            25,
+            0,
+            0
+         ],
+         "numberOfDistinctServices":3
+      },
+      {
+         "created":[
+            2020,
+            11,
+            26,
+            0,
+            0
+         ],
+         "numberOfDistinctServices":3
+      },
+      {
+         "created":[
+            2020,
+            11,
+            27,
+            0,
+            0
+         ],
+         "numberOfDistinctServices":3
+      },
+      {
+         "created":[
+            2020,
+            11,
+            28,
+            0,
+            0
+         ],
+         "numberOfDistinctServices":3
+      },
+      {
+         "created":[
+            2020,
+            11,
+            29,
+            0,
+            0
+         ],
+         "numberOfDistinctServices":3
+      },
+      {
+         "created":[
+            2020,
+            11,
+            30,
+            0,
+            0
+         ],
+         "numberOfDistinctServices":3
+      }
+   ]
+}
 ```
 
 The response has the following fields:
@@ -1409,79 +1726,287 @@ The response has the following fields:
 Requests
 
 List errors for a given subsystem:
-curl "http://<SERVER_ADDRESS>:8080/api/listErrors/<INSTANCE>/<MEMBER_CLASS>/<MEMBER_CODE>/<SUBSYSTEM_CODE>/<HISTORY_AMOUNT_IN_DAYS>" -H "Content-Type: application/json"
+``` $ curl "http://<SERVER_ADDRESS>:8080/api/listErrors/<INSTANCE>/<MEMBER_CLASS>/<MEMBER_CODE>/<SUBSYSTEM_CODE>?startDate=<START_DATE>&endDate=<END_DATE>" -H "Content-Type: application/json" ```
 
 List errors for a given member:
-curl "http://<SERVER_ADDRESS>:8080/api/listErrors/<INSTANCE>/<MEMBER_CLASS>/<MEMBER_CODE>/<HISTORY_AMOUNT_IN_DAYS>" -H "Content-Type: application/json"
+``` $ curl "http://<SERVER_ADDRESS>:8080/api/listErrors/<INSTANCE>/<MEMBER_CLASS>/<MEMBER_CODE>?startDate=<START_DATE>&endDate=<END_DATE>" -H "Content-Type: application/json" ```
 
 List errors for a given member class:
-curl "http://<SERVER_ADDRESS>:8080/api/listErrors/<INSTANCE>/<MEMBER_CLASS>/<HISTORY_AMOUNT_IN_DAYS>" -H "Content-Type: application/json"
+``` $ curl "http://<SERVER_ADDRESS>:8080/api/listErrors/<INSTANCE>/<MEMBER_CLASS>?startDate=<START_DATE>&endDate=<END_DATE>" -H "Content-Type: application/json" ```
 
 List errors for a given instance:
-curl "http://<SERVER_ADDRESS>:8080/api/listErrors/<INSTANCE>/<HISTORY_AMOUNT_IN_DAYS>" -H "Content-Type: application/json"
+``` $ curl "http://<SERVER_ADDRESS>:8080/api/listErrors/<INSTANCE>?startDate=<START_DATE>&endDate=<END_DATE>" -H "Content-Type: application/json" ```
 
 List errors for all the instances and members:
-curl "http://<SERVER_ADDRESS>:8080/api/listErrors/<HISTORY_AMOUNT_IN_DAYS>" -H "Content-Type: application/json"
+``` $ curl "http://<SERVER_ADDRESS>:8080/api/listErrors?startDate=<START_DATE>&endDate=<END_DATE>" -H "Content-Type: application/json" ```
 
 List errors for a given subsystem with pagination:
-curl "http://<SERVER_ADDRESS>:8080/api/listErrors/<INSTANCE>/<MEMBER_CLASS>/<MEMBER_CODE>/<SUBSYSTEM_CODE>/<HISTORY_AMOUNT_IN_DAYS>?page=<PAGE_NUMBER>&limit=<NO_OF_ERRORS_PER_PAGE>" -H "Content-Type: application/json"
+``` $ curl "http://<SERVER_ADDRESS>:8080/api/listErrors/<INSTANCE>/<MEMBER_CLASS>/<MEMBER_CODE>/<SUBSYSTEM_CODE>?startDate=<START_DATE>&endDate=<END_DATE>&page=<PAGE_NUMBER>&limit=<NO_OF_ERRORS_PER_PAGE>" -H "Content-Type: application/json" ```
 
 List errors for a given member with pagination:
-curl "http://<SERVER_ADDRESS>:8080/api/listErrors/<INSTANCE>/<MEMBER_CLASS>/<MEMBER_CODE>/<HISTORY_AMOUNT_IN_DAYS>?page=<PAGE_NUMBER>&limit=<NO_OF_ERRORS_PER_PAGE>" -H "Content-Type: application/json"
+``` $ curl "http://<SERVER_ADDRESS>:8080/api/listErrors/<INSTANCE>/<MEMBER_CLASS>/<MEMBER_CODE>?startDate=<START_DATE>&endDate=<END_DATE>&page=<PAGE_NUMBER>&limit=<NO_OF_ERRORS_PER_PAGE>" -H "Content-Type: application/json" ```
 
 List errors for a given member class with pagination:
-curl "http://<SERVER_ADDRESS>:8080/api/listErrors/<INSTANCE>/<MEMBER_CLASS>/<HISTORY_AMOUNT_IN_DAYS>?page=<PAGE_NUMBER>&limit=<NO_OF_ERRORS_PER_PAGE>" -H "Content-Type: application/json"
+``` $ curl "http://<SERVER_ADDRESS>:8080/api/listErrors/<INSTANCE>/<MEMBER_CLASS>?startDate=<START_DATE>&endDate=<END_DATE>&page=<PAGE_NUMBER>&limit=<NO_OF_ERRORS_PER_PAGE>" -H "Content-Type: application/json" ```
 
 List errors for a given instance with pagination:
-curl "http://<SERVER_ADDRESS>:8080/api/listErrors/<INSTANCE>/<HISTORY_AMOUNT_IN_DAYS>?page=<PAGE_NUMBER>&limit=<NO_OF_ERRORS_PER_PAGE>" -H "Content-Type: application/json"
+``` $ curl "http://<SERVER_ADDRESS>:8080/api/listErrors/<INSTANCE>?startDate=<START_DATE>&endDate=<END_DATE>&page=<PAGE_NUMBER>&limit=<NO_OF_ERRORS_PER_PAGE>" -H "Content-Type: application/json" ```
 
 List errors for all the instances and members with pagination:
-curl "http://<SERVER_ADDRESS>:8080/api/listErrors/<HISTORY_AMOUNT_IN_DAYS>?page=<PAGE_NUMBER>&limit=<NO_OF_ERRORS_PER_PAGE>" -H "Content-Type: application/json"
+``` $ curl "http://<SERVER_ADDRESS>:8080/api/listErrors?startDate=<START_DATE>&endDate=<END_DATE>&page=<PAGE_NUMBER>&limit=<NO_OF_ERRORS_PER_PAGE>" -H "Content-Type: application/json" ```
 
 Example request
-curl "http://localhost:8080/api/listErrors/DEV/GOV/1234/TEST/29?page=0&limit=10" -H "Content-Type: application/json"
+``` $ curl "http://localhost:8900/api/listErrors/DEV/GOV/1234?startDate=2021-08-24&endDate=2021-08-25&page=0&limit=10" -H "Content-Type: application/json" ```
+
 
 * SERVER_ADDRESS please use the server address, on which the X-Road Catalog Lister is running on, e.g. localhost
 * INSTANCE name of X-Road instance, e.g. DEV
 * MEMBER_CLASS member class, e.g. GOV
 * MEMBER_CODE member code, e.g. 1234
 * SUBSYSTEM_CODE subsystem code, e.g. TEST
-* HISTORY_AMOUNT_IN_DAYS length of the statistics to show in days, e.g. 2
+* START_DATE - an optional parameter(a string in format YYYY-MM-DD), if not used, today's date will be assumed
+* END_DATE - an optional parameter(a string in format YYYY-MM-DD), if not used, today's date will be assumed
 * PAGE_NUMBER the number of page of the fetched results
 * NO_OF_ERRORS_PER_PAGE number of errors per fetched page
 
 Response in JSON:
 ```json
 {
-  "pageNumber": 0,
-  "pageSize": 10,
-  "numberOfPages": 3,
-  "errorLogList": [
-    {
-      "id": 158,
-      "message": "Fetch of SOAP services failed: Client (SUBSYSTEM:DEV/GOV/1234/MANAGEMENT) specifies HTTPS NO AUTH but client made  plaintext connection",
-      "code": "500",
-      "created": [
-        2021,
-        9,
-        28,
-        10,
-        35,
-        33,
-        255000000
-      ],
-      "memberClass": "GOV",
-      "memberCode": "1234",
-      "subsystemCode": "TEST",
-      "groupCode": "",
-      "serviceCode": "",
-      "serviceVersion": null,
-      "securityCategoryCode": "",
-      "serverCode": "",
-      "xroadInstance": "DEV"
-    },
-    {}
-  ]
+   "pageNumber":0,
+   "pageSize":10,
+   "numberOfPages":2,
+   "errorLogList":[
+      {
+         "id":38,
+         "message":"Fetch of REST services failed(url: http://ss3/r1/DEV/GOV/1234/TEST/listMethods): 500 Server Error",
+         "code":"500",
+         "created":[
+            2021,
+            8,
+            24,
+            16,
+            21,
+            13,
+            114000000
+         ],
+         "memberClass":"GOV",
+         "memberCode":"1234",
+         "subsystemCode":"TEST",
+         "groupCode":"",
+         "serviceCode":"",
+         "serviceVersion":null,
+         "securityCategoryCode":"",
+         "serverCode":"",
+         "xroadInstance":"DEV"
+      },
+      {
+         "id":39,
+         "message":"Fetch of REST services failed(url: http://ss3/r1/DEV/GOV/1234/TESTCLIENT/listMethods): 500 Server Error",
+         "code":"500",
+         "created":[
+            2021,
+            8,
+            24,
+            16,
+            21,
+            13,
+            114000000
+         ],
+         "memberClass":"GOV",
+         "memberCode":"1234",
+         "subsystemCode":"TESTCLIENT",
+         "groupCode":"",
+         "serviceCode":"",
+         "serviceVersion":null,
+         "securityCategoryCode":"",
+         "serverCode":"",
+         "xroadInstance":"DEV"
+      },
+      {
+         "id":40,
+         "message":"Fetch of REST services failed(url: http://ss3/r1/DEV/GOV/1234/MASTER/listMethods): 500 Server Error",
+         "code":"500",
+         "created":[
+            2021,
+            8,
+            24,
+            16,
+            21,
+            13,
+            114000000
+         ],
+         "memberClass":"GOV",
+         "memberCode":"1234",
+         "subsystemCode":"MASTER",
+         "groupCode":"",
+         "serviceCode":"",
+         "serviceVersion":null,
+         "securityCategoryCode":"",
+         "serverCode":"",
+         "xroadInstance":"DEV"
+      },
+      {
+         "id":41,
+         "message":"Fetch of REST services failed(url: http://ss3/r1/DEV/GOV/1234/MANAGEMENT/listMethods): 500 Server Error",
+         "code":"500",
+         "created":[
+            2021,
+            8,
+            24,
+            16,
+            31,
+            39,
+            548000000
+         ],
+         "memberClass":"GOV",
+         "memberCode":"1234",
+         "subsystemCode":"MANAGEMENT",
+         "groupCode":"",
+         "serviceCode":"",
+         "serviceVersion":null,
+         "securityCategoryCode":"",
+         "serverCode":"",
+         "xroadInstance":"DEV"
+      },
+      {
+         "id":42,
+         "message":"Fetch of REST services failed(url: http://ss3/r1/DEV/GOV/1234/TESTCLIENT/listMethods): 500 Server Error",
+         "code":"500",
+         "created":[
+            2021,
+            8,
+            24,
+            16,
+            31,
+            39,
+            551000000
+         ],
+         "memberClass":"GOV",
+         "memberCode":"1234",
+         "subsystemCode":"TESTCLIENT",
+         "groupCode":"",
+         "serviceCode":"",
+         "serviceVersion":null,
+         "securityCategoryCode":"",
+         "serverCode":"",
+         "xroadInstance":"DEV"
+      },
+      {
+         "id":43,
+         "message":"Fetch of REST services failed(url: http://ss3/r1/DEV/GOV/1234/MANAGEMENT/listMethods): 500 Server Error",
+         "code":"500",
+         "created":[
+            2021,
+            8,
+            24,
+            16,
+            34,
+            46,
+            378000000
+         ],
+         "memberClass":"GOV",
+         "memberCode":"1234",
+         "subsystemCode":"MANAGEMENT",
+         "groupCode":"",
+         "serviceCode":"",
+         "serviceVersion":null,
+         "securityCategoryCode":"",
+         "serverCode":"",
+         "xroadInstance":"DEV"
+      },
+      {
+         "id":44,
+         "message":"Fetch of REST services failed(url: http://ss3/r1/DEV/GOV/1234/TESTCLIENT/listMethods): 500 Server Error",
+         "code":"500",
+         "created":[
+            2021,
+            8,
+            24,
+            16,
+            34,
+            46,
+            384000000
+         ],
+         "memberClass":"GOV",
+         "memberCode":"1234",
+         "subsystemCode":"TESTCLIENT",
+         "groupCode":"",
+         "serviceCode":"",
+         "serviceVersion":null,
+         "securityCategoryCode":"",
+         "serverCode":"",
+         "xroadInstance":"DEV"
+      },
+      {
+         "id":45,
+         "message":"Fetch of REST services failed(url: http://ss3/r1/DEV/GOV/1234/TESTCLIENT/listMethods): 500 Server Error",
+         "code":"500",
+         "created":[
+            2021,
+            8,
+            24,
+            16,
+            36,
+            25,
+            490000000
+         ],
+         "memberClass":"GOV",
+         "memberCode":"1234",
+         "subsystemCode":"TESTCLIENT",
+         "groupCode":"",
+         "serviceCode":"",
+         "serviceVersion":null,
+         "securityCategoryCode":"",
+         "serverCode":"",
+         "xroadInstance":"DEV"
+      },
+      {
+         "id":46,
+         "message":"Fetch of REST services failed(url: http://ss3/r1/DEV/GOV/1234/TESTCLIENT/listMethods): 500 Server Error",
+         "code":"500",
+         "created":[
+            2021,
+            8,
+            24,
+            16,
+            39,
+            30,
+            845000000
+         ],
+         "memberClass":"GOV",
+         "memberCode":"1234",
+         "subsystemCode":"TESTCLIENT",
+         "groupCode":"",
+         "serviceCode":"",
+         "serviceVersion":null,
+         "securityCategoryCode":"",
+         "serverCode":"",
+         "xroadInstance":"DEV"
+      },
+      {
+         "id":47,
+         "message":"Fetch of REST services failed(url: http://ss1/r1/DEV/GOV/1234/TESTCLIENT/listMethods): 500 Server Error",
+         "code":"500",
+         "created":[
+            2021,
+            8,
+            24,
+            16,
+            41,
+            34,
+            622000000
+         ],
+         "memberClass":"GOV",
+         "memberCode":"1234",
+         "subsystemCode":"TESTCLIENT",
+         "groupCode":"",
+         "serviceCode":"",
+         "serviceVersion":null,
+         "securityCategoryCode":"",
+         "serverCode":"",
+         "xroadInstance":"DEV"
+      }
+   ]
 }
 ```
 
@@ -1509,7 +2034,9 @@ The response has the following fields:
 
 Request
 
-curl "http://localhost:8080/api/listSecurityServers" -H "Content-Type: application/json"
+``` $ curl "http://<SERVER_ADDRESS>:8080/api/listSecurityServers" -H "Content-Type: application/json" ```
+
+* SERVER_ADDRESS please use the server address, on which the X-Road Catalog Lister is running on, e.g. localhost
 
 Response
 ```json
@@ -1586,11 +2113,13 @@ The response has the following fields:
 
 Request
 
-curl "http://localhost:8080/api/listDescriptors" -H "Content-Type: application/json"
+``` $ curl "http://<SERVER_ADDRESS>:8080/api/listDescriptors" -H "Content-Type: application/json" ```
+
+* SERVER_ADDRESS please use the server address, on which the X-Road Catalog Lister is running on, e.g. localhost
 
 Response
 
-```
+```json
 [
     {
         "x_road_instance":"DEV",
@@ -1625,9 +2154,7 @@ Response
         "member_code":"1234",
         "member_name":"ACME",
         "subsystem_code":"TEST"
-    },
-    {}
-...
+    }
 ]
 ```
 
@@ -1658,16 +2185,17 @@ the fields are still required for the X-Road Metrics to operate correctly
 ### 3.2.3.20 Get Organization
 
 Request
-curl "http://localhost:8080/api/getOrganization/<BUSINESS_CODE>" -H "Content-Type: application/json"
+``` $ curl "http://<SERVER_ADDRESS>:8080/api/getOrganization/<BUSINESS_CODE>" -H "Content-Type: application/json" ```
 
+* SERVER_ADDRESS please use the server address, on which the X-Road Catalog Lister is running on, e.g. localhost
 * BUSINESS_CODE businessCode of the organization
 
 Example request
-curl "http://localhost:8080/api/getOrganization/0130729-0" -H "Content-Type: application/json"
+``` $ curl "http://localhost:8080/api/getOrganization/0130729-0" -H "Content-Type: application/json" ```
 
 Response
 
-```
+```json
 {
   "organizationData": {
     "businessCode": "0130729-0",
@@ -1688,10 +2216,7 @@ Response
         "fetched": [2022,2,3,13,19,34,414000000],
         "removed": null
       }
-    ],
-
-  ...
-
+    ]
   },
   "companyData": null
 }
@@ -1970,33 +2495,143 @@ with the given businessCode was not found among the data retrieved from the firs
 
 Request
 
-curl "http://localhost:8080/api/getOrganizationChanges/<BUSINESS_CODE>/<SINCE>" -H "Content-Type: application/json"
+``` $ curl "http://<SERVER_ADDRESS>:8080/api/getOrganizationChanges/<BUSINESS_CODE>?startDate=<START_DATE>&endDate=<END_DATE>" -H "Content-Type: application/json" ```
 
+* SERVER_ADDRESS please use the server address, on which the X-Road Catalog Lister is running on, e.g. localhost
 * BUSINESS_CODE businessCode of the organization
-* SINCE a date value after which the changes should have occurred (a string in format YYYY-MM-DD)
+* START_DATE - an optional parameter(a string in format YYYY-MM-DD), if not used, today's date will be assumed
+* END_DATE - an optional parameter(a string in format YYYY-MM-DD), if not used, today's date will be assumed
 
 Example request
-curl "http://localhost:8080/api/getOrganizationChanges/0130729-0/2022-01-01" -H "Content-Type: application/json"
+``` $ curl "http://localhost:8080/api/getOrganizationChanges/0130729-0?startDate=2021-08-24&endDate=2021-08-25" -H "Content-Type: application/json" ```
 
 Response
 
-```
+```json
 {
-  "changed": true,
-  "changedValueList": [
-    {
-      "name": "StreetAddress"
-    },
-    {
-      "name": "StreetAddress AdditionalInformation"
-    },
-    {
-      "name": "StreetAddress"
-    },
-    {
-      "name": "StreetAddress AdditionalInformation"
-    }
-  ]
+   "changed":true,
+   "changedValueList":[
+      {
+         "name":"Organization"
+      },
+      {
+         "name":"OrganizationName"
+      },
+      {
+         "name":"OrganizationDescription"
+      },
+      {
+         "name":"Email"
+      },
+      {
+         "name":"PhoneNumber"
+      },
+      {
+         "name":"WebPage"
+      },
+      {
+         "name":"Address"
+      },
+      {
+         "name":"Street"
+      },
+      {
+         "name":"Street"
+      },
+      {
+         "name":"Street"
+      },
+      {
+         "name":"Street"
+      },
+      {
+         "name":"Street"
+      },
+      {
+         "name":"Street"
+      },
+      {
+         "name":"StreetAddress PostOffice"
+      },
+      {
+         "name":"StreetAddress PostOffice"
+      },
+      {
+         "name":"StreetAddress PostOffice"
+      },
+      {
+         "name":"StreetAddress PostOffice"
+      },
+      {
+         "name":"StreetAddress PostOffice"
+      },
+      {
+         "name":"StreetAddress PostOffice"
+      },
+      {
+         "name":"StreetAddress Municipality"
+      },
+      {
+         "name":"StreetAddress Municipality Name"
+      },
+      {
+         "name":"StreetAddress Municipality Name"
+      },
+      {
+         "name":"StreetAddress Municipality Name"
+      },
+      {
+         "name":"Address"
+      },
+      {
+         "name":"Street"
+      },
+      {
+         "name":"Street"
+      },
+      {
+         "name":"Street"
+      },
+      {
+         "name":"Street"
+      },
+      {
+         "name":"Street"
+      },
+      {
+         "name":"Street"
+      },
+      {
+         "name":"StreetAddress PostOffice"
+      },
+      {
+         "name":"StreetAddress PostOffice"
+      },
+      {
+         "name":"StreetAddress PostOffice"
+      },
+      {
+         "name":"StreetAddress PostOffice"
+      },
+      {
+         "name":"StreetAddress PostOffice"
+      },
+      {
+         "name":"StreetAddress PostOffice"
+      },
+      {
+         "name":"StreetAddress Municipality"
+      },
+      {
+         "name":"StreetAddress Municipality Name"
+      },
+      {
+         "name":"StreetAddress Municipality Name"
+      },
+      {
+         "name":"StreetAddress Municipality Name"
+      }
+   ]
 }
 ```
 
@@ -2020,8 +2655,8 @@ The purpose of this piece of software is to persist and read persisted data. Use
 The database and tables required for X-Road Catalog can be created with the following:
 
 ```sh
-sudo -u postgres psql --file=src/main/sql/init_database.sql
-sudo -u postgres psql --file=src/main/sql/create_tables.sql
+$ sudo -u postgres psql --file=src/main/sql/init_database.sql
+$ sudo -u postgres psql --file=src/main/sql/create_tables.sql
 ```
 
 ### 3.3.2 Build

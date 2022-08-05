@@ -26,6 +26,7 @@ import fi.vrk.xroad.catalog.collector.util.OrganizationUtil;
 import fi.vrk.xroad.catalog.collector.wsimport.ClientType;
 import fi.vrk.xroad.catalog.collector.wsimport.XRoadClientIdentifierType;
 import fi.vrk.xroad.catalog.persistence.CatalogService;
+import fi.vrk.xroad.catalog.persistence.CompanyService;
 import fi.vrk.xroad.catalog.persistence.entity.*;
 import lombok.extern.slf4j.Slf4j;
 import org.json.JSONArray;
@@ -34,14 +35,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
-
 import java.util.ArrayList;
 import java.util.List;
 
-
-/**
- * Actor which fetches companies with respective data
- */
 @Component
 @Scope("prototype")
 @Slf4j
@@ -53,9 +49,12 @@ public class FetchCompaniesActor extends XRoadCatalogActor {
     @Autowired
     protected CatalogService catalogService;
 
+    @Autowired
+    protected CompanyService companyService;
+
     @Override
     public void preStart() throws Exception {
-
+        // This method is here just to override the method from the superclass
     }
 
     @Override
@@ -76,109 +75,129 @@ public class FetchCompaniesActor extends XRoadCatalogActor {
 
     private void saveData(JSONArray data) {
         for (int i = 0; i < data.length(); i++) {
-            Company company = OrganizationUtil.createCompany(data.optJSONObject(i));
-            JSONArray businessAddressesJson = data.optJSONObject(i).optJSONArray("addresses");
-            JSONArray businessAuxiliaryNamesJson = data.optJSONObject(i).optJSONArray("auxiliaryNames");
-            JSONArray businessIdChangesJson = data.optJSONObject(i).optJSONArray("businessIdChanges");
-            JSONArray businessLinesJson = data.optJSONObject(i).optJSONArray("businessLines");
-            JSONArray businessNamesJson = data.optJSONObject(i).optJSONArray("businessNames");
-            JSONArray companyFormsJson = data.optJSONObject(i).optJSONArray("companyForms");
-            JSONArray contactDetailsJson = data.optJSONObject(i).optJSONArray("contactDetails");
-            JSONArray languagesJson = data.optJSONObject(i).optJSONArray("languages");
-            JSONArray liquidationsJson = data.optJSONObject(i).optJSONArray("liquidations");
-            JSONArray registeredEntriesJson = data.optJSONObject(i).optJSONArray("registeredEntries");
-            JSONArray registeredOfficesJson = data.optJSONObject(i).optJSONArray("registeredOffices");
-
-            List<BusinessAddress> businessAddresses = businessAddressesJson != null
-                    ? OrganizationUtil.createBusinessAddresses(businessAddressesJson)
-                    : new ArrayList<>();
-            List<BusinessAuxiliaryName> businessAuxiliaryNames = businessAuxiliaryNamesJson != null
-                    ? OrganizationUtil.createBusinessAuxiliaryNames(businessAuxiliaryNamesJson)
-                    : new ArrayList<>();
-            List<BusinessIdChange> businessIdChanges = businessIdChangesJson != null
-                    ? OrganizationUtil.createBusinessIdChanges(businessIdChangesJson)
-                    : new ArrayList<>();
-            List<BusinessLine> businessLines = businessLinesJson != null
-                    ? OrganizationUtil.createBusinessLines(businessLinesJson)
-                    : new ArrayList<>();
-            List<BusinessName> businessNames = businessNamesJson != null
-                    ? OrganizationUtil.createBusinessNames(businessNamesJson)
-                    : new ArrayList<>();
-            List<CompanyForm> companyForms = companyFormsJson != null
-                    ? OrganizationUtil.createCompanyForms(companyFormsJson)
-                    : new ArrayList<>();
-            List<ContactDetail> contactDetails = contactDetailsJson != null
-                    ? OrganizationUtil.createContactDetails(contactDetailsJson)
-                    : new ArrayList<>();
-            List<Language> languages = languagesJson != null
-                    ? OrganizationUtil.createLanguages(languagesJson)
-                    : new ArrayList<>();
-            List<Liquidation> liquidations = liquidationsJson != null
-                    ? OrganizationUtil.createLiquidations(liquidationsJson)
-                    : new ArrayList<>();
-            List<RegisteredEntry> registeredEntries = registeredEntriesJson != null
-                    ? OrganizationUtil.createRegisteredEntries(registeredEntriesJson)
-                    : new ArrayList<>();
-            List<RegisteredOffice> registeredOffices = registeredOfficesJson != null
-                    ? OrganizationUtil.createRegisteredOffices(registeredOfficesJson)
-                    : new ArrayList<>();
-
-            Company savedCompany = catalogService.saveCompany(company);
-
-            businessAddresses.forEach(businessAddress -> {
-                businessAddress.setCompany(savedCompany);
-                catalogService.saveBusinessAddress(businessAddress);
-            });
-
-            businessAuxiliaryNames.forEach(businessAuxiliaryName -> {
-                businessAuxiliaryName.setCompany(savedCompany);
-                catalogService.saveBusinessAuxiliaryName(businessAuxiliaryName);
-            });
-
-            businessIdChanges.forEach(businessIdChange -> {
-                businessIdChange.setCompany(savedCompany);
-                catalogService.saveBusinessIdChange(businessIdChange);
-            });
-
-            businessLines.forEach(businessLine -> {
-                businessLine.setCompany(savedCompany);
-                catalogService.saveBusinessLine(businessLine);
-            });
-
-            businessNames.forEach(businessName -> {
-                businessName.setCompany(savedCompany);
-                catalogService.saveBusinessName(businessName);
-            });
-
-            companyForms.forEach(companyForm -> {
-                companyForm.setCompany(savedCompany);
-                catalogService.saveCompanyForm(companyForm);
-            });
-
-            contactDetails.forEach(contactDetail -> {
-                contactDetail.setCompany(savedCompany);
-                catalogService.saveContactDetail(contactDetail);
-            });
-
-            languages.forEach(language -> {
-                language.setCompany(savedCompany);
-                catalogService.saveLanguage(language);
-            });
-
-            liquidations.forEach(liquidation -> {
-                liquidation.setCompany(savedCompany);
-                catalogService.saveLiquidation(liquidation);
-            });
-
-            registeredEntries.forEach(registeredEntry -> {
-                registeredEntry.setCompany(savedCompany);
-                catalogService.saveRegisteredEntry(registeredEntry);
-            });
-
-            registeredOffices.forEach(registeredOffice -> {
-                registeredOffice.setCompany(savedCompany);
-                catalogService.saveRegisteredOffice(registeredOffice);
-            });
+            Company savedCompany = companyService.saveCompany(OrganizationUtil.createCompany(data.optJSONObject(i)));
+            saveBusinessAddresses(data.optJSONObject(i).optJSONArray("addresses"), savedCompany);
+            saveBusinessAuxiliaryNames(data.optJSONObject(i).optJSONArray("auxiliaryNames"), savedCompany);
+            saveBusinessIdChanges(data.optJSONObject(i).optJSONArray("businessIdChanges"), savedCompany);
+            saveBusinessLines(data.optJSONObject(i).optJSONArray("businessLines"), savedCompany);
+            saveBusinessNames(data.optJSONObject(i).optJSONArray("businessNames"), savedCompany);
+            saveCompanyForms(data.optJSONObject(i).optJSONArray("companyForms"), savedCompany);
+            saveContactDetails(data.optJSONObject(i).optJSONArray("contactDetails"), savedCompany);
+            saveLanguages(data.optJSONObject(i).optJSONArray("languages"), savedCompany);
+            saveLiquidations(data.optJSONObject(i).optJSONArray("liquidations"), savedCompany);
+            saveRegisteredEntries(data.optJSONObject(i).optJSONArray("registeredEntries"), savedCompany);
+            saveRegisteredOffices(data.optJSONObject(i).optJSONArray("registeredOffices"), savedCompany);
         }
+    }
+
+    private void saveBusinessAddresses(JSONArray businessAddressesJson, Company savedCompany) {
+        List<BusinessAddress> businessAddresses = businessAddressesJson != null
+                ? OrganizationUtil.createBusinessAddresses(businessAddressesJson)
+                : new ArrayList<>();
+
+        businessAddresses.forEach(businessAddress -> {
+            businessAddress.setCompany(savedCompany);
+            companyService.saveBusinessAddress(businessAddress);
+        });
+    }
+
+    private void saveBusinessAuxiliaryNames(JSONArray businessAuxiliaryNamesJson, Company savedCompany) {
+        List<BusinessAuxiliaryName> businessAuxiliaryNames = businessAuxiliaryNamesJson != null
+                ? OrganizationUtil.createBusinessAuxiliaryNames(businessAuxiliaryNamesJson)
+                : new ArrayList<>();
+        businessAuxiliaryNames.forEach(businessAuxiliaryName -> {
+            businessAuxiliaryName.setCompany(savedCompany);
+            companyService.saveBusinessAuxiliaryName(businessAuxiliaryName);
+        });
+    }
+
+    private void saveBusinessIdChanges(JSONArray businessIdChangesJson, Company savedCompany) {
+        List<BusinessIdChange> businessIdChanges = businessIdChangesJson != null
+                ? OrganizationUtil.createBusinessIdChanges(businessIdChangesJson)
+                : new ArrayList<>();
+        businessIdChanges.forEach(businessIdChange -> {
+            businessIdChange.setCompany(savedCompany);
+            companyService.saveBusinessIdChange(businessIdChange);
+        });
+    }
+
+    private void saveBusinessLines(JSONArray businessLinesJson, Company savedCompany) {
+        List<BusinessLine> businessLines = businessLinesJson != null
+                ? OrganizationUtil.createBusinessLines(businessLinesJson)
+                : new ArrayList<>();
+        businessLines.forEach(businessLine -> {
+            businessLine.setCompany(savedCompany);
+            companyService.saveBusinessLine(businessLine);
+        });
+    }
+
+    private void saveBusinessNames(JSONArray businessNamesJson, Company savedCompany) {
+        List<BusinessName> businessNames = businessNamesJson != null
+                ? OrganizationUtil.createBusinessNames(businessNamesJson)
+                : new ArrayList<>();
+        businessNames.forEach(businessName -> {
+            businessName.setCompany(savedCompany);
+            companyService.saveBusinessName(businessName);
+        });
+    }
+
+    private void saveCompanyForms(JSONArray companyFormsJson, Company savedCompany) {
+        List<CompanyForm> companyForms = companyFormsJson != null
+                ? OrganizationUtil.createCompanyForms(companyFormsJson)
+                : new ArrayList<>();
+        companyForms.forEach(companyForm -> {
+            companyForm.setCompany(savedCompany);
+            companyService.saveCompanyForm(companyForm);
+        });
+    }
+
+    private void saveContactDetails(JSONArray contactDetailsJson, Company savedCompany) {
+        List<ContactDetail> contactDetails = contactDetailsJson != null
+                ? OrganizationUtil.createContactDetails(contactDetailsJson)
+                : new ArrayList<>();
+        contactDetails.forEach(contactDetail -> {
+            contactDetail.setCompany(savedCompany);
+            companyService.saveContactDetail(contactDetail);
+        });
+    }
+
+    private void saveLanguages(JSONArray languagesJson, Company savedCompany) {
+        List<Language> languages = languagesJson != null
+                ? OrganizationUtil.createLanguages(languagesJson)
+                : new ArrayList<>();
+        languages.forEach(language -> {
+            language.setCompany(savedCompany);
+            companyService.saveLanguage(language);
+        });
+    }
+
+    private void saveLiquidations(JSONArray liquidationsJson, Company savedCompany) {
+        List<Liquidation> liquidations = liquidationsJson != null
+                ? OrganizationUtil.createLiquidations(liquidationsJson)
+                : new ArrayList<>();
+        liquidations.forEach(liquidation -> {
+            liquidation.setCompany(savedCompany);
+            companyService.saveLiquidation(liquidation);
+        });
+    }
+
+    private void saveRegisteredEntries(JSONArray registeredEntriesJson, Company savedCompany) {
+        List<RegisteredEntry> registeredEntries = registeredEntriesJson != null
+                ? OrganizationUtil.createRegisteredEntries(registeredEntriesJson)
+                : new ArrayList<>();
+        registeredEntries.forEach(registeredEntry -> {
+            registeredEntry.setCompany(savedCompany);
+            companyService.saveRegisteredEntry(registeredEntry);
+        });
+    }
+
+    private void saveRegisteredOffices(JSONArray registeredOfficesJson, Company savedCompany) {
+        List<RegisteredOffice> registeredOffices = registeredOfficesJson != null
+                ? OrganizationUtil.createRegisteredOffices(registeredOfficesJson)
+                : new ArrayList<>();
+        registeredOffices.forEach(registeredOffice -> {
+            registeredOffice.setCompany(savedCompany);
+            companyService.saveRegisteredOffice(registeredOffice);
+        });
     }
 }

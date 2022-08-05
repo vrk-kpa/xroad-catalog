@@ -24,7 +24,8 @@
     <soapenv:Body>
         <xrcl:HasCompanyChanged>
             <xrcl:businessId>1710128-9</xrcl:businessId>
-            <xrcl:changedAfter>2011-01-01</xrcl:changedAfter>
+            <xrcl:startDateTime>2020-01-01</xrcl:startDateTime>
+            <xrcl:endDateTime>2022-01-01</xrcl:endDateTime>
         </xrcl:HasCompanyChanged>
     </soapenv:Body>
 </soapenv:Envelope>

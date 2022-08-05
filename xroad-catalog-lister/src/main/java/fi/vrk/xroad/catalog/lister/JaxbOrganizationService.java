@@ -22,19 +22,31 @@
  */
 package fi.vrk.xroad.catalog.lister;
 
-import org.springframework.ws.soap.server.endpoint.annotation.FaultCode;
-import org.springframework.ws.soap.server.endpoint.annotation.SoapFault;
+import fi.vrk.xroad.xroad_catalog_lister.ChangedValue;
+import fi.vrk.xroad.xroad_catalog_lister.Organization;
+import javax.xml.datatype.XMLGregorianCalendar;
 
-@SoapFault(faultCode = FaultCode.SERVER)
-public class MemberNotFoundException extends CatalogListerRuntimeException {
+public interface JaxbOrganizationService {
 
-    public MemberNotFoundException(String message, Throwable cause) {
-        super(message, cause);
-    }
+    /**
+     * Returns all organizations
+     *
+     * All subitems of organization are always returned
+     *
+     * @param businessCode businessCode of an organization
+     * @return Iterable of JAXB generated Organizations
+     */
+    Iterable<Organization> getOrganizations(String businessCode);
 
-
-    public MemberNotFoundException(String s) {
-        super(s);
-    }
-
+    /**
+     * Returns whether some values of Organization have changed
+     *
+     * @param  guid guid of a company
+     * @param startDateTime creation datetime from
+     * @param endDateTime creation datetime to
+     * @return Iterable of JAXB generated ChangedValues
+     */
+    Iterable<ChangedValue> getChangedOrganizationValues(String guid,
+                                                        XMLGregorianCalendar startDateTime,
+                                                        XMLGregorianCalendar endDateTime);
 }

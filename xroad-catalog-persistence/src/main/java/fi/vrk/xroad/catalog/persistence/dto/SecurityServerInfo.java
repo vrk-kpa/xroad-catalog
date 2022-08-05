@@ -27,9 +27,6 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 
-/**
- * Data structure for holding security server information
- */
 @Getter
 @ToString
 @EqualsAndHashCode

@@ -26,9 +26,6 @@ import fi.vrk.xroad.catalog.persistence.CatalogService;
 import org.springframework.boot.SpringApplication;
 import org.springframework.context.annotation.ComponentScan;
 
-/**
- * Main spring boot app for lister interface
- */
 @ComponentScan(basePackageClasses = {ListerApplication.class, CatalogService.class})
 public class ListerApplication {
 

@@ -25,7 +25,6 @@ package fi.vrk.xroad.catalog.persistence.entity;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -58,9 +57,6 @@ public class OpenApi {
         // Empty constructor
     }
 
-    /**
-     * Constructor
-     */
     public OpenApi(Service service, String data, String externalId) {
         this.service = service;
         this.data = data;

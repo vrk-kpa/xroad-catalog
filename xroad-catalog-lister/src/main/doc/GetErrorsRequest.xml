@@ -23,7 +23,8 @@
     </soapenv:Header>
     <soapenv:Body>
         <xrcl:GetErrors>
-            <xrcl:since>2020-01-01</xrcl:since>
+            <xrcl:startDateTime>2020-01-01</xrcl:startDateTime>
+            <xrcl:endDateTime>2022-01-01</xrcl:endDateTime>
         </xrcl:GetErrors>
     </soapenv:Body>
 </soapenv:Envelope>

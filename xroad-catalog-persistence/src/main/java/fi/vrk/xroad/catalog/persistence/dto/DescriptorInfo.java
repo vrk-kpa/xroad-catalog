@@ -28,7 +28,6 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
 import java.io.Serializable;
 import java.util.List;
 
@@ -42,18 +41,18 @@ public class DescriptorInfo implements Serializable {
 
     private static final long serialVersionUID = 4049961366368846285L;
 
-    private String x_road_instance;
+    private String xRoadInstance;
 
-    private SubsystemName subsystem_name;
+    private SubsystemName subsystemName;
 
     private List<Email> email;
 
-    private String member_class;
+    private String memberClass;
 
-    private String member_code;
+    private String memberCode;
 
-    private String member_name;
+    private String memberName;
 
-    private String subsystem_code;
+    private String subsystemCode;
 
 }

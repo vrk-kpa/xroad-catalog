@@ -36,7 +36,6 @@ import org.json.JSONObject;
 import org.springframework.http.*;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.web.client.RestTemplate;
-
 import javax.net.ssl.SSLContext;
 import java.security.KeyManagementException;
 import java.security.KeyStoreException;
@@ -47,10 +46,19 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
 
 @Slf4j
 public class OrganizationUtil {
+    
+    private static final String WITH_BUSINESS_CODE = "with businessCode ";
+    private static final String DESCRIPTION = "description";
+    private static final String LANGUAGE = "language";
+    private static final String VALUE = "value";
+    private static final String REGISTRATION_DATE = "registrationDate";
+    private static final String END_DATE = "endDate";
+    private static final String SOURCE = "source";
+    private static final String VERSION = "version";
+    private static final String ORDER = "order";
 
     private OrganizationUtil() {
 
@@ -66,26 +74,26 @@ public class OrganizationUtil {
             return jsonObject;
         } catch (KeyStoreException e) {
             ErrorLog errorLog = MethodListUtil.createErrorLog(clientType,
-                    "KeyStoreException occurred when fetching companies from url " + url + " with businessCode "+businessCode,
+                    "KeyStoreException occurred when fetching companies from url " + url + WITH_BUSINESS_CODE + businessCode,
                     "500");
             catalogService.saveErrorLog(errorLog);
             log.error("KeyStoreException occurred when fetching companies from url {} with businessCode {}", url, businessCode);
         } catch (NoSuchAlgorithmException e) {
             ErrorLog errorLog = MethodListUtil.createErrorLog(clientType,
-                    "NoSuchAlgorithmException occurred when fetching companies from url " + url + " with businessCode "+businessCode,
+                    "NoSuchAlgorithmException occurred when fetching companies from url " + url + WITH_BUSINESS_CODE + businessCode,
                     "500");
             catalogService.saveErrorLog(errorLog);
             log.error("NoSuchAlgorithmException occurred when fetching companies from url {} with businessCode {}", url, businessCode);
         } catch (KeyManagementException e) {
             ErrorLog errorLog = MethodListUtil.createErrorLog(clientType,
-                    "KeyManagementException occurred when fetching companies from url " + url + " with businessCode "+businessCode,
+                    "KeyManagementException occurred when fetching companies from url " + url + WITH_BUSINESS_CODE + businessCode,
                     "500");
             catalogService.saveErrorLog(errorLog);
             log.error("KeyManagementException occurred when fetching companies from url {} with businessCode {}", url, businessCode);
         }
         catch (Exception e) {
             ErrorLog errorLog = MethodListUtil.createErrorLog(clientType,
-                    "Exception occurred when fetching companies from url " + url + " with businessCode "+businessCode,
+                    "Exception occurred when fetching companies from url " + url + WITH_BUSINESS_CODE + businessCode,
                     "500");
             catalogService.saveErrorLog(errorLog);
             log.error("Exception occurred when fetching companies from url {} with businessCode {}", url, businessCode);
@@ -157,9 +165,9 @@ public class OrganizationUtil {
         List<Email> emails = new ArrayList<>();
         for (int i = 0; i < jsonArray.length(); i++) {
             emails.add(Email.builder()
-                    .description(replaceUnicodeControlCharacters(jsonArray.optJSONObject(i).optString("description")))
-                    .language(jsonArray.optJSONObject(i).optString("language"))
-                    .value(replaceUnicodeControlCharacters(jsonArray.optJSONObject(i).optString("value"))).build());
+                    .description(replaceUnicodeControlCharacters(jsonArray.optJSONObject(i).optString(DESCRIPTION)))
+                    .language(jsonArray.optJSONObject(i).optString(LANGUAGE))
+                    .value(replaceUnicodeControlCharacters(jsonArray.optJSONObject(i).optString(VALUE))).build());
         }
         return emails;
     }
@@ -169,8 +177,8 @@ public class OrganizationUtil {
         for (int i = 0; i < jsonArray.length(); i++) {
             webPages.add(WebPage.builder()
                     .url(replaceUnicodeControlCharacters(jsonArray.optJSONObject(i).optString("url")))
-                    .language(jsonArray.optJSONObject(i).optString("language"))
-                    .value(replaceUnicodeControlCharacters(jsonArray.optJSONObject(i).optString("value"))).build());
+                    .language(jsonArray.optJSONObject(i).optString(LANGUAGE))
+                    .value(replaceUnicodeControlCharacters(jsonArray.optJSONObject(i).optString(VALUE))).build());
         }
         return webPages;
     }
@@ -180,8 +188,8 @@ public class OrganizationUtil {
         for (int i = 0; i < jsonArray.length(); i++) {
             organizationDescriptions.add(OrganizationDescription.builder()
                     .type(jsonArray.optJSONObject(i).optString("type"))
-                    .language(jsonArray.optJSONObject(i).optString("language"))
-                    .value(replaceUnicodeControlCharacters(jsonArray.optJSONObject(i).optString("value"))).build());
+                    .language(jsonArray.optJSONObject(i).optString(LANGUAGE))
+                    .value(replaceUnicodeControlCharacters(jsonArray.optJSONObject(i).optString(VALUE))).build());
         }
         return organizationDescriptions;
     }
@@ -195,8 +203,8 @@ public class OrganizationUtil {
         for (int i = 0; i < jsonArray.length(); i++) {
             organizationNames.add(OrganizationName.builder()
                     .type(jsonArray.optJSONObject(i).optString("type"))
-                    .language(jsonArray.optJSONObject(i).optString("language"))
-                    .value(replaceUnicodeControlCharacters(jsonArray.optJSONObject(i).optString("value"))).build());
+                    .language(jsonArray.optJSONObject(i).optString(LANGUAGE))
+                    .value(replaceUnicodeControlCharacters(jsonArray.optJSONObject(i).optString(VALUE))).build());
         }
         return organizationNames;
     }
@@ -230,8 +238,8 @@ public class OrganizationUtil {
         List<StreetAddressMunicipalityName> streetAddressMunicipalityNames = new ArrayList<>();
         for (int i = 0; i < jsonArray.length(); i++) {
             streetAddressMunicipalityNames.add(StreetAddressMunicipalityName.builder()
-                    .language(jsonArray.optJSONObject(i).optString("language"))
-                    .value(jsonArray.optJSONObject(i).optString("value")).build());
+                    .language(jsonArray.optJSONObject(i).optString(LANGUAGE))
+                    .value(jsonArray.optJSONObject(i).optString(VALUE)).build());
         }
         return streetAddressMunicipalityNames;
     }
@@ -240,8 +248,8 @@ public class OrganizationUtil {
         List<StreetAddressAdditionalInformation> additionalInformationList = new ArrayList<>();
         for (int i = 0; i < jsonArray.length(); i++) {
             additionalInformationList.add(StreetAddressAdditionalInformation.builder()
-                    .language(jsonArray.optJSONObject(i).optString("language"))
-                    .value(replaceUnicodeControlCharacters(jsonArray.optJSONObject(i).optString("value"))).build());
+                    .language(jsonArray.optJSONObject(i).optString(LANGUAGE))
+                    .value(replaceUnicodeControlCharacters(jsonArray.optJSONObject(i).optString(VALUE))).build());
         }
         return additionalInformationList;
     }
@@ -250,8 +258,8 @@ public class OrganizationUtil {
         List<StreetAddressPostOffice> postOffices = new ArrayList<>();
         for (int i = 0; i < jsonArray.length(); i++) {
             postOffices.add(StreetAddressPostOffice.builder()
-                    .language(jsonArray.optJSONObject(i).optString("language"))
-                    .value(jsonArray.optJSONObject(i).optString("value")).build());
+                    .language(jsonArray.optJSONObject(i).optString(LANGUAGE))
+                    .value(jsonArray.optJSONObject(i).optString(VALUE)).build());
         }
         return postOffices;
     }
@@ -260,8 +268,8 @@ public class OrganizationUtil {
         List<Street> streets = new ArrayList<>();
         for (int i = 0; i < jsonArray.length(); i++) {
             streets.add(Street.builder()
-                    .language(jsonArray.optJSONObject(i).optString("language"))
-                    .value(jsonArray.optJSONObject(i).optString("value")).build());
+                    .language(jsonArray.optJSONObject(i).optString(LANGUAGE))
+                    .value(jsonArray.optJSONObject(i).optString(VALUE)).build());
         }
         return streets;
     }
@@ -276,8 +284,8 @@ public class OrganizationUtil {
         List<PostOfficeBoxAddressAdditionalInformation> additionalInformationList = new ArrayList<>();
         for (int i = 0; i < jsonArray.length(); i++) {
             additionalInformationList.add(PostOfficeBoxAddressAdditionalInformation.builder()
-                    .language(jsonArray.optJSONObject(i).optString("language"))
-                    .value(replaceUnicodeControlCharacters(jsonArray.optJSONObject(i).optString("value"))).build());
+                    .language(jsonArray.optJSONObject(i).optString(LANGUAGE))
+                    .value(replaceUnicodeControlCharacters(jsonArray.optJSONObject(i).optString(VALUE))).build());
         }
         return additionalInformationList;
     }
@@ -286,8 +294,8 @@ public class OrganizationUtil {
         List<PostOfficeBox> postOfficeBoxes = new ArrayList<>();
         for (int i = 0; i < jsonArray.length(); i++) {
             postOfficeBoxes.add(PostOfficeBox.builder()
-                    .language(jsonArray.optJSONObject(i).optString("language"))
-                    .value(jsonArray.optJSONObject(i).optString("value")).build());
+                    .language(jsonArray.optJSONObject(i).optString(LANGUAGE))
+                    .value(jsonArray.optJSONObject(i).optString(VALUE)).build());
         }
         return postOfficeBoxes;
     }
@@ -296,8 +304,8 @@ public class OrganizationUtil {
         List<PostOffice> postOffices = new ArrayList<>();
         for (int i = 0; i < jsonArray.length(); i++) {
             postOffices.add(PostOffice.builder()
-                    .language(jsonArray.optJSONObject(i).optString("language"))
-                    .value(jsonArray.optJSONObject(i).optString("value")).build());
+                    .language(jsonArray.optJSONObject(i).optString(LANGUAGE))
+                    .value(jsonArray.optJSONObject(i).optString(VALUE)).build());
         }
         return postOffices;
     }
@@ -311,8 +319,8 @@ public class OrganizationUtil {
         List<PostOfficeBoxAddressMunicipalityName> streetAddressMunicipalityNames = new ArrayList<>();
         for (int i = 0; i < jsonArray.length(); i++) {
             streetAddressMunicipalityNames.add(PostOfficeBoxAddressMunicipalityName.builder()
-                    .language(jsonArray.optJSONObject(i).optString("language"))
-                    .value(jsonArray.optJSONObject(i).optString("value")).build());
+                    .language(jsonArray.optJSONObject(i).optString(LANGUAGE))
+                    .value(jsonArray.optJSONObject(i).optString(VALUE)).build());
         }
         return streetAddressMunicipalityNames;
     }
@@ -325,7 +333,7 @@ public class OrganizationUtil {
                     .number(jsonArray.optJSONObject(i).optString("number"))
                     .isFinnishServiceNumber(jsonArray.optJSONObject(i).getBoolean("isFinnishServiceNumber"))
                     .prefixNumber(jsonArray.optJSONObject(i).optString("prefixNumber"))
-                    .language(jsonArray.optJSONObject(i).optString("language"))
+                    .language(jsonArray.optJSONObject(i).optString(LANGUAGE))
                     .chargeDescription(replaceUnicodeControlCharacters(jsonArray.optJSONObject(i).optString("chargeDescription")))
                     .serviceChargeType(jsonArray.optJSONObject(i).optString("serviceChargeType")).build());
         }
@@ -337,7 +345,7 @@ public class OrganizationUtil {
                 .companyForm(jsonObject.optString("companyForm"))
                 .detailsUri(jsonObject.optString("detailsUri"))
                 .name(jsonObject.optString("name"))
-                .registrationDate(parseDateFromString(jsonObject.optString("registrationDate")))
+                .registrationDate(parseDateFromString(jsonObject.optString(REGISTRATION_DATE)))
                 .build();
     }
 
@@ -348,14 +356,14 @@ public class OrganizationUtil {
                     .careOf(jsonArray.optJSONObject(i).optString("careOf"))
                     .city(jsonArray.optJSONObject(i).optString("city"))
                     .country(jsonArray.optJSONObject(i).optString("country"))
-                    .language(jsonArray.optJSONObject(i).optString("language"))
+                    .language(jsonArray.optJSONObject(i).optString(LANGUAGE))
                     .postCode(jsonArray.optJSONObject(i).optString("postCode"))
-                    .source(jsonArray.optJSONObject(i).optLong("source"))
+                    .source(jsonArray.optJSONObject(i).optLong(SOURCE))
                     .type(jsonArray.optJSONObject(i).optLong("type"))
-                    .version(jsonArray.optJSONObject(i).optLong("version"))
+                    .version(jsonArray.optJSONObject(i).optLong(VERSION))
                     .street(jsonArray.optJSONObject(i).optString("street"))
-                    .registrationDate(parseDateFromString(jsonArray.optJSONObject(i).optString("registrationDate")))
-                    .endDate(parseDateFromString(jsonArray.optJSONObject(i).optString("endDate")))
+                    .registrationDate(parseDateFromString(jsonArray.optJSONObject(i).optString(REGISTRATION_DATE)))
+                    .endDate(parseDateFromString(jsonArray.optJSONObject(i).optString(END_DATE)))
                     .build());
         }
         return businessAddresses;
@@ -365,13 +373,13 @@ public class OrganizationUtil {
         List<BusinessAuxiliaryName> businessAuxiliaryNames = new ArrayList<>();
         for (int i = 0; i < jsonArray.length(); i++) {
             businessAuxiliaryNames.add(BusinessAuxiliaryName.builder()
-                    .language(jsonArray.optJSONObject(i).optString("language"))
+                    .language(jsonArray.optJSONObject(i).optString(LANGUAGE))
                     .name(jsonArray.optJSONObject(i).optString("name"))
-                    .ordering(jsonArray.optJSONObject(i).optLong("order"))
-                    .source(jsonArray.optJSONObject(i).optLong("source"))
-                    .version(jsonArray.optJSONObject(i).optLong("version"))
-                    .registrationDate(parseDateFromString(jsonArray.optJSONObject(i).optString("registrationDate")))
-                    .endDate(parseDateFromString(jsonArray.optJSONObject(i).optString("endDate")))
+                    .ordering(jsonArray.optJSONObject(i).optLong(ORDER))
+                    .source(jsonArray.optJSONObject(i).optLong(SOURCE))
+                    .version(jsonArray.optJSONObject(i).optLong(VERSION))
+                    .registrationDate(parseDateFromString(jsonArray.optJSONObject(i).optString(REGISTRATION_DATE)))
+                    .endDate(parseDateFromString(jsonArray.optJSONObject(i).optString(END_DATE)))
                     .build());
         }
         return businessAuxiliaryNames;
@@ -381,14 +389,14 @@ public class OrganizationUtil {
         List<BusinessIdChange> businessIdChanges = new ArrayList<>();
         for (int i = 0; i < jsonArray.length(); i++) {
             businessIdChanges.add(BusinessIdChange.builder()
-                    .language(jsonArray.optJSONObject(i).optString("language"))
+                    .language(jsonArray.optJSONObject(i).optString(LANGUAGE))
                     .change(jsonArray.optJSONObject(i).optString("change"))
                     .changeDate(jsonArray.optJSONObject(i).optString("changeDate"))
-                    .description(jsonArray.optJSONObject(i).optString("description"))
+                    .description(jsonArray.optJSONObject(i).optString(DESCRIPTION))
                     .reason(jsonArray.optJSONObject(i).optString("reason"))
                     .oldBusinessId(jsonArray.optJSONObject(i).optString("oldBusinessId"))
                     .newBusinessId(jsonArray.optJSONObject(i).optString("newBusinessId"))
-                    .source(jsonArray.optJSONObject(i).optLong("source"))
+                    .source(jsonArray.optJSONObject(i).optLong(SOURCE))
                     .build());
         }
         return businessIdChanges;
@@ -398,13 +406,13 @@ public class OrganizationUtil {
         List<BusinessLine> businessLines = new ArrayList<>();
         for (int i = 0; i < jsonArray.length(); i++) {
             businessLines.add(BusinessLine.builder()
-                    .language(jsonArray.optJSONObject(i).optString("language"))
+                    .language(jsonArray.optJSONObject(i).optString(LANGUAGE))
                     .name(jsonArray.optJSONObject(i).optString("name"))
-                    .ordering(jsonArray.optJSONObject(i).optLong("order"))
-                    .source(jsonArray.optJSONObject(i).optLong("source"))
-                    .version(jsonArray.optJSONObject(i).optLong("version"))
-                    .registrationDate(parseDateFromString(jsonArray.optJSONObject(i).optString("registrationDate")))
-                    .endDate(parseDateFromString(jsonArray.optJSONObject(i).optString("endDate")))
+                    .ordering(jsonArray.optJSONObject(i).optLong(ORDER))
+                    .source(jsonArray.optJSONObject(i).optLong(SOURCE))
+                    .version(jsonArray.optJSONObject(i).optLong(VERSION))
+                    .registrationDate(parseDateFromString(jsonArray.optJSONObject(i).optString(REGISTRATION_DATE)))
+                    .endDate(parseDateFromString(jsonArray.optJSONObject(i).optString(END_DATE)))
                     .build());
         }
         return businessLines;
@@ -414,13 +422,13 @@ public class OrganizationUtil {
         List<BusinessName> businessNames = new ArrayList<>();
         for (int i = 0; i < jsonArray.length(); i++) {
             businessNames.add(BusinessName.builder()
-                    .language(jsonArray.optJSONObject(i).optString("language"))
+                    .language(jsonArray.optJSONObject(i).optString(LANGUAGE))
                     .name(jsonArray.optJSONObject(i).optString("name"))
-                    .ordering(jsonArray.optJSONObject(i).optLong("order"))
-                    .source(jsonArray.optJSONObject(i).optLong("source"))
-                    .version(jsonArray.optJSONObject(i).optLong("version"))
-                    .registrationDate(parseDateFromString(jsonArray.optJSONObject(i).optString("registrationDate")))
-                    .endDate(parseDateFromString(jsonArray.optJSONObject(i).optString("endDate")))
+                    .ordering(jsonArray.optJSONObject(i).optLong(ORDER))
+                    .source(jsonArray.optJSONObject(i).optLong(SOURCE))
+                    .version(jsonArray.optJSONObject(i).optLong(VERSION))
+                    .registrationDate(parseDateFromString(jsonArray.optJSONObject(i).optString(REGISTRATION_DATE)))
+                    .endDate(parseDateFromString(jsonArray.optJSONObject(i).optString(END_DATE)))
                     .build());
         }
         return businessNames;
@@ -430,13 +438,13 @@ public class OrganizationUtil {
         List<CompanyForm> companyForms = new ArrayList<>();
         for (int i = 0; i < jsonArray.length(); i++) {
             companyForms.add(CompanyForm.builder()
-                    .language(jsonArray.optJSONObject(i).optString("language"))
+                    .language(jsonArray.optJSONObject(i).optString(LANGUAGE))
                     .name(jsonArray.optJSONObject(i).optString("name"))
-                    .source(jsonArray.optJSONObject(i).optLong("source"))
+                    .source(jsonArray.optJSONObject(i).optLong(SOURCE))
                     .type(jsonArray.optJSONObject(i).optLong("type"))
-                    .version(jsonArray.optJSONObject(i).optLong("version"))
-                    .registrationDate(parseDateFromString(jsonArray.optJSONObject(i).optString("registrationDate")))
-                    .endDate(parseDateFromString(jsonArray.optJSONObject(i).optString("endDate")))
+                    .version(jsonArray.optJSONObject(i).optLong(VERSION))
+                    .registrationDate(parseDateFromString(jsonArray.optJSONObject(i).optString(REGISTRATION_DATE)))
+                    .endDate(parseDateFromString(jsonArray.optJSONObject(i).optString(END_DATE)))
                     .build());
         }
         return companyForms;
@@ -446,13 +454,13 @@ public class OrganizationUtil {
         List<ContactDetail> contactDetails = new ArrayList<>();
         for (int i = 0; i < jsonArray.length(); i++) {
             contactDetails.add(ContactDetail.builder()
-                    .version(jsonArray.optJSONObject(i).optLong("version"))
+                    .version(jsonArray.optJSONObject(i).optLong(VERSION))
                     .type(jsonArray.optJSONObject(i).optString("type"))
-                    .source(jsonArray.optJSONObject(i).optLong("source"))
-                    .language(jsonArray.optJSONObject(i).optString("language"))
-                    .value(jsonArray.optJSONObject(i).optString("value"))
-                    .registrationDate(parseDateFromString(jsonArray.optJSONObject(i).optString("registrationDate")))
-                    .endDate(parseDateFromString(jsonArray.optJSONObject(i).optString("endDate")))
+                    .source(jsonArray.optJSONObject(i).optLong(SOURCE))
+                    .language(jsonArray.optJSONObject(i).optString(LANGUAGE))
+                    .value(jsonArray.optJSONObject(i).optString(VALUE))
+                    .registrationDate(parseDateFromString(jsonArray.optJSONObject(i).optString(REGISTRATION_DATE)))
+                    .endDate(parseDateFromString(jsonArray.optJSONObject(i).optString(END_DATE)))
                     .build());
         }
         return contactDetails;
@@ -462,12 +470,12 @@ public class OrganizationUtil {
         List<Language> languages = new ArrayList<>();
         for (int i = 0; i < jsonArray.length(); i++) {
             languages.add(Language.builder()
-                    .version(jsonArray.optJSONObject(i).optLong("version"))
-                    .source(jsonArray.optJSONObject(i).optLong("source"))
-                    .language(jsonArray.optJSONObject(i).optString("language"))
+                    .version(jsonArray.optJSONObject(i).optLong(VERSION))
+                    .source(jsonArray.optJSONObject(i).optLong(SOURCE))
+                    .language(jsonArray.optJSONObject(i).optString(LANGUAGE))
                     .name(jsonArray.optJSONObject(i).optString("name"))
-                    .registrationDate(parseDateFromString(jsonArray.optJSONObject(i).optString("registrationDate")))
-                    .endDate(parseDateFromString(jsonArray.optJSONObject(i).optString("endDate")))
+                    .registrationDate(parseDateFromString(jsonArray.optJSONObject(i).optString(REGISTRATION_DATE)))
+                    .endDate(parseDateFromString(jsonArray.optJSONObject(i).optString(END_DATE)))
                     .build());
         }
         return languages;
@@ -477,9 +485,9 @@ public class OrganizationUtil {
         List<Liquidation> liquidations = new ArrayList<>();
         for (int i = 0; i < jsonArray.length(); i++) {
             liquidations.add(Liquidation.builder()
-                    .version(jsonArray.optJSONObject(i).optLong("version"))
-                    .source(jsonArray.optJSONObject(i).optLong("source"))
-                    .language(jsonArray.optJSONObject(i).optString("language"))
+                    .version(jsonArray.optJSONObject(i).optLong(VERSION))
+                    .source(jsonArray.optJSONObject(i).optLong(SOURCE))
+                    .language(jsonArray.optJSONObject(i).optString(LANGUAGE))
                     .name(jsonArray.optJSONObject(i).optString("name"))
                     .type(jsonArray.optJSONObject(i).optLong("type"))
                     .registrationDate(LocalDateTime.now())
@@ -493,13 +501,13 @@ public class OrganizationUtil {
         List<RegisteredEntry> registeredEntries = new ArrayList<>();
         for (int i = 0; i < jsonArray.length(); i++) {
             registeredEntries.add(RegisteredEntry.builder()
-                    .language(jsonArray.optJSONObject(i).optString("language"))
-                    .description(jsonArray.optJSONObject(i).optString("description"))
+                    .language(jsonArray.optJSONObject(i).optString(LANGUAGE))
+                    .description(jsonArray.optJSONObject(i).optString(DESCRIPTION))
                     .register(jsonArray.optJSONObject(i).optLong("register"))
                     .status(jsonArray.optJSONObject(i).optLong("status"))
                     .authority(jsonArray.optJSONObject(i).optLong("authority"))
-                    .registrationDate(parseDateFromString(jsonArray.optJSONObject(i).optString("registrationDate")))
-                    .endDate(parseDateFromString(jsonArray.optJSONObject(i).optString("endDate")))
+                    .registrationDate(parseDateFromString(jsonArray.optJSONObject(i).optString(REGISTRATION_DATE)))
+                    .endDate(parseDateFromString(jsonArray.optJSONObject(i).optString(END_DATE)))
                     .build());
         }
         return registeredEntries;
@@ -509,13 +517,13 @@ public class OrganizationUtil {
         List<RegisteredOffice> registeredOffices = new ArrayList<>();
         for (int i = 0; i < jsonArray.length(); i++) {
             registeredOffices.add(RegisteredOffice.builder()
-                    .source(jsonArray.optJSONObject(i).optLong("source"))
-                    .language(jsonArray.optJSONObject(i).optString("language"))
+                    .source(jsonArray.optJSONObject(i).optLong(SOURCE))
+                    .language(jsonArray.optJSONObject(i).optString(LANGUAGE))
                     .name(jsonArray.optJSONObject(i).optString("name"))
-                    .ordering(jsonArray.optJSONObject(i).optLong("order"))
-                    .version(jsonArray.optJSONObject(i).optLong("version"))
-                    .registrationDate(parseDateFromString(jsonArray.optJSONObject(i).optString("registrationDate")))
-                    .endDate(parseDateFromString(jsonArray.optJSONObject(i).optString("endDate")))
+                    .ordering(jsonArray.optJSONObject(i).optLong(ORDER))
+                    .version(jsonArray.optJSONObject(i).optLong(VERSION))
+                    .registrationDate(parseDateFromString(jsonArray.optJSONObject(i).optString(REGISTRATION_DATE)))
+                    .endDate(parseDateFromString(jsonArray.optJSONObject(i).optString(END_DATE)))
                     .build());
         }
         return registeredOffices;

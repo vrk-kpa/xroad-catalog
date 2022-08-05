@@ -22,16 +22,10 @@
  */
 package fi.vrk.xroad.catalog.lister;
 
-/**
- * Application specific runtime exception class.
- */
 public class CatalogListerRuntimeException extends RuntimeException {
 
     public CatalogListerRuntimeException(String s) {
         super(s);
     }
 
-    public CatalogListerRuntimeException(String s, Throwable throwable) {
-        super(s, throwable);
-    }
 }

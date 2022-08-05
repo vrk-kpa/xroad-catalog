@@ -23,7 +23,6 @@
 package fi.vrk.xroad.catalog.persistence.entity;
 
 import lombok.*;
-
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.HashSet;
@@ -130,104 +129,48 @@ public class Company {
     @OneToMany(mappedBy = "company", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private Set<BusinessIdChange> businessIdChanges = new HashSet<>();
 
-    /**
-     * This collection can be used to add new items
-     *
-     * @return Set of all businessNames
-     */
     public Set<BusinessName> getAllBusinessNames() {
         return businessNames;
     }
 
-    /**
-     * This collection can be used to add new items
-     *
-     * @return Set of all BusinessAuxiliaryNames
-     */
     public Set<BusinessAuxiliaryName> getAllBusinessAuxiliaryNames() {
         return businessAuxiliaryNames;
     }
 
-    /**
-     * This collection can be used to add new items
-     *
-     * @return Set of all BusinessAddresses
-     */
     public Set<BusinessAddress> getAllBusinessAddresses() {
         return businessAddresses;
     }
 
-    /**
-     * This collection can be used to add new items
-     *
-     * @return Set of all CompanyForms
-     */
     public Set<CompanyForm> getAllCompanyForms() {
         return companyForms;
     }
 
-    /**
-     * This collection can be used to add new items
-     *
-     * @return Set of all Liquidations
-     */
     public Set<Liquidation> getAllLiquidations() {
         return liquidations;
     }
 
-    /**
-     * This collection can be used to add new items
-     *
-     * @return Set of all BusinessLines
-     */
     public Set<BusinessLine> getAllBusinessLines() {
         return businessLines;
     }
 
-    /**
-     * This collection can be used to add new items
-     *
-     * @return Set of all Languages
-     */
     public Set<Language> getAllLanguages() {
         return languages;
     }
 
-    /**
-     * This collection can be used to add new items
-     *
-     * @return Set of all RegisteredOffices
-     */
     public Set<RegisteredOffice> getAllRegisteredOffices() {
         return registeredOffices;
     }
 
-    /**
-     * This collection can be used to add new items
-     *
-     * @return Set of all ContactDetails
-     */
     public Set<ContactDetail> getAllContactDetails() {
         return contactDetails;
     }
 
-    /**
-     * This collection can be used to add new items
-     *
-     * @return Set of all RegisteredEntries
-     */
     public Set<RegisteredEntry> getAllRegisteredEntries() {
         return registeredEntries;
     }
 
-    /**
-     * This collection can be used to add new items
-     *
-     * @return Set of all BusinessIdChanges
-     */
     public Set<BusinessIdChange> getAllBusinessIdChanges() {
         return businessIdChanges;
     }
-
 
 }

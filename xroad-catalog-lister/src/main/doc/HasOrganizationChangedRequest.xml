@@ -23,8 +23,9 @@
    </soapenv:Header>
    <soapenv:Body>
       <xrcl:HasOrganizationChanged>
-         <xrcl:guid>e6b33f11-bb47-496e-98c5-6a736dae6014</xrcl:guid>
-         <xrcl:changedAfter>2011-01-01</xrcl:changedAfter>
+         <xrcl:guid>8df32876-8bfd-44e4-9232-c65cc56d8a95</xrcl:guid>
+         <xrcl:startDateTime>2020-01-01</xrcl:startDateTime>
+         <xrcl:endDateTime>2022-01-01</xrcl:endDateTime>
       </xrcl:HasOrganizationChanged>
    </soapenv:Body>
 </soapenv:Envelope>

@@ -23,7 +23,6 @@
 package fi.vrk.xroad.catalog.persistence;
 
 import fi.vrk.xroad.catalog.persistence.entity.Subsystem;
-
 import fi.vrk.xroad.catalog.persistence.repository.SubsystemRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
@@ -32,7 +31,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 

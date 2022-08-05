@@ -112,7 +112,8 @@ http://x-road.eu/xsd/identifiers ">
             <xs:element name="ListMembers">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element name="changedAfter" type="xs:dateTime"/>
+                        <xs:element name="startDateTime" type="xs:dateTime"/>
+                        <xs:element name="endDateTime" type="xs:dateTime"/>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
@@ -572,7 +573,8 @@ http://x-road.eu/xsd/identifiers ">
                 <xs:complexType>
                     <xs:sequence>
                         <xs:element name="guid" type="xs:string"/>
-                        <xs:element name="changedAfter" type="xs:dateTime"/>
+                        <xs:element name="startDateTime" type="xs:dateTime"/>
+                        <xs:element name="endDateTime" type="xs:dateTime"/>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
@@ -590,7 +592,8 @@ http://x-road.eu/xsd/identifiers ">
                 <xs:complexType>
                     <xs:sequence>
                         <xs:element name="businessId" type="xs:string"/>
-                        <xs:element name="changedAfter" type="xs:dateTime"/>
+                        <xs:element name="startDateTime" type="xs:dateTime"/>
+                        <xs:element name="endDateTime" type="xs:dateTime"/>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
@@ -912,7 +915,8 @@ http://x-road.eu/xsd/identifiers ">
             <xs:element name="GetErrors">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element name="since" type="xs:dateTime"/>
+                        <xs:element name="startDateTime" type="xs:dateTime"/>
+                        <xs:element name="endDateTime" type="xs:dateTime"/>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>

@@ -24,7 +24,6 @@ package fi.vrk.xroad.catalog.lister;
 
 import com.google.common.collect.Lists;
 import fi.vrk.xroad.catalog.persistence.dto.DescriptorInfo;
-import fi.vrk.xroad.catalog.persistence.dto.DescriptorInfoList;
 import fi.vrk.xroad.catalog.persistence.dto.Email;
 import fi.vrk.xroad.catalog.persistence.dto.MemberInfo;
 import fi.vrk.xroad.catalog.persistence.dto.SecurityServerData;
@@ -40,7 +39,6 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
-
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -51,13 +49,28 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-/**
- * Class for parsing X-Road shared-params.xml
- */
 @Slf4j
 @Component
 public class SharedParamsParser {
 
+    private static final String MEMBER = "member";
+    private static final String MEMBER_CLASS = "memberClass";
+    private static final String MEMBER_CODE = "memberCode";
+    private static final String XML_VERSION = "1.0";
+    private static final String OWNER = "owner";
+    private static final String SERVER_CODE = "serverCode";
+    private static final String ADDRESS = "address";
+    private static final String CLIENT = "client";
+    private static final String ID = "id";
+    private static final String CODE = "code";
+    private static final String NAME = "name";
+    private static final String SUBSYSTEM = "subsystem";
+    private static final String SUBSYSTEM_CODE = "subsystemCode";
+    private static final String SECURITY_SERVER = "securityServer";
+    private static final String DEFAULT_CONTACT_NAME = "Firstname Lastname";
+    private static final String DEFAULT_CONTACT_EMAIL = "yourname@yourdomain";
+    private static final String DEFAULT_SUBSYSTEM_NAME_EN = "Subsystem Name EN";
+    private static final String DEFAULT_SUBSYSTEM_NAME_ET = "Subsystem Name ET";
 
     @Autowired
     private Environment environment;
@@ -67,42 +80,36 @@ public class SharedParamsParser {
      * Matches member elements with securityServer elements to gather the information.
      *
      * @return list of {@link SecurityServerInfo} objects
-     * @throws ParserConfigurationException
-     * @throws IOException
-     * @throws SAXException
+     * @throws ParserConfigurationException when there are issues with parsing the file
+     * @throws IOException when unable to read input file
+     * @throws SAXException when there are issues with parsing of XML
      */
     public Set<SecurityServerInfo> parseInfo(String sharedParamsFile) throws ParserConfigurationException, IOException, SAXException {
-        File inputFile = new File(sharedParamsFile);
-
-        DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
-        DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
-        Document document = documentBuilder.parse(inputFile);
-        document.setXmlVersion("1.0");
-        document.getDocumentElement().normalize();
+        Document document = parseInputAndConvertToXmlDocument(new File(sharedParamsFile));
         Element root = document.getDocumentElement();
         String xRoadInstance = root.getChildNodes().item(1).getFirstChild().getNodeValue();
-        NodeList members = root.getElementsByTagName("member");
-        NodeList securityServers = root.getElementsByTagName("securityServer");
+        NodeList members = root.getElementsByTagName(MEMBER);
+        NodeList securityServers = root.getElementsByTagName(SECURITY_SERVER);
         Set<SecurityServerInfo> securityServerInfos = new HashSet<>();
 
         for (int i = 0; i < securityServers.getLength(); i++) {
             Node securityServer = securityServers.item(i);
             if (securityServer.getNodeType() == Node.ELEMENT_NODE) {
                 Element securityServerElement = (Element) securityServer;
-                String owner = securityServerElement.getElementsByTagName("owner").item(0).getTextContent();
-                String serverCode = securityServerElement.getElementsByTagName("serverCode").item(0).getTextContent();
-                String address = securityServerElement.getElementsByTagName("address").item(0).getTextContent();
+                String owner = securityServerElement.getElementsByTagName(OWNER).item(0).getTextContent();
+                String serverCode = securityServerElement.getElementsByTagName(SERVER_CODE).item(0).getTextContent();
+                String address = securityServerElement.getElementsByTagName(ADDRESS).item(0).getTextContent();
                 for (int j = 0; j < members.getLength(); j++) {
                     Node member = members.item(j);
                     if (member.getNodeType() == Node.ELEMENT_NODE) {
                         Element memberElement = (Element) member;
-                        if (memberElement.getAttribute("id").equals(owner)) {
+                        if (memberElement.getAttribute(ID).equals(owner)) {
                             Element memberClassElement =
-                                    (Element) memberElement.getElementsByTagName("memberClass").item(0);
+                                    (Element) memberElement.getElementsByTagName(MEMBER_CLASS).item(0);
                             String memberClass =
-                                    memberClassElement.getElementsByTagName("code").item(0).getTextContent();
+                                    memberClassElement.getElementsByTagName(CODE).item(0).getTextContent();
                             String memberCode =
-                                    memberElement.getElementsByTagName("memberCode").item(0).getTextContent();
+                                    memberElement.getElementsByTagName(MEMBER_CODE).item(0).getTextContent();
                             SecurityServerInfo info =
                                     new SecurityServerInfo(xRoadInstance, serverCode, address, memberClass, memberCode);
                             securityServerInfos.add(info);
@@ -121,98 +128,15 @@ public class SharedParamsParser {
      * Matches member elements with securityServer elements to gather the information.
      *
      * @return list of {@link SecurityServerInfo} objects
-     * @throws ParserConfigurationException
-     * @throws IOException
-     * @throws SAXException
+     * @throws ParserConfigurationException when there are issues with parsing the file
+     * @throws IOException when unable to read input file
+     * @throws SAXException when there are issues with parsing of XML
      */
     public SecurityServerDataList parseDetails(String sharedParamsFile) throws ParserConfigurationException, IOException, SAXException {
-        File inputFile = new File(sharedParamsFile);
-
-        DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
-        DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
-        Document document = documentBuilder.parse(inputFile);
-        document.setXmlVersion("1.0");
-        document.getDocumentElement().normalize();
+        Document document = parseInputAndConvertToXmlDocument(new File(sharedParamsFile));
         Element root = document.getDocumentElement();
-        String xRoadInstance = root.getChildNodes().item(1).getFirstChild().getNodeValue();
-        NodeList members = root.getElementsByTagName("member");
-        NodeList securityServers = root.getElementsByTagName("securityServer");
-        List<SecurityServerData> securityServerList = new ArrayList<>();
-
-        for (int i = 0; i < securityServers.getLength(); i++) {
-            Node securityServer = securityServers.item(i);
-            if (securityServer.getNodeType() == Node.ELEMENT_NODE) {
-                Element securityServerElement = (Element) securityServer;
-                String owner = securityServerElement.getElementsByTagName("owner").item(0).getTextContent();
-                String serverCode = securityServerElement.getElementsByTagName("serverCode").item(0).getTextContent();
-                String address = securityServerElement.getElementsByTagName("address").item(0).getTextContent();
-                NodeList clientNames = securityServerElement.getElementsByTagName("client");
-                MemberInfo ownerData = MemberInfo.builder().build();
-                List<MemberInfo> clients = new ArrayList<>();
-                List<String> clientNamesList = new ArrayList<>();
-                for (int j = 0; j < clientNames.getLength(); j++) {
-                    Node member = clientNames.item(j);
-                    clientNamesList.add(member.getFirstChild().getNodeValue());
-                }
-
-                for (int j = 0; j < members.getLength(); j++) {
-                    Node member = members.item(j);
-                    if (member.getNodeType() == Node.ELEMENT_NODE) {
-                        Element memberElement = (Element) member;
-                        Element memberClassElement =
-                                (Element) memberElement.getElementsByTagName("memberClass").item(0);
-                        String memberClass =
-                                memberClassElement.getElementsByTagName("code").item(0).getTextContent();
-                        String memberCode =
-                                memberElement.getElementsByTagName("memberCode").item(0).getTextContent();
-                        String name =
-                                memberElement.getElementsByTagName("name").item(0).getTextContent();
-
-                        NodeList subsystems = memberElement.getElementsByTagName("subsystem");
-                        for (int k = 0; k < subsystems.getLength(); k++) {
-                            Node subsystem = subsystems.item(k);
-                            if (member.getNodeType() == Node.ELEMENT_NODE) {
-                                Element subsystemElement = (Element) subsystem;
-                                if (clientNamesList.contains(subsystemElement.getAttribute("id"))) {
-                                    String subsystemCode =
-                                            subsystemElement.getElementsByTagName("subsystemCode").item(0).getTextContent();
-                                    clients.add(MemberInfo.builder()
-                                            .memberClass(memberClass)
-                                            .memberCode(memberCode)
-                                            .subsystemCode(subsystemCode)
-                                            .name(name).build());
-                                }
-                            }
-                        }
-                        if (clientNamesList.contains(memberElement.getAttribute("id"))) {
-                            clients.add(MemberInfo.builder()
-                                    .memberClass(memberClass)
-                                    .memberCode(memberCode)
-                                    .subsystemCode(null)
-                                    .name(name).build());
-                        }
-                        if (memberElement.getAttribute("id").equals(owner)) {
-                            ownerData = MemberInfo.builder()
-                                    .memberClass(memberClass)
-                                    .memberCode(memberCode)
-                                    .subsystemCode(null)
-                                    .name(name).build();
-                        }
-                    }
-                }
-
-                securityServerList.add(SecurityServerData.builder()
-                        .owner(ownerData)
-                        .serverCode(serverCode)
-                        .address(address)
-                        .clients(clients).build());
-            }
-        }
-
-        SecurityServerDataList securityServerDataList = SecurityServerDataList.builder()
-                .securityServerDataList(securityServerList).build();
-
-        return securityServerDataList;
+        List<SecurityServerData> securityServerList = getSecurityServerDataList(root.getElementsByTagName(SECURITY_SERVER), root.getElementsByTagName(MEMBER));
+        return SecurityServerDataList.builder().securityServerDataList(securityServerList).build();
     }
 
     /**
@@ -220,55 +144,44 @@ public class SharedParamsParser {
      * Matches member elements with securityServer elements to gather the information.
      *
      * @return list of {@link SecurityServerInfo} objects
-     * @throws ParserConfigurationException
-     * @throws IOException
-     * @throws SAXException
+     * @throws ParserConfigurationException when there are issues with parsing the file
+     * @throws IOException when unable to read input file
+     * @throws SAXException when there are issues with parsing of XML
      */
     public List<DescriptorInfo> parseDescriptorInfo(String sharedParamsFile) throws ParserConfigurationException, IOException, SAXException {
-        File inputFile = new File(sharedParamsFile);
-
-        DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
-        DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
-        Document document = documentBuilder.parse(inputFile);
-        document.setXmlVersion("1.0");
-        document.getDocumentElement().normalize();
+        Document document = parseInputAndConvertToXmlDocument(new File(sharedParamsFile));
         Element root = document.getDocumentElement();
         String xRoadInstance = root.getChildNodes().item(1).getFirstChild().getNodeValue();
-        NodeList members = root.getElementsByTagName("member");
+        NodeList members = root.getElementsByTagName(MEMBER);
         List<DescriptorInfo> descriptorInfos = new ArrayList<>();
 
         for (int j = 0; j < members.getLength(); j++) {
             Node member = members.item(j);
             if (member.getNodeType() == Node.ELEMENT_NODE) {
                 Element memberElement = (Element) member;
-                Element memberClassElement =
-                        (Element) memberElement.getElementsByTagName("memberClass").item(0);
-                String memberClass =
-                        memberClassElement.getElementsByTagName("code").item(0).getTextContent();
-                String memberCode =
-                        memberElement.getElementsByTagName("memberCode").item(0).getTextContent();
-                String name =
-                        memberElement.getElementsByTagName("name").item(0).getTextContent();
-
-                NodeList subsystems = memberElement.getElementsByTagName("subsystem");
+                Element memberClassElement = (Element) memberElement.getElementsByTagName(MEMBER_CLASS).item(0);
+                String memberClass = memberClassElement.getElementsByTagName(CODE).item(0).getTextContent();
+                String memberCode = memberElement.getElementsByTagName(MEMBER_CODE).item(0).getTextContent();
+                String name = memberElement.getElementsByTagName(NAME).item(0).getTextContent();
+                NodeList subsystems = memberElement.getElementsByTagName(SUBSYSTEM);
                 for (int k = 0; k < subsystems.getLength(); k++) {
                     Node subsystem = subsystems.item(k);
                     if (member.getNodeType() == Node.ELEMENT_NODE) {
                         Element subsystemElement = (Element) subsystem;
                         String subsystemCode =
-                                subsystemElement.getElementsByTagName("subsystemCode").item(0).getTextContent();
+                                subsystemElement.getElementsByTagName(SUBSYSTEM_CODE).item(0).getTextContent();
 
                         descriptorInfos.add(DescriptorInfo.builder()
-                                .x_road_instance(xRoadInstance)
-                                .member_code(memberCode)
-                                .member_class(memberClass)
-                                .member_name(name)
-                                .subsystem_code(subsystemCode)
-                                .subsystem_name(SubsystemName.builder().en("Subsystem Name EN").et("Subsystem Name ET").build())
+                                .xRoadInstance(xRoadInstance)
+                                .memberCode(memberCode)
+                                .memberClass(memberClass)
+                                .memberName(name)
+                                .subsystemCode(subsystemCode)
+                                .subsystemName(SubsystemName.builder().en(DEFAULT_SUBSYSTEM_NAME_EN).et(DEFAULT_SUBSYSTEM_NAME_ET).build())
                                 .email(Lists.newArrayList(
                                         Email.builder()
-                                                .name("Firstname Lastname")
-                                                .email("yourname@yourdomain")
+                                                .name(DEFAULT_CONTACT_NAME)
+                                                .email(DEFAULT_CONTACT_EMAIL)
                                                 .build())).build());
                     }
                 }
@@ -277,5 +190,106 @@ public class SharedParamsParser {
         }
 
         return descriptorInfos;
+    }
+
+    private Document parseInputAndConvertToXmlDocument(File inputFile) throws ParserConfigurationException, IOException, SAXException {
+        DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
+        DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
+        Document document = documentBuilder.parse(inputFile);
+        document.setXmlVersion(XML_VERSION);
+        document.getDocumentElement().normalize();
+        return document;
+    }
+
+    private List<SecurityServerData> getSecurityServerDataList(NodeList securityServers, NodeList members) {
+        List<SecurityServerData> securityServerList = new ArrayList<>();
+        for (int i = 0; i < securityServers.getLength(); i++) {
+            Node securityServer = securityServers.item(i);
+            if (securityServer.getNodeType() == Node.ELEMENT_NODE) {
+                securityServerList.add(getSecurityServerData(securityServer, members));
+            }
+        }
+        return securityServerList;
+    }
+
+    private SecurityServerData getSecurityServerData(Node securityServer, NodeList members) {
+        Element securityServerElement = (Element) securityServer;
+        String owner = securityServerElement.getElementsByTagName(OWNER).item(0).getTextContent();
+        String serverCode = securityServerElement.getElementsByTagName(SERVER_CODE).item(0).getTextContent();
+        String address = securityServerElement.getElementsByTagName(ADDRESS).item(0).getTextContent();
+        MemberInfo ownerData = MemberInfo.builder().build();
+        NodeList clientNames = securityServerElement.getElementsByTagName(CLIENT);
+        List<MemberInfo> clients = new ArrayList<>();
+        List<String> clientNamesList = new ArrayList<>();
+        for (int j = 0; j < clientNames.getLength(); j++) {
+            Node member = clientNames.item(j);
+            clientNamesList.add(member.getFirstChild().getNodeValue());
+        }
+        for (int j = 0; j < members.getLength(); j++) {
+            Node member = members.item(j);
+            if (member.getNodeType() == Node.ELEMENT_NODE) {
+                Element memberElement = (Element) member;
+                Element memberClassElement = (Element) memberElement.getElementsByTagName(MEMBER_CLASS).item(0);
+                String memberClass = memberClassElement.getElementsByTagName(CODE).item(0).getTextContent();
+                String memberCode = memberElement.getElementsByTagName(MEMBER_CODE).item(0).getTextContent();
+                String name = memberElement.getElementsByTagName(NAME).item(0).getTextContent();
+                clients = getClients(memberElement, member, clientNamesList, memberClass, memberCode, name);
+                ownerData = getOwnerData(memberElement, owner, memberClass, memberCode, name);
+            }
+        }
+        return SecurityServerData.builder()
+                .owner(ownerData)
+                .serverCode(serverCode)
+                .address(address)
+                .clients(clients).build();
+    }
+
+    private MemberInfo getOwnerData(Element memberElement,
+                                    String owner,
+                                    String memberClass,
+                                    String memberCode,
+                                    String name) {
+        MemberInfo ownerData = MemberInfo.builder().build();
+        if (memberElement.getAttribute(ID).equals(owner)) {
+            ownerData = MemberInfo.builder()
+                    .memberClass(memberClass)
+                    .memberCode(memberCode)
+                    .subsystemCode(null)
+                    .name(name).build();
+        }
+        return ownerData;
+    }
+
+    private List<MemberInfo> getClients(Element memberElement,
+                                        Node member,
+                                        List<String> clientNamesList,
+                                        String memberClass,
+                                        String memberCode,
+                                        String name) {
+        List<MemberInfo> clients = new ArrayList<>();
+        NodeList subsystems = memberElement.getElementsByTagName(SUBSYSTEM);
+        for (int k = 0; k < subsystems.getLength(); k++) {
+            Node subsystem = subsystems.item(k);
+            if (member.getNodeType() == Node.ELEMENT_NODE) {
+                Element subsystemElement = (Element) subsystem;
+                if (clientNamesList.contains(subsystemElement.getAttribute(ID))) {
+                    String subsystemCode =
+                            subsystemElement.getElementsByTagName(SUBSYSTEM_CODE).item(0).getTextContent();
+                    clients.add(MemberInfo.builder()
+                            .memberClass(memberClass)
+                            .memberCode(memberCode)
+                            .subsystemCode(subsystemCode)
+                            .name(name).build());
+                }
+            }
+        }
+        if (clientNamesList.contains(memberElement.getAttribute(ID))) {
+            clients.add(MemberInfo.builder()
+                    .memberClass(memberClass)
+                    .memberCode(memberCode)
+                    .subsystemCode(null)
+                    .name(name).build());
+        }
+        return clients;
     }
 }

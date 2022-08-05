@@ -34,11 +34,9 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.util.ClassUtils;
 import org.springframework.ws.client.core.WebServiceTemplate;
 import org.springframework.ws.soap.client.SoapFaultClientException;
-
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
-
 import java.time.LocalDateTime;
 import java.time.Month;
 import java.time.ZoneId;
@@ -46,14 +44,11 @@ import java.util.GregorianCalendar;
 
 import static org.junit.Assert.*;
 
-/**
- * Http tests for lister interface
- */
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = ListerApplication.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class ApplicationTests {
 
-	private Jaxb2Marshaller marshaller = new Jaxb2Marshaller();
+	private final Jaxb2Marshaller marshaller = new Jaxb2Marshaller();
 
 	@LocalServerPort
 	private int port;
@@ -170,7 +165,7 @@ public class ApplicationTests {
 			exceptionMessage = e.getMessage();
 		}
 		assertTrue(thrown);
-		assertEquals(exceptionMessage, "wsdl with external id 1001 not found");
+		assertEquals("wsdl with external id 1001 not found", exceptionMessage);
 	}
 
 	@Test
@@ -197,7 +192,7 @@ public class ApplicationTests {
 			exceptionMessage = e.getMessage();
 		}
 		assertTrue(thrown);
-		assertEquals(exceptionMessage, "OpenApi with external id 3001 not found");
+		assertEquals("OpenApi with external id 3001 not found", exceptionMessage);
 	}
 
 	@Test
@@ -240,7 +235,7 @@ public class ApplicationTests {
 				exceptionMessage = e.getMessage();
 		}
 		assertTrue(thrown);
-		assertEquals(exceptionMessage, "Member with xRoadInstance \"dev-cs\", memberClass \"PUB\" and memberCode \"123\" not found");
+		assertEquals("Member with xRoadInstance \"dev-cs\", memberClass \"PUB\" and memberCode \"123\" not found", exceptionMessage);
 	}
 
 	@Test
@@ -277,7 +272,7 @@ public class ApplicationTests {
 			exceptionMessage = e.getMessage();
 		}
 		assertTrue(thrown);
-		assertEquals(exceptionMessage, "Organizations with businessCode 0123456-1 not found");
+		assertEquals("Organizations with businessCode 0123456-1 not found", exceptionMessage);
 	}
 
 	@Test
@@ -285,14 +280,19 @@ public class ApplicationTests {
 		HasOrganizationChanged request = new HasOrganizationChanged();
 		request.setGuid("abcdef123456");
 		LocalDateTime changedAfter = LocalDateTime.of(2015, Month.JULY, 29, 19, 30, 40);
-		GregorianCalendar cal = GregorianCalendar.from(changedAfter.atZone(ZoneId.systemDefault()));
-		XMLGregorianCalendar xc = null;
+		LocalDateTime changedUntil = LocalDateTime.of(2022, Month.JULY, 29, 19, 30, 40);
+		GregorianCalendar calStart = GregorianCalendar.from(changedAfter.atZone(ZoneId.systemDefault()));
+		GregorianCalendar calEnd = GregorianCalendar.from(changedUntil.atZone(ZoneId.systemDefault()));
+		XMLGregorianCalendar startDateTime = null;
+		XMLGregorianCalendar endDateTime = null;
 		try {
-			xc = DatatypeFactory.newInstance().newXMLGregorianCalendar(cal);
+			startDateTime = DatatypeFactory.newInstance().newXMLGregorianCalendar(calStart);
+			endDateTime = DatatypeFactory.newInstance().newXMLGregorianCalendar(calEnd);
 		} catch (DatatypeConfigurationException e) {
 			e.printStackTrace();
 		}
-		request.setChangedAfter(xc);
+		request.setStartDateTime(startDateTime);
+		request.setEndDateTime(endDateTime);
 		HasOrganizationChangedResponse result = (HasOrganizationChangedResponse)new WebServiceTemplate(marshaller).marshalSendAndReceive(
 				"http://localhost:" + port + "/ws/HasOrganizationChanged/", request);
 		assertNotNull(result);
@@ -305,14 +305,19 @@ public class ApplicationTests {
 		HasOrganizationChanged request = new HasOrganizationChanged();
 		request.setGuid("abcdef123456");
 		LocalDateTime changedAfter = LocalDateTime.of(2019, Month.JULY, 29, 19, 30, 40);
-		GregorianCalendar cal = GregorianCalendar.from(changedAfter.atZone(ZoneId.systemDefault()));
-		XMLGregorianCalendar xc = null;
+		LocalDateTime changedUntil = LocalDateTime.of(2022, Month.JULY, 29, 19, 30, 40);
+		GregorianCalendar calStart = GregorianCalendar.from(changedAfter.atZone(ZoneId.systemDefault()));
+		GregorianCalendar calEnd = GregorianCalendar.from(changedUntil.atZone(ZoneId.systemDefault()));
+		XMLGregorianCalendar startDateTime = null;
+		XMLGregorianCalendar endDateTime = null;
 		try {
-			xc = DatatypeFactory.newInstance().newXMLGregorianCalendar(cal);
+			startDateTime = DatatypeFactory.newInstance().newXMLGregorianCalendar(calStart);
+			endDateTime = DatatypeFactory.newInstance().newXMLGregorianCalendar(calEnd);
 		} catch (DatatypeConfigurationException e) {
 			e.printStackTrace();
 		}
-		request.setChangedAfter(xc);
+		request.setStartDateTime(startDateTime);
+		request.setEndDateTime(endDateTime);
 		HasOrganizationChangedResponse result = (HasOrganizationChangedResponse)new WebServiceTemplate(marshaller).marshalSendAndReceive(
 				"http://localhost:" + port + "/ws/HasOrganizationChanged/", request);
 		assertNotNull(result);
@@ -326,14 +331,19 @@ public class ApplicationTests {
 		HasOrganizationChanged request = new HasOrganizationChanged();
 		request.setGuid("abcdef123456");
 		LocalDateTime changedAfter = LocalDateTime.of(2020, Month.JANUARY, 1, 0, 0, 0);
-		GregorianCalendar cal = GregorianCalendar.from(changedAfter.atZone(ZoneId.systemDefault()));
-		XMLGregorianCalendar xc = null;
+		LocalDateTime changedUntil = LocalDateTime.of(2022, Month.JULY, 29, 19, 30, 40);
+		GregorianCalendar calStart = GregorianCalendar.from(changedAfter.atZone(ZoneId.systemDefault()));
+		GregorianCalendar calEnd = GregorianCalendar.from(changedUntil.atZone(ZoneId.systemDefault()));
+		XMLGregorianCalendar startDateTime = null;
+		XMLGregorianCalendar endDateTime = null;
 		try {
-			xc = DatatypeFactory.newInstance().newXMLGregorianCalendar(cal);
+			startDateTime = DatatypeFactory.newInstance().newXMLGregorianCalendar(calStart);
+			endDateTime = DatatypeFactory.newInstance().newXMLGregorianCalendar(calEnd);
 		} catch (DatatypeConfigurationException e) {
 			e.printStackTrace();
 		}
-		request.setChangedAfter(xc);
+		request.setStartDateTime(startDateTime);
+		request.setEndDateTime(endDateTime);
 		HasOrganizationChangedResponse result = (HasOrganizationChangedResponse)new WebServiceTemplate(marshaller).marshalSendAndReceive(
 				"http://localhost:" + port + "/ws/HasOrganizationChanged/", request);
 		assertNotNull(result);
@@ -349,14 +359,19 @@ public class ApplicationTests {
 			HasOrganizationChanged request = new HasOrganizationChanged();
 			request.setGuid("a123456");
 			LocalDateTime changedAfter = LocalDateTime.of(2015, Month.JULY, 29, 19, 30, 40);
-			GregorianCalendar cal = GregorianCalendar.from(changedAfter.atZone(ZoneId.systemDefault()));
-			XMLGregorianCalendar xc = null;
+			LocalDateTime changedUntil = LocalDateTime.of(2022, Month.JULY, 29, 19, 30, 40);
+			GregorianCalendar calStart = GregorianCalendar.from(changedAfter.atZone(ZoneId.systemDefault()));
+			GregorianCalendar calEnd = GregorianCalendar.from(changedUntil.atZone(ZoneId.systemDefault()));
+			XMLGregorianCalendar startDateTime = null;
+			XMLGregorianCalendar endDateTime = null;
 			try {
-				xc = DatatypeFactory.newInstance().newXMLGregorianCalendar(cal);
+				startDateTime = DatatypeFactory.newInstance().newXMLGregorianCalendar(calStart);
+				endDateTime = DatatypeFactory.newInstance().newXMLGregorianCalendar(calEnd);
 			} catch (DatatypeConfigurationException e) {
 				e.printStackTrace();
 			}
-			request.setChangedAfter(xc);
+			request.setStartDateTime(startDateTime);
+			request.setEndDateTime(endDateTime);
 			HasOrganizationChangedResponse result = (HasOrganizationChangedResponse)new WebServiceTemplate(marshaller).marshalSendAndReceive(
 					"http://localhost:" + port + "/ws/HasOrganizationChanged/", request);
 		} catch (SoapFaultClientException e) {
@@ -364,7 +379,39 @@ public class ApplicationTests {
 			exceptionMessage = e.getMessage();
 		}
 		assertTrue(thrown);
-		assertEquals(exceptionMessage, "Organization with guid a123456 not found");
+		assertEquals("Organization with guid a123456 not found", exceptionMessage);
+
+	}
+
+	@Test
+	public void testHasOrganizationChangedGuidRequiredException() {
+		boolean thrown = false;
+		String exceptionMessage = null;
+		try {
+			HasOrganizationChanged request = new HasOrganizationChanged();
+			request.setGuid(null);
+			LocalDateTime changedAfter = LocalDateTime.of(2015, Month.JULY, 29, 19, 30, 40);
+			LocalDateTime changedUntil = LocalDateTime.of(2022, Month.JULY, 29, 19, 30, 40);
+			GregorianCalendar calStart = GregorianCalendar.from(changedAfter.atZone(ZoneId.systemDefault()));
+			GregorianCalendar calEnd = GregorianCalendar.from(changedUntil.atZone(ZoneId.systemDefault()));
+			XMLGregorianCalendar startDateTime = null;
+			XMLGregorianCalendar endDateTime = null;
+			try {
+				startDateTime = DatatypeFactory.newInstance().newXMLGregorianCalendar(calStart);
+				endDateTime = DatatypeFactory.newInstance().newXMLGregorianCalendar(calEnd);
+			} catch (DatatypeConfigurationException e) {
+				e.printStackTrace();
+			}
+			request.setStartDateTime(startDateTime);
+			request.setEndDateTime(endDateTime);
+			HasOrganizationChangedResponse result = (HasOrganizationChangedResponse)new WebServiceTemplate(marshaller).marshalSendAndReceive(
+					"http://localhost:" + port + "/ws/HasOrganizationChanged/", request);
+		} catch (SoapFaultClientException e) {
+			thrown = true;
+			exceptionMessage = e.getMessage();
+		}
+		assertTrue(thrown);
+		assertEquals("Guid is a required parameter", exceptionMessage);
 
 	}
 
@@ -418,7 +465,24 @@ public class ApplicationTests {
 			exceptionMessage = e.getMessage();
 		}
 		assertTrue(thrown);
-		assertEquals(exceptionMessage, "Companies with businessId 1710128-1 not found");
+		assertEquals("Companies with businessId 1710128-1 not found", exceptionMessage);
+	}
+
+	@Test
+	public void testGetCompaniesBusinessIdRequiredException() {
+		boolean thrown = false;
+		String exceptionMessage = null;
+		try {
+			GetCompanies request = new GetCompanies();
+			request.setBusinessId(null);
+			GetCompaniesResponse result = (GetCompaniesResponse)new WebServiceTemplate(marshaller).marshalSendAndReceive(
+					"http://localhost:" + port + "/ws/GetCompanies/", request);
+		} catch (SoapFaultClientException e) {
+			thrown = true;
+			exceptionMessage = e.getMessage();
+		}
+		assertTrue(thrown);
+		assertEquals("Companies with businessId null not found", exceptionMessage);
 	}
 
 	@Test
@@ -426,14 +490,19 @@ public class ApplicationTests {
 		HasCompanyChanged request = new HasCompanyChanged();
 		request.setBusinessId("1710128-9");
 		LocalDateTime changedAfter = LocalDateTime.of(2020, Month.MAY, 4, 0, 0, 0);
-		GregorianCalendar cal = GregorianCalendar.from(changedAfter.atZone(ZoneId.systemDefault()));
-		XMLGregorianCalendar xc = null;
+		LocalDateTime changedUntil = LocalDateTime.of(2022, Month.JULY, 29, 19, 30, 40);
+		GregorianCalendar calStart = GregorianCalendar.from(changedAfter.atZone(ZoneId.systemDefault()));
+		GregorianCalendar calEnd = GregorianCalendar.from(changedUntil.atZone(ZoneId.systemDefault()));
+		XMLGregorianCalendar startDateTime = null;
+		XMLGregorianCalendar endDateTime = null;
 		try {
-			xc = DatatypeFactory.newInstance().newXMLGregorianCalendar(cal);
+			startDateTime = DatatypeFactory.newInstance().newXMLGregorianCalendar(calStart);
+			endDateTime = DatatypeFactory.newInstance().newXMLGregorianCalendar(calEnd);
 		} catch (DatatypeConfigurationException e) {
 			e.printStackTrace();
 		}
-		request.setChangedAfter(xc);
+		request.setStartDateTime(startDateTime);
+		request.setEndDateTime(endDateTime);
 		HasCompanyChangedResponse result = (HasCompanyChangedResponse)new WebServiceTemplate(marshaller).marshalSendAndReceive(
 				"http://localhost:" + port + "/ws/HasCompanyChanged/", request);
 		assertNotNull(result);
@@ -446,14 +515,19 @@ public class ApplicationTests {
 		HasCompanyChanged request = new HasCompanyChanged();
 		request.setBusinessId("1710128-9");
 		LocalDateTime changedAfter = LocalDateTime.of(2020, Month.MAY, 6, 0, 0, 0);
-		GregorianCalendar cal = GregorianCalendar.from(changedAfter.atZone(ZoneId.systemDefault()));
-		XMLGregorianCalendar xc = null;
+		LocalDateTime changedUntil = LocalDateTime.of(2022, Month.JULY, 29, 19, 30, 40);
+		GregorianCalendar calStart = GregorianCalendar.from(changedAfter.atZone(ZoneId.systemDefault()));
+		GregorianCalendar calEnd = GregorianCalendar.from(changedUntil.atZone(ZoneId.systemDefault()));
+		XMLGregorianCalendar startDateTime = null;
+		XMLGregorianCalendar endDateTime = null;
 		try {
-			xc = DatatypeFactory.newInstance().newXMLGregorianCalendar(cal);
+			startDateTime = DatatypeFactory.newInstance().newXMLGregorianCalendar(calStart);
+			endDateTime = DatatypeFactory.newInstance().newXMLGregorianCalendar(calEnd);
 		} catch (DatatypeConfigurationException e) {
 			e.printStackTrace();
 		}
-		request.setChangedAfter(xc);
+		request.setStartDateTime(startDateTime);
+		request.setEndDateTime(endDateTime);
 		HasCompanyChangedResponse result = (HasCompanyChangedResponse)new WebServiceTemplate(marshaller).marshalSendAndReceive(
 				"http://localhost:" + port + "/ws/HasCompanyChanged/", request);
 		assertNotNull(result);
@@ -466,14 +540,19 @@ public class ApplicationTests {
 		HasCompanyChanged request = new HasCompanyChanged();
 		request.setBusinessId("1710128-9");
 		LocalDateTime changedAfter = LocalDateTime.of(2021, Month.MAY, 6, 12, 0, 0);
-		GregorianCalendar cal = GregorianCalendar.from(changedAfter.atZone(ZoneId.systemDefault()));
-		XMLGregorianCalendar xc = null;
+		LocalDateTime changedUntil = LocalDateTime.of(2022, Month.JULY, 29, 19, 30, 40);
+		GregorianCalendar calStart = GregorianCalendar.from(changedAfter.atZone(ZoneId.systemDefault()));
+		GregorianCalendar calEnd = GregorianCalendar.from(changedUntil.atZone(ZoneId.systemDefault()));
+		XMLGregorianCalendar startDateTime = null;
+		XMLGregorianCalendar endDateTime = null;
 		try {
-			xc = DatatypeFactory.newInstance().newXMLGregorianCalendar(cal);
+			startDateTime = DatatypeFactory.newInstance().newXMLGregorianCalendar(calStart);
+			endDateTime = DatatypeFactory.newInstance().newXMLGregorianCalendar(calEnd);
 		} catch (DatatypeConfigurationException e) {
 			e.printStackTrace();
 		}
-		request.setChangedAfter(xc);
+		request.setStartDateTime(startDateTime);
+		request.setEndDateTime(endDateTime);
 		HasCompanyChangedResponse result = (HasCompanyChangedResponse)new WebServiceTemplate(marshaller).marshalSendAndReceive(
 				"http://localhost:" + port + "/ws/HasCompanyChanged/", request);
 		assertNotNull(result);
@@ -489,14 +568,19 @@ public class ApplicationTests {
 			HasCompanyChanged request = new HasCompanyChanged();
 			request.setBusinessId("1710128-1");
 			LocalDateTime changedAfter = LocalDateTime.of(2020, Month.MAY, 6, 12, 0, 0);
-			GregorianCalendar cal = GregorianCalendar.from(changedAfter.atZone(ZoneId.systemDefault()));
-			XMLGregorianCalendar xc = null;
+			LocalDateTime changedUntil = LocalDateTime.of(2022, Month.JULY, 29, 19, 30, 40);
+			GregorianCalendar calStart = GregorianCalendar.from(changedAfter.atZone(ZoneId.systemDefault()));
+			GregorianCalendar calEnd = GregorianCalendar.from(changedUntil.atZone(ZoneId.systemDefault()));
+			XMLGregorianCalendar startDateTime = null;
+			XMLGregorianCalendar endDateTime = null;
 			try {
-				xc = DatatypeFactory.newInstance().newXMLGregorianCalendar(cal);
+				startDateTime = DatatypeFactory.newInstance().newXMLGregorianCalendar(calStart);
+				endDateTime = DatatypeFactory.newInstance().newXMLGregorianCalendar(calEnd);
 			} catch (DatatypeConfigurationException e) {
 				e.printStackTrace();
 			}
-			request.setChangedAfter(xc);
+			request.setStartDateTime(startDateTime);
+			request.setEndDateTime(endDateTime);
 			HasCompanyChangedResponse result = (HasCompanyChangedResponse)new WebServiceTemplate(marshaller).marshalSendAndReceive(
 					"http://localhost:" + port + "/ws/HasCompanyChanged/", request);
 		} catch (SoapFaultClientException e) {
@@ -504,7 +588,39 @@ public class ApplicationTests {
 			exceptionMessage = e.getMessage();
 		}
 		assertTrue(thrown);
-		assertEquals(exceptionMessage, "company with businessId 1710128-1 not found");
+		assertEquals("company with businessId 1710128-1 not found", exceptionMessage);
+
+	}
+
+	@Test
+	public void testHasCompanyChangedBusinessIdRequiredException() {
+		boolean thrown = false;
+		String exceptionMessage = null;
+		try {
+			HasCompanyChanged request = new HasCompanyChanged();
+			request.setBusinessId(null);
+			LocalDateTime changedAfter = LocalDateTime.of(2020, Month.MAY, 6, 12, 0, 0);
+			LocalDateTime changedUntil = LocalDateTime.of(2022, Month.JULY, 29, 19, 30, 40);
+			GregorianCalendar calStart = GregorianCalendar.from(changedAfter.atZone(ZoneId.systemDefault()));
+			GregorianCalendar calEnd = GregorianCalendar.from(changedUntil.atZone(ZoneId.systemDefault()));
+			XMLGregorianCalendar startDateTime = null;
+			XMLGregorianCalendar endDateTime = null;
+			try {
+				startDateTime = DatatypeFactory.newInstance().newXMLGregorianCalendar(calStart);
+				endDateTime = DatatypeFactory.newInstance().newXMLGregorianCalendar(calEnd);
+			} catch (DatatypeConfigurationException e) {
+				e.printStackTrace();
+			}
+			request.setStartDateTime(startDateTime);
+			request.setEndDateTime(endDateTime);
+			HasCompanyChangedResponse result = (HasCompanyChangedResponse)new WebServiceTemplate(marshaller).marshalSendAndReceive(
+					"http://localhost:" + port + "/ws/HasCompanyChanged/", request);
+		} catch (SoapFaultClientException e) {
+			thrown = true;
+			exceptionMessage = e.getMessage();
+		}
+		assertTrue(thrown);
+		assertEquals("BusinessId is a required parameter", exceptionMessage);
 
 	}
 
@@ -512,14 +628,19 @@ public class ApplicationTests {
 	public void testGetErrors() {
 		GetErrors request = new GetErrors();
 		LocalDateTime changedAfter = LocalDateTime.of(2001, Month.MAY, 6, 12, 0, 0);
-		GregorianCalendar cal = GregorianCalendar.from(changedAfter.atZone(ZoneId.systemDefault()));
-		XMLGregorianCalendar xc = null;
+		LocalDateTime changedUntil = LocalDateTime.of(2022, Month.JULY, 29, 19, 30, 40);
+		GregorianCalendar calStart = GregorianCalendar.from(changedAfter.atZone(ZoneId.systemDefault()));
+		GregorianCalendar calEnd = GregorianCalendar.from(changedUntil.atZone(ZoneId.systemDefault()));
+		XMLGregorianCalendar startDateTime = null;
+		XMLGregorianCalendar endDateTime = null;
 		try {
-			xc = DatatypeFactory.newInstance().newXMLGregorianCalendar(cal);
+			startDateTime = DatatypeFactory.newInstance().newXMLGregorianCalendar(calStart);
+			endDateTime = DatatypeFactory.newInstance().newXMLGregorianCalendar(calEnd);
 		} catch (DatatypeConfigurationException e) {
 			e.printStackTrace();
 		}
-		request.setSince(xc);
+		request.setStartDateTime(startDateTime);
+		request.setEndDateTime(endDateTime);
 		GetErrorsResponse result = (GetErrorsResponse)new WebServiceTemplate(marshaller).marshalSendAndReceive(
 				"http://localhost:" + port + "/ws/GetErrors/", request);
 		assertNotNull(result);
@@ -534,15 +655,19 @@ public class ApplicationTests {
 		GetErrors request = new GetErrors();
 		try {
 			LocalDateTime changedAfter = LocalDateTime.of(2021, Month.JANUARY, 6, 12, 0, 0);
-			GregorianCalendar cal = GregorianCalendar.from(changedAfter.atZone(ZoneId.systemDefault()));
-			XMLGregorianCalendar xc = null;
+			LocalDateTime changedUntil = LocalDateTime.of(2022, Month.JULY, 29, 19, 30, 40);
+			GregorianCalendar calStart = GregorianCalendar.from(changedAfter.atZone(ZoneId.systemDefault()));
+			GregorianCalendar calEnd = GregorianCalendar.from(changedUntil.atZone(ZoneId.systemDefault()));
+			XMLGregorianCalendar startDateTime = null;
+			XMLGregorianCalendar endDateTime = null;
 			try {
-				xc = DatatypeFactory.newInstance().newXMLGregorianCalendar(cal);
+				startDateTime = DatatypeFactory.newInstance().newXMLGregorianCalendar(calStart);
+				endDateTime = DatatypeFactory.newInstance().newXMLGregorianCalendar(calEnd);
 			} catch (DatatypeConfigurationException e) {
 				e.printStackTrace();
 			}
-			request.setSince(xc);
-
+			request.setStartDateTime(startDateTime);
+			request.setEndDateTime(endDateTime);
 			GetErrorsResponse result = (GetErrorsResponse)new WebServiceTemplate(marshaller).marshalSendAndReceive(
 					"http://localhost:" + port + "/ws/GetErrors/", request);
 		} catch (SoapFaultClientException e) {
@@ -550,6 +675,7 @@ public class ApplicationTests {
 			exceptionMessage = e.getMessage();
 		}
 		assertTrue(thrown);
-		assertEquals(exceptionMessage, "ErrorLog entries since " + request.getSince().toString() + " not found");
+		assertEquals(exceptionMessage, "ErrorLog entries since " + request.getStartDateTime().toString() +
+				" until " + request.getEndDateTime().toString() + " not found");
 	}
 }

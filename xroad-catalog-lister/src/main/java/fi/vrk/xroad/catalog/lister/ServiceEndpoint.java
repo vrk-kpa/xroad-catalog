@@ -34,7 +34,6 @@ import org.springframework.ws.server.endpoint.annotation.Endpoint;
 import org.springframework.ws.server.endpoint.annotation.PayloadRoot;
 import org.springframework.ws.server.endpoint.annotation.RequestPayload;
 import org.springframework.ws.server.endpoint.annotation.ResponsePayload;
-
 import java.util.concurrent.atomic.AtomicReference;
 
 @Endpoint
@@ -49,6 +48,13 @@ public class ServiceEndpoint {
     private JaxbCatalogService jaxbCatalogService;
 
     @Autowired
+    private JaxbCompanyService jaxbCompanyService;
+
+    @Autowired
+    private JaxbOrganizationService jaxbOrganizationService;
+
+
+    @Autowired
     private JaxbConverter jaxbConverter;
 
     @PayloadRoot(namespace = NAMESPACE_URI, localPart = "ListMembers")
@@ -57,7 +63,7 @@ public class ServiceEndpoint {
         ListMembersResponse response = new ListMembersResponse();
         response.setMemberList(new MemberList());
 
-        Iterable<Member> members = jaxbCatalogService.getAllMembers(request.getChangedAfter());
+        Iterable<Member> members = jaxbCatalogService.getAllMembers(request.getStartDateTime(), request.getEndDateTime());
         response.getMemberList().getMember().addAll(Lists.newArrayList(members));
         return response;
     }
@@ -73,7 +79,7 @@ public class ServiceEndpoint {
                 request.getSubsystemCode(),
                 request.getServiceVersion());
         if (service == null) {
-            throw new ServiceNotFoundException("Service with xRoadInstance \"" + request.getXRoadInstance()
+            throw new CatalogListerRuntimeException("Service with xRoadInstance \"" + request.getXRoadInstance()
                     + "\", memberClass \"" + request.getMemberClass()
                     + "\", memberCode \"" + request.getMemberCode()
                     + "\", serviceCode \"" + request.getServiceCode()
@@ -99,7 +105,7 @@ public class ServiceEndpoint {
                 request.getMemberClass(), request.getMemberCode());
 
         if (member == null) {
-            throw new MemberNotFoundException("Member with xRoadInstance \"" + request.getXRoadInstance()
+            throw new CatalogListerRuntimeException("Member with xRoadInstance \"" + request.getXRoadInstance()
                     + "\", memberClass \"" + request.getMemberClass()
                     + "\" and memberCode \"" + request.getMemberCode() + "\" not found");
         }
@@ -123,7 +129,7 @@ public class ServiceEndpoint {
         GetWsdlResponse response = new GetWsdlResponse();
         Wsdl wsdl = catalogService.getWsdl(request.getExternalId());
         if (wsdl == null) {
-            throw new WsdlNotFoundException("wsdl with external id " + request.getExternalId()
+            throw new CatalogListerRuntimeException("wsdl with external id " + request.getExternalId()
                     + " not found");
         }
         response.setWsdl(wsdl.getData());
@@ -136,7 +142,7 @@ public class ServiceEndpoint {
         GetOpenAPIResponse response = new GetOpenAPIResponse();
         OpenApi openApi = catalogService.getOpenApi(request.getExternalId());
         if (openApi == null) {
-            throw new OpenApiNotFoundException("OpenApi with external id " + request.getExternalId()
+            throw new CatalogListerRuntimeException("OpenApi with external id " + request.getExternalId()
                     + " not found");
         }
         response.setOpenapi(openApi.getData());
@@ -148,9 +154,9 @@ public class ServiceEndpoint {
     public GetOrganizationsResponse getOrganizations(@RequestPayload GetOrganizations request) {
         GetOrganizationsResponse response = new GetOrganizationsResponse();
         response.setOrganizationList(new OrganizationList());
-        Iterable<Organization> organizations = jaxbCatalogService.getOrganizations(request.getBusinessCode());
+        Iterable<Organization> organizations = jaxbOrganizationService.getOrganizations(request.getBusinessCode());
         if (!organizations.iterator().hasNext()) {
-            throw new OrganizationsNotFoundException("Organizations with businessCode " + request.getBusinessCode()
+            throw new CatalogListerRuntimeException("Organizations with businessCode " + request.getBusinessCode()
                     + " not found");
         }
         response.getOrganizationList().getOrganization().addAll(Lists.newArrayList(organizations));
@@ -160,12 +166,15 @@ public class ServiceEndpoint {
     @PayloadRoot(namespace = NAMESPACE_URI, localPart = "HasOrganizationChanged")
     @ResponsePayload
     public HasOrganizationChangedResponse hasOrganizationChanged(@RequestPayload HasOrganizationChanged request) {
-        if ((request.getGuid() == null || request.getGuid().isEmpty()) || request.getChangedAfter() == null) {
-            throw new ChangedValuesException("Guid and ChangedAfter are both required parameters");
+        if ((request.getGuid() == null || request.getGuid().isEmpty())) {
+            throw new CatalogListerRuntimeException("Guid is a required parameter");
         }
         HasOrganizationChangedResponse response = new HasOrganizationChangedResponse();
         response.setChangedValueList(new ChangedValueList());
-        Iterable<ChangedValue> changedValues = jaxbCatalogService.getChangedOrganizationValues(request.getGuid(), request.getChangedAfter());
+        Iterable<ChangedValue> changedValues = jaxbOrganizationService.getChangedOrganizationValues(
+                request.getGuid(),
+                request.getStartDateTime(),
+                request.getEndDateTime());
         response.getChangedValueList().getChangedValue().addAll(Lists.newArrayList(changedValues));
         response.setChanged(!response.getChangedValueList().getChangedValue().isEmpty());
         return response;
@@ -176,9 +185,9 @@ public class ServiceEndpoint {
     public GetCompaniesResponse getCompanies(@RequestPayload GetCompanies request) {
         GetCompaniesResponse response = new GetCompaniesResponse();
         response.setCompanyList(new CompanyList());
-        Iterable<Company> companies = jaxbCatalogService.getCompanies(request.getBusinessId());
+        Iterable<Company> companies = jaxbCompanyService.getCompanies(request.getBusinessId());
         if (!companies.iterator().hasNext()) {
-            throw new CompaniesNotFoundException("Companies with businessId " + request.getBusinessId()
+            throw new CatalogListerRuntimeException("Companies with businessId " + request.getBusinessId()
                     + " not found");
         }
         response.getCompanyList().getCompany().addAll(Lists.newArrayList(companies));
@@ -188,12 +197,15 @@ public class ServiceEndpoint {
     @PayloadRoot(namespace = NAMESPACE_URI, localPart = "HasCompanyChanged")
     @ResponsePayload
     public HasCompanyChangedResponse hasCompanyChanged(@RequestPayload HasCompanyChanged request) {
-        if ((request.getBusinessId() == null || request.getBusinessId().isEmpty()) || request.getChangedAfter() == null) {
-            throw new ChangedValuesException("BusinessId and ChangedAfter are both required parameters");
+        if ((request.getBusinessId() == null || request.getBusinessId().isEmpty())) {
+            throw new CatalogListerRuntimeException("BusinessId is a required parameter");
         }
         HasCompanyChangedResponse response = new HasCompanyChangedResponse();
         response.setChangedValueList(new ChangedValueList());
-        Iterable<ChangedValue> changedValues = jaxbCatalogService.getChangedCompanyValues(request.getBusinessId(), request.getChangedAfter());
+        Iterable<ChangedValue> changedValues = jaxbCompanyService.getChangedCompanyValues(
+                request.getBusinessId(),
+                request.getStartDateTime(),
+                request.getEndDateTime());
         response.getChangedValueList().getChangedValue().addAll(Lists.newArrayList(changedValues));
         response.setChanged(!response.getChangedValueList().getChangedValue().isEmpty());
         return response;
@@ -202,14 +214,12 @@ public class ServiceEndpoint {
     @PayloadRoot(namespace = NAMESPACE_URI, localPart = "GetErrors")
     @ResponsePayload
     public GetErrorsResponse getErrors(@RequestPayload GetErrors request) {
-        if ((request.getSince() == null || request.getSince().toString().isEmpty())) {
-            throw new ErrorLogNotFoundException("Since is a required parameter");
-        }
         GetErrorsResponse response = new GetErrorsResponse();
         response.setErrorLogList(new ErrorLogList());
-        Iterable<ErrorLog> errorLogEntries = jaxbCatalogService.getErrorLog(request.getSince());
+        Iterable<ErrorLog> errorLogEntries = jaxbCatalogService.getErrorLog(request.getStartDateTime(), request.getEndDateTime());
         if (errorLogEntries != null && !errorLogEntries.iterator().hasNext()) {
-            throw new ErrorLogNotFoundException("ErrorLog entries since " + request.getSince().toString() + " not found");
+            throw new CatalogListerRuntimeException("ErrorLog entries since "
+                    + request.getStartDateTime().toString() + " until " + request.getEndDateTime().toString() + " not found");
         }
         response.getErrorLogList().getErrorLog().addAll(Lists.newArrayList(errorLogEntries));
         return response;

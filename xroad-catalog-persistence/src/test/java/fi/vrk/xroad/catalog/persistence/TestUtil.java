@@ -26,14 +26,14 @@ import fi.vrk.xroad.catalog.persistence.entity.*;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.StreamSupport;
-
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 @Component
 public class TestUtil {
@@ -43,6 +43,13 @@ public class TestUtil {
 
     @Autowired
     EntityManager entityManager;
+
+    public static void verifySavedStatusInfo(StatusInfo statusInfo) {
+        assertNotNull(statusInfo.getCreated());
+        assertNotNull(statusInfo.getChanged());
+        assertNotNull(statusInfo.getFetched());
+        assertNull(statusInfo.getRemoved());
+    }
 
     public Optional getEntity(Iterable entities, Long l) {
         return StreamSupport.stream(entities.spliterator(), false)
@@ -63,12 +70,6 @@ public class TestUtil {
         return (Long) entityManagerFactory.getPersistenceUnitUtil().getIdentifier(entity);
     }
 
-    /**
-     * @param day Day of month
-     * @param month 1 = January
-     * @param year Year
-     * @return LocalDateTime with zero hours
-     */
     public LocalDateTime createDate(int day, int month, int year) {
         return LocalDateTime.of(year, month, day, 0, 0, 0);
     }
@@ -93,6 +94,7 @@ public class TestUtil {
 
         Service s1 = createService(name, now, "service1");
         Service s2 = createService(name, now, "service2");
+
         s1.setSubsystem(ss1);
         s2.setSubsystem(ss1);
         ss1.setServices(new HashSet<>());
@@ -110,9 +112,7 @@ public class TestUtil {
     }
 
     private Service createService(String memberName, LocalDateTime d, String serviceName) {
-        Service s1 = new Service();
-        s1.setServiceCode(memberName + "-" + serviceName);
-        s1.setServiceVersion("v1");
+        Service s1 = new Service(null, memberName + "-" + serviceName, "v1");
         s1.getStatusInfo().setTimestampsForNew(d);
         return s1;
     }
