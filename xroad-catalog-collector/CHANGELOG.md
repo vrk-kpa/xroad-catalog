@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.0.0] - 2022-08-02
+
+# Changed
+- major refacto of REST apis and SOAP endpoints to have start and end date in parameters instead of just one date(since)
+- cleanup of all related code
+
+# Added
+- improvement of test coverage by adding new unit tests
+
 ## [1.4.1] - 2022-03-18
 
 # Changed

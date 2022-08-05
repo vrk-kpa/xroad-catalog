@@ -27,7 +27,6 @@ import fi.vrk.xroad.catalog.collector.extension.SpringExtension;
 import fi.vrk.xroad.catalog.collector.wsimport.XRoadObjectType;
 import fi.vrk.xroad.catalog.collector.wsimport.XRoadServiceIdentifierType;
 import fi.vrk.xroad.catalog.persistence.CatalogService;
-
 import akka.actor.ActorRef;
 import akka.actor.ActorSystem;
 import akka.testkit.TestActorRef;
@@ -42,9 +41,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 
-/**
- * Test actorsystem actor creation and call
- */
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = DevelopmentConfiguration.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @TestPropertySource(properties = {

@@ -20,21 +20,32 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package fi.vrk.xroad.catalog.lister;
+package fi.vrk.xroad.catalog.persistence.dto;
 
-import org.springframework.ws.soap.server.endpoint.annotation.FaultCode;
-import org.springframework.ws.soap.server.endpoint.annotation.SoapFault;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import java.io.Serializable;
 
-@SoapFault(faultCode = FaultCode.SERVER)
-public class WsdlNotFoundException extends CatalogListerRuntimeException {
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+@EqualsAndHashCode
+@Getter
+@Setter
+public class XRoadData implements Serializable {
 
-    public WsdlNotFoundException(String message, Throwable cause) {
-        super(message, cause);
-    }
+    private static final long serialVersionUID = 4049921386369146285L;
 
+    private String xRoadInstance;
 
-    public WsdlNotFoundException(String s) {
-        super(s);
-    }
+    private String memberClass;
+
+    private String memberCode;
+
+    private String subsystemCode;
 
 }

@@ -30,15 +30,11 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.http.*;
 import org.springframework.web.client.RestTemplate;
-
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Helper for method list
- */
 @Slf4j
 public class MethodListUtil {
 
@@ -48,14 +44,14 @@ public class MethodListUtil {
         // Private empty constructor
     }
 
-    public static Boolean shouldFetchCompanies(boolean fetchUnlimited, int fetchHourAfter, int fetchHourBefore) {
+    public static boolean shouldFetchCompanies(boolean fetchUnlimited, int fetchHourAfter, int fetchHourBefore) {
         if (fetchUnlimited) {
             return true;
         }
         return isTimeBetweenHours(fetchHourAfter, fetchHourBefore);
     }
 
-    public static Boolean shouldFlushLogEntries(int fetchHourAfter, int fetchHourBefore) {
+    public static boolean shouldFlushLogEntries(int fetchHourAfter, int fetchHourBefore) {
         return isTimeBetweenHours(fetchHourAfter, fetchHourBefore);
     }
 
@@ -97,7 +93,7 @@ public class MethodListUtil {
 
         JSONObject json = MethodListUtil.getJSON(url, clientType, catalogService);
 
-        return json.toString();
+        return (json != null) ? json.toString() : "";
     }
 
     public static ErrorLog createErrorLog(ClientType clientType, String message, String code) {
@@ -145,8 +141,7 @@ public class MethodListUtil {
         final HttpEntity<String> entity = new HttpEntity<>(headers);
         try {
             ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, entity, String.class);
-            JSONObject json = new JSONObject(response.getBody());
-            return json;
+            return new JSONObject(response.getBody());
         } catch (Exception e) {
             SecurityServerMetadata newSecurityServerMetadata = SecurityServerMetadata.builder()
                     .xRoadInstance(clientType.getId().getXRoadInstance())

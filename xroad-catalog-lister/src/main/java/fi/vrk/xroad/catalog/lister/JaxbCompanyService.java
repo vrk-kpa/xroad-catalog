@@ -22,19 +22,32 @@
  */
 package fi.vrk.xroad.catalog.lister;
 
-import org.springframework.ws.soap.server.endpoint.annotation.FaultCode;
-import org.springframework.ws.soap.server.endpoint.annotation.SoapFault;
+import fi.vrk.xroad.xroad_catalog_lister.ChangedValue;
+import fi.vrk.xroad.xroad_catalog_lister.Company;
+import javax.xml.datatype.XMLGregorianCalendar;
 
-@SoapFault(faultCode = FaultCode.SERVER)
-public class ServiceNotFoundException extends CatalogListerRuntimeException {
+public interface JaxbCompanyService {
 
-    public ServiceNotFoundException(String message, Throwable cause) {
-        super(message, cause);
-    }
+    /**
+     * Returns whether some values of Company have changed
+     *
+     * @param  businessID businessId of a company
+     * @param startDateTime creation datetime from
+     * @param endDateTime creation datetime to
+     * @return Iterable of JAXB generated ChangedValues
+     */
+    Iterable<ChangedValue> getChangedCompanyValues(String businessID,
+                                                   XMLGregorianCalendar startDateTime,
+                                                   XMLGregorianCalendar endDateTime);
 
-
-    public ServiceNotFoundException(String s) {
-        super(s);
-    }
+    /**
+     * Returns all companies
+     *
+     * All subitems of company are always returned
+     *
+     * @param  businessId businessId of a company
+     * @return Iterable of JAXB generated Companies
+     */
+    Iterable<Company> getCompanies(String businessId);
 
 }

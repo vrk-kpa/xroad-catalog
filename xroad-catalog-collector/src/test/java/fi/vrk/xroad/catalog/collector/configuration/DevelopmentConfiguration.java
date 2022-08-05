@@ -25,7 +25,6 @@ package fi.vrk.xroad.catalog.collector.configuration;
 import fi.vrk.xroad.catalog.collector.mock.MockMetaServicesImpl;
 import fi.vrk.xroad.catalog.collector.mock.MockRestTemplate;
 import fi.vrk.xroad.catalog.collector.wsimport.MetaServicesPort;
-
 import lombok.extern.slf4j.Slf4j;
 import org.apache.cxf.Bus;
 import org.apache.cxf.jaxws.EndpointImpl;
@@ -38,9 +37,6 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Profile;
 import org.springframework.web.client.RestOperations;
 
-/**
- * Configuration for development environment only.
- */
 @Configuration
 @Profile( {"development", "default"})
 @Slf4j

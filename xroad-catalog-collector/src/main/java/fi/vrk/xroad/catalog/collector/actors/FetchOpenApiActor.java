@@ -33,19 +33,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
-
 import java.net.URL;
 import java.util.concurrent.atomic.AtomicInteger;
 
-/**
- * Actor which fetches one openapi
- */
 @Component
 @Scope("prototype")
 @Slf4j
 public class FetchOpenApiActor extends XRoadCatalogActor {
 
-    private static AtomicInteger COUNTER = new AtomicInteger(0);
+    private static AtomicInteger openApiCounter = new AtomicInteger(0);
 
     @Value("${xroad-catalog.security-server-host}")
     private String xroadSecurityServerHost;
@@ -81,7 +77,7 @@ public class FetchOpenApiActor extends XRoadCatalogActor {
     protected boolean handleMessage(Object message) {
         if (message instanceof XRoadServiceIdentifierType) {
             XRoadServiceIdentifierType service = (XRoadServiceIdentifierType) message;
-            log.info("Fetching openApi [{}] {}", COUNTER.addAndGet(1), ClientTypeUtil.toString(service));
+            log.info("Fetching openApi [{}] {}", openApiCounter.addAndGet(1), ClientTypeUtil.toString(service));
             String openApi = xroadClient.getOpenApi(service, xroadSecurityServerHost, catalogService);
             catalogService.saveOpenApi(createSubsystemId(service), createServiceId(service), openApi);
             log.info("Saved openApi successfully");

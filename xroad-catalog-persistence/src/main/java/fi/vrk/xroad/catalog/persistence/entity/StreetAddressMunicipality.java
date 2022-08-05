@@ -23,7 +23,6 @@
 package fi.vrk.xroad.catalog.persistence.entity;
 
 import lombok.*;
-
 import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
@@ -55,11 +54,6 @@ public class StreetAddressMunicipality {
     @OneToMany(mappedBy = "streetAddressMunicipality", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private Set<StreetAddressMunicipalityName> streetAddressMunicipalityNames = new HashSet<>();
 
-    /**
-     * This collection can be used to add new items
-     *
-     * @return Set of all StreetAddressMunicipalityName
-     */
     public Set<StreetAddressMunicipalityName> getAllMunicipalityNames() {
         return streetAddressMunicipalityNames;
     }

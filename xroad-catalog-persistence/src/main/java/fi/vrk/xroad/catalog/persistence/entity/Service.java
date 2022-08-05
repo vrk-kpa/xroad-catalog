@@ -26,7 +26,6 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.HashSet;
@@ -66,9 +65,6 @@ public class Service {
         // Empty constructor
     }
 
-    /**
-     * Constructor for all args
-     */
     public Service(Subsystem subsystem, String serviceCode, String serviceVersion) {
         this.subsystem = subsystem;
         this.serviceCode = serviceCode;
@@ -76,9 +72,6 @@ public class Service {
         statusInfo.setTimestampsForNew(LocalDateTime.now());
     }
 
-    /**
-     * Add given wsdl to set of wsdls. Create the set if needed.
-     */
     public void setWsdl(Wsdl wsdl) {
         if (wsdls == null) {
             wsdls = new HashSet<>();
@@ -92,9 +85,6 @@ public class Service {
 
     public boolean hasOpenApi() { return !openApis.isEmpty(); }
 
-    /**
-     * Add given openApi to set of openApis. Create the set if needed.
-     */
     public void setOpenApi(OpenApi openApi) {
         if (openApis == null) {
             openApis = new HashSet<>();
@@ -104,9 +94,6 @@ public class Service {
     }
     public OpenApi getOpenApi() { return openApis.isEmpty() ? null : openApis.iterator().next(); }
 
-    /**
-     * @return comparable & equals-able natural key _within one subsystem_
-     */
     public ServiceId createKey() {
         return new ServiceId(serviceCode, serviceVersion);
     }

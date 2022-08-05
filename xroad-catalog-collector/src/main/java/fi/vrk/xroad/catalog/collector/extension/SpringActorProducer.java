@@ -26,9 +26,6 @@ import akka.actor.Actor;
 import akka.actor.IndirectActorProducer;
 import org.springframework.context.ApplicationContext;
 
-/**
- * An actor producer that lets Spring create the Actor instances.
- */
 public class SpringActorProducer implements IndirectActorProducer {
 
     private final ApplicationContext applicationContext;
@@ -37,12 +34,6 @@ public class SpringActorProducer implements IndirectActorProducer {
     // arguments to use when creating a bean instance using explicit arguments
     private final Object[] args;
 
-    /**
-     * Create a new SpringActorProducer which creates new Actor instances without
-     * constructor arguments
-     * @param applicationContext
-     * @param actorBeanName
-     */
     public SpringActorProducer(ApplicationContext applicationContext,
         String actorBeanName) {
         this.applicationContext = applicationContext;
@@ -50,13 +41,6 @@ public class SpringActorProducer implements IndirectActorProducer {
         args = null;
     }
 
-    /**
-     * Create a new SpringActorProducer which creates new Actor instances,
-     * using given constructor arguments
-     * @param applicationContext
-     * @param actorBeanName
-     * @param args arguments to use when creating a bean instance using explicit arguments
-     */
     public SpringActorProducer(ApplicationContext applicationContext,
                                String actorBeanName,
                                Object... args) {

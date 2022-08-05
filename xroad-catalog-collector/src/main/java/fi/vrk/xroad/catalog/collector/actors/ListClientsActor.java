@@ -39,18 +39,14 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestOperations;
-
 import java.security.KeyManagementException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
-/**
- * Actor which fetches all clients, and delegates listing
- * their methods to ListMethodsActors
- */
 @Component
 @Scope("prototype")
 @Slf4j
@@ -77,6 +73,8 @@ public class ListClientsActor extends XRoadCatalogActor {
     @Value("${xroad-catalog.fetch-time-before-hour}")
     private Integer fetchTimeBeforeHour;
 
+    private static AtomicInteger clientCounter = new AtomicInteger(0);
+
     // supervisor-created pool of list clients actors
     protected ActorRef listMethodsPoolRef;
 
@@ -92,44 +90,9 @@ public class ListClientsActor extends XRoadCatalogActor {
 
     @Override
     protected boolean handleMessage(Object message) throws NoSuchAlgorithmException, KeyStoreException, KeyManagementException {
-
         if (START_COLLECTING.equals(message)) {
-
-            if (fetchUnlimited || isTimeBetweenHours(fetchTimeAfterHour, fetchTimeBeforeHour)) {
-
-                String listClientsUrl = host + "/listClients";
-
-                log.info("Getting client list from {}", listClientsUrl);
-                ClientList clientList = ClientListUtil.clientListFromResponse(listClientsUrl, catalogService);
-
-                int counter = 1;
-                HashMap<MemberId, Member> m = new HashMap();
-
-                for (ClientType clientType : clientList.getMember()) {
-                    log.info("{} - {}", counter++, ClientTypeUtil.toString(clientType));
-                    Member newMember = new Member(clientType.getId().getXRoadInstance(), clientType.getId()
-                            .getMemberClass(),
-                            clientType.getId().getMemberCode(), clientType.getName());
-                    newMember.setSubsystems(new HashSet<>());
-                    if (m.get(newMember.createKey()) == null) {
-                        m.put(newMember.createKey(), newMember);
-                    }
-
-                    if (XRoadObjectType.SUBSYSTEM.equals(clientType.getId().getObjectType())) {
-                        Subsystem newSubsystem = new Subsystem(newMember, clientType.getId().getSubsystemCode());
-                        m.get(newMember.createKey()).getAllSubsystems().add(newSubsystem);
-                    }
-                }
-
-                // Save members
-                catalogService.saveAllMembersAndSubsystems(m.values());
-                for (ClientType clientType : clientList.getMember()) {
-                    listMethodsPoolRef.tell(clientType, getSelf());
-                }
-
-                log.info("all clients (" + (counter - 1) + ") sent to actor");
-
-                return true;
+            if (Boolean.TRUE.equals(fetchUnlimited) || isTimeBetweenHours(fetchTimeAfterHour, fetchTimeBeforeHour)) {
+                return fetchClients();
             }
             return true;
         } else {
@@ -137,10 +100,46 @@ public class ListClientsActor extends XRoadCatalogActor {
         }
     }
 
+    private boolean fetchClients(){
+        String listClientsUrl = host + "/listClients";
+
+        log.info("Getting client list from {}", listClientsUrl);
+        ClientList clientList = ClientListUtil.clientListFromResponse(listClientsUrl, catalogService);
+        HashMap<MemberId, Member> m = populateMapWithMembers(clientList);
+        catalogService.saveAllMembersAndSubsystems(m.values());
+
+        for (ClientType clientType : clientList.getMember()) {
+            listMethodsPoolRef.tell(clientType, getSelf());
+        }
+
+        log.info("all clients (" + (clientCounter.get() - 1) + ") sent to actor");
+
+        return true;
+    }
+
     private static boolean isTimeBetweenHours(int fetchHourAfter, int fetchHourBefore) {
         LocalDateTime today = LocalDateTime.now();
         LocalDateTime fetchTimeFrom = LocalDate.now().atTime(fetchHourAfter, 0);
         LocalDateTime fetchTimeTo = LocalDate.now().atTime(fetchHourBefore, 0);
         return (today.isAfter(fetchTimeFrom) && today.isBefore(fetchTimeTo));
+    }
+
+    private static HashMap<MemberId, Member> populateMapWithMembers(ClientList clientList) {
+        HashMap<MemberId, Member> m = new HashMap<>();
+        for (ClientType clientType : clientList.getMember()) {
+            log.info("{} - {}", clientCounter.addAndGet(1), ClientTypeUtil.toString(clientType));
+            Member newMember = new Member(clientType.getId().getXRoadInstance(), clientType.getId()
+                    .getMemberClass(),
+                    clientType.getId().getMemberCode(), clientType.getName());
+            newMember.setSubsystems(new HashSet<>());
+            m.putIfAbsent(newMember.createKey(), newMember);
+
+            if (XRoadObjectType.SUBSYSTEM.equals(clientType.getId().getObjectType())) {
+                Subsystem newSubsystem = new Subsystem(newMember, clientType.getId().getSubsystemCode());
+                m.get(newMember.createKey()).getAllSubsystems().add(newSubsystem);
+            }
+        }
+
+        return m;
     }
 }

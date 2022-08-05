@@ -61,6 +61,10 @@ import java.util.stream.Collectors;
                 query = Member.FIND_ALL_CHANGED_QUERY),
         @NamedQuery(name = "Member.findActiveChangedSince",
                 query = Member.FIND_ACTIVE_CHANGED_QUERY),
+        @NamedQuery(name = "Member.findAllChangedBetween",
+                query = Member.FIND_ALL_CHANGED_BETWEEN_QUERY),
+        @NamedQuery(name = "Member.findActiveChangedBetween",
+                query = Member.FIND_ACTIVE_CHANGED_BETWEEN_QUERY),
 })
 // identity is based on xroad identity (instance, member code...)
 @EqualsAndHashCode(exclude = {"id", "subsystems", "statusInfo"})
@@ -90,12 +94,36 @@ public class Member {
                     "FROM Wsdl wsdl " +
                     "WHERE wsdl.service.subsystem.member = mem " +
                     "AND wsdl.statusInfo.changed > :since) ";
+    private static final String FIND_CHANGED_QUERY_PART_3 =
+            "mem.statusInfo.changed >= :startDate AND mem.statusInfo.changed <= :endDate " +
+                    "OR EXISTS ( " +
+                    "SELECT sub " +
+                    "FROM Subsystem sub " +
+                    "WHERE sub.member = mem " +
+                    "AND sub.statusInfo.changed >= :startDate AND sub.statusInfo.changed <= :endDate)" +
+                    "OR EXISTS ( " +
+                    "SELECT service " +
+                    "FROM Service service " +
+                    "WHERE service.subsystem.member = mem " +
+                    "AND service.statusInfo.changed >= :startDate AND service.statusInfo.changed <= :endDate)" +
+                    "OR EXISTS ( " +
+                    "SELECT wsdl " +
+                    "FROM Wsdl wsdl " +
+                    "WHERE wsdl.service.subsystem.member = mem " +
+                    "AND wsdl.statusInfo.changed >= :startDate AND wsdl.statusInfo.changed <= :endDate) ";
     static final String FIND_ALL_CHANGED_QUERY =
             FIND_CHANGED_QUERY_PART_1 + FIND_CHANGED_QUERY_PART_2;
+    static final String FIND_ALL_CHANGED_BETWEEN_QUERY =
+            FIND_CHANGED_QUERY_PART_1 + FIND_CHANGED_QUERY_PART_3;
     static final String FIND_ACTIVE_CHANGED_QUERY =
             FIND_CHANGED_QUERY_PART_1 +
                     "mem.statusInfo.removed IS NULL AND (" +
                     FIND_CHANGED_QUERY_PART_2 +
+                    ")";
+    static final String FIND_ACTIVE_CHANGED_BETWEEN_QUERY =
+            FIND_CHANGED_QUERY_PART_1 +
+                    "mem.statusInfo.removed IS NULL AND (" +
+                    FIND_CHANGED_QUERY_PART_3 +
                     ")";
 
     @Id

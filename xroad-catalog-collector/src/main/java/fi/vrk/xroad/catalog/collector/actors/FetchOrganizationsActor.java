@@ -24,6 +24,7 @@ package fi.vrk.xroad.catalog.collector.actors;
 
 import fi.vrk.xroad.catalog.collector.util.OrganizationUtil;
 import fi.vrk.xroad.catalog.collector.wsimport.ClientType;
+import fi.vrk.xroad.catalog.persistence.OrganizationService;
 import fi.vrk.xroad.catalog.persistence.entity.*;
 import fi.vrk.xroad.catalog.persistence.CatalogService;
 import lombok.extern.slf4j.Slf4j;
@@ -33,7 +34,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
-
 import java.security.KeyManagementException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
@@ -41,9 +41,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
-/**
- * Actor which fetches organizations with respective data
- */
 @Component
 @Scope("prototype")
 @Slf4j
@@ -61,9 +58,12 @@ public class FetchOrganizationsActor extends XRoadCatalogActor {
     @Autowired
     protected CatalogService catalogService;
 
+    @Autowired
+    protected OrganizationService organizationService;
+
     @Override
     public void preStart() throws Exception {
-
+        // This method is here just to override the method from the superclass
     }
 
     @Override
@@ -102,7 +102,7 @@ public class FetchOrganizationsActor extends XRoadCatalogActor {
         for (int i = 0; i < data.length(); i++) {
             Organization organization = OrganizationUtil.createOrganization(data.optJSONObject(i));
             JSONObject dataJson = data.optJSONObject(i);
-            Organization savedOrganization = catalogService.saveOrganization(organization);
+            Organization savedOrganization = organizationService.saveOrganization(organization);
             saveOrganizationNames(dataJson, savedOrganization);
             saveOrganizationDescriptions(dataJson, savedOrganization);
             saveEmails(dataJson, savedOrganization);
@@ -117,7 +117,7 @@ public class FetchOrganizationsActor extends XRoadCatalogActor {
                 .optJSONArray("organizationNames"));
         organizationNames.forEach(organizationName -> {
             organizationName.setOrganization(savedOrganization);
-            catalogService.saveOrganizationName(organizationName);
+            organizationService.saveOrganizationName(organizationName);
         });
     }
 
@@ -126,7 +126,7 @@ public class FetchOrganizationsActor extends XRoadCatalogActor {
                 .optJSONArray("organizationDescriptions"));
         organizationDescriptions.forEach(organizationDescription -> {
             organizationDescription.setOrganization(savedOrganization);
-            catalogService.saveOrganizationDescription(organizationDescription);
+            organizationService.saveOrganizationDescription(organizationDescription);
         });
     }
 
@@ -134,7 +134,7 @@ public class FetchOrganizationsActor extends XRoadCatalogActor {
         List<Email> emails = OrganizationUtil.createEmails(data.optJSONArray("emails"));
         emails.forEach(email -> {
             email.setOrganization(savedOrganization);
-            catalogService.saveEmail(email);
+            organizationService.saveEmail(email);
         });
     }
 
@@ -142,7 +142,7 @@ public class FetchOrganizationsActor extends XRoadCatalogActor {
         List<PhoneNumber> phoneNumbers = OrganizationUtil.createPhoneNumbers(data.optJSONArray("phoneNumbers"));
         phoneNumbers.forEach(phone -> {
             phone.setOrganization(savedOrganization);
-            catalogService.savePhoneNumber(phone);
+            organizationService.savePhoneNumber(phone);
         });
     }
 
@@ -150,7 +150,7 @@ public class FetchOrganizationsActor extends XRoadCatalogActor {
         List<WebPage> webPages = OrganizationUtil.createWebPages(data.optJSONArray("webPages"));
         webPages.forEach(webPage -> {
             webPage.setOrganization(savedOrganization);
-            catalogService.saveWebPage(webPage);
+            organizationService.saveWebPage(webPage);
         });
     }
 
@@ -159,7 +159,7 @@ public class FetchOrganizationsActor extends XRoadCatalogActor {
         JSONArray addressesListJson = data.optJSONArray("addresses");
         addresses.forEach(address -> {
             address.setOrganization(savedOrganization);
-            Address savedAddress = catalogService.saveAddress(address);
+            Address savedAddress = organizationService.saveAddress(address);
             saveAddressDetails(addressesListJson, savedAddress);
         });
     }
@@ -182,7 +182,7 @@ public class FetchOrganizationsActor extends XRoadCatalogActor {
     private void saveStreetAddress(JSONObject streetAddressJson, Address savedAddress) {
         StreetAddress streetAddress = OrganizationUtil.createStreetAddress(streetAddressJson);
         streetAddress.setAddress(savedAddress);
-        StreetAddress savedStreetAddress = catalogService.saveStreetAddress(streetAddress);
+        StreetAddress savedStreetAddress = organizationService.saveStreetAddress(streetAddress);
         saveStreetAddressMunicipality(streetAddressJson.optJSONObject("municipality"), savedStreetAddress);
         saveStreetAddressAdditionalInformation(streetAddressJson.optJSONArray("additionalInformation"), savedStreetAddress);
         saveStreetAddressPostOffice(streetAddressJson.optJSONArray("postOffice"), savedStreetAddress);
@@ -194,7 +194,7 @@ public class FetchOrganizationsActor extends XRoadCatalogActor {
             StreetAddressMunicipality streetAddressMunicipality = OrganizationUtil
                     .createStreetAddressMunicipality(municipalityJson);
             streetAddressMunicipality.setStreetAddress(savedStreetAddress);
-            StreetAddressMunicipality savedStreetAddressMunicipality = catalogService
+            StreetAddressMunicipality savedStreetAddressMunicipality = organizationService
                     .saveStreetAddressMunicipality(streetAddressMunicipality);
 
             if (municipalityJson.optJSONArray("name") != null) {
@@ -203,7 +203,7 @@ public class FetchOrganizationsActor extends XRoadCatalogActor {
                         .createStreetAddressMunicipalityNames(streetAddressMunicipalityNamesJson);
                 streetAddressMunicipalityNames.forEach(municipalityName -> {
                     municipalityName.setStreetAddressMunicipality(savedStreetAddressMunicipality);
-                    catalogService.saveStreetAddressMunicipalityName(municipalityName);
+                    organizationService.saveStreetAddressMunicipalityName(municipalityName);
                 });
             }
         }
@@ -215,7 +215,7 @@ public class FetchOrganizationsActor extends XRoadCatalogActor {
                     .createStreetAddressAdditionalInformation(additionalInformationJson);
             streetAddressAdditionalInformationList.forEach(additionalInfo -> {
                 additionalInfo.setStreetAddress(savedStreetAddress);
-                catalogService.saveStreetAddressAdditionalInformation(additionalInfo);
+                organizationService.saveStreetAddressAdditionalInformation(additionalInfo);
             });
         }
     }
@@ -226,7 +226,7 @@ public class FetchOrganizationsActor extends XRoadCatalogActor {
                     .createStreetAddressPostOffices(postOfficeJson);
             streetAddressPostOfficeList.forEach(postOffice -> {
                 postOffice.setStreetAddress(savedStreetAddress);
-                catalogService.saveStreetAddressPostOffice(postOffice);
+                organizationService.saveStreetAddressPostOffice(postOffice);
             });
         }
     }
@@ -236,7 +236,7 @@ public class FetchOrganizationsActor extends XRoadCatalogActor {
             List<Street> streetList = OrganizationUtil.createStreets(streetJson);
             streetList.forEach(street -> {
                 street.setStreetAddress(savedStreetAddress);
-                catalogService.saveStreet(street);
+                organizationService.saveStreet(street);
             });
         }
     }
@@ -244,7 +244,7 @@ public class FetchOrganizationsActor extends XRoadCatalogActor {
     private void savePostOfficeBoxAddress(JSONObject postOfficeBoxAddressJson, Address savedAddress) {
         PostOfficeBoxAddress postOfficeBoxAddress = OrganizationUtil.createPostOfficeBoxAddress(postOfficeBoxAddressJson);
         postOfficeBoxAddress.setAddress(savedAddress);
-        PostOfficeBoxAddress savedPostOfficeBoxAddress = catalogService.savePostOfficeBoxAddress(postOfficeBoxAddress);
+        PostOfficeBoxAddress savedPostOfficeBoxAddress = organizationService.savePostOfficeBoxAddress(postOfficeBoxAddress);
 
         savePostOfficeBoxAddressAdditionalInformation(postOfficeBoxAddressJson.optJSONArray("additionalInformation"),
                 savedPostOfficeBoxAddress);
@@ -260,7 +260,7 @@ public class FetchOrganizationsActor extends XRoadCatalogActor {
                     = OrganizationUtil.createPostOfficeBoxAddressAdditionalInformation(additionalInformationJson);
             postOfficeBoxAddressAdditionalInformationList.forEach(additionalInfo -> {
                 additionalInfo.setPostOfficeBoxAddress(savedPostOfficeBoxAddress);
-                catalogService.savePostOfficeBoxAddressAdditionalInformation(additionalInfo);
+                organizationService.savePostOfficeBoxAddressAdditionalInformation(additionalInfo);
             });
         }
     }
@@ -270,7 +270,7 @@ public class FetchOrganizationsActor extends XRoadCatalogActor {
             List<PostOffice> postOfficeList = OrganizationUtil.createPostOffice(postOfficeJson);
             postOfficeList.forEach(postOffice -> {
                 postOffice.setPostOfficeBoxAddress(savedPostOfficeBoxAddress);
-                catalogService.savePostOffice(postOffice);
+                organizationService.savePostOffice(postOffice);
             });
         }
     }
@@ -281,7 +281,7 @@ public class FetchOrganizationsActor extends XRoadCatalogActor {
             PostOfficeBoxAddressMunicipality postOfficeBoxAddressMunicipality = OrganizationUtil
                     .createPostOfficeBoxAddressMunicipality(municipalityJson);
             postOfficeBoxAddressMunicipality.setPostOfficeBoxAddress(savedPostOfficeBoxAddress);
-            PostOfficeBoxAddressMunicipality savedPostOfficeBoxAddressMunicipality = catalogService
+            PostOfficeBoxAddressMunicipality savedPostOfficeBoxAddressMunicipality = organizationService
                     .savePostOfficeBoxAddressMunicipality(postOfficeBoxAddressMunicipality);
 
             if (municipalityJson.optJSONArray("name") != null) {
@@ -290,7 +290,7 @@ public class FetchOrganizationsActor extends XRoadCatalogActor {
                         .createPostOfficeBoxAddressMunicipalityNames(postOfficeBoxAddressMunicipalityNamesJson);
                 postOfficeBoxAddressMunicipalityNames.forEach(municipalityName -> {
                     municipalityName.setPostOfficeBoxAddressMunicipality(savedPostOfficeBoxAddressMunicipality);
-                    catalogService.savePostOfficeBoxAddressMunicipalityName(municipalityName);
+                    organizationService.savePostOfficeBoxAddressMunicipalityName(municipalityName);
                 });
             }
         }
@@ -302,7 +302,7 @@ public class FetchOrganizationsActor extends XRoadCatalogActor {
                     .createPostOfficeBoxes(postOfficeBoxJson);
             postOfficeBoxList.forEach(postOfficeBox -> {
                 postOfficeBox.setPostOfficeBoxAddress(savedPostOfficeBoxAddress);
-                catalogService.savePostOfficeBox(postOfficeBox);
+                organizationService.savePostOfficeBox(postOfficeBox);
             });
         }
     }

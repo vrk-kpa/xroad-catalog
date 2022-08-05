@@ -23,7 +23,6 @@
 package fi.vrk.xroad.catalog.persistence.entity;
 
 import lombok.*;
-
 import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
@@ -97,56 +96,26 @@ public class Organization {
     @OneToMany(mappedBy = "organization", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private Set<Address> addresses = new HashSet<>();
 
-    /**
-     * This collection can be used to add new items
-     *
-     * @return Set of all organizationNames
-     */
     public Set<OrganizationName> getAllOrganizationNames() {
         return organizationNames;
     }
 
-    /**
-     * This collection can be used to add new items
-     *
-     * @return Set of all organizationDescriptions
-     */
     public Set<OrganizationDescription> getAllOrganizationDescriptions() {
         return organizationDescriptions;
     }
 
-    /**
-     * This collection can be used to add new items
-     *
-     * @return Set of all emails
-     */
     public Set<Email> getAllEmails() {
         return emails;
     }
 
-    /**
-     * This collection can be used to add new items
-     *
-     * @return Set of all phoneNumbers
-     */
     public Set<PhoneNumber> getAllPhoneNumbers() {
         return phoneNumbers;
     }
 
-    /**
-     * This collection can be used to add new items
-     *
-     * @return Set of all webPages
-     */
     public Set<WebPage> getAllWebPages() {
         return webPages;
     }
 
-    /**
-     * This collection can be used to add new items
-     *
-     * @return Set of all addresses
-     */
     public Set<Address> getAllAddresses() {
         return addresses;
     }

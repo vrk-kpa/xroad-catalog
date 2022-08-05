@@ -24,7 +24,6 @@ package fi.vrk.xroad.catalog.collector.actors;
 
 import fi.vrk.xroad.catalog.collector.XRoadCatalogCollector;
 import fi.vrk.xroad.catalog.collector.wsimport.ClientList;
-
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -41,9 +40,6 @@ import static org.springframework.test.web.client.match.MockRestRequestMatchers.
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withServerError;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
 
-/**
- * Test for client actor
- */
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = XRoadCatalogCollector.class, webEnvironment = SpringBootTest.WebEnvironment.NONE)
 @Slf4j

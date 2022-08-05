@@ -29,14 +29,10 @@ import org.springframework.ws.soap.saaj.SaajSoapMessage;
 import org.w3c.dom.CDATASection;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.Node;
-
 import javax.xml.namespace.QName;
 import javax.xml.soap.*;
 import java.util.Iterator;
 
-/**
- * Changes wsdl element to CDATASection
- */
 public class WsdlCdataInterceptor implements EndpointInterceptor {
 
     @Override

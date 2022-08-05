@@ -26,9 +26,6 @@ import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 
-/**
- * Utility class to work as a key for Members in Maps etc
- */
 @EqualsAndHashCode
 @AllArgsConstructor
 public class MemberId {

@@ -23,7 +23,6 @@
 package fi.vrk.xroad.catalog.persistence.dto;
 
 import lombok.*;
-
 import java.io.Serializable;
 import java.time.LocalDateTime;
 

@@ -23,18 +23,13 @@
 package fi.vrk.xroad.catalog.collector.actors;
 
 import fi.vrk.xroad.catalog.collector.util.CatalogCollectorRuntimeException;
-
 import akka.actor.Terminated;
 import akka.actor.UntypedActor;
 import lombok.extern.slf4j.Slf4j;
-
 import java.security.KeyManagementException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 
-/**
- * Base class for all actors in the system.
- */
 @Slf4j
 public abstract class XRoadCatalogActor extends UntypedActor {
 

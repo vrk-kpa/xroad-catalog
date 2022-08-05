@@ -22,19 +22,23 @@
  */
 package fi.vrk.xroad.catalog.lister;
 
-import org.springframework.ws.soap.server.endpoint.annotation.FaultCode;
-import org.springframework.ws.soap.server.endpoint.annotation.SoapFault;
+import fi.vrk.xroad.catalog.persistence.entity.StatusInfo;
+import org.springframework.stereotype.Component;
+import java.time.LocalDateTime;
 
-@SoapFault(faultCode = FaultCode.SERVER)
-public class OpenApiNotFoundException extends CatalogListerRuntimeException {
+@Component
+public class TestUtil {
 
-    public OpenApiNotFoundException(String message, Throwable cause) {
-        super(message, cause);
-    }
-
-
-    public OpenApiNotFoundException(String s) {
-        super(s);
+    public static StatusInfo createStatusInfo(LocalDateTime created,
+                                              LocalDateTime changed,
+                                              LocalDateTime fetched,
+                                              LocalDateTime removed) {
+        StatusInfo statusInfo = new StatusInfo();
+        statusInfo.setCreated(created);
+        statusInfo.setChanged(changed);
+        statusInfo.setFetched(fetched);
+        statusInfo.setRemoved(removed);
+        return statusInfo;
     }
 
 }

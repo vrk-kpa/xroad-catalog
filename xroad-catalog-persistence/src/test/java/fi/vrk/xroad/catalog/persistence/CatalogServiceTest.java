@@ -22,14 +22,18 @@
  */
 package fi.vrk.xroad.catalog.persistence;
 
+import fi.vrk.xroad.catalog.persistence.dto.DistinctServiceStatistics;
 import fi.vrk.xroad.catalog.persistence.dto.LastCollectionData;
+import fi.vrk.xroad.catalog.persistence.dto.MemberDataList;
+import fi.vrk.xroad.catalog.persistence.dto.ServiceStatistics;
+import fi.vrk.xroad.catalog.persistence.dto.XRoadData;
 import fi.vrk.xroad.catalog.persistence.entity.*;
-
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import fi.vrk.xroad.catalog.persistence.repository.*;
 import lombok.extern.slf4j.Slf4j;
+import org.json.JSONException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,14 +41,10 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.sql.Timestamp;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Month;
 import java.util.*;
 import java.util.stream.StreamSupport;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
@@ -53,18 +53,12 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-/**
- * Persistence tests
- */
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = Application.class)
 @Transactional
 @Slf4j
 public class CatalogServiceTest {
 
-    /**
-     * item counts for test data
-     */
     public static final int TEST_DATA_MEMBERS = 8;
     public static final int TEST_DATA_ACTIVE_MEMBERS = 7;
     public static final int TEST_DATA_SUBSYSTEMS = 12;
@@ -107,142 +101,18 @@ public class CatalogServiceTest {
     }
 
     @Test
-    public void testGetOrganizations() {
-        Iterable<Organization> organizations = catalogService.getOrganizations("0123456-9");
-        assertEquals(1, Iterables.size(organizations));
-        assertEquals(1, organizations.iterator().next().getAllOrganizationNames().size());
-        assertEquals(1, organizations.iterator().next().getAllOrganizationDescriptions().size());
-        assertEquals(1, organizations.iterator().next().getAllEmails().size());
-        assertEquals(1, organizations.iterator().next().getAllPhoneNumbers().size());
-        assertEquals(1, organizations.iterator().next().getAllWebPages().size());
-        assertEquals(1, organizations.iterator().next().getAllAddresses().size());
-        assertEquals(1, organizations.iterator().next().getAllAddresses().iterator().next()
-                .getAllStreetAddresses().size());
-        assertEquals(1, organizations.iterator().next().getAllAddresses().iterator().next()
-                .getAllPostOfficeBoxAddresses().size());
-        assertEquals("0123456-9", organizations.iterator().next().getBusinessCode());
-        assertEquals("abcdef123456", organizations.iterator().next().getGuid());
-        assertEquals("Published", organizations.iterator().next().getPublishingStatus());
-        assertEquals("Municipality", organizations.iterator().next().getOrganizationType());
-        assertEquals("Vaasan kaupunki", organizations.iterator().next().getAllOrganizationNames().iterator().next().getValue());
-        assertEquals("Vaasa on yli 67 000 asukkaan voimakkaasti kasvava kaupunki",
-                organizations.iterator().next().getAllOrganizationDescriptions().iterator().next().getValue());
-        assertEquals("vaasa@vaasa.fi", organizations.iterator().next().getAllEmails().iterator().next().getValue());
-        assertEquals("62249111", organizations.iterator().next().getAllPhoneNumbers().iterator().next().getNumber());
-        assertEquals("https://www.vaasa.fi/", organizations.iterator().next().getAllWebPages().iterator().next().getUrl());
-        assertEquals("Street", organizations.iterator().next().getAllAddresses().iterator().next().getSubType());
-        assertEquals("64200", organizations.iterator().next().getAllAddresses().iterator().next()
-                .getAllStreetAddresses().iterator().next().getPostalCode());
-        assertEquals("Motellikuja", organizations.iterator().next().getAllAddresses().iterator().next()
-                .getAllStreetAddresses().iterator().next().getAllStreets().iterator().next().getValue());
-        assertEquals("64200", organizations.iterator().next().getAllAddresses().iterator().next()
-                .getAllPostOfficeBoxAddresses().iterator().next().getPostalCode());
-        assertEquals("NIVALA", organizations.iterator().next().getAllAddresses().iterator().next()
-                .getAllPostOfficeBoxAddresses().iterator().next().getAllPostOffices().iterator().next().getValue());
-        assertEquals("NIVALA", organizations.iterator().next().getAllAddresses().iterator().next()
-                .getAllPostOfficeBoxAddresses().iterator().next().getAllPostOfficeBoxes().iterator().next().getValue());
-        assertEquals("Kaupungintalo/kaupunginjohtaja", organizations.iterator().next().getAllAddresses().iterator().next()
-                .getAllPostOfficeBoxAddresses().iterator().next().getAllAdditionalInformation().iterator().next().getValue());
-        assertEquals("545", organizations.iterator().next().getAllAddresses().iterator().next()
-                .getAllPostOfficeBoxAddresses().iterator().next().getAllMunicipalities().iterator().next().getCode());
-        assertEquals("Nivala", organizations.iterator().next().getAllAddresses().iterator().next()
-                .getAllPostOfficeBoxAddresses().iterator().next().getAllMunicipalities().iterator().next()
-                .getAllMunicipalityNames().iterator().next().getValue());
-    }
-
-    @Test
-    public void testGetOrganization() {
-        Optional<Organization> organization = catalogService.getOrganization("abcdef123456");
-        assertEquals(true, organization.isPresent());
-        assertEquals(1, organization.get().getAllOrganizationNames().size());
-        assertEquals(1, organization.get().getAllOrganizationDescriptions().size());
-        assertEquals(1, organization.get().getAllEmails().size());
-        assertEquals(1, organization.get().getAllPhoneNumbers().size());
-        assertEquals(1, organization.get().getAllWebPages().size());
-        assertEquals(1, organization.get().getAllAddresses().size());
-        assertEquals(1, organization.get().getAllAddresses().iterator().next()
-                .getAllStreetAddresses().size());
-        assertEquals(1, organization.get().getAllAddresses().iterator().next()
-                .getAllPostOfficeBoxAddresses().size());
-        assertEquals("0123456-9", organization.get().getBusinessCode());
-        assertEquals("abcdef123456", organization.get().getGuid());
-        assertEquals("Published", organization.get().getPublishingStatus());
-        assertEquals("Municipality", organization.get().getOrganizationType());
-        assertEquals("Vaasan kaupunki", organization.get().getAllOrganizationNames().iterator().next().getValue());
-        assertEquals("Vaasa on yli 67 000 asukkaan voimakkaasti kasvava kaupunki",
-                organization.get().getAllOrganizationDescriptions().iterator().next().getValue());
-        assertEquals("vaasa@vaasa.fi", organization.get().getAllEmails().iterator().next().getValue());
-        assertEquals("62249111", organization.get().getAllPhoneNumbers().iterator().next().getNumber());
-        assertEquals("https://www.vaasa.fi/", organization.get().getAllWebPages().iterator().next().getUrl());
-        assertEquals("Street", organization.get().getAllAddresses().iterator().next().getSubType());
-        assertEquals("64200", organization.get().getAllAddresses().iterator().next()
-                .getAllStreetAddresses().iterator().next().getPostalCode());
-        assertEquals("Motellikuja", organization.get().getAllAddresses().iterator().next()
-                .getAllStreetAddresses().iterator().next().getAllStreets().iterator().next().getValue());
-        assertEquals("64200", organization.get().getAllAddresses().iterator().next()
-                .getAllPostOfficeBoxAddresses().iterator().next().getPostalCode());
-        assertEquals("NIVALA", organization.get().getAllAddresses().iterator().next()
-                .getAllPostOfficeBoxAddresses().iterator().next().getAllPostOffices().iterator().next().getValue());
-        assertEquals("NIVALA", organization.get().getAllAddresses().iterator().next()
-                .getAllPostOfficeBoxAddresses().iterator().next().getAllPostOfficeBoxes().iterator().next().getValue());
-        assertEquals("Kaupungintalo/kaupunginjohtaja", organization.get().getAllAddresses().iterator().next()
-                .getAllPostOfficeBoxAddresses().iterator().next().getAllAdditionalInformation().iterator().next().getValue());
-        assertEquals("545", organization.get().getAllAddresses().iterator().next()
-                .getAllPostOfficeBoxAddresses().iterator().next().getAllMunicipalities().iterator().next().getCode());
-        assertEquals("Nivala", organization.get().getAllAddresses().iterator().next()
-                .getAllPostOfficeBoxAddresses().iterator().next().getAllMunicipalities().iterator().next()
-                .getAllMunicipalityNames().iterator().next().getValue());
-    }
-
-    @Test
-    public void testGetCompanies() {
-        Iterable<Company> companies = catalogService.getCompanies("1710128-9");
-        assertEquals(1, Iterables.size(companies));
-        assertEquals(1, companies.iterator().next().getAllBusinessAddresses().size());
-        assertEquals(1, companies.iterator().next().getAllBusinessAuxiliaryNames().size());
-        assertEquals(1, companies.iterator().next().getAllBusinessIdChanges().size());
-        assertEquals(1, companies.iterator().next().getAllBusinessLines().size());
-        assertEquals(1, companies.iterator().next().getAllBusinessNames().size());
-        assertEquals(1, companies.iterator().next().getAllCompanyForms().size());
-        assertEquals(1, companies.iterator().next().getAllContactDetails().size());
-        assertEquals(1, companies.iterator().next().getAllLanguages().size());
-        assertEquals(1, companies.iterator().next().getAllLiquidations().size());
-        assertEquals(1, companies.iterator().next().getAllRegisteredEntries().size());
-        assertEquals(1, companies.iterator().next().getAllRegisteredOffices().size());
-        assertEquals("1710128-9", companies.iterator().next().getBusinessId());
-        assertEquals("", companies.iterator().next().getDetailsUri());
-        assertEquals("OYJ", companies.iterator().next().getCompanyForm());
-        assertEquals("Gofore Oyj", companies.iterator().next().getName());
-        assertEquals("Kalevantie 2", companies.iterator().next().getAllBusinessAddresses().iterator().next().getStreet());
-        assertEquals("Solinor", companies.iterator().next().getAllBusinessAuxiliaryNames().iterator().next().getName());
-        assertEquals("1796717-0", companies.iterator().next().getAllBusinessIdChanges().iterator().next().getOldBusinessId());
-        assertEquals("Dataprogrammering", companies.iterator().next().getAllBusinessLines().iterator().next().getName());
-        assertEquals("FI", companies.iterator().next().getAllBusinessNames().iterator().next().getLanguage());
-        assertEquals("Public limited company", companies.iterator().next().getAllCompanyForms().iterator().next().getName());
-        assertEquals("EN", companies.iterator().next().getAllContactDetails().iterator().next().getLanguage());
-        assertEquals("Finska", companies.iterator().next().getAllLanguages().iterator().next().getName());
-        assertEquals("FI", companies.iterator().next().getAllLiquidations().iterator().next().getLanguage());
-        assertEquals("Unregistered", companies.iterator().next().getAllRegisteredEntries().iterator().next().getDescription());
-        assertEquals("FI", companies.iterator().next().getAllRegisteredOffices().iterator().next().getLanguage());
-    }
-
-    @Test
     public void testGetErrorLog() {
         LocalDateTime changedAfter = LocalDateTime.of(2020, Month.JANUARY, 1, 0, 0, 0);
-        Iterable<ErrorLog> errorLogEntries = catalogService.getErrorLog(changedAfter);
+        LocalDateTime endDate = LocalDateTime.of(2022, Month.JANUARY, 1, 0, 0, 0);
+        Iterable<ErrorLog> errorLogEntries = catalogService.getErrorLog(changedAfter, endDate);
         assertNotNull(errorLogEntries);
         assertEquals(true, errorLogEntries.iterator().hasNext());
     }
 
     @Test
     public void testGetErrorsForSubsystem() {
-        Page<ErrorLog> errorLogEntries = catalogService.getErrors("DEV",
-                "GOV",
-                "1234",
-                "TestSubsystem",
-                1000L,
-                0,
-                100);
+        XRoadData xRoadData = XRoadData.builder().xRoadInstance("DEV").memberClass("GOV").memberCode("1234").subsystemCode("TestSubsystem").build();
+        Page<ErrorLog> errorLogEntries = catalogService.getErrors(xRoadData, 0, 100, LocalDateTime.parse("2020-01-01T00:00:00"), LocalDateTime.now());
         assertNotNull(errorLogEntries);
         assertEquals(1, errorLogEntries.getNumberOfElements());
         assertEquals(1, errorLogEntries.getTotalPages());
@@ -250,13 +120,8 @@ public class CatalogServiceTest {
 
     @Test
     public void testGetErrorsForMemberCode() {
-        Page<ErrorLog> errorLogEntries = catalogService.getErrors("DEV",
-                "GOV",
-                "1234",
-                null,
-                1000L,
-                0,
-                100);
+        XRoadData xRoadData = XRoadData.builder().xRoadInstance("DEV").memberClass("GOV").memberCode("1234").subsystemCode(null).build();
+        Page<ErrorLog> errorLogEntries = catalogService.getErrors(xRoadData, 0, 100, LocalDateTime.parse("2020-01-01T00:00:00"), LocalDateTime.now());
         assertNotNull(errorLogEntries);
         assertEquals(2, errorLogEntries.getNumberOfElements());
         assertEquals(1, errorLogEntries.getTotalPages());
@@ -264,13 +129,8 @@ public class CatalogServiceTest {
 
     @Test
     public void testGetErrorsForMemberClass() {
-        Page<ErrorLog> errorLogEntries = catalogService.getErrors("DEV",
-                "GOV",
-                null,
-                null,
-                1000L,
-                0,
-                100);
+        XRoadData xRoadData = XRoadData.builder().xRoadInstance("DEV").memberClass("GOV").memberCode(null).subsystemCode(null).build();
+        Page<ErrorLog> errorLogEntries = catalogService.getErrors(xRoadData, 0, 100, LocalDateTime.parse("2020-01-01T00:00:00"), LocalDateTime.now());
         assertNotNull(errorLogEntries);
         assertEquals(3, errorLogEntries.getNumberOfElements());
         assertEquals(1, errorLogEntries.getTotalPages());
@@ -278,13 +138,8 @@ public class CatalogServiceTest {
 
     @Test
     public void testGetErrorsForInstance() {
-        Page<ErrorLog> errorLogEntries = catalogService.getErrors("DEV",
-                null,
-                null,
-                null,
-                1000L,
-                0,
-                100);
+        XRoadData xRoadData = XRoadData.builder().xRoadInstance("DEV").memberClass(null).memberCode(null).subsystemCode(null).build();
+        Page<ErrorLog> errorLogEntries = catalogService.getErrors(xRoadData, 0, 100, LocalDateTime.parse("2020-01-01T00:00:00"), LocalDateTime.now());
         assertNotNull(errorLogEntries);
         assertEquals(4, errorLogEntries.getNumberOfElements());
         assertEquals(1, errorLogEntries.getTotalPages());
@@ -292,13 +147,8 @@ public class CatalogServiceTest {
 
     @Test
     public void testGetErrorsAll() {
-        Page<ErrorLog> errorLogEntries = catalogService.getErrors(null,
-                null,
-                null,
-                null,
-                1000L,
-                0,
-                100);
+        XRoadData xRoadData = XRoadData.builder().xRoadInstance(null).memberClass(null).memberCode(null).subsystemCode(null).build();
+        Page<ErrorLog> errorLogEntries = catalogService.getErrors(xRoadData, 0, 100, LocalDateTime.parse("2020-01-01T00:00:00"), LocalDateTime.now());
         assertNotNull(errorLogEntries);
         assertEquals(6, errorLogEntries.getNumberOfElements());
         assertEquals(1, errorLogEntries.getTotalPages());
@@ -313,594 +163,13 @@ public class CatalogServiceTest {
     }
 
     @Test
-    public void testSaveCompany() {
-        Company company = Company.builder()
-                .companyForm("OYJ")
-                .businessId("123456789-1")
-                .detailsUri("123")
-                .registrationDate(LocalDateTime.of(2020, 4, 30, 0, 0 ,0))
-                .name("A company").build();
-        Company savedCompany = catalogService.saveCompany(company);
-        assertNotNull(savedCompany);
-        assertNotNull(savedCompany.getId());
-        assertEquals("123456789-1", savedCompany.getBusinessId());
-        assertEquals("123", savedCompany.getDetailsUri());
-        assertEquals("OYJ", savedCompany.getCompanyForm());
-        assertEquals("A company", savedCompany.getName());
-        assertEquals(LocalDate.of(2020, 4, 30), savedCompany.getRegistrationDate().toLocalDate());
-        verifySavedStatusInfo(savedCompany.getStatusInfo());
-    }
-
-    @Test
-    public void testSaveBusinessName() {
-        Iterable<Company> companies = catalogService.getCompanies("1710128-9");
-        assertEquals(1, Iterables.size(companies));
-        BusinessName businessName = BusinessName.builder()
-                .name("").language("FI").ordering(0).source(0).version(0)
-                .registrationDate(LocalDateTime.of(2020, 4, 30, 0, 0 ,0))
-                .endDate(null).company(companies.iterator().next()).build();
-        catalogService.saveBusinessName(businessName);
-        Iterable<Company> foundCompanies = catalogService.getCompanies("1710128-9");
-        assertEquals(1, Iterables.size(foundCompanies));
-        assertEquals(1, companies.iterator().next().getAllBusinessNames().size());
-        assertEquals("FI", companies.iterator().next().getAllBusinessNames().iterator().next().getLanguage());
-        assertEquals("", companies.iterator().next().getAllBusinessNames().iterator().next().getName());
-        assertEquals(0, companies.iterator().next().getAllBusinessNames().iterator().next().getOrdering());
-        assertEquals(0, companies.iterator().next().getAllBusinessNames().iterator().next().getSource());
-        assertEquals(0, companies.iterator().next().getAllBusinessNames().iterator().next().getVersion());
-        assertEquals(LocalDate.of(2020, 4, 30),
-                companies.iterator().next().getAllBusinessNames().iterator().next().getRegistrationDate().toLocalDate());
-        assertNull(companies.iterator().next().getAllBusinessNames().iterator().next().getEndDate());
-        verifySavedStatusInfo(companies.iterator().next().getAllBusinessNames().iterator().next().getStatusInfo());
-    }
-
-    @Test
-    public void testSaveBusinessAuxiliaryName() {
-        Iterable<Company> companies = catalogService.getCompanies("1710128-9");
-        assertEquals(1, Iterables.size(companies));
-        BusinessAuxiliaryName businessAuxiliaryName = BusinessAuxiliaryName.builder()
-                .name("Solinor").language("").ordering(5).source(1).version(1)
-                .registrationDate(LocalDateTime.of(2020, 4, 30, 0, 0 ,0))
-                .endDate(null).company(companies.iterator().next()).build();
-        catalogService.saveBusinessAuxiliaryName(businessAuxiliaryName);
-        Iterable<Company> foundCompanies = catalogService.getCompanies("1710128-9");
-        assertEquals(1, Iterables.size(foundCompanies));
-        assertEquals(1, companies.iterator().next().getAllBusinessAuxiliaryNames().size());
-        assertEquals("", companies.iterator().next().getAllBusinessAuxiliaryNames().iterator().next().getLanguage());
-        assertEquals("Solinor", companies.iterator().next().getAllBusinessAuxiliaryNames().iterator().next().getName());
-        assertEquals(5, companies.iterator().next().getAllBusinessAuxiliaryNames().iterator().next().getOrdering());
-        assertEquals(1, companies.iterator().next().getAllBusinessAuxiliaryNames().iterator().next().getSource());
-        assertEquals(1, companies.iterator().next().getAllBusinessAuxiliaryNames().iterator().next().getVersion());
-        assertEquals(LocalDate.of(2020, 4, 30),
-                companies.iterator().next().getAllBusinessAuxiliaryNames().iterator().next().getRegistrationDate().toLocalDate());
-        assertNull(companies.iterator().next().getAllBusinessAuxiliaryNames().iterator().next().getEndDate());
-        verifySavedStatusInfo(companies.iterator().next().getAllBusinessAuxiliaryNames().iterator().next().getStatusInfo());
-    }
-
-    @Test
-    public void testSaveBusinessAddress() {
-        Iterable<Company> companies = catalogService.getCompanies("1710128-9");
-        assertEquals(1, Iterables.size(companies));
-        BusinessAddress businessAddress = BusinessAddress.builder().careOf("").city("Tampere").country("Finland")
-                .language("FI").postCode("30123").source(0).street("Katu 1").type(2).version(1)
-                .registrationDate(LocalDateTime.of(2020, 4, 30, 0, 0 ,0))
-                .endDate(null).company(companies.iterator().next()).build();
-        catalogService.saveBusinessAddress(businessAddress);
-        Iterable<Company> foundCompanies = catalogService.getCompanies("1710128-9");
-        assertEquals(1, Iterables.size(foundCompanies));
-        assertEquals(1, companies.iterator().next().getAllBusinessAddresses().size());
-        assertEquals("FI", companies.iterator().next().getAllBusinessAddresses().iterator().next().getLanguage());
-        assertEquals("", companies.iterator().next().getAllBusinessAddresses().iterator().next().getCareOf());
-        assertEquals("Tampere", companies.iterator().next().getAllBusinessAddresses().iterator().next().getCity());
-        assertEquals("Finland", companies.iterator().next().getAllBusinessAddresses().iterator().next().getCountry());
-        assertEquals("30123", companies.iterator().next().getAllBusinessAddresses().iterator().next().getPostCode());
-        assertEquals("Katu 1", companies.iterator().next().getAllBusinessAddresses().iterator().next().getStreet());
-        assertEquals(0, companies.iterator().next().getAllBusinessAddresses().iterator().next().getSource());
-        assertEquals(2, companies.iterator().next().getAllBusinessAddresses().iterator().next().getType());
-        assertEquals(1, companies.iterator().next().getAllBusinessAddresses().iterator().next().getVersion());
-        assertEquals(LocalDate.of(2020, 4, 30),
-                companies.iterator().next().getAllBusinessAddresses().iterator().next().getRegistrationDate().toLocalDate());
-        assertNull(companies.iterator().next().getAllBusinessAddresses().iterator().next().getEndDate());
-    }
-
-    @Test
-    public void testSaveBusinessIdChange() {
-        Iterable<Company> companies = catalogService.getCompanies("1710128-9");
-        assertEquals(1, Iterables.size(companies));
-        BusinessIdChange businessIdChange = BusinessIdChange.builder()
-                .language("").change("44").description("Change description").reason("Change reason")
-                .source(2).oldBusinessId("1796717-0").newBusinessId("1710128-9").changeDate("2020-01-25")
-                .company(companies.iterator().next()).build();
-        catalogService.saveBusinessIdChange(businessIdChange);
-        Iterable<Company> foundCompanies = catalogService.getCompanies("1710128-9");
-        assertEquals(1, Iterables.size(foundCompanies));
-        assertEquals(1, companies.iterator().next().getAllBusinessIdChanges().size());
-        assertEquals("", companies.iterator().next().getAllBusinessIdChanges().iterator().next().getLanguage());
-        assertEquals("44", companies.iterator().next().getAllBusinessIdChanges().iterator().next().getChange());
-        assertEquals("Change description", companies.iterator().next().getAllBusinessIdChanges().iterator().next().getDescription());
-        assertEquals("Change reason", companies.iterator().next().getAllBusinessIdChanges().iterator().next().getReason());
-        assertEquals(2, companies.iterator().next().getAllBusinessIdChanges().iterator().next().getSource());
-        assertEquals("1796717-0", companies.iterator().next().getAllBusinessIdChanges().iterator().next().getOldBusinessId());
-        assertEquals("1710128-9", companies.iterator().next().getAllBusinessIdChanges().iterator().next().getNewBusinessId());
-        assertEquals("2020-01-25", companies.iterator().next().getAllBusinessIdChanges().iterator().next().getChangeDate());
-        verifySavedStatusInfo(companies.iterator().next().getAllBusinessAuxiliaryNames().iterator().next().getStatusInfo());
-    }
-
-    @Test
-    public void testSaveBusinessLine() {
-        Iterable<Company> companies = catalogService.getCompanies("1710128-9");
-        assertEquals(1, Iterables.size(companies));
-        BusinessLine businessLine = BusinessLine.builder()
-                .name("Dataprogrammering").language("SE").ordering(0).source(2).version(1)
-                .registrationDate(LocalDateTime.of(2020, 4, 30, 0, 0 ,0))
-                .endDate(null).company(companies.iterator().next()).build();
-        catalogService.saveBusinessLine(businessLine);
-        Iterable<Company> foundCompanies = catalogService.getCompanies("1710128-9");
-        assertEquals(1, Iterables.size(foundCompanies));
-        assertEquals(1, companies.iterator().next().getAllBusinessLines().size());
-        assertEquals("SE", companies.iterator().next().getAllBusinessLines().iterator().next().getLanguage());
-        assertEquals("Dataprogrammering", companies.iterator().next().getAllBusinessLines().iterator().next().getName());
-        assertEquals(0, companies.iterator().next().getAllBusinessLines().iterator().next().getOrdering());
-        assertEquals(2, companies.iterator().next().getAllBusinessLines().iterator().next().getSource());
-        assertEquals(1, companies.iterator().next().getAllBusinessLines().iterator().next().getVersion());
-        assertEquals(LocalDate.of(2020, 4, 30),
-                companies.iterator().next().getAllBusinessLines().iterator().next().getRegistrationDate().toLocalDate());
-        assertNull(companies.iterator().next().getAllBusinessLines().iterator().next().getEndDate());
-        verifySavedStatusInfo(companies.iterator().next().getAllBusinessLines().iterator().next().getStatusInfo());
-    }
-
-    @Test
-    public void testSaveCompanyForm() {
-        Iterable<Company> companies = catalogService.getCompanies("1710128-9");
-        assertEquals(1, Iterables.size(companies));
-        CompanyForm companyForm = CompanyForm.builder()
-                .name("Public limited company").language("EN").source(1).version(1).type(0)
-                .registrationDate(LocalDateTime.of(2020, 4, 30, 0, 0 ,0))
-                .endDate(null).company(companies.iterator().next()).build();
-        catalogService.saveCompanyForm(companyForm);
-        Iterable<Company> foundCompanies = catalogService.getCompanies("1710128-9");
-        assertEquals(1, Iterables.size(foundCompanies));
-        assertEquals(1, companies.iterator().next().getAllCompanyForms().size());
-        assertEquals("EN", companies.iterator().next().getAllCompanyForms().iterator().next().getLanguage());
-        assertEquals("Public limited company", companies.iterator().next().getAllCompanyForms().iterator().next().getName());
-        assertEquals(1, companies.iterator().next().getAllCompanyForms().iterator().next().getSource());
-        assertEquals(1, companies.iterator().next().getAllCompanyForms().iterator().next().getVersion());
-        assertEquals(0, companies.iterator().next().getAllCompanyForms().iterator().next().getType());
-        assertEquals(LocalDate.of(2020, 4, 30),
-                companies.iterator().next().getAllCompanyForms().iterator().next().getRegistrationDate().toLocalDate());
-        assertNull(companies.iterator().next().getAllCompanyForms().iterator().next().getEndDate());
-        verifySavedStatusInfo(companies.iterator().next().getAllCompanyForms().iterator().next().getStatusInfo());
-    }
-
-    @Test
-    public void testSaveContactDetail() {
-        Iterable<Company> companies = catalogService.getCompanies("1710128-9");
-        assertEquals(1, Iterables.size(companies));
-        ContactDetail contactDetail = ContactDetail.builder()
-                .value("VALUE").language("EN").source(0).version(1).type("0")
-                .registrationDate(LocalDateTime.of(2020, 4, 30, 0, 0 ,0))
-                .endDate(null).company(companies.iterator().next()).build();
-        catalogService.saveContactDetail(contactDetail);
-        Iterable<Company> foundCompanies = catalogService.getCompanies("1710128-9");
-        assertEquals(1, Iterables.size(foundCompanies));
-        assertEquals(1, companies.iterator().next().getAllContactDetails().size());
-        assertEquals("EN", companies.iterator().next().getAllContactDetails().iterator().next().getLanguage());
-        assertEquals("VALUE", companies.iterator().next().getAllContactDetails().iterator().next().getValue());
-        assertEquals(0, companies.iterator().next().getAllContactDetails().iterator().next().getSource());
-        assertEquals(1, companies.iterator().next().getAllContactDetails().iterator().next().getVersion());
-        assertEquals("0", companies.iterator().next().getAllContactDetails().iterator().next().getType());
-        assertEquals(LocalDate.of(2020, 4, 30),
-                companies.iterator().next().getAllContactDetails().iterator().next().getRegistrationDate().toLocalDate());
-        assertNull(companies.iterator().next().getAllContactDetails().iterator().next().getEndDate());
-        verifySavedStatusInfo(companies.iterator().next().getAllContactDetails().iterator().next().getStatusInfo());
-    }
-
-    @Test
-    public void testSaveLanguage() {
-        Iterable<Company> companies = catalogService.getCompanies("1710128-9");
-        assertEquals(1, Iterables.size(companies));
-        Language language = Language.builder()
-                .name("Finska").language("SE").source(0).version(1)
-                .registrationDate(LocalDateTime.of(2020, 4, 30, 0, 0 ,0))
-                .endDate(null).company(companies.iterator().next()).build();
-        catalogService.saveLanguage(language);
-        Iterable<Company> foundCompanies = catalogService.getCompanies("1710128-9");
-        assertEquals(1, Iterables.size(foundCompanies));
-        assertEquals(1, companies.iterator().next().getAllLanguages().size());
-        assertEquals("SE", companies.iterator().next().getAllLanguages().iterator().next().getLanguage());
-        assertEquals("Finska", companies.iterator().next().getAllLanguages().iterator().next().getName());
-        assertEquals(0, companies.iterator().next().getAllLanguages().iterator().next().getSource());
-        assertEquals(1, companies.iterator().next().getAllLanguages().iterator().next().getVersion());
-        assertEquals(LocalDate.of(2020, 4, 30),
-                companies.iterator().next().getAllLanguages().iterator().next().getRegistrationDate().toLocalDate());
-        assertNull(companies.iterator().next().getAllLanguages().iterator().next().getEndDate());
-        verifySavedStatusInfo(companies.iterator().next().getAllLanguages().iterator().next().getStatusInfo());
-    }
-
-    @Test
-    public void testSaveLiquidation() {
-        Iterable<Company> companies = catalogService.getCompanies("1710128-9");
-        assertEquals(1, Iterables.size(companies));
-        Liquidation liquidation = Liquidation.builder()
-                .name("Liquidation").language("FI").source(0).version(0).type(1)
-                .registrationDate(LocalDateTime.of(2020, 4, 30, 0, 0 ,0))
-                .endDate(null).company(companies.iterator().next()).build();
-        catalogService.saveLiquidation(liquidation);
-        Iterable<Company> foundCompanies = catalogService.getCompanies("1710128-9");
-        assertEquals(1, Iterables.size(foundCompanies));
-        assertEquals(1, companies.iterator().next().getAllLiquidations().size());
-        assertEquals("FI", companies.iterator().next().getAllLiquidations().iterator().next().getLanguage());
-        assertEquals("Liquidation", companies.iterator().next().getAllLiquidations().iterator().next().getName());
-        assertEquals(0, companies.iterator().next().getAllLiquidations().iterator().next().getSource());
-        assertEquals(1, companies.iterator().next().getAllLiquidations().iterator().next().getType());
-        assertEquals(0, companies.iterator().next().getAllLiquidations().iterator().next().getVersion());
-        assertEquals(LocalDate.of(2020, 4, 30),
-                companies.iterator().next().getAllLiquidations().iterator().next().getRegistrationDate().toLocalDate());
-        assertNull(companies.iterator().next().getAllLiquidations().iterator().next().getEndDate());
-        verifySavedStatusInfo(companies.iterator().next().getAllLiquidations().iterator().next().getStatusInfo());
-    }
-
-    @Test
-    public void testSaveRegisteredEntry() {
-        Iterable<Company> companies = catalogService.getCompanies("1710128-9");
-        assertEquals(1, Iterables.size(companies));
-        RegisteredEntry registeredEntry = RegisteredEntry.builder()
-                .status(2).authority(2).register(1).description("Unregistered")
-                .language("EN").registrationDate(LocalDateTime.of(2020, 4, 30, 0, 0 ,0))
-                .endDate(null).company(companies.iterator().next()).build();
-        catalogService.saveRegisteredEntry(registeredEntry);
-        Iterable<Company> foundCompanies = catalogService.getCompanies("1710128-9");
-        assertEquals(1, Iterables.size(foundCompanies));
-        assertEquals(1, companies.iterator().next().getAllRegisteredEntries().size());
-        assertEquals("EN", companies.iterator().next().getAllRegisteredEntries().iterator().next().getLanguage());
-        assertEquals("Unregistered", companies.iterator().next().getAllRegisteredEntries().iterator().next().getDescription());
-        assertEquals(2, companies.iterator().next().getAllRegisteredEntries().iterator().next().getStatus());
-        assertEquals(2, companies.iterator().next().getAllRegisteredEntries().iterator().next().getAuthority());
-        assertEquals(1, companies.iterator().next().getAllRegisteredEntries().iterator().next().getRegister());
-        assertEquals(LocalDate.of(2020, 4, 30),
-                companies.iterator().next().getAllRegisteredEntries().iterator().next().getRegistrationDate().toLocalDate());
-        assertNull(companies.iterator().next().getAllRegisteredEntries().iterator().next().getEndDate());
-        verifySavedStatusInfo(companies.iterator().next().getAllRegisteredEntries().iterator().next().getStatusInfo());
-    }
-
-    @Test
-    public void testSaveRegisteredOffice() {
-        Iterable<Company> companies = catalogService.getCompanies("1710128-9");
-        assertEquals(1, Iterables.size(companies));
-        RegisteredOffice registeredOffice = RegisteredOffice.builder().source(0).ordering(0)
-                .name("Registered Office").version(0).language("FI")
-                .registrationDate(LocalDateTime.of(2020, 4, 30, 0, 0 ,0))
-                .endDate(null).company(companies.iterator().next()).build();
-        catalogService.saveRegisteredOffice(registeredOffice);
-        Iterable<Company> foundCompanies = catalogService.getCompanies("1710128-9");
-        assertEquals(1, Iterables.size(foundCompanies));
-        assertEquals(1, companies.iterator().next().getAllRegisteredOffices().size());
-        assertEquals("FI", companies.iterator().next().getAllRegisteredOffices().iterator().next().getLanguage());
-        assertEquals("Registered Office", companies.iterator().next().getAllRegisteredOffices().iterator().next().getName());
-        assertEquals(0, companies.iterator().next().getAllRegisteredOffices().iterator().next().getSource());
-        assertEquals(0, companies.iterator().next().getAllRegisteredOffices().iterator().next().getOrdering());
-        assertEquals(0, companies.iterator().next().getAllRegisteredOffices().iterator().next().getVersion());
-        assertEquals(LocalDate.of(2020, 4, 30),
-                companies.iterator().next().getAllRegisteredOffices().iterator().next().getRegistrationDate().toLocalDate());
-        assertNull(companies.iterator().next().getAllRegisteredOffices().iterator().next().getEndDate());
-        verifySavedStatusInfo(companies.iterator().next().getAllRegisteredOffices().iterator().next().getStatusInfo());
-    }
-
-    @Test
-    public void testSaveOrganization() {
-        Organization organization = Organization.builder()
-                .organizationType("Municipality")
-                .businessCode("123456789-0")
-                .guid("abcdef123456789")
-                .publishingStatus("Published").build();
-        Organization savedOrganization = catalogService.saveOrganization(organization);
-        assertNotNull(savedOrganization);
-        assertNotNull(savedOrganization.getId());
-        assertEquals("abcdef123456789", savedOrganization.getGuid());
-        assertEquals("123456789-0", savedOrganization.getBusinessCode());
-        verifySavedStatusInfo(savedOrganization.getStatusInfo());
-    }
-
-    @Test
-    public void testSaveOrganizationName() {
-        Optional<Organization> organization = catalogService.getOrganization("abcdef123456");
-        assertEquals(true, organization.isPresent());
-        assertEquals(1, organization.get().getAllOrganizationNames().size());
-        OrganizationName organizationName = OrganizationName.builder()
-                .language("fi").type("Name").value("Vaasa").organization(organization.get()).build();
-        catalogService.saveOrganizationName(organizationName);
-        Optional<Organization> foundOrganization = catalogService.getOrganization("abcdef123456");
-        assertEquals(1, foundOrganization.get().getAllOrganizationNames().size());
-        assertEquals("fi", foundOrganization.get().getAllOrganizationNames().iterator().next().getLanguage());
-        assertEquals("Vaasa", foundOrganization.get().getAllOrganizationNames().iterator().next().getValue());
-        verifySavedStatusInfo(foundOrganization.get().getAllOrganizationNames().iterator().next().getStatusInfo());
-    }
-
-    @Test
-    public void testSaveOrganizationDescription() {
-        Optional<Organization> organization = catalogService.getOrganization("abcdef123456");
-        assertEquals(true, organization.isPresent());
-        assertEquals(1, organization.get().getAllOrganizationNames().size());
-        OrganizationDescription organizationDescription = OrganizationDescription.builder()
-                .language("fi").type("Description").value("Vaasa").organization(organization.get()).build();
-        catalogService.saveOrganizationDescription(organizationDescription);
-        Optional<Organization> foundOrganization = catalogService.getOrganization("abcdef123456");
-        assertEquals(1, foundOrganization.get().getAllOrganizationDescriptions().size());
-        assertEquals("fi", foundOrganization.get().getAllOrganizationDescriptions().iterator().next().getLanguage());
-        assertEquals("Vaasa", foundOrganization.get().getAllOrganizationDescriptions().iterator().next().getValue());
-        verifySavedStatusInfo(foundOrganization.get().getAllOrganizationDescriptions().iterator().next().getStatusInfo());
-    }
-
-    @Test
-    public void testSaveEmail() {
-        Optional<Organization> organization = catalogService.getOrganization("abcdef123456");
-        assertEquals(true, organization.isPresent());
-        assertEquals(1, organization.get().getAllOrganizationNames().size());
-        Email email = Email.builder()
-                .language("fi").description("Asiakaspalvelu").value("vaasa@vaasa.fi").organization(organization.get()).build();
-        catalogService.saveEmail(email);
-        Optional<Organization> foundOrganization = catalogService.getOrganization("abcdef123456");
-        assertEquals(1, foundOrganization.get().getAllEmails().size());
-        assertEquals("fi", foundOrganization.get().getAllEmails().iterator().next().getLanguage());
-        assertEquals("vaasa@vaasa.fi", foundOrganization.get().getAllEmails().iterator().next().getValue());
-        verifySavedStatusInfo(foundOrganization.get().getAllEmails().iterator().next().getStatusInfo());
-    }
-
-    @Test
-    public void testSavePhoneNumber() {
-        Optional<Organization> organization = catalogService.getOrganization("abcdef123456");
-        assertEquals(true, organization.isPresent());
-        assertEquals(1, organization.get().getAllOrganizationNames().size());
-        PhoneNumber phoneNumber = PhoneNumber.builder()
-                .additionalInformation("Puhelinvaihde")
-                .organization(organization.get())
-                .number("62249111")
-                .isFinnishServiceNumber(false)
-                .prefixNumber("+358")
-                .language("FI")
-                .chargeDescription("Chargeable")
-                .serviceChargeType("charge").build();
-        catalogService.savePhoneNumber(phoneNumber);
-        Optional<Organization> foundOrganization = catalogService.getOrganization("abcdef123456");
-        assertEquals(1, foundOrganization.get().getAllPhoneNumbers().size());
-        assertEquals("62249111", foundOrganization.get().getAllPhoneNumbers().iterator().next().getNumber());
-        assertEquals(false, foundOrganization.get().getAllPhoneNumbers().iterator().next().getIsFinnishServiceNumber());
-        verifySavedStatusInfo(foundOrganization.get().getAllPhoneNumbers().iterator().next().getStatusInfo());
-    }
-
-    @Test
-    public void testSaveWebPage() {
-        Optional<Organization> organization = catalogService.getOrganization("abcdef123456");
-        assertEquals(true, organization.isPresent());
-        assertEquals(1, organization.get().getAllOrganizationNames().size());
-        WebPage webPage = WebPage.builder()
-                .language("fi").url("https://www.vaasa.fi/").value("Vaasa").organization(organization.get()).build();
-        catalogService.saveWebPage(webPage);
-        Optional<Organization> foundOrganization = catalogService.getOrganization("abcdef123456");
-        assertEquals(1, foundOrganization.get().getAllWebPages().size());
-        assertEquals("fi", foundOrganization.get().getAllWebPages().iterator().next().getLanguage());
-        assertEquals("https://www.vaasa.fi/", foundOrganization.get().getAllWebPages().iterator().next().getUrl());
-        assertEquals("Vaasa", foundOrganization.get().getAllWebPages().iterator().next().getValue());
-        verifySavedStatusInfo(foundOrganization.get().getAllWebPages().iterator().next().getStatusInfo());
-    }
-
-    @Test
-    public void testSaveAddress() {
-        Optional<Organization> organization = catalogService.getOrganization("abcdef123456");
-        assertEquals(true, organization.isPresent());
-        assertEquals(1, organization.get().getAllOrganizationNames().size());
-        Address address = Address.builder()
-                .country("UK").organization(organization.get()).type("Postal").subType("Street").build();
-        Address savedAddress = catalogService.saveAddress(address);
-        assertNotNull(savedAddress);
-        assertEquals("UK", savedAddress.getCountry());
-        assertEquals("Postal", savedAddress.getType());
-        assertEquals("Street", savedAddress.getSubType());
-        verifySavedStatusInfo(savedAddress.getStatusInfo());
-    }
-
-    @Test
-    public void testSaveStreetAddress() {
-        Optional<Organization> organization = catalogService.getOrganization("abcdef123456");
-        assertEquals(true, organization.isPresent());
-        assertEquals(1, organization.get().getAllAddresses().size());
-        StreetAddress streetAddress = StreetAddress.builder()
-                .postalCode("12345").longitude("23").latitude("59").coordinateState("Ok")
-                .streetNumber("100").address(organization.get().getAllAddresses().iterator().next()).build();
-        StreetAddress savedStreetAddress = catalogService.saveStreetAddress(streetAddress);
-        assertNotNull(savedStreetAddress);
-        assertEquals("12345", savedStreetAddress.getPostalCode());
-        assertEquals("23", savedStreetAddress.getLongitude());
-        assertEquals("59", savedStreetAddress.getLatitude());
-        assertEquals("100", savedStreetAddress.getStreetNumber());
-        verifySavedStatusInfo(savedStreetAddress.getStatusInfo());
-    }
-
-    @Test
-    public void testSaveStreet() {
-        Optional<Organization> organization = catalogService.getOrganization("abcdef123456");
-        assertEquals(true, organization.isPresent());
-        assertEquals(1, organization.get().getAllAddresses().size());
-        assertEquals(1, organization.get().getAllAddresses().iterator().next().getAllStreetAddresses().size());
-        Street street = Street.builder()
-                .streetAddress(organization.get().getAllAddresses().iterator().next().getAllStreetAddresses().iterator().next())
-                .language("fi").value("Motellikuja").build();
-        Street savedStreet = catalogService.saveStreet(street);
-        assertNotNull(savedStreet);
-        assertEquals("fi", savedStreet.getLanguage());
-        assertEquals("Motellikuja", savedStreet.getValue());
-        verifySavedStatusInfo(savedStreet.getStatusInfo());
-    }
-
-    @Test
-    public void testSaveStreetAddressPostOffice() {
-        Optional<Organization> organization = catalogService.getOrganization("abcdef123456");
-        assertEquals(true, organization.isPresent());
-        assertEquals(1, organization.get().getAllAddresses().size());
-        assertEquals(1, organization.get().getAllAddresses().iterator().next().getAllStreetAddresses().size());
-        StreetAddressPostOffice streetAddressPostOffice = StreetAddressPostOffice.builder()
-                .streetAddress(organization.get().getAllAddresses().iterator().next().getAllStreetAddresses().iterator().next())
-                .language("fi").value("NIVALA").build();
-        StreetAddressPostOffice savedStreetAddressPostOffice = catalogService.saveStreetAddressPostOffice(streetAddressPostOffice);
-        assertNotNull(savedStreetAddressPostOffice);
-        assertEquals("fi", savedStreetAddressPostOffice.getLanguage());
-        assertEquals("NIVALA", savedStreetAddressPostOffice.getValue());
-        verifySavedStatusInfo(savedStreetAddressPostOffice.getStatusInfo());
-    }
-
-    @Test
-    public void testSaveStreetAddressAdditionalInformation() {
-        Optional<Organization> organization = catalogService.getOrganization("abcdef123456");
-        assertEquals(true, organization.isPresent());
-        assertEquals(1, organization.get().getAllAddresses().size());
-        assertEquals(1, organization.get().getAllAddresses().iterator().next().getAllStreetAddresses().size());
-        StreetAddressAdditionalInformation addressAdditionalInformation = StreetAddressAdditionalInformation.builder()
-                .streetAddress(organization.get().getAllAddresses().iterator().next().getAllStreetAddresses().iterator().next())
-                .language("fi").value("Kaupungintalo/kaupunginjohtaja").build();
-        StreetAddressAdditionalInformation savedStreetAddressAdditionalInformation =
-                catalogService.saveStreetAddressAdditionalInformation(addressAdditionalInformation);
-        assertNotNull(savedStreetAddressAdditionalInformation);
-        assertEquals("fi", savedStreetAddressAdditionalInformation.getLanguage());
-        assertEquals("Kaupungintalo/kaupunginjohtaja", savedStreetAddressAdditionalInformation.getValue());
-        verifySavedStatusInfo(savedStreetAddressAdditionalInformation.getStatusInfo());
-    }
-
-    @Test
-    public void testSaveStreetAddressMunicipality() {
-        Optional<Organization> organization = catalogService.getOrganization("abcdef123456");
-        assertEquals(true, organization.isPresent());
-        assertEquals(1, organization.get().getAllAddresses().size());
-        assertEquals(1, organization.get().getAllAddresses().iterator().next().getAllStreetAddresses().size());
-        StreetAddressMunicipality streetAddressMunicipality = StreetAddressMunicipality.builder()
-                .streetAddress(organization.get().getAllAddresses().iterator().next().getAllStreetAddresses().iterator().next())
-                .code("999").build();
-        StreetAddressMunicipality savedStreetAddressMunicipality = catalogService.saveStreetAddressMunicipality(streetAddressMunicipality);
-        assertNotNull(savedStreetAddressMunicipality);
-        assertEquals("999", savedStreetAddressMunicipality.getCode());
-        verifySavedStatusInfo(savedStreetAddressMunicipality.getStatusInfo());
-    }
-
-    @Test
-    public void testSaveStreetAddressMunicipalityName() {
-        Optional<Organization> organization = catalogService.getOrganization("abcdef123456");
-        assertEquals(true, organization.isPresent());
-        assertEquals(1, organization.get().getAllAddresses().size());
-        assertEquals(1, organization.get().getAllAddresses().iterator().next().getAllStreetAddresses().size());
-        StreetAddressMunicipalityName streetAddressMunicipalityName = StreetAddressMunicipalityName.builder()
-                .streetAddressMunicipality(organization.get().getAllAddresses().iterator().next().getAllStreetAddresses()
-                        .iterator().next().getAllMunicipalities().iterator().next())
-                .language("fi").value("Nivala").build();
-        StreetAddressMunicipalityName savedStreetAddressMunicipalityName =
-                catalogService.saveStreetAddressMunicipalityName(streetAddressMunicipalityName);
-        assertNotNull(savedStreetAddressMunicipalityName);
-        assertEquals("fi", savedStreetAddressMunicipalityName.getLanguage());
-        assertEquals("Nivala", savedStreetAddressMunicipalityName.getValue());
-        verifySavedStatusInfo(savedStreetAddressMunicipalityName.getStatusInfo());
-    }
-
-    @Test
-    public void testSavePostOfficeBoxAddress() {
-        Optional<Organization> organization = catalogService.getOrganization("abcdef123456");
-        assertEquals(true, organization.isPresent());
-        assertEquals(1, organization.get().getAllAddresses().size());
-        PostOfficeBoxAddress postOfficeBoxAddress = PostOfficeBoxAddress.builder()
-                .postalCode("9876").address(organization.get().getAllAddresses().iterator().next()).build();
-        PostOfficeBoxAddress savedPostOfficeBoxAddress = catalogService.savePostOfficeBoxAddress(postOfficeBoxAddress);
-        assertNotNull(savedPostOfficeBoxAddress);
-        assertEquals("9876", savedPostOfficeBoxAddress.getPostalCode());
-        verifySavedStatusInfo(savedPostOfficeBoxAddress.getStatusInfo());
-    }
-
-    @Test
-    public void testSavePostOffice() {
-        Optional<Organization> organization = catalogService.getOrganization("abcdef123456");
-        assertEquals(true, organization.isPresent());
-        assertEquals(1, organization.get().getAllAddresses().size());
-        assertEquals(1, organization.get().getAllAddresses().iterator().next().getAllPostOfficeBoxAddresses().size());
-        PostOffice postOffice = PostOffice.builder()
-                .postOfficeBoxAddress(organization.get().getAllAddresses().iterator().next().getAllPostOfficeBoxAddresses().iterator().next())
-                .language("FI").value("Posti").build();
-        PostOffice savedPostOffice = catalogService.savePostOffice(postOffice);
-        assertNotNull(savedPostOffice);
-        assertEquals("FI", savedPostOffice.getLanguage());
-        assertEquals("Posti", savedPostOffice.getValue());
-        verifySavedStatusInfo(savedPostOffice.getStatusInfo());
-    }
-
-    @Test
-    public void testSavePostOfficeBox() {
-        Optional<Organization> organization = catalogService.getOrganization("abcdef123456");
-        assertEquals(true, organization.isPresent());
-        assertEquals(1, organization.get().getAllAddresses().size());
-        assertEquals(1, organization.get().getAllAddresses().iterator().next().getAllPostOfficeBoxAddresses().size());
-        PostOfficeBox postOfficeBox = PostOfficeBox.builder()
-                .postOfficeBoxAddress(organization.get().getAllAddresses().iterator().next().getAllPostOfficeBoxAddresses().iterator().next())
-                .language("FI").value("NIVALA").build();
-        PostOfficeBox savedPostOfficeBox = catalogService.savePostOfficeBox(postOfficeBox);
-        assertNotNull(savedPostOfficeBox);
-        assertEquals("FI", savedPostOfficeBox.getLanguage());
-        assertEquals("NIVALA", savedPostOfficeBox.getValue());
-        verifySavedStatusInfo(savedPostOfficeBox.getStatusInfo());
-    }
-
-    @Test
-    public void testSavePostOfficeBoxAddressAdditionalInformation() {
-        Optional<Organization> organization = catalogService.getOrganization("abcdef123456");
-        assertEquals(true, organization.isPresent());
-        assertEquals(1, organization.get().getAllAddresses().size());
-        assertEquals(1, organization.get().getAllAddresses().iterator().next().getAllPostOfficeBoxAddresses().size());
-        PostOfficeBoxAddressAdditionalInformation addressAdditionalInformation = PostOfficeBoxAddressAdditionalInformation.builder()
-                .postOfficeBoxAddress(organization.get().getAllAddresses().iterator().next().getAllPostOfficeBoxAddresses().iterator().next())
-                .language("fi").value("Kaupungintalo/kaupunginjohtaja").build();
-        PostOfficeBoxAddressAdditionalInformation savedAdditionalInformation =
-                catalogService.savePostOfficeBoxAddressAdditionalInformation(addressAdditionalInformation);
-        assertNotNull(savedAdditionalInformation);
-        assertEquals("fi", savedAdditionalInformation.getLanguage());
-        assertEquals("Kaupungintalo/kaupunginjohtaja", savedAdditionalInformation.getValue());
-        verifySavedStatusInfo(savedAdditionalInformation.getStatusInfo());
-    }
-
-    @Test
-    public void testSavePostOfficeBoxAddressMunicipality() {
-        Optional<Organization> organization = catalogService.getOrganization("abcdef123456");
-        assertEquals(true, organization.isPresent());
-        assertEquals(1, organization.get().getAllAddresses().size());
-        assertEquals(1, organization.get().getAllAddresses().iterator().next().getAllStreetAddresses().size());
-        PostOfficeBoxAddressMunicipality postOfficeBoxAddressMunicipality = PostOfficeBoxAddressMunicipality.builder()
-                .postOfficeBoxAddress(organization.get().getAllAddresses().iterator().next().getAllPostOfficeBoxAddresses().iterator().next())
-                .code("222").build();
-        PostOfficeBoxAddressMunicipality savedPostOfficeBoxAddressMunicipality =
-                catalogService.savePostOfficeBoxAddressMunicipality(postOfficeBoxAddressMunicipality);
-        assertNotNull(savedPostOfficeBoxAddressMunicipality);
-        assertEquals("222", savedPostOfficeBoxAddressMunicipality.getCode());
-        verifySavedStatusInfo(savedPostOfficeBoxAddressMunicipality.getStatusInfo());
-    }
-
-    @Test
-    public void testSavePostOfficeBoxMunicipalityName() {
-        Optional<Organization> organization = catalogService.getOrganization("abcdef123456");
-        assertEquals(true, organization.isPresent());
-        assertEquals(1, organization.get().getAllAddresses().size());
-        assertEquals(1, organization.get().getAllAddresses().iterator().next().getAllPostOfficeBoxAddresses().size());
-        PostOfficeBoxAddressMunicipalityName postOfficeBoxAddressMunicipalityName = PostOfficeBoxAddressMunicipalityName.builder()
-                .postOfficeBoxAddressMunicipality(organization.get().getAllAddresses().iterator().next().getAllPostOfficeBoxAddresses()
-                        .iterator().next().getAllMunicipalities().iterator().next())
-                .language("fi").value("Nivala").build();
-        PostOfficeBoxAddressMunicipalityName savedPostOfficeBoxMunicipalityName =
-                catalogService.savePostOfficeBoxAddressMunicipalityName(postOfficeBoxAddressMunicipalityName);
-        assertNotNull(savedPostOfficeBoxMunicipalityName);
-        assertEquals("fi", savedPostOfficeBoxMunicipalityName.getLanguage());
-        assertEquals("Nivala", savedPostOfficeBoxMunicipalityName.getValue());
-        verifySavedStatusInfo(savedPostOfficeBoxMunicipalityName.getStatusInfo());
-    }
-
-    @Test
     public void testEntityTreesFetchedCorrectly() throws InterruptedException {
         assertEntityTreeFetchedCorrectly(catalogService.getAllMembers());
         assertEntityTreeFetchedCorrectly(catalogService.getActiveMembers());
         LocalDateTime modifiedSince1800 = LocalDateTime.of(1800, 1, 1, 0, 0);
-        assertEntityTreeFetchedCorrectly(catalogService.getAllMembers(modifiedSince1800));
-        assertEntityTreeFetchedCorrectly(catalogService.getActiveMembers(modifiedSince1800));
+        LocalDateTime endDate = LocalDateTime.of(2022, Month.JANUARY, 1, 0, 0, 0);
+        assertEntityTreeFetchedCorrectly(catalogService.getAllMembers(modifiedSince1800, endDate));
+        assertEntityTreeFetchedCorrectly(catalogService.getActiveMembers(modifiedSince1800, endDate));
     }
 
     private void assertEntityTreeFetchedCorrectly(Iterable<Member> members) {
@@ -1019,7 +288,9 @@ public class CatalogServiceTest {
     @Test
     public void testGetActiveMembersSince() {
         // all non-deleted members that contain parts that were modified since 1.1.2007 (3-7)
-        Iterable<Member> members = catalogService.getActiveMembers(testUtil.createDate(1, 1, 2017));
+        Iterable<Member> members = catalogService.getActiveMembers(
+                testUtil.createDate(1, 1, 2017),
+                testUtil.createDate(1, 1, 2022));
         log.info("found members: " + testUtil.getIds(members));
         assertEquals(Arrays.asList(3L, 4L, 5L, 6L, 7L),
                 new ArrayList<>(testUtil.getIds(members)));
@@ -1028,7 +299,9 @@ public class CatalogServiceTest {
     @Test
     public void testGetAllMembersSince() {
         // all members that contain parts that were modified since 1.1.2007 (3-8)
-        Iterable<Member> members = catalogService.getAllMembers(testUtil.createDate(1, 1, 2017));
+        Iterable<Member> members = catalogService.getAllMembers(
+                testUtil.createDate(1, 1, 2017),
+                testUtil.createDate(1, 1, 2022));
         log.info("found members: " + testUtil.getIds(members));
         assertEquals(Arrays.asList(3L, 4L, 5L, 6L, 7L, 8L),
                 new ArrayList<Long>(testUtil.getIds(members)));
@@ -1284,6 +557,7 @@ public class CatalogServiceTest {
         Service originalService = originalWsdl.getService();
         ServiceId originalServiceId = originalWsdl.getService().createKey();
         SubsystemId originalSubsystemId = originalWsdl.getService().getSubsystem().createKey();
+        assertEquals("SubsystemId(subsystemCode=subsystem_7-1)", originalSubsystemId.toString());
         // detach, so we dont modify those objects in the next steps
         testUtil.entityManagerClear();
 
@@ -1378,8 +652,10 @@ public class CatalogServiceTest {
         // detach, so we dont modify those objects in the next steps
         testUtil.entityManagerClear();
 
-        Wsdl newWsdl = new Wsdl();
         final String data = "<testwsdl/>";
+        Wsdl newWsdl = new Wsdl(oldService, data, "1");
+        newWsdl.initializeExternalId();
+        assertNotNull(newWsdl.getExternalId());
         catalogService.saveWsdl(originalSubsystemId, originalServiceId, data);
         testUtil.entityManagerFlush();
         testUtil.entityManagerClear();
@@ -1387,6 +663,7 @@ public class CatalogServiceTest {
         Service checkedService = serviceRepository.findOne(3L);
         Wsdl checkedWsdl = checkedService.getWsdl();
         log.info("externalId [{}]", checkedWsdl.getExternalId());
+        assertTrue(checkedService.hasWsdl());
         assertNotNull(checkedWsdl.getExternalId());
         assertEquals(data, checkedWsdl.getData());
         assertEquals(checkedWsdl.getService().createKey(), originalServiceId);
@@ -1406,8 +683,14 @@ public class CatalogServiceTest {
         // detach, so we dont modify those objects in the next steps
         testUtil.entityManagerClear();
 
-        OpenApi newOpenApi = new OpenApi();
+        Service aService = new Service(oldService.getSubsystem(), "code", "version");
         final String data = "<testopenapi/>";
+        OpenApi newOpenApi = new OpenApi(aService, data, "1");
+        newOpenApi.initializeExternalId();
+        assertNotNull(newOpenApi.getExternalId());
+        aService.setOpenApi(newOpenApi);
+        assertTrue(aService.hasOpenApi());
+
         catalogService.saveOpenApi(originalSubsystemId, originalServiceId, data);
         testUtil.entityManagerFlush();
         testUtil.entityManagerClear();
@@ -1417,6 +700,7 @@ public class CatalogServiceTest {
         log.info("externalId [{}]", checkedOpenApi.getExternalId());
         assertNotNull(checkedOpenApi.getExternalId());
         assertEquals(data, checkedOpenApi.getData());
+        assertTrue(checkedService.hasOpenApi());
         assertEquals(checkedOpenApi.getService().createKey(), originalServiceId);
         assertNotNull(checkedOpenApi.getStatusInfo().getCreated());
         assertNotNull(checkedOpenApi.getStatusInfo().getChanged());
@@ -1529,10 +813,28 @@ public class CatalogServiceTest {
         assertEquals(2017, lastCollectionData.getWsdlsLastFetched().getYear());
     }
 
-    private void verifySavedStatusInfo(StatusInfo statusInfo) {
-        assertNotNull(statusInfo.getCreated());
-        assertNotNull(statusInfo.getChanged());
-        assertNotNull(statusInfo.getFetched());
-        assertNull(statusInfo.getRemoved());
+    @Test
+    public void testGetServiceStatistics() throws JSONException {
+        LocalDateTime startDateTime = LocalDateTime.of(2014, 1, 1, 0, 0);
+        LocalDateTime endDateTime = LocalDateTime.of(2022, 1, 1, 0, 0);
+        List<ServiceStatistics> serviceStatistics = catalogService.getServiceStatistics(startDateTime, endDateTime);
+        assertEquals(2923, serviceStatistics.size());
     }
+
+    @Test
+    public void testGetDistinctServiceStatistics() throws JSONException {
+        LocalDateTime startDateTime = LocalDateTime.of(2014, 1, 1, 0, 0);
+        LocalDateTime endDateTime = LocalDateTime.of(2022, 1, 1, 0, 0);
+        List<DistinctServiceStatistics> distinctServiceStatistics = catalogService.getDistinctServiceStatistics(startDateTime, endDateTime);
+        assertEquals(2923, distinctServiceStatistics.size());
+    }
+
+    @Test
+    public void testGetMemberData() throws JSONException {
+        LocalDateTime startDateTime = LocalDateTime.of(2014, 1, 1, 0, 0);
+        LocalDateTime endDateTime = LocalDateTime.of(2022, 1, 1, 0, 0);
+        List<MemberDataList> members = catalogService.getMemberData(startDateTime, endDateTime);
+        assertEquals(2923, members.size());
+    }
+
 }

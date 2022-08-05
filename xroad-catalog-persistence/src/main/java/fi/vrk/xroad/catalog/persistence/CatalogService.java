@@ -26,13 +26,12 @@ import fi.vrk.xroad.catalog.persistence.dto.LastCollectionData;
 import fi.vrk.xroad.catalog.persistence.dto.DistinctServiceStatistics;
 import fi.vrk.xroad.catalog.persistence.dto.MemberDataList;
 import fi.vrk.xroad.catalog.persistence.dto.ServiceStatistics;
+import fi.vrk.xroad.catalog.persistence.dto.XRoadData;
 import fi.vrk.xroad.catalog.persistence.entity.*;
 import org.springframework.data.domain.Page;
-
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
-import java.util.Optional;
 
 /**
  * CRUD methods for catalog objects. no business logic (e.g. hash calculation),
@@ -48,12 +47,14 @@ public interface CatalogService {
      * Gets all non-removed members, regardless of when they were changed.
      * Fetches all data from graph member->subsystem->service.
      * Does NOT fetch wsdl.
+     * @return Iterable of Member entities
      */
     Iterable<Member> getActiveMembers();
 
     /**
      * Same as {@link #getActiveMembers()} except that returns also
      * removed items
+     * @return Iterable of Member entities
      */
     Iterable<Member> getAllMembers();
 
@@ -61,29 +62,19 @@ public interface CatalogService {
      * Gets all non-removed members that have been changed (created) after given time.
      * Change is determined by field "changed".
      * Fetches all data from graph member->subsystem->service->wsdl.
-     * @param changedAfter Only interested in member after this
+     * @param startDateTime Only interested in member after this
+     * @param endDateTime Only interested in member before this
      * @return Iterable of Member entities
      */
-    Iterable<Member> getActiveMembers(LocalDateTime changedAfter);
+    Iterable<Member> getActiveMembers(LocalDateTime startDateTime, LocalDateTime endDateTime);
 
     /**
-     * Same as {@link #getActiveMembers(LocalDateTime)} except that returns also removed items
-     * @param changedAfter Only interested in member after this
+     * Same as {@link #getActiveMembers(LocalDateTime, LocalDateTime)} except that returns also removed items
+     * @param startDateTime Only interested in member after this
+     * @param endDateTime Only interested in member before this
      * @return Iterable of Member entities
      */
-    Iterable<Member> getAllMembers(LocalDateTime changedAfter);
-
-    /**
-     * @param businessCode Only interested in organizations with this businessCode value
-     * @return Iterable of Organization entities
-     */
-    Iterable<Organization> getOrganizations(String businessCode);
-
-    /**
-     * @param businessId Only interested in companies with this businessId value
-     * @return Iterable of Company entities
-     */
-    Iterable<Company> getCompanies(String businessId);
+    Iterable<Member> getAllMembers(LocalDateTime startDateTime, LocalDateTime endDateTime);
 
     /**
      * Returns full Member object
@@ -96,6 +87,7 @@ public interface CatalogService {
 
     /**
      * Returns the full Wsdl object. Only returns active ones, removed are not found.
+     * @param externalId id of a Wsdl
      * @return Wsdl, if any, null if not found
      * @throws RuntimeException if multiple matches found.
      */
@@ -103,6 +95,7 @@ public interface CatalogService {
 
     /**
      * Returns the full OpenApi object. Only returns active ones, removed are not found.
+     * @param externalId id of an OpenAPI
      * @return Wsdl, if any, null if not found
      * @throws RuntimeException if multiple matches found.
      */
@@ -110,6 +103,12 @@ public interface CatalogService {
 
     /**
      * Returns the full Service object. Only returns active ones, removed are not found.
+     * @param xRoadInstance X-Road instance identifier
+     * @param memberClass X-Road member class
+     * @param memberCode X-Road member code
+     * @param serviceCode X-Road service code
+     * @param subsystemCode X-Road subsystem code
+     * @param serviceVersion X-Road service version
      * @return Service, if any, null if not found
      * @throws RuntimeException if multiple matches found.
      */
@@ -122,46 +121,49 @@ public interface CatalogService {
 
     /**
      * Returns a list of error logs with pagination
+     * @param xRoadData X-Road instance identifier, member class, member code and subsystem code
+     * @param page page number of pageable result of error logs
+     * @param limit number of results per page
+     * @param startDate creation date from
+     * @param endDate creation date to
      * @return Page of ErrorLog, null if not found
      */
-    Page<ErrorLog> getErrors(String xRoadInstance,
-                             String memberClass,
-                             String memberCode,
-                             String subsystemCode,
-                             Long historyAmountInDays,
+    Page<ErrorLog> getErrors(XRoadData xRoadData,
                              int page,
-                             int limit);
+                             int limit,
+                             LocalDateTime startDate,
+                             LocalDateTime endDate);
 
     /**
      * Returns a list of service statistics
+     * @param startDateTime creation date from
+     * @param endDateTime creation date to
      * @return List of ServiceStatistics, null if not found
      */
-    List<ServiceStatistics> getServiceStatistics(Long historyInDays);
+    List<ServiceStatistics> getServiceStatistics(LocalDateTime startDateTime, LocalDateTime endDateTime);
 
     /**
      * Returns a list of distinct service statistics
      * @return List of DistinctServiceStatistics, null if not found
      */
-    List<DistinctServiceStatistics> getDistinctServiceStatistics(Long historyInDays);
+    List<DistinctServiceStatistics> getDistinctServiceStatistics(LocalDateTime startDateTime, LocalDateTime endDateTime);
 
     /**
      * Returns a list of memberDataLists
+     * @param startDateTime creation date from
+     * @param endDateTime creation date to
      * @return List of memberDataLists, null if not found
      */
-    List<MemberDataList> getMemberData(Long historyInDays);
-
-    /**
-     * Returns the full Organization object.
-     * @return Organization, if any
-     */
-    Optional<Organization> getOrganization(String guid);
+    List<MemberDataList> getMemberData(LocalDateTime startDateTime, LocalDateTime endDateTime);
 
     /**
      * Returns the full ErrorLog object.
+     * @param startDateTime creation date from
+     * @param endDateTime creation date to
      * @return ErrorLog, if any, null if not found
      * @throws RuntimeException if multiple matches found.
      */
-    Iterable<ErrorLog> getErrorLog(LocalDateTime since);
+    Iterable<ErrorLog> getErrorLog(LocalDateTime startDateTime, LocalDateTime endDateTime);
 
     /**
      * Stores given members and subsystems. This should be the full dataset of both items
@@ -208,147 +210,6 @@ public interface CatalogService {
     void saveOpenApi(SubsystemId subsystemId, ServiceId serviceId, String openApi);
 
     /**
-     * Saves given organization data. The organization can either be a new one, or an update to an existing one.
-     * Updates "changed" field based on whether data is different compared to last time.
-     * @return saved organization
-     * @param organization the actual organization
-     */
-    Organization saveOrganization(Organization organization);
-
-    /**
-     * Saves given organizationName data.
-     * @param organizationName the organizationName
-     */
-    void saveOrganizationName(OrganizationName organizationName);
-
-    /**
-     * Saves given organizationDescription data.
-     * @param organizationDescription the organizationDescription
-     */
-    void saveOrganizationDescription(OrganizationDescription organizationDescription);
-
-    /**
-     * Saves given email data.
-     * @param email the actual email
-     */
-    void saveEmail(Email email);
-
-    /**
-     * Saves given phoneNumber data.
-     * @param phoneNumber the actual phoneNumber
-     */
-    void savePhoneNumber(PhoneNumber phoneNumber);
-
-    /**
-     * Saves given webPage data.
-     * @param webPage the actual webPage
-     */
-    void saveWebPage(WebPage webPage);
-
-    /**
-     * Saves given address data.
-     * @return saved Address
-     * @param address the actual address
-     */
-    Address saveAddress(Address address);
-
-    /**
-     * Saves given StreetAddress data.
-     * @return saved StreetAddress
-     * @param streetAddress the actual StreetAddress
-     */
-    StreetAddress saveStreetAddress(StreetAddress streetAddress);
-
-    /**
-     * Saves given PostOfficeBoxAddress data.
-     * @return saved PostOfficeBoxAddress
-     * @param postOfficeBoxAddress the actual PostOfficeBoxAddress
-     */
-    PostOfficeBoxAddress savePostOfficeBoxAddress(PostOfficeBoxAddress postOfficeBoxAddress);
-
-    /**
-     * Saves given StreetAddressMunicipality data.
-     * @return saved StreetAddressMunicipality
-     * @param streetAddressMunicipality the actual StreetAddressMunicipality
-     */
-    StreetAddressMunicipality saveStreetAddressMunicipality(StreetAddressMunicipality streetAddressMunicipality);
-
-    /**
-     * Saves given PostOfficeBoxAddressMunicipality data.
-     * @return saved PostOfficeBoxAddressMunicipality
-     * @param postOfficeBoxAddressMunicipality the actual PostOfficeBoxAddressMunicipality
-     */
-    PostOfficeBoxAddressMunicipality savePostOfficeBoxAddressMunicipality(PostOfficeBoxAddressMunicipality postOfficeBoxAddressMunicipality);
-
-
-    /**
-     * Saves given StreetAddressMunicipalityName data.
-     * @return saved StreetAddressMunicipalityName
-     * @param streetAddressMunicipalityName the actual StreetAddressMunicipalityName
-     */
-    StreetAddressMunicipalityName saveStreetAddressMunicipalityName(StreetAddressMunicipalityName streetAddressMunicipalityName);
-
-    /**
-     * Saves given PostOfficeBoxAddressMunicipalityName data.
-     * @return saved PostOfficeBoxAddressMunicipalityName
-     * @param postOfficeBoxAddressMunicipalityName the actual PostOfficeBoxAddressMunicipalityName
-     */
-    PostOfficeBoxAddressMunicipalityName savePostOfficeBoxAddressMunicipalityName(
-            PostOfficeBoxAddressMunicipalityName postOfficeBoxAddressMunicipalityName);
-
-    /**
-     * Saves given StreetAddressAdditionalInformation data.
-     * @return saved StreetAddressAdditionalInformation
-     * @param streetAddressAdditionalInformation the actual StreetAddressAdditionalInformation
-     */
-    StreetAddressAdditionalInformation saveStreetAddressAdditionalInformation(
-            StreetAddressAdditionalInformation streetAddressAdditionalInformation);
-
-    /**
-     * Saves given PostOfficeBoxAddressAdditionalInformation data.
-     * @return saved PostOfficeBoxAddressAdditionalInformation
-     * @param postOfficeBoxAddressAdditionalInformation the actual PostOfficeBoxAddressAdditionalInformation
-     */
-    PostOfficeBoxAddressAdditionalInformation savePostOfficeBoxAddressAdditionalInformation(
-            PostOfficeBoxAddressAdditionalInformation postOfficeBoxAddressAdditionalInformation);
-
-    /**
-     * Saves given StreetAddressPostOffice data.
-     * @return saved StreetAddressPostOffice
-     * @param streetAddressPostOffice the actual StreetAddressPostOffice
-     */
-    StreetAddressPostOffice saveStreetAddressPostOffice(StreetAddressPostOffice streetAddressPostOffice);
-
-    /**
-     * Saves given PostOffice data.
-     * @return saved PostOffice
-     * @param postOffice the actual PostOffice
-     */
-    PostOffice savePostOffice(PostOffice postOffice);
-
-    /**
-     * Saves given PostOfficeBox data.
-     * @return saved PostOfficeBox
-     * @param postOfficeBox the actual PostOfficeBox
-     */
-    PostOfficeBox savePostOfficeBox(PostOfficeBox postOfficeBox);
-
-    /**
-     * Saves given Street data.
-     * @return saved Street
-     * @param street the actual Street
-     */
-    Street saveStreet(Street street);
-
-    /**
-     * Saves given company data. The company can either be a new one, or an update to an existing one.
-     * Updates "changed" field based on whether data is different compared to last time.
-     * @return saved company
-     * @param company the actual company
-     */
-    Company saveCompany(Company company);
-
-    /**
      * Checks if database is alive
      * @return databaseConnection
      */
@@ -361,74 +222,9 @@ public interface CatalogService {
     LastCollectionData getLastCollectionData();
 
     /**
-     * Saves given BusinessName data.
-     * @param businessName the BusinessName
-     */
-    void saveBusinessName(BusinessName businessName);
-
-    /**
-     * Saves given BusinessAuxiliaryName data.
-     * @param businessAuxiliaryName the BusinessAuxiliaryName
-     */
-    void saveBusinessAuxiliaryName(BusinessAuxiliaryName businessAuxiliaryName);
-
-    /**
-     * Saves given BusinessAddress data.
-     * @param businessAddress the BusinessAddress
-     */
-    void saveBusinessAddress(BusinessAddress businessAddress);
-
-    /**
-     * Saves given BusinessIdChange data.
-     * @param businessIdChange the BusinessIdChange
-     */
-    void saveBusinessIdChange(BusinessIdChange businessIdChange);
-
-    /**
-     * Saves given BusinessLine data.
-     * @param businessLine the BusinessLine
-     */
-    void saveBusinessLine(BusinessLine businessLine);
-
-    /**
-     * Saves given CompanyForm data.
-     * @param companyForm the CompanyForm
-     */
-    void saveCompanyForm(CompanyForm companyForm);
-
-    /**
-     * Saves given ContactDetail data.
-     * @param contactDetail the ContactDetail
-     */
-    void saveContactDetail(ContactDetail contactDetail);
-
-    /**
-     * Saves given Language data.
-     * @param language the Language
-     */
-    void saveLanguage(Language language);
-
-    /**
-     * Saves given Liquidation data.
-     * @param liquidation the Liquidation
-     */
-    void saveLiquidation(Liquidation liquidation);
-
-    /**
-     * Saves given RegisteredEntry data.
-     * @param registeredEntry the RegisteredEntry
-     */
-    void saveRegisteredEntry(RegisteredEntry registeredEntry);
-
-    /**
-     * Saves given RegisteredOffice data.
-     * @param registeredOffice the RegisteredOffice
-     */
-    void saveRegisteredOffice(RegisteredOffice registeredOffice);
-
-    /**
      * Saves given errorLog data.
      * @param errorLog the actual errorLog
+     @return error log
      */
     ErrorLog saveErrorLog(ErrorLog errorLog);
 

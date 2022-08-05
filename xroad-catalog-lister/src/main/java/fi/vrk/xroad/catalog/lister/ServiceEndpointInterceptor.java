@@ -28,16 +28,11 @@ import org.springframework.ws.soap.SoapHeader;
 import org.springframework.ws.soap.SoapHeaderElement;
 import org.springframework.ws.soap.SoapMessage;
 import org.springframework.ws.soap.server.SoapEndpointInterceptor;
-
 import javax.xml.soap.SOAPException;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import java.util.Iterator;
-
-/**
- * Endpoint interceptor that
- */
 
 public class ServiceEndpointInterceptor implements SoapEndpointInterceptor {
 

@@ -28,25 +28,20 @@ import fi.vrk.xroad.catalog.collector.wsimport.XRoadServiceIdentifierType;
 import fi.vrk.xroad.catalog.persistence.CatalogService;
 import fi.vrk.xroad.catalog.persistence.entity.ServiceId;
 import fi.vrk.xroad.catalog.persistence.entity.SubsystemId;
-
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
-
 import java.net.URL;
 import java.util.concurrent.atomic.AtomicInteger;
 
-/**
- * Actor which fetches one wsdl
- */
 @Component
 @Scope("prototype")
 @Slf4j
 public class FetchWsdlActor extends XRoadCatalogActor {
 
-    private static AtomicInteger COUNTER = new AtomicInteger(0);
+    private static AtomicInteger wsdlCounter = new AtomicInteger(0);
 
     @Value("${xroad-catalog.xroad-instance}")
     private String xroadInstance;
@@ -79,7 +74,7 @@ public class FetchWsdlActor extends XRoadCatalogActor {
     protected boolean handleMessage(Object message) {
         if (message instanceof XRoadServiceIdentifierType) {
             XRoadServiceIdentifierType service = (XRoadServiceIdentifierType) message;
-            log.info("Fetching wsdl [{}] {}", COUNTER.addAndGet(1), ClientTypeUtil.toString(service));
+            log.info("Fetching wsdl [{}] {}", wsdlCounter.addAndGet(1), ClientTypeUtil.toString(service));
             String wsdl = xroadClient.getWsdl(service, catalogService);
             catalogService.saveWsdl(createSubsystemId(service), createServiceId(service), wsdl);
             log.info("Saved wsdl successfully");

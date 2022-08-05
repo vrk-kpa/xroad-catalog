@@ -13,7 +13,7 @@ CMD="-ba"
 
 rm -rf ${ROOT}/RPMS/*
 
-app_version=1.4.1
+app_version=2.0.0
 
 rpmbuild \
     --define "xroad_catalog_version $app_version" \

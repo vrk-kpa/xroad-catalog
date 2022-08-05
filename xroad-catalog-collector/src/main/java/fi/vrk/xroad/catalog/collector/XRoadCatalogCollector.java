@@ -24,7 +24,6 @@ package fi.vrk.xroad.catalog.collector;
 
 import fi.vrk.xroad.catalog.collector.actors.Supervisor;
 import fi.vrk.xroad.catalog.collector.extension.SpringExtension;
-
 import akka.actor.ActorRef;
 import akka.actor.ActorSystem;
 import akka.event.Logging;
@@ -37,13 +36,8 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
 import scala.concurrent.duration.Duration;
-
 import java.util.concurrent.TimeUnit;
 
-/**
- * Main collector application.
- * Initiates a supervisor
- */
 @Slf4j
 @Configuration
 @EnableAutoConfiguration

@@ -23,7 +23,6 @@
 package fi.vrk.xroad.catalog.collector.util;
 
 import fi.vrk.xroad.catalog.collector.wsimport.*;
-
 import fi.vrk.xroad.catalog.persistence.CatalogService;
 import fi.vrk.xroad.catalog.persistence.entity.ErrorLog;
 import lombok.extern.slf4j.Slf4j;
@@ -32,23 +31,19 @@ import org.apache.cxf.frontend.ClientProxy;
 import org.apache.cxf.message.Attachment;
 import org.apache.cxf.message.Message;
 import org.apache.cxf.transport.http.HTTPConduit;
-
 import javax.activation.DataHandler;
 import javax.xml.ws.BindingProvider;
 import javax.xml.ws.Holder;
-
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 
-/**
- * WS client
- */
 @Slf4j
 public class XRoadClient {
 
@@ -103,7 +98,7 @@ public class XRoadClient {
                     .build();
             catalogService.saveErrorLog(errorLog);
         }
-        return response.getService();
+        return response != null ? response.getService() : new ArrayList<>();
     }
 
     public String getWsdl(XRoadServiceIdentifierType service, CatalogService catalogService) {
@@ -183,9 +178,12 @@ public class XRoadClient {
                 catalogService.saveErrorLog(errorLog);
             }
             try (ByteArrayOutputStream buf = new ByteArrayOutputStream()) {
+                if (dh == null) {
+                    throw new IOException("Unable to extract attachment from response context.");
+                }
                 dh.writeTo(buf);
                 return buf.toString(StandardCharsets.UTF_8.name());
-            } catch (IOException e) {
+            } catch (IOException|NullPointerException e) {
                 log.error("Error downloading WSDL: ", e.getMessage());
                 ErrorLog errorLog = ErrorLog.builder()
                         .created(LocalDateTime.now())
@@ -244,9 +242,6 @@ public class XRoadClient {
         return new Holder<>(value);
     }
 
-    /**
-     * MetaServicesPort for url
-     */
     private static MetaServicesPort getMetaServicesPort(URL url) {
         ProducerPortService service = new ProducerPortService();
         MetaServicesPort port = service.getMetaServicesPortSoap11();

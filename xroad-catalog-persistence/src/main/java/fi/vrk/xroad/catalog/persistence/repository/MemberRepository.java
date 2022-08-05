@@ -54,6 +54,13 @@ public interface MemberRepository extends CrudRepository<Member, Long> {
     // uses named query Member.findActiveChangedSince
     Set<Member> findActiveChangedSince(@Param("since") LocalDateTime since);
 
+    // uses named query Member.findAllChangedBetween
+    Set<Member> findAllChangedBetween(@Param("startDate") LocalDateTime startDate,
+                                      @Param("endDate") LocalDateTime endDate);
+
+    // uses named query Member.findActiveChangedBetween
+    Set<Member> findActiveChangedBetween(@Param("startDate") LocalDateTime startDate,
+                                         @Param("endDate") LocalDateTime endDate);
     /**
      * Returns only active items (non-deleted)
      * @param xRoadInstance X-Road instance parameter, for example FI

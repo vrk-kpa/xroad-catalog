@@ -31,7 +31,6 @@ import fi.vrk.xroad.catalog.persistence.CatalogService;
 import fi.vrk.xroad.catalog.persistence.CatalogServiceImpl;
 import fi.vrk.xroad.catalog.persistence.entity.Member;
 import fi.vrk.xroad.catalog.persistence.entity.Subsystem;
-
 import akka.actor.ActorSystem;
 import akka.actor.InternalActorRef;
 import akka.actor.Props;
@@ -55,24 +54,18 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.util.ReflectionTestUtils;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import static org.mockito.Matchers.anyBoolean;
-import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.anyObject;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-/**
- * Test for client actor
- */
 @RunWith(PowerMockRunner.class)
 @PrepareForTest( {ListClientsActor.class, ClientListUtil.class})
 @ActiveProfiles("development")
@@ -106,11 +99,6 @@ public class ListClientsActorTest extends TestKit {
         _system = null;
     }
 
-    /**
-     * Setup test
-     *
-     * @throws Exception
-     */
     @Before
     public void setup() throws Exception {
         listMethodsPoolRef = PowerMockito.mock(InternalActorRef.class);
@@ -122,8 +110,6 @@ public class ListClientsActorTest extends TestKit {
 
         ReflectionTestUtils.setField(listClientsActor, "host", "http://localhost");
         ReflectionTestUtils.setField(listClientsActor, "fetchUnlimited", Boolean.TRUE);
-
-        //when(listClientsActor.shouldFetchClients(anyBoolean(), anyInt(), anyInt())).thenReturn(true);
 
         MockitoAnnotations.initMocks(this);
     }
@@ -147,10 +133,6 @@ public class ListClientsActorTest extends TestKit {
         when(ClientListUtil.clientListFromResponse(anyString(), anyObject())).thenReturn(cMock);
         when(cMock.getMember()).thenReturn(memberlist);
 
-//        doNothing().when(listMethodsPoolRef).tell(Matchers.anyObject(), Matchers.anyObject());
-        //    doNothing().when(listMethodsPoolRef).tell(Matchers.any(ClientType.class), Matchers.any(ActorRef.class));
-
-        // Call onReceive
         listClientsActor.onReceive(ListClientsActor.START_COLLECTING);
 
         Set<Member> expectedMembers = new HashSet<>();

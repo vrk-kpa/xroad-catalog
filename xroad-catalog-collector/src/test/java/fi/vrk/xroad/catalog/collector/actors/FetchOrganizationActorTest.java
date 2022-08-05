@@ -27,11 +27,10 @@ import fi.vrk.xroad.catalog.collector.extension.SpringExtension;
 import fi.vrk.xroad.catalog.collector.wsimport.ClientType;
 import fi.vrk.xroad.catalog.collector.wsimport.XRoadClientIdentifierType;
 import fi.vrk.xroad.catalog.collector.wsimport.XRoadObjectType;
-import fi.vrk.xroad.catalog.persistence.CatalogService;
-
 import akka.actor.ActorRef;
 import akka.actor.ActorSystem;
 import akka.testkit.TestActorRef;
+import fi.vrk.xroad.catalog.persistence.OrganizationService;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -45,9 +44,6 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
-/**
- * Test actorsystem actor creation and call
- */
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = DevelopmentConfiguration.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @TestPropertySource(properties = {"xroad-catalog.fetch-organizations-limit=3"})
@@ -55,7 +51,7 @@ import static org.mockito.Mockito.verify;
 public class FetchOrganizationActorTest {
 
     @MockBean
-    CatalogService catalogService;
+    OrganizationService organizationService;
 
     @Autowired
     ActorSystem actorSystem;
@@ -77,7 +73,7 @@ public class FetchOrganizationActorTest {
         value.setObjectType(XRoadObjectType.SERVICE);
         clientType.setId(value);
         fetchOrganizationActor.tell(clientType, ActorRef.noSender());
-        verify(catalogService, times(3)).saveOrganization(any());
+        verify(organizationService, times(3)).saveOrganization(any());
     }
 }
 

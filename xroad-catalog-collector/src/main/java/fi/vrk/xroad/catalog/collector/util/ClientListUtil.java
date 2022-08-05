@@ -26,7 +26,6 @@ import fi.vrk.xroad.catalog.collector.wsimport.ClientList;
 import fi.vrk.xroad.catalog.collector.wsimport.ClientType;
 import fi.vrk.xroad.catalog.collector.wsimport.XRoadClientIdentifierType;
 import fi.vrk.xroad.catalog.collector.wsimport.XRoadObjectType;
-
 import fi.vrk.xroad.catalog.persistence.CatalogService;
 import fi.vrk.xroad.catalog.persistence.entity.ErrorLog;
 import org.json.JSONArray;
@@ -34,10 +33,6 @@ import org.json.JSONObject;
 import org.springframework.http.*;
 import org.springframework.web.client.RestTemplate;
 
-
-/**
- * Helper for client list
- */
 public class ClientListUtil {
 
 

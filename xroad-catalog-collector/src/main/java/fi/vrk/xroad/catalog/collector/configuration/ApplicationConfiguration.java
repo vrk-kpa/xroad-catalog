@@ -23,7 +23,6 @@
 package fi.vrk.xroad.catalog.collector.configuration;
 
 import fi.vrk.xroad.catalog.collector.extension.SpringExtension;
-
 import akka.actor.ActorSystem;
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigFactory;
@@ -42,9 +41,6 @@ import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.web.client.RestOperations;
 import org.springframework.web.client.RestTemplate;
 
-/**
- * Common conf for development and production
- */
 @Configuration
 @Lazy
 @ComponentScan(basePackages = {
@@ -56,8 +52,6 @@ import org.springframework.web.client.RestTemplate;
 @Slf4j
 public class ApplicationConfiguration extends SpringBootServletInitializer {
 
-    // The application context is needed to initialize the Akka Spring
-    // Extension
     @Autowired
     private ApplicationContext applicationContext;
 
@@ -67,9 +61,6 @@ public class ApplicationConfiguration extends SpringBootServletInitializer {
     @Value("${xroad-catalog.collector-interval-min}")
     private Long collectorInterval;
 
-    /**
-     * Actor system singleton for this application.
-     */
     @Bean
     public ActorSystem actorSystem() {
 
@@ -81,9 +72,6 @@ public class ApplicationConfiguration extends SpringBootServletInitializer {
         return system;
     }
 
-    /**
-     * Read configuration from application.conf file
-     */
     @Bean
     public Config akkaConfiguration() {
         return ConfigFactory.load();

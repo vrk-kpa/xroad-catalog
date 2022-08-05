@@ -27,25 +27,16 @@ import fi.vrk.xroad.catalog.collector.wsimport.XRoadClientIdentifierType;
 import fi.vrk.xroad.catalog.collector.wsimport.XRoadIdentifierType;
 import fi.vrk.xroad.catalog.collector.wsimport.XRoadObjectType;
 
-/**
- * Helper for client type
- */
 public class ClientTypeUtil {
 
     private ClientTypeUtil() {
         // Private empty constructor
     }
 
-    /**
-     * Helper for logging
-     */
     public static String toString(ClientType c) {
         return toString(c.getId()) + ":" + c.getName();
     }
 
-    /**
-     * Helper for logging
-     */
     public static String toString(XRoadIdentifierType c) {
         StringBuilder sb = new StringBuilder(128);
         sb.append(c.getObjectType());

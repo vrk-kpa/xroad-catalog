@@ -24,15 +24,11 @@ package fi.vrk.xroad.catalog.collector.mock;
 
 import fi.vrk.xroad.catalog.collector.util.ClientTypeUtil;
 import fi.vrk.xroad.catalog.collector.wsimport.*;
-
 import lombok.extern.slf4j.Slf4j;
-
 import javax.annotation.Resource;
-import javax.jws.WebParam;
 import javax.jws.WebService;
 import javax.xml.ws.Holder;
 import javax.xml.ws.WebServiceContext;
-
 import java.nio.charset.StandardCharsets;
 import java.text.MessageFormat;
 

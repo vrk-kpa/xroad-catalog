@@ -26,7 +26,6 @@ import fi.vrk.xroad.catalog.persistence.entity.Member;
 import fi.vrk.xroad.catalog.persistence.entity.Service;
 import fi.vrk.xroad.catalog.persistence.entity.Subsystem;
 import fi.vrk.xroad.catalog.persistence.entity.Wsdl;
-
 import com.google.common.collect.Lists;
 import fi.vrk.xroad.catalog.persistence.repository.MemberRepository;
 import fi.vrk.xroad.catalog.persistence.repository.SubsystemRepository;
@@ -38,7 +37,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 

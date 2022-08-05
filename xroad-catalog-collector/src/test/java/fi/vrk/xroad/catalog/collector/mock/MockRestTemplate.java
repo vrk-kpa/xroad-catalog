@@ -23,7 +23,6 @@
 package fi.vrk.xroad.catalog.collector.mock;
 
 import fi.vrk.xroad.catalog.collector.util.CatalogCollectorRuntimeException;
-
 import com.sun.net.httpserver.HttpServer;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.client.RestClientException;
