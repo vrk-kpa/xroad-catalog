@@ -55,10 +55,6 @@ public class OrganizationServiceTest {
         assertEquals(1, organizations.iterator().next().getAllPhoneNumbers().size());
         assertEquals(1, organizations.iterator().next().getAllWebPages().size());
         assertEquals(1, organizations.iterator().next().getAllAddresses().size());
-        assertEquals(1, organizations.iterator().next().getAllAddresses().iterator().next()
-                .getAllStreetAddresses().size());
-        assertEquals(1, organizations.iterator().next().getAllAddresses().iterator().next()
-                .getAllPostOfficeBoxAddresses().size());
         assertEquals("0123456-9", organizations.iterator().next().getBusinessCode());
         assertEquals("abcdef123456", organizations.iterator().next().getGuid());
         assertEquals("Published", organizations.iterator().next().getPublishingStatus());
@@ -99,10 +95,6 @@ public class OrganizationServiceTest {
         assertEquals(1, organization.get().getAllPhoneNumbers().size());
         assertEquals(1, organization.get().getAllWebPages().size());
         assertEquals(1, organization.get().getAllAddresses().size());
-        assertEquals(1, organization.get().getAllAddresses().iterator().next()
-                .getAllStreetAddresses().size());
-        assertEquals(1, organization.get().getAllAddresses().iterator().next()
-                .getAllPostOfficeBoxAddresses().size());
         assertEquals("0123456-9", organization.get().getBusinessCode());
         assertEquals("abcdef123456", organization.get().getGuid());
         assertEquals("Published", organization.get().getPublishingStatus());
@@ -142,7 +134,6 @@ public class OrganizationServiceTest {
                 .publishingStatus("Published").build();
         Organization savedOrganization = organizationService.saveOrganization(organization);
         assertNotNull(savedOrganization);
-        assertNotNull(savedOrganization.getId());
         assertEquals("abcdef123456789", savedOrganization.getGuid());
         assertEquals("123456789-0", savedOrganization.getBusinessCode());
         TestUtil.verifySavedStatusInfo(savedOrganization.getStatusInfo());
@@ -157,7 +148,6 @@ public class OrganizationServiceTest {
                 .publishingStatus("Published").build();
         Organization savedOrganization = organizationService.saveOrganization(organization);
         assertNotNull(savedOrganization);
-        assertNotNull(savedOrganization.getId());
         assertEquals("abcdef123456", savedOrganization.getGuid());
         assertEquals("0123456-9", savedOrganization.getBusinessCode());
         TestUtil.verifySavedStatusInfo(savedOrganization.getStatusInfo());

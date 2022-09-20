@@ -33,7 +33,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.InetSocketAddress;
-import java.util.concurrent.TimeUnit;
 
 public interface MockHttpServer {
 
@@ -57,8 +56,6 @@ public interface MockHttpServer {
             getServer().setExecutor(null); // creates a default executor
             log.info("Starting local http server {} in port {}", getServer(), PORT);
             getServer().start();
-            // TODO: what about removing this delay?
-            TimeUnit.SECONDS.sleep(1);
         } catch (Exception e) {
             throw new CatalogCollectorRuntimeException("Cannot start httpserver", e);
         }

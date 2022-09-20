@@ -53,7 +53,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.data.domain.Page;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -96,7 +95,7 @@ public class ServiceController {
     private SharedParamsParser sharedParamsParser;
 
     @GetMapping(path = {"/getOrganization/{businessCode}"}, produces = "application/json")
-    public ResponseEntity<?> getOrganization(@PathVariable String businessCode) {
+    public ResponseEntity<OrganizationDTO> getOrganization(@PathVariable String businessCode) {
         OrganizationDTO organizationDTO = null;
         Iterable<Company> companies = companyService.getCompanies(businessCode);
         if (companies.iterator().hasNext()) {
@@ -149,7 +148,7 @@ public class ServiceController {
     }
 
     @GetMapping(path = {"/getOrganizationChanges/{businessCode}"}, produces = "application/json")
-    public ResponseEntity<?> getOrganizationChanges(@PathVariable String businessCode,
+    public ResponseEntity<OrganizationChanged> getOrganizationChanges(@PathVariable String businessCode,
                                                     @RequestParam(required = false) String startDate,
                                                     @RequestParam(required = false) String endDate) {
         LocalDateTime startDateTime;
@@ -158,7 +157,7 @@ public class ServiceController {
             startDateTime = ServiceUtil.convertStringToLocalDateTime(startDate);
             endDateTime = ServiceUtil.convertStringToLocalDateTime(endDate);
         } catch(CatalogListerRuntimeException e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+            return ResponseEntity.badRequest().build();
         }
 
         OrganizationChanged organizationChanged = null;
@@ -175,6 +174,9 @@ public class ServiceController {
                         JaxbUtil.toXmlGregorianCalendar(startDateTime),
                         JaxbUtil.toXmlGregorianCalendar(endDateTime));
             }
+        }
+        if (changedValues == null) {
+            return ResponseEntity.noContent().build();
         }
         if (changedValues.iterator().hasNext()) {
             List<fi.vrk.xroad.catalog.persistence.dto.ChangedValue> changedValueList = new ArrayList<>();
@@ -193,14 +195,14 @@ public class ServiceController {
                         "/listErrors/{xRoadInstance}",
                         "/listErrors"},
                         produces = "application/json")
-    public ResponseEntity<?> listErrors(@PathVariable(required = false) String xRoadInstance,
-                                        @PathVariable(required = false) String memberClass,
-                                        @PathVariable(required = false) String memberCode,
-                                        @PathVariable(required = false) String subsystemCode,
-                                        @RequestParam(required = false) String startDate,
-                                        @RequestParam(required = false) String endDate,
-                                        @RequestParam(required = false) Integer page,
-                                        @RequestParam(required = false) Integer limit) {
+    public ResponseEntity<ErrorLogResponse> listErrors(@PathVariable(required = false) String xRoadInstance,
+                                                       @PathVariable(required = false) String memberClass,
+                                                       @PathVariable(required = false) String memberCode,
+                                                       @PathVariable(required = false) String subsystemCode,
+                                                       @RequestParam(required = false) String startDate,
+                                                       @RequestParam(required = false) String endDate,
+                                                       @RequestParam(required = false) Integer page,
+                                                       @RequestParam(required = false) Integer limit) {
         page = (page == null) ? 0 : page;
         limit = (limit == null) ? 100 : limit;
         LocalDateTime startDateTime;
@@ -209,7 +211,7 @@ public class ServiceController {
             startDateTime = ServiceUtil.convertStringToLocalDateTime(startDate);
             endDateTime = ServiceUtil.convertStringToLocalDateTime(endDate);
         } catch(CatalogListerRuntimeException e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+            return ResponseEntity.badRequest().build();
         }
         XRoadData xRoadData = XRoadData.builder()
                 .xRoadInstance(xRoadInstance)
@@ -221,7 +223,9 @@ public class ServiceController {
                                                          Integer.valueOf(limit),
                                                          startDateTime,
                                                          endDateTime);
-        if (errors == null | !errors.hasContent()) {
+        if (errors == null) {
+            return ResponseEntity.noContent().build();
+        } else if (!errors.hasContent()) {
             return ResponseEntity.noContent().build();
         } else {
             return ResponseEntity.ok(ErrorLogResponse.builder()
@@ -233,7 +237,7 @@ public class ServiceController {
     }
 
     @GetMapping(path = "/getDistinctServiceStatistics", produces = "application/json")
-    public ResponseEntity<?> getDistinctServiceStatistics(@RequestParam(required = false) String startDate,
+    public ResponseEntity<DistinctServiceStatisticsResponse> getDistinctServiceStatistics(@RequestParam(required = false) String startDate,
                                                           @RequestParam(required = false) String endDate) {
         LocalDateTime startDateTime;
         LocalDateTime endDateTime;
@@ -241,7 +245,7 @@ public class ServiceController {
             startDateTime = ServiceUtil.convertStringToLocalDateTime(startDate);
             endDateTime = ServiceUtil.convertStringToLocalDateTime(endDate);
         } catch(CatalogListerRuntimeException e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+            return ResponseEntity.badRequest().build();
         }
         List<DistinctServiceStatistics> serviceStatisticsList = catalogService.getDistinctServiceStatistics(startDateTime, endDateTime);
         if (serviceStatisticsList == null || serviceStatisticsList.isEmpty()) {
@@ -252,7 +256,7 @@ public class ServiceController {
     }
 
     @GetMapping(path = "/getServiceStatistics", produces = "application/json")
-    public ResponseEntity<?> getServiceStatistics(@RequestParam(required = false) String startDate,
+    public ResponseEntity<ServiceStatisticsResponse> getServiceStatistics(@RequestParam(required = false) String startDate,
                                                   @RequestParam(required = false) String endDate) {
         LocalDateTime startDateTime;
         LocalDateTime endDateTime;
@@ -260,7 +264,7 @@ public class ServiceController {
             startDateTime = ServiceUtil.convertStringToLocalDateTime(startDate);
             endDateTime = ServiceUtil.convertStringToLocalDateTime(endDate);
         } catch(CatalogListerRuntimeException e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+            return ResponseEntity.badRequest().build();
         }
         List<ServiceStatistics> serviceStatisticsList = catalogService.getServiceStatistics(startDateTime, endDateTime);
         if (serviceStatisticsList == null || serviceStatisticsList.isEmpty()) {
@@ -271,15 +275,15 @@ public class ServiceController {
     }
 
     @GetMapping(path = "/getServiceStatisticsCSV", produces = "text/csv")
-    public ResponseEntity<?> getServiceStatisticsCSV(@RequestParam(required = false) String startDate,
-                                                     @RequestParam(required = false) String endDate) {
+    public ResponseEntity<ByteArrayResource> getServiceStatisticsCSV(@RequestParam(required = false) String startDate,
+                                                                     @RequestParam(required = false) String endDate) {
         LocalDateTime startDateTime;
         LocalDateTime endDateTime;
         try {
             startDateTime = ServiceUtil.convertStringToLocalDateTime(startDate);
             endDateTime = ServiceUtil.convertStringToLocalDateTime(endDate);
         } catch(CatalogListerRuntimeException e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+            return ResponseEntity.badRequest().build();
         }
         List<ServiceStatistics> serviceStatisticsList = catalogService.getServiceStatistics(startDateTime, endDateTime);
         if (serviceStatisticsList != null) {
@@ -307,7 +311,7 @@ public class ServiceController {
     }
 
     @GetMapping(path = "/getListOfServices", produces = "application/json")
-    public ResponseEntity<?> getListOfServices(@RequestParam(required = false) String startDate,
+    public ResponseEntity<ListOfServicesResponse> getListOfServices(@RequestParam(required = false) String startDate,
                                                @RequestParam(required = false) String endDate) {
         LocalDateTime startDateTime;
         LocalDateTime endDateTime;
@@ -315,7 +319,7 @@ public class ServiceController {
             startDateTime = ServiceUtil.convertStringToLocalDateTime(startDate);
             endDateTime = ServiceUtil.convertStringToLocalDateTime(endDate);
         } catch(CatalogListerRuntimeException e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+            return ResponseEntity.badRequest().build();
         }
         List<SecurityServerInfo> securityServerList = ServiceUtil.getSecurityServerInfoList(sharedParamsParser, sharedParamsFile);
         List<MemberDataList> memberDataList = catalogService.getMemberData(startDateTime, endDateTime);
@@ -330,15 +334,15 @@ public class ServiceController {
     }
 
     @GetMapping(path = "/getListOfServicesCSV", produces = "text/csv")
-    public ResponseEntity<?> getListOfServicesCSV(@RequestParam(required = false) String startDate,
-                                                  @RequestParam(required = false) String endDate) {
+    public ResponseEntity<ByteArrayResource> getListOfServicesCSV(@RequestParam(required = false) String startDate,
+                                                                  @RequestParam(required = false) String endDate) {
         LocalDateTime startDateTime;
         LocalDateTime endDateTime;
         try {
             startDateTime = ServiceUtil.convertStringToLocalDateTime(startDate);
             endDateTime = ServiceUtil.convertStringToLocalDateTime(endDate);
         } catch(CatalogListerRuntimeException e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+            return ResponseEntity.badRequest().build();
         }
         List<SecurityServerInfo> securityServerList = ServiceUtil.getSecurityServerInfoList(sharedParamsParser, sharedParamsFile);
         List<MemberDataList> memberDataList = catalogService.getMemberData(startDateTime, endDateTime);
@@ -365,7 +369,7 @@ public class ServiceController {
     }
 
     @GetMapping(path = "/listSecurityServers", produces = "application/json")
-    public ResponseEntity<?> listSecurityServers() {
+    public ResponseEntity<SecurityServerDataList> listSecurityServers() {
         SecurityServerDataList securityServerDataList = ServiceUtil.getSecurityServerDataList(sharedParamsParser, sharedParamsFile);
         if (securityServerDataList != null) {
             return ResponseEntity.ok(securityServerDataList);
@@ -375,7 +379,7 @@ public class ServiceController {
     }
 
     @GetMapping(path = "/listDescriptors", produces = "application/json")
-    public ResponseEntity<?> listDescriptors() {
+    public ResponseEntity<List<DescriptorInfo>> listDescriptors() {
         List<DescriptorInfo> descriptorInfo = ServiceUtil.getDescriptorInfoList(sharedParamsParser, sharedParamsFile);
         if (descriptorInfo != null) {
             return ResponseEntity.ok(descriptorInfo);

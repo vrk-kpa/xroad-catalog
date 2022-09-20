@@ -70,7 +70,7 @@ public class ApplicationTests {
 	}
 
 	@Test
-	public void testGetServiceTypeSOAP() {
+	public void testGetServiceType() {
 		GetServiceType request = new GetServiceType();
 		request.setXRoadInstance("dev-cs");
 		request.setMemberClass("PUB");
@@ -78,41 +78,24 @@ public class ApplicationTests {
 		request.setServiceCode("testService");
 		request.setSubsystemCode("TestSubSystem");
 		request.setServiceVersion("v1");
+
 		GetServiceTypeResponse result = (GetServiceTypeResponse)new WebServiceTemplate(marshaller).marshalSendAndReceive(
 				"http://localhost:" + port + "/ws/GetServiceType/", request);
 		assertNotNull(result);
 		assertEquals("Is given service a SOAP service", "SOAP", result.getType());
-	}
 
-
-	@Test
-	public void testGetServiceTypeREST() {
-		GetServiceType request = new GetServiceType();
-		request.setXRoadInstance("dev-cs");
-		request.setMemberClass("PUB");
-		request.setMemberCode("14151328");
 		request.setServiceCode("getAnotherRandom");
-		request.setSubsystemCode("TestSubSystem");
-		request.setServiceVersion("v1");
-		GetServiceTypeResponse result = (GetServiceTypeResponse)new WebServiceTemplate(marshaller).marshalSendAndReceive(
+		result = (GetServiceTypeResponse)new WebServiceTemplate(marshaller).marshalSendAndReceive(
 				"http://localhost:" + port + "/ws/GetServiceType/", request);
 		assertNotNull(result);
 		assertEquals("Is given service a SOAP service", "REST", result.getType());
-	}
 
-	@Test
-	public void testGetServiceTypeOPENAPI() {
-		GetServiceType request = new GetServiceType();
-		request.setXRoadInstance("dev-cs");
-		request.setMemberClass("PUB");
-		request.setMemberCode("14151328");
 		request.setServiceCode("getRandom");
-		request.setSubsystemCode("TestSubSystem");
-		request.setServiceVersion("v1");
-		GetServiceTypeResponse result = (GetServiceTypeResponse)new WebServiceTemplate(marshaller).marshalSendAndReceive(
+		result = (GetServiceTypeResponse)new WebServiceTemplate(marshaller).marshalSendAndReceive(
 				"http://localhost:" + port + "/ws/GetServiceType/", request);
 		assertNotNull(result);
 		assertEquals("Is given service a SOAP service", "OPENAPI", result.getType());
+
 	}
 
 	@Test

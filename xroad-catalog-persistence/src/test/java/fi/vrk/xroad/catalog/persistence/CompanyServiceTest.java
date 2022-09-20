@@ -50,7 +50,6 @@ public class CompanyServiceTest {
     @Test
     public void testGetCompanies() {
         Iterable<Company> companies = companyService.getCompanies("1710128-9");
-        assertEquals(1, Iterables.size(companies));
         assertEquals(1, companies.iterator().next().getAllBusinessAddresses().size());
         assertEquals(1, companies.iterator().next().getAllBusinessAuxiliaryNames().size());
         assertEquals(1, companies.iterator().next().getAllBusinessIdChanges().size());
@@ -63,7 +62,6 @@ public class CompanyServiceTest {
         assertEquals(1, companies.iterator().next().getAllRegisteredEntries().size());
         assertEquals(1, companies.iterator().next().getAllRegisteredOffices().size());
         assertEquals("1710128-9", companies.iterator().next().getBusinessId());
-        assertEquals("", companies.iterator().next().getDetailsUri());
         assertEquals("OYJ", companies.iterator().next().getCompanyForm());
         assertEquals("Gofore Oyj", companies.iterator().next().getName());
         assertEquals("Kalevantie 2", companies.iterator().next().getAllBusinessAddresses().iterator().next().getStreet());
@@ -89,7 +87,6 @@ public class CompanyServiceTest {
                 .name("A company").build();
         Company savedCompany = companyService.saveCompany(company);
         assertNotNull(savedCompany);
-        assertNotNull(savedCompany.getId());
         assertEquals("123456789-1", savedCompany.getBusinessId());
         assertEquals("123", savedCompany.getDetailsUri());
         assertEquals("OYJ", savedCompany.getCompanyForm());
@@ -108,7 +105,6 @@ public class CompanyServiceTest {
                 .name("Gofore Oyj").build();
         Company savedCompany = companyService.saveCompany(company);
         assertNotNull(savedCompany);
-        assertNotNull(savedCompany.getId());
         assertEquals("1710128-9", savedCompany.getBusinessId());
         assertEquals("123", savedCompany.getDetailsUri());
         assertEquals("OYJ", savedCompany.getCompanyForm());

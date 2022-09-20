@@ -70,6 +70,8 @@ import java.util.stream.Collectors;
 @EqualsAndHashCode(exclude = {"id", "subsystems", "statusInfo"})
 public class Member {
 
+    private final static String OR_EXISTS = "OR EXISTS ( ";
+
     private static final String FIND_CHANGED_QUERY_PART_1 =
             "SELECT DISTINCT mem " +
                     "FROM Member mem " +
@@ -79,34 +81,34 @@ public class Member {
                     "WHERE ";
     private static final String FIND_CHANGED_QUERY_PART_2 =
             "mem.statusInfo.changed > :since " +
-                    "OR EXISTS ( " +
+                    OR_EXISTS +
                     "SELECT sub " +
                     "FROM Subsystem sub " +
                     "WHERE sub.member = mem " +
                     "AND sub.statusInfo.changed > :since)" +
-                    "OR EXISTS ( " +
+                    OR_EXISTS +
                     "SELECT service " +
                     "FROM Service service " +
                     "WHERE service.subsystem.member = mem " +
                     "AND service.statusInfo.changed > :since)" +
-                    "OR EXISTS ( " +
+                    OR_EXISTS +
                     "SELECT wsdl " +
                     "FROM Wsdl wsdl " +
                     "WHERE wsdl.service.subsystem.member = mem " +
                     "AND wsdl.statusInfo.changed > :since) ";
     private static final String FIND_CHANGED_QUERY_PART_3 =
             "mem.statusInfo.changed >= :startDate AND mem.statusInfo.changed <= :endDate " +
-                    "OR EXISTS ( " +
+                    OR_EXISTS +
                     "SELECT sub " +
                     "FROM Subsystem sub " +
                     "WHERE sub.member = mem " +
                     "AND sub.statusInfo.changed >= :startDate AND sub.statusInfo.changed <= :endDate)" +
-                    "OR EXISTS ( " +
+                    OR_EXISTS +
                     "SELECT service " +
                     "FROM Service service " +
                     "WHERE service.subsystem.member = mem " +
                     "AND service.statusInfo.changed >= :startDate AND service.statusInfo.changed <= :endDate)" +
-                    "OR EXISTS ( " +
+                    OR_EXISTS +
                     "SELECT wsdl " +
                     "FROM Wsdl wsdl " +
                     "WHERE wsdl.service.subsystem.member = mem " +
@@ -178,7 +180,9 @@ public class Member {
      *
      */
     public void updateWithDataFrom(Member transientMember, LocalDateTime timestamp) {
-        assert transientMember.getStatusInfo().getRemoved() == null;
+        if (transientMember.getStatusInfo().getRemoved() != null) {
+            throw new IllegalStateException("Member has not been removed");
+        }
         boolean isModifiedData = !isDataIdentical(transientMember);
         name = transientMember.getName();
         statusInfo.setTimestampsForSaved(timestamp, isModifiedData);

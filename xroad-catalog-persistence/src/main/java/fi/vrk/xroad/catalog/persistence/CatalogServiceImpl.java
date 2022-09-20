@@ -55,6 +55,7 @@ import java.util.stream.StreamSupport;
 @Transactional
 public class CatalogServiceImpl implements CatalogService {
 
+    private static final String NOT_FOUND = " not found!";
     @Autowired
     MemberRepository memberRepository;
 
@@ -148,35 +149,42 @@ public class CatalogServiceImpl implements CatalogService {
         List<Service> services = serviceRepository.findAllActive();
         LocalDateTime dateInPast = startDateTime;
         while (isDateBetweenDates(dateInPast, startDateTime, endDateTime)) {
-            AtomicLong numberOfSoapServices = new AtomicLong();
-            AtomicLong numberOfRestServices = new AtomicLong();
-            AtomicLong numberOfOpenApiServices = new AtomicLong();
-
-            services.forEach(service -> {
-                LocalDateTime creationDate = service.getStatusInfo().getCreated();
-                if (isDateBetweenDates(creationDate, startDateTime, endDateTime)) {
-                    if (service.hasOpenApi()) {
-                        numberOfOpenApiServices.getAndIncrement();
-                    }
-                    if (service.hasWsdl()) {
-                        numberOfSoapServices.getAndIncrement();
-                    }
-                    if (!service.hasOpenApi() & !service.hasWsdl()) {
-                        numberOfRestServices.getAndIncrement();
-                    }
-                }
-            });
-
-            ServiceStatistics serviceStatistics = ServiceStatistics.builder()
-                    .created(dateInPast)
-                    .numberOfRestServices(numberOfRestServices.longValue())
-                    .numberOfSoapServices(numberOfSoapServices.longValue())
-                    .numberOfOpenApiServices(numberOfOpenApiServices.longValue()).build();
-
+            ServiceStatistics serviceStatistics = createServiceStatistics(services, dateInPast, startDateTime, endDateTime);
             serviceStatisticsList.add(serviceStatistics);
             dateInPast = dateInPast.plusDays(1);
         }
         return serviceStatisticsList;
+    }
+
+    private ServiceStatistics createServiceStatistics(List<Service> services,
+                                                      LocalDateTime dateInPast,
+                                                      LocalDateTime startDateTime,
+                                                      LocalDateTime endDateTime) {
+        AtomicLong numberOfSoapServices = new AtomicLong();
+        AtomicLong numberOfRestServices = new AtomicLong();
+        AtomicLong numberOfOpenApiServices = new AtomicLong();
+
+        services.forEach(service -> {
+            LocalDateTime creationDate = service.getStatusInfo().getCreated();
+            if (isDateBetweenDates(creationDate, startDateTime, endDateTime)) {
+                if (service.hasOpenApi()) {
+                    numberOfOpenApiServices.getAndIncrement();
+                }
+                else if (service.hasWsdl()) {
+                    numberOfSoapServices.getAndIncrement();
+                }
+                else {
+                    numberOfRestServices.getAndIncrement();
+                }
+            }
+        });
+
+        ServiceStatistics serviceStatistics = ServiceStatistics.builder()
+                .created(dateInPast)
+                .numberOfRestServices(numberOfRestServices.longValue())
+                .numberOfSoapServices(numberOfSoapServices.longValue())
+                .numberOfOpenApiServices(numberOfOpenApiServices.longValue()).build();
+        return serviceStatistics;
     }
 
     @Override
@@ -190,36 +198,43 @@ public class CatalogServiceImpl implements CatalogService {
         String memberClass = xRoadData.getMemberClass();
         String memberCode = xRoadData.getMemberCode();
         String subsystemCode = xRoadData.getSubsystemCode();
-        if (xRoadInstance != null && memberClass != null && memberCode != null && subsystemCode != null) {
-            errorLogList = errorLogRepository.findAnyByAllParameters(startDateTime,
-                                                                     endDateTime,
-                                                                     xRoadInstance,
-                                                                     memberClass,
-                                                                     memberCode,
-                                                                     subsystemCode,
-                                                                     new PageRequest(page, limit));
-        } else if (xRoadInstance != null && memberClass != null && memberCode != null && subsystemCode == null) {
-            errorLogList = errorLogRepository.findAnyByMemberCode(startDateTime,
-                                                                  endDateTime,
-                                                                  xRoadInstance,
-                                                                  memberClass,
-                                                                  memberCode,
-                                                                  new PageRequest(page, limit));
-        } else if (xRoadInstance != null && memberClass != null && memberCode == null && subsystemCode == null) {
-            errorLogList = errorLogRepository.findAnyByMemberClass(startDateTime,
-                                                                   endDateTime,
-                                                                   xRoadInstance,
-                                                                   memberClass,
-                                                                   new PageRequest(page, limit));
-        } else if (xRoadInstance != null && memberClass == null && memberCode == null && subsystemCode == null) {
-            errorLogList = errorLogRepository.findAnyByInstance(startDateTime,
-                                                                endDateTime,
-                                                                xRoadInstance,
-                                                                new PageRequest(page, limit));
+
+        if (xRoadInstance != null) {
+            if (memberClass != null) {
+                if (memberCode != null) {
+                    if (subsystemCode != null) {
+                        errorLogList = errorLogRepository.findAnyByAllParameters(startDateTime,
+                                endDateTime,
+                                xRoadInstance,
+                                memberClass,
+                                memberCode,
+                                subsystemCode,
+                                new PageRequest(page, limit));
+                    } else {
+                        errorLogList = errorLogRepository.findAnyByMemberCode(startDateTime,
+                                endDateTime,
+                                xRoadInstance,
+                                memberClass,
+                                memberCode,
+                                new PageRequest(page, limit));
+                    }
+                } else {
+                    errorLogList = errorLogRepository.findAnyByMemberClass(startDateTime,
+                            endDateTime,
+                            xRoadInstance,
+                            memberClass,
+                            new PageRequest(page, limit));
+                }
+            } else {
+                errorLogList = errorLogRepository.findAnyByInstance(startDateTime,
+                        endDateTime,
+                        xRoadInstance,
+                        new PageRequest(page, limit));
+            }
         } else {
             errorLogList = errorLogRepository.findAnyByCreated(startDateTime,
-                                                               endDateTime,
-                                                               new PageRequest(page, limit));
+                    endDateTime,
+                    new PageRequest(page, limit));
         }
 
         return errorLogList;
@@ -342,12 +357,14 @@ public class CatalogServiceImpl implements CatalogService {
 
     @Override
     public void saveServices(SubsystemId subsystemId, Collection<Service> services) {
-        assert subsystemId != null;
+        if (subsystemId == null) {
+            throw new IllegalStateException("subsystem " + subsystemId + NOT_FOUND);
+        }
         Subsystem oldSubsystem = subsystemRepository.findActiveByNaturalKey(subsystemId.getXRoadInstance(),
                 subsystemId.getMemberClass(), subsystemId.getMemberCode(),
                 subsystemId.getSubsystemCode());
         if (oldSubsystem == null) {
-            throw new IllegalStateException("subsystem " + subsystemId + " not found!");
+            throw new IllegalStateException("subsystem " + subsystemId + NOT_FOUND);
         }
 
         LocalDateTime now = LocalDateTime.now();
@@ -397,7 +414,7 @@ public class CatalogServiceImpl implements CatalogService {
                     serviceId.getServiceVersion());
         }
         if (oldService == null) {
-            throw new IllegalStateException("service " + serviceId + " not found!");
+            throw new IllegalStateException("service " + serviceId + NOT_FOUND);
         }
         LocalDateTime now = LocalDateTime.now();
         Wsdl wsdl = new Wsdl();
@@ -447,7 +464,7 @@ public class CatalogServiceImpl implements CatalogService {
                     serviceId.getServiceVersion());
         }
         if (oldService == null) {
-            throw new IllegalStateException("service " + serviceId + " not found!");
+            throw new IllegalStateException("service " + serviceId + NOT_FOUND);
         }
         LocalDateTime now = LocalDateTime.now();
         OpenApi openApi = new OpenApi();

@@ -38,6 +38,19 @@ import java.util.*;
 @Slf4j
 public class JaxbCompanyServiceImpl implements JaxbCompanyService {
 
+    private static final String COMPANY = "Company";
+    private static final String BUSINESS_ADDRESS = "BusinessAddress";
+    private static final String BUSINESS_AUXILIARY_NAME = "BusinessAuxiliaryName";
+    private static final String BUSINESS_ID_CHANGE = "BusinessIdChange";
+    private static final String BUSINESS_LINE = "BusinessLine";
+    private static final String BUSINESS_NAME = "BusinessName";
+    private static final String COMPANY_FORM = "CompanyForm";
+    private static final String CONTACT_DETAIL = "ContactDetail";
+    private static final String LANGUAGE = "Language";
+    private static final String LIQUIDATION = "Liquidation";
+    private static final String REGISTERED_ENTRY = "RegisteredEntry";
+    private static final String REGISTERED_OFFICE = "RegisteredOffice";
+
     @Autowired
     @Setter
     private CompanyService companyService;
@@ -86,90 +99,199 @@ public class JaxbCompanyServiceImpl implements JaxbCompanyService {
         Set<RegisteredEntry> registeredEntries = company.getAllRegisteredEntries();
         Set<RegisteredOffice> registeredOffices = company.getAllRegisteredOffices();
 
-        LocalDateTime companyChange = company.getStatusInfo().getChanged();
-        if (companyChange.isAfter(startDateTime) && companyChange.isBefore(endDateTime)) {
-            ChangedValue changedValue = new ChangedValue();
-            changedValue.setName("Company");
-            changedValueList.add(changedValue);
+        if (getCompanyChangedValue(company, startDateTime, endDateTime) != null) {
+            changedValueList.add(getCompanyChangedValue(company, startDateTime, endDateTime));
         }
 
-        if (businessAddresses.stream().anyMatch(obj -> obj.getStatusInfo().getChanged().isAfter(startDateTime) &&
-                obj.getStatusInfo().getChanged().isBefore(endDateTime))) {
-            ChangedValue changedValue = new ChangedValue();
-            changedValue.setName("BusinessAddress");
-            changedValueList.add(changedValue);
+        if (getBusinessAddressChangedValue(businessAddresses, startDateTime, endDateTime) != null) {
+            changedValueList.add(getBusinessAddressChangedValue(businessAddresses, startDateTime, endDateTime));
         }
 
-        if (businessAuxiliaryNames.stream().anyMatch(obj -> obj.getStatusInfo().getChanged().isAfter(startDateTime) &&
-                obj.getStatusInfo().getChanged().isBefore(endDateTime))) {
-            ChangedValue changedValue = new ChangedValue();
-            changedValue.setName("BusinessAuxiliaryName");
-            changedValueList.add(changedValue);
+        if (getBusinessAuxiliaryNamesChangedValue(businessAuxiliaryNames, startDateTime, endDateTime) != null) {
+            changedValueList.add(getBusinessAuxiliaryNamesChangedValue(businessAuxiliaryNames, startDateTime, endDateTime));
         }
 
-        if (businessIdChanges.stream().anyMatch(obj -> obj.getStatusInfo().getChanged().isAfter(startDateTime) &&
-                obj.getStatusInfo().getChanged().isBefore(endDateTime))) {
-            ChangedValue changedValue = new ChangedValue();
-            changedValue.setName("BusinessIdChange");
-            changedValueList.add(changedValue);
+        if (getBusinessIdChangeChangedValue(businessIdChanges, startDateTime, endDateTime) != null) {
+            changedValueList.add(getBusinessIdChangeChangedValue(businessIdChanges, startDateTime, endDateTime));
         }
 
-        if (businessLines.stream().anyMatch(obj -> obj.getStatusInfo().getChanged().isAfter(startDateTime) &&
-                obj.getStatusInfo().getChanged().isBefore(endDateTime))) {
-            ChangedValue changedValue = new ChangedValue();
-            changedValue.setName("BusinessLine");
-            changedValueList.add(changedValue);
+        if (getBusinessLineChangedValue(businessLines, startDateTime, endDateTime) != null) {
+            changedValueList.add(getBusinessLineChangedValue(businessLines, startDateTime, endDateTime));
         }
 
-        if (businessNames.stream().anyMatch(obj -> obj.getStatusInfo().getChanged().isAfter(startDateTime) &&
-                obj.getStatusInfo().getChanged().isBefore(endDateTime))) {
-            ChangedValue changedValue = new ChangedValue();
-            changedValue.setName("BusinessName");
-            changedValueList.add(changedValue);
+        if (getBusinessNameChangedValue(businessNames, startDateTime, endDateTime) != null) {
+            changedValueList.add(getBusinessNameChangedValue(businessNames, startDateTime, endDateTime));
         }
 
-        if (companyForms.stream().anyMatch(obj -> obj.getStatusInfo().getChanged().isAfter(startDateTime) &&
-                obj.getStatusInfo().getChanged().isBefore(endDateTime))) {
-            ChangedValue changedValue = new ChangedValue();
-            changedValue.setName("CompanyForm");
-            changedValueList.add(changedValue);
+        if (getCompanyFormChangedValue(companyForms, startDateTime, endDateTime) != null) {
+            changedValueList.add(getCompanyFormChangedValue(companyForms, startDateTime, endDateTime));
         }
 
-        if (contactDetails.stream().anyMatch(obj -> obj.getStatusInfo().getChanged().isAfter(startDateTime) &&
-                obj.getStatusInfo().getChanged().isBefore(endDateTime))) {
-            ChangedValue changedValue = new ChangedValue();
-            changedValue.setName("ContactDetail");
-            changedValueList.add(changedValue);
+        if (getContactDetailChangedValue(contactDetails, startDateTime, endDateTime) != null) {
+            changedValueList.add(getContactDetailChangedValue(contactDetails, startDateTime, endDateTime));
         }
 
-        if (languages.stream().anyMatch(obj -> obj.getStatusInfo().getChanged().isAfter(startDateTime) &&
-                obj.getStatusInfo().getChanged().isBefore(endDateTime))) {
-            ChangedValue changedValue = new ChangedValue();
-            changedValue.setName("Language");
-            changedValueList.add(changedValue);
+        if (getLanguageChangedValue(languages, startDateTime, endDateTime) != null) {
+            changedValueList.add(getLanguageChangedValue(languages, startDateTime, endDateTime));
         }
 
-        if (liquidations.stream().anyMatch(obj -> obj.getStatusInfo().getChanged().isAfter(startDateTime) &&
-                obj.getStatusInfo().getChanged().isBefore(endDateTime))) {
-            ChangedValue changedValue = new ChangedValue();
-            changedValue.setName("Liquidation");
-            changedValueList.add(changedValue);
+        if (getLiquidationChangedValue(liquidations, startDateTime, endDateTime) != null) {
+            changedValueList.add(getLiquidationChangedValue(liquidations, startDateTime, endDateTime));
         }
 
-        if (registeredEntries.stream().anyMatch(obj -> obj.getStatusInfo().getChanged().isAfter(startDateTime) &&
-                obj.getStatusInfo().getChanged().isBefore(endDateTime))) {
-            ChangedValue changedValue = new ChangedValue();
-            changedValue.setName("RegisteredEntry");
-            changedValueList.add(changedValue);
+        if (getRegisteredEntryChangedValue(registeredEntries, startDateTime, endDateTime) != null) {
+            changedValueList.add(getRegisteredEntryChangedValue(registeredEntries, startDateTime, endDateTime));
         }
 
-        if (registeredOffices.stream().anyMatch(obj -> obj.getStatusInfo().getChanged().isAfter(startDateTime) &&
-                obj.getStatusInfo().getChanged().isBefore(endDateTime))) {
-            ChangedValue changedValue = new ChangedValue();
-            changedValue.setName("RegisteredOffice");
-            changedValueList.add(changedValue);
+        if (getRegisteredOfficeChangedValue(registeredOffices, startDateTime, endDateTime) != null) {
+            changedValueList.add(getRegisteredOfficeChangedValue(registeredOffices, startDateTime, endDateTime));
         }
 
         return changedValueList;
     }
+
+    private ChangedValue getCompanyChangedValue(fi.vrk.xroad.catalog.persistence.entity.Company company,
+                                                LocalDateTime startDateTime,
+                                                LocalDateTime endDateTime) {
+        LocalDateTime companyChange = company.getStatusInfo().getChanged();
+        ChangedValue changedValue = null;
+        if (companyChange.isAfter(startDateTime) && companyChange.isBefore(endDateTime)) {
+            changedValue = new ChangedValue();
+            changedValue.setName(COMPANY);
+        }
+        return changedValue;
+    }
+
+    private ChangedValue getBusinessAddressChangedValue(Set<BusinessAddress> businessAddresses,
+                                                        LocalDateTime startDateTime,
+                                                        LocalDateTime endDateTime) {
+        ChangedValue changedValue = null;
+        if (businessAddresses.stream().anyMatch(obj -> obj.getStatusInfo().getChanged().isAfter(startDateTime) &&
+                obj.getStatusInfo().getChanged().isBefore(endDateTime))) {
+            changedValue = new ChangedValue();
+            changedValue.setName(BUSINESS_ADDRESS);
+        }
+        return changedValue;
+    }
+
+    private ChangedValue getBusinessAuxiliaryNamesChangedValue(Set<BusinessAuxiliaryName> businessAuxiliaryNames,
+                                                               LocalDateTime startDateTime,
+                                                               LocalDateTime endDateTime) {
+        ChangedValue changedValue = null;
+        if (businessAuxiliaryNames.stream().anyMatch(obj -> obj.getStatusInfo().getChanged().isAfter(startDateTime) &&
+                obj.getStatusInfo().getChanged().isBefore(endDateTime))) {
+            changedValue = new ChangedValue();
+            changedValue.setName(BUSINESS_AUXILIARY_NAME);
+        }
+        return changedValue;
+    }
+
+    private ChangedValue getBusinessIdChangeChangedValue(Set<BusinessIdChange> businessIdChanges,
+                                                         LocalDateTime startDateTime,
+                                                         LocalDateTime endDateTime) {
+        ChangedValue changedValue = null;
+        if (businessIdChanges.stream().anyMatch(obj -> obj.getStatusInfo().getChanged().isAfter(startDateTime) &&
+                obj.getStatusInfo().getChanged().isBefore(endDateTime))) {
+            changedValue = new ChangedValue();
+            changedValue.setName(BUSINESS_ID_CHANGE);
+        }
+        return changedValue;
+    }
+
+    private ChangedValue getBusinessLineChangedValue(Set<BusinessLine> businessLines,
+                                                     LocalDateTime startDateTime,
+                                                     LocalDateTime endDateTime) {
+        ChangedValue changedValue = null;
+        if (businessLines.stream().anyMatch(obj -> obj.getStatusInfo().getChanged().isAfter(startDateTime) &&
+                obj.getStatusInfo().getChanged().isBefore(endDateTime))) {
+            changedValue = new ChangedValue();
+            changedValue.setName(BUSINESS_LINE);
+        }
+        return changedValue;
+    }
+
+    private ChangedValue getBusinessNameChangedValue(Set<BusinessName> businessNames,
+                                                     LocalDateTime startDateTime,
+                                                     LocalDateTime endDateTime) {
+        ChangedValue changedValue = null;
+        if (businessNames.stream().anyMatch(obj -> obj.getStatusInfo().getChanged().isAfter(startDateTime) &&
+                obj.getStatusInfo().getChanged().isBefore(endDateTime))) {
+            changedValue = new ChangedValue();
+            changedValue.setName(BUSINESS_NAME);
+        }
+        return changedValue;
+    }
+
+    private ChangedValue getCompanyFormChangedValue(Set<CompanyForm> companyForms,
+                                                    LocalDateTime startDateTime,
+                                                    LocalDateTime endDateTime) {
+        ChangedValue changedValue = null;
+        if (companyForms.stream().anyMatch(obj -> obj.getStatusInfo().getChanged().isAfter(startDateTime) &&
+                obj.getStatusInfo().getChanged().isBefore(endDateTime))) {
+            changedValue = new ChangedValue();
+            changedValue.setName(COMPANY_FORM);
+        }
+        return changedValue;
+    }
+
+    private ChangedValue getContactDetailChangedValue(Set<ContactDetail> contactDetails,
+                                                      LocalDateTime startDateTime,
+                                                      LocalDateTime endDateTime) {
+        ChangedValue changedValue = null;
+        if (contactDetails.stream().anyMatch(obj -> obj.getStatusInfo().getChanged().isAfter(startDateTime) &&
+                obj.getStatusInfo().getChanged().isBefore(endDateTime))) {
+            changedValue = new ChangedValue();
+            changedValue.setName(CONTACT_DETAIL);
+        }
+        return changedValue;
+    }
+
+    private ChangedValue getLanguageChangedValue(Set<Language> languages,
+                                                 LocalDateTime startDateTime,
+                                                 LocalDateTime endDateTime) {
+        ChangedValue changedValue = null;
+        if (languages.stream().anyMatch(obj -> obj.getStatusInfo().getChanged().isAfter(startDateTime) &&
+                obj.getStatusInfo().getChanged().isBefore(endDateTime))) {
+            changedValue = new ChangedValue();
+            changedValue.setName(LANGUAGE);
+        }
+        return changedValue;
+    }
+
+    private ChangedValue getLiquidationChangedValue(Set<Liquidation> liquidations,
+                                                    LocalDateTime startDateTime,
+                                                    LocalDateTime endDateTime) {
+        ChangedValue changedValue = null;
+        if (liquidations.stream().anyMatch(obj -> obj.getStatusInfo().getChanged().isAfter(startDateTime) &&
+                obj.getStatusInfo().getChanged().isBefore(endDateTime))) {
+            changedValue = new ChangedValue();
+            changedValue.setName(LIQUIDATION);
+        }
+        return changedValue;
+    }
+
+    private ChangedValue getRegisteredEntryChangedValue(Set<RegisteredEntry> registeredEntries,
+                                                        LocalDateTime startDateTime,
+                                                        LocalDateTime endDateTime) {
+        ChangedValue changedValue = null;
+        if (registeredEntries.stream().anyMatch(obj -> obj.getStatusInfo().getChanged().isAfter(startDateTime) &&
+                obj.getStatusInfo().getChanged().isBefore(endDateTime))) {
+            changedValue = new ChangedValue();
+            changedValue.setName(REGISTERED_ENTRY);
+        }
+        return changedValue;
+    }
+
+    private ChangedValue getRegisteredOfficeChangedValue(Set<RegisteredOffice> registeredOffices,
+                                                         LocalDateTime startDateTime,
+                                                         LocalDateTime endDateTime) {
+        ChangedValue changedValue = null;
+        if (registeredOffices.stream().anyMatch(obj -> obj.getStatusInfo().getChanged().isAfter(startDateTime) &&
+                obj.getStatusInfo().getChanged().isBefore(endDateTime))) {
+            changedValue = new ChangedValue();
+            changedValue.setName(REGISTERED_OFFICE);
+        }
+        return changedValue;
+    }
+
 }

@@ -38,6 +38,26 @@ import java.util.*;
 @Slf4j
 public class JaxbOrganizationServiceImpl implements JaxbOrganizationService {
 
+    private static final String ORGANIZATION = "Organization";
+    private static final String ORGANIZATION_NAME = "OrganizationName";
+    private static final String ORGANIZATION_DESCRIPTION = "OrganizationDescription";
+    private static final String EMAIL = "Email";
+    private static final String PHONE_NUMBER = "PhoneNumber";
+    private static final String WEB_PAGE = "WebPage";
+    private static final String ADDRESS = "Address";
+    private static final String STREET_ADDRESS = "StreetAddress";
+    private static final String STREET_ADDRESS_STREET = "Street";
+    private static final String STREET_ADDRESS_POST_OFFICE = "StreetAddress PostOffice";
+    private static final String STREET_ADDRESS_MUNICIPALITY = "StreetAddress Municipality";
+    private static final String STREET_ADDRESS_MUNICIPALITY_NAME = "StreetAddress Municipality Name";
+    private static final String STREET_ADDRESS_ADDITIONAL_INFORMATION = "StreetAddress AdditionalInformation";
+    private static final String POST_OFFICE_BOX_ADDRESS = "PostOfficeBoxAddress";
+    private static final String POST_OFFICE_BOX_ADDRESS_POST_OFFICE = "PostOfficeBoxAddress PostOffice";
+    private static final String POST_OFFICE_BOX_ADDRESS_POST_OFFICE_BOX = "PostOfficeBoxAddress PostOfficeBox";
+    private static final String POST_OFFICE_BOX_ADDRESS_MUNICIPALITY = "PostOfficeBoxAddress Municipality";
+    private static final String POST_OFFICE_BOX_ADDRESS_MUNICIPALITY_NAME = "PostOfficeBoxAddress Municipality Name";
+    private static final String POST_OFFICE_BOX_ADDRESS_ADDITIONAL_INFORMATION = "PostOfficeBoxAddress AdditionalInformation";
+
     @Autowired
     @Setter
     private OrganizationService organizationService;
@@ -82,42 +102,42 @@ public class JaxbOrganizationServiceImpl implements JaxbOrganizationService {
         if (organization.getStatusInfo().getChanged().isAfter(startDateTime) &&
                 organization.getStatusInfo().getChanged().isBefore(endDateTime)) {
             ChangedValue changedValue = new ChangedValue();
-            changedValue.setName("Organization");
+            changedValue.setName(ORGANIZATION);
             changedValueList.add(changedValue);
         }
 
         if (organizationNames.stream().anyMatch(obj -> obj.getStatusInfo().getChanged().isAfter(startDateTime) &&
                 obj.getStatusInfo().getChanged().isBefore(endDateTime))) {
             ChangedValue changedValue = new ChangedValue();
-            changedValue.setName("OrganizationName");
+            changedValue.setName(ORGANIZATION_NAME);
             changedValueList.add(changedValue);
         }
 
         if (organizationDescriptions.stream().anyMatch(obj -> obj.getStatusInfo().getChanged().isAfter(startDateTime) &&
                 obj.getStatusInfo().getChanged().isBefore(endDateTime))) {
             ChangedValue changedValue = new ChangedValue();
-            changedValue.setName("OrganizationDescription");
+            changedValue.setName(ORGANIZATION_DESCRIPTION);
             changedValueList.add(changedValue);
         }
 
         if (emails.stream().anyMatch(obj -> obj.getStatusInfo().getChanged().isAfter(startDateTime) &&
                 obj.getStatusInfo().getChanged().isBefore(endDateTime))) {
             ChangedValue changedValue = new ChangedValue();
-            changedValue.setName("Email");
+            changedValue.setName(EMAIL);
             changedValueList.add(changedValue);
         }
 
         if (phoneNumbers.stream().anyMatch(obj -> obj.getStatusInfo().getChanged().isAfter(startDateTime) &&
                 obj.getStatusInfo().getChanged().isBefore(endDateTime))) {
             ChangedValue changedValue = new ChangedValue();
-            changedValue.setName("PhoneNumber");
+            changedValue.setName(PHONE_NUMBER);
             changedValueList.add(changedValue);
         }
 
         if (webPages.stream().anyMatch(obj -> obj.getStatusInfo().getChanged().isAfter(startDateTime) &&
                 obj.getStatusInfo().getChanged().isBefore(endDateTime))) {
             ChangedValue changedValue = new ChangedValue();
-            changedValue.setName("WebPage");
+            changedValue.setName(WEB_PAGE);
             changedValueList.add(changedValue);
         }
 
@@ -131,138 +151,279 @@ public class JaxbOrganizationServiceImpl implements JaxbOrganizationService {
                                                                    LocalDateTime endDateTime) {
         List<ChangedValue> changedValueList = new ArrayList<>();
         addresses.forEach(address -> {
-            LocalDateTime addressChange = address.getStatusInfo().getChanged();
-            if (addressChange.isAfter(startDateTime) && addressChange.isBefore(endDateTime)) {
-                ChangedValue changedValue = new ChangedValue();
-                changedValue.setName("Address");
-                changedValueList.add(changedValue);
+            if (getChangedValueForAddress(address, startDateTime, endDateTime) != null) {
+                changedValueList.add(getChangedValueForAddress(address, startDateTime, endDateTime));
             }
 
             Set<StreetAddress> streetAddresses = address.getAllStreetAddresses();
             streetAddresses.forEach(streetAddress -> {
-                LocalDateTime streetAddressChange = streetAddress.getStatusInfo().getChanged();
-                if (streetAddressChange.isAfter(startDateTime) && streetAddressChange.isBefore(endDateTime)) {
-                    ChangedValue changedValue = new ChangedValue();
-                    changedValue.setName("StreetAddress");
+                List<ChangedValue> allChangedValuesForStreetAddress = getAllChangedValuesForStreetAddress(streetAddress, startDateTime, endDateTime);
+                for (ChangedValue changedValue : allChangedValuesForStreetAddress) {
                     changedValueList.add(changedValue);
                 }
-
-                Set<Street> streets = streetAddress.getAllStreets();
-                streets.forEach(street -> {
-                    LocalDateTime streetChange = street.getStatusInfo().getChanged();
-                    if (streetChange.isAfter(startDateTime) && streetChange.isBefore(endDateTime)) {
-                        ChangedValue changedValue = new ChangedValue();
-                        changedValue.setName("Street");
-                        changedValueList.add(changedValue);
-                    }
-                });
-
-                Set<StreetAddressPostOffice> postOffices = streetAddress.getAllPostOffices();
-                postOffices.forEach(postOffice -> {
-                    LocalDateTime streetAddressPostOfficeChange = postOffice.getStatusInfo().getChanged();
-                    if (streetAddressPostOfficeChange.isAfter(startDateTime) && streetAddressPostOfficeChange.isBefore(endDateTime)) {
-                        ChangedValue changedValue = new ChangedValue();
-                        changedValue.setName("StreetAddress PostOffice");
-                        changedValueList.add(changedValue);
-                    }
-                });
-
-                Set<StreetAddressMunicipality> municipalities = streetAddress.getAllMunicipalities();
-                municipalities.forEach(municipality -> {
-                    LocalDateTime streetAddressMunicipalityChange = municipality.getStatusInfo().getChanged();
-                    if (streetAddressMunicipalityChange.isAfter(startDateTime) && streetAddressMunicipalityChange.isBefore(endDateTime)) {
-                        ChangedValue changedValue = new ChangedValue();
-                        changedValue.setName("StreetAddress Municipality");
-                        changedValueList.add(changedValue);
-                    }
-
-                    Set<StreetAddressMunicipalityName> municipalityNames = municipality.getAllMunicipalityNames();
-                    municipalityNames.forEach(municipalityName -> {
-                        LocalDateTime streetAddressMunicipalityNameChange = municipalityName.getStatusInfo().getChanged();
-                        if (streetAddressMunicipalityNameChange.isAfter(startDateTime) && streetAddressMunicipalityNameChange.isBefore(endDateTime)) {
-                            ChangedValue changedValue = new ChangedValue();
-                            changedValue.setName("StreetAddress Municipality Name");
-                            changedValueList.add(changedValue);
-                        }
-                    });
-                });
-
-                Set<StreetAddressAdditionalInformation> additionalInformationList = streetAddress.getAllAdditionalInformation();
-                additionalInformationList.forEach(additionalInformation -> {
-                    LocalDateTime streetAddressAdditionalInfoChange = additionalInformation.getStatusInfo().getChanged();
-                    if (streetAddressAdditionalInfoChange.isAfter(startDateTime) && streetAddressAdditionalInfoChange.isBefore(endDateTime)) {
-                        ChangedValue changedValue = new ChangedValue();
-                        changedValue.setName("StreetAddress AdditionalInformation");
-                        changedValueList.add(changedValue);
-                    }
-                });
-
             });
 
             Set<PostOfficeBoxAddress> postOfficeBoxAddresses = address.getAllPostOfficeBoxAddresses();
             postOfficeBoxAddresses.forEach(postOfficeBoxAddress -> {
-                LocalDateTime postOfficeBoxAddressChange = postOfficeBoxAddress.getStatusInfo().getChanged();
-                if (postOfficeBoxAddressChange.isAfter(startDateTime) && postOfficeBoxAddressChange.isBefore(endDateTime)) {
-                    ChangedValue changedValue = new ChangedValue();
-                    changedValue.setName("PostOfficeBoxAddress");
+                List<ChangedValue> allChangedValuesForPostOfficeBoxAddress = getAllChangedValuesForPostOfficeBoxAddress(postOfficeBoxAddress,
+                                                                                                                        startDateTime,
+                                                                                                                        endDateTime);
+                for (ChangedValue changedValue : allChangedValuesForPostOfficeBoxAddress) {
                     changedValueList.add(changedValue);
                 }
-
-                Set<PostOffice> postOffices = postOfficeBoxAddress.getAllPostOffices();
-                postOffices.forEach(postOffice -> {
-                    LocalDateTime postOfficeChange = postOffice.getStatusInfo().getChanged();
-                    if (postOfficeChange.isAfter(startDateTime) && postOfficeChange.isBefore(endDateTime)) {
-                        ChangedValue changedValue = new ChangedValue();
-                        changedValue.setName("PostOfficeBoxAddress PostOffice");
-                        changedValueList.add(changedValue);
-                    }
-                });
-
-                Set<PostOfficeBox> postOfficeBoxes = postOfficeBoxAddress.getAllPostOfficeBoxes();
-                postOfficeBoxes.forEach(postOfficeBox -> {
-                    LocalDateTime postOfficeBoxChange = postOfficeBox.getStatusInfo().getChanged();
-                    if (postOfficeBoxChange.isAfter(startDateTime) && postOfficeBoxChange.isBefore(endDateTime)) {
-                        ChangedValue changedValue = new ChangedValue();
-                        changedValue.setName("PostOfficeBoxAddress PostOfficeBox");
-                        changedValueList.add(changedValue);
-                    }
-                });
-
-                Set<PostOfficeBoxAddressAdditionalInformation> addressAdditionalInformationList = postOfficeBoxAddress.getAllAdditionalInformation();
-                addressAdditionalInformationList.forEach(additionalInformation -> {
-                    LocalDateTime postOfficeBoxAddressAdditionalInfoChange = additionalInformation.getStatusInfo().getChanged();
-                    if (postOfficeBoxAddressAdditionalInfoChange.isAfter(startDateTime) &&
-                            postOfficeBoxAddressAdditionalInfoChange.isBefore(endDateTime)) {
-                        ChangedValue changedValue = new ChangedValue();
-                        changedValue.setName("PostOfficeBoxAddress AdditionalInformation");
-                        changedValueList.add(changedValue);
-                    }
-                });
-
-                Set<PostOfficeBoxAddressMunicipality> municipalities = postOfficeBoxAddress.getAllMunicipalities();
-                municipalities.forEach(municipality -> {
-                    LocalDateTime postOfficeBoxAddressMunicipalityChange = municipality.getStatusInfo().getChanged();
-                    if (postOfficeBoxAddressMunicipalityChange.isAfter(startDateTime) &&
-                            postOfficeBoxAddressMunicipalityChange.isBefore(endDateTime)) {
-                        ChangedValue changedValue = new ChangedValue();
-                        changedValue.setName("PostOfficeBoxAddress Municipality");
-                        changedValueList.add(changedValue);
-                    }
-
-                    Set<PostOfficeBoxAddressMunicipalityName> municipalityNames = municipality.getAllMunicipalityNames();
-                    municipalityNames.forEach(municipalityName -> {
-                        LocalDateTime postOfficeBoxAddressMunicipalityNameChange = municipalityName.getStatusInfo().getChanged();
-                        if (postOfficeBoxAddressMunicipalityNameChange.isAfter(startDateTime) &&
-                                postOfficeBoxAddressMunicipalityNameChange.isBefore(endDateTime)) {
-                            ChangedValue changedValue = new ChangedValue();
-                            changedValue.setName("PostOfficeBoxAddress Municipality Name");
-                            changedValueList.add(changedValue);
-                        }
-                    });
-                });
             });
         });
 
         return changedValueList;
+    }
+
+    private ChangedValue getChangedValueForAddress(Address address,
+                                                   LocalDateTime startDateTime,
+                                                   LocalDateTime endDateTime) {
+        LocalDateTime addressChange = address.getStatusInfo().getChanged();
+        ChangedValue changedValue = null;
+        if (addressChange.isAfter(startDateTime) && addressChange.isBefore(endDateTime)) {
+            changedValue = new ChangedValue();
+            changedValue.setName(ADDRESS);
+        }
+        return changedValue;
+    }
+
+    private List<ChangedValue> getAllChangedValuesForStreetAddress(StreetAddress streetAddress,
+                                                                   LocalDateTime startDateTime,
+                                                                   LocalDateTime endDateTime) {
+        List<ChangedValue> changedValueList = new ArrayList<>();
+        if (getChangedValueForStreetAddress(streetAddress, startDateTime, endDateTime) != null) {
+            changedValueList.add(getChangedValueForStreetAddress(streetAddress, startDateTime, endDateTime));
+        }
+
+        Set<Street> streets = streetAddress.getAllStreets();
+        streets.forEach(street -> {
+            if (getChangedValueForStreetAddressStreet(street, startDateTime, endDateTime) != null) {
+                changedValueList.add(getChangedValueForStreetAddressStreet(street, startDateTime, endDateTime));
+            }
+        });
+
+        Set<StreetAddressPostOffice> postOffices = streetAddress.getAllPostOffices();
+        postOffices.forEach(postOffice -> {
+            if (getChangedValueForStreetAddressPostOffice(postOffice, startDateTime, endDateTime) != null) {
+                changedValueList.add(getChangedValueForStreetAddressPostOffice(postOffice, startDateTime, endDateTime));
+            }
+        });
+
+        Set<StreetAddressMunicipality> municipalities = streetAddress.getAllMunicipalities();
+        municipalities.forEach(municipality -> {
+            if (getChangedValueForStreetAddressMunicipality(municipality, startDateTime, endDateTime) != null) {
+                changedValueList.add(getChangedValueForStreetAddressMunicipality(municipality, startDateTime, endDateTime));
+            }
+
+            Set<StreetAddressMunicipalityName> municipalityNames = municipality.getAllMunicipalityNames();
+            municipalityNames.forEach(municipalityName -> {
+                if (getChangedValueForStreetAddressMunicipalityName(municipalityName, startDateTime, endDateTime) != null) {
+                    changedValueList.add(getChangedValueForStreetAddressMunicipalityName(municipalityName, startDateTime, endDateTime));
+                }
+            });
+        });
+
+        Set<StreetAddressAdditionalInformation> additionalInformationList = streetAddress.getAllAdditionalInformation();
+        additionalInformationList.forEach(additionalInformation -> {
+            if (getChangedValueForStreetAddressAdditionalInformation(additionalInformation, startDateTime, endDateTime) != null) {
+                changedValueList.add(getChangedValueForStreetAddressAdditionalInformation(additionalInformation, startDateTime, endDateTime));
+            }
+        });
+
+        return changedValueList;
+    }
+
+    private ChangedValue getChangedValueForStreetAddress(StreetAddress address,
+                                                         LocalDateTime startDateTime,
+                                                         LocalDateTime endDateTime) {
+        LocalDateTime streetAddressChange = address.getStatusInfo().getChanged();
+        ChangedValue changedValue = null;
+        if (streetAddressChange.isAfter(startDateTime) && streetAddressChange.isBefore(endDateTime)) {
+            changedValue = new ChangedValue();
+            changedValue.setName(STREET_ADDRESS);
+        }
+        return changedValue;
+    }
+
+    private ChangedValue getChangedValueForStreetAddressStreet(Street street,
+                                                               LocalDateTime startDateTime,
+                                                               LocalDateTime endDateTime) {
+        LocalDateTime streetChange = street.getStatusInfo().getChanged();
+        ChangedValue changedValue = null;
+        if (streetChange.isAfter(startDateTime) && streetChange.isBefore(endDateTime)) {
+            changedValue = new ChangedValue();
+            changedValue.setName(STREET_ADDRESS_STREET);
+        }
+        return changedValue;
+    }
+
+    private ChangedValue getChangedValueForStreetAddressPostOffice(StreetAddressPostOffice postOffice,
+                                                                   LocalDateTime startDateTime,
+                                                                   LocalDateTime endDateTime) {
+        LocalDateTime streetAddressPostOfficeChange = postOffice.getStatusInfo().getChanged();
+        ChangedValue changedValue = null;
+        if (streetAddressPostOfficeChange.isAfter(startDateTime) && streetAddressPostOfficeChange.isBefore(endDateTime)) {
+            changedValue = new ChangedValue();
+            changedValue.setName(STREET_ADDRESS_POST_OFFICE);
+        }
+        return changedValue;
+    }
+
+    private ChangedValue getChangedValueForStreetAddressMunicipality(StreetAddressMunicipality municipality,
+                                                                     LocalDateTime startDateTime,
+                                                                     LocalDateTime endDateTime) {
+        LocalDateTime streetAddressMunicipalityChange = municipality.getStatusInfo().getChanged();
+        ChangedValue changedValue = null;
+        if (streetAddressMunicipalityChange.isAfter(startDateTime) && streetAddressMunicipalityChange.isBefore(endDateTime)) {
+            changedValue = new ChangedValue();
+            changedValue.setName(STREET_ADDRESS_MUNICIPALITY);
+        }
+        return changedValue;
+    }
+
+    private ChangedValue getChangedValueForStreetAddressMunicipalityName(StreetAddressMunicipalityName municipalityName,
+                                                                         LocalDateTime startDateTime,
+                                                                         LocalDateTime endDateTime) {
+        LocalDateTime streetAddressMunicipalityNameChange = municipalityName.getStatusInfo().getChanged();
+        ChangedValue changedValue = null;
+        if (streetAddressMunicipalityNameChange.isAfter(startDateTime) && streetAddressMunicipalityNameChange.isBefore(endDateTime)) {
+            changedValue = new ChangedValue();
+            changedValue.setName(STREET_ADDRESS_MUNICIPALITY_NAME);
+        }
+        return changedValue;
+    }
+
+    private ChangedValue getChangedValueForStreetAddressAdditionalInformation(StreetAddressAdditionalInformation additionalInformation,
+                                                                              LocalDateTime startDateTime,
+                                                                              LocalDateTime endDateTime) {
+        LocalDateTime streetAddressAdditionalInfoChange = additionalInformation.getStatusInfo().getChanged();
+        ChangedValue changedValue = null;
+        if (streetAddressAdditionalInfoChange.isAfter(startDateTime) && streetAddressAdditionalInfoChange.isBefore(endDateTime)) {
+            changedValue = new ChangedValue();
+            changedValue.setName(STREET_ADDRESS_ADDITIONAL_INFORMATION);
+        }
+        return changedValue;
+    }
+
+    private List<ChangedValue> getAllChangedValuesForPostOfficeBoxAddress(PostOfficeBoxAddress postOfficeBoxAddress,
+                                                                          LocalDateTime startDateTime,
+                                                                          LocalDateTime endDateTime) {
+        List<ChangedValue> changedValueList = new ArrayList<>();
+        if (getChangedValueForPostOfficeBoxAddress(postOfficeBoxAddress, startDateTime, endDateTime) != null) {
+            changedValueList.add(getChangedValueForPostOfficeBoxAddress(postOfficeBoxAddress, startDateTime, endDateTime));
+        }
+
+        Set<PostOffice> postOffices = postOfficeBoxAddress.getAllPostOffices();
+        postOffices.forEach(postOffice -> {
+            if (getChangedValueForPostOfficeBoxAddressPostOffice(postOffice, startDateTime, endDateTime) != null) {
+                changedValueList.add(getChangedValueForPostOfficeBoxAddressPostOffice(postOffice, startDateTime, endDateTime));
+            }
+        });
+
+        Set<PostOfficeBox> postOfficeBoxes = postOfficeBoxAddress.getAllPostOfficeBoxes();
+        postOfficeBoxes.forEach(postOfficeBox -> {
+            if (getChangedValueForPostOfficeBoxAddressPostOfficeBox(postOfficeBox, startDateTime, endDateTime) != null) {
+                changedValueList.add(getChangedValueForPostOfficeBoxAddressPostOfficeBox(postOfficeBox, startDateTime, endDateTime));
+            }
+        });
+
+        Set<PostOfficeBoxAddressAdditionalInformation> addressAdditionalInformationList = postOfficeBoxAddress.getAllAdditionalInformation();
+        addressAdditionalInformationList.forEach(additionalInformation -> {
+            if (getChangedValueForPostOfficeBoxAddressAdditionalInformation(additionalInformation, startDateTime, endDateTime) != null) {
+                changedValueList.add(getChangedValueForPostOfficeBoxAddressAdditionalInformation(additionalInformation, startDateTime, endDateTime));
+            }
+        });
+
+        Set<PostOfficeBoxAddressMunicipality> municipalities = postOfficeBoxAddress.getAllMunicipalities();
+        municipalities.forEach(municipality -> {
+            if (getChangedValueForPostOfficeBoxAddressMunicipality(municipality, startDateTime, endDateTime) != null) {
+                changedValueList.add(getChangedValueForPostOfficeBoxAddressMunicipality(municipality, startDateTime, endDateTime));
+            }
+
+            Set<PostOfficeBoxAddressMunicipalityName> municipalityNames = municipality.getAllMunicipalityNames();
+            municipalityNames.forEach(municipalityName -> {
+                if (getChangedValueForPostOfficeBoxAddressMunicipalityName(municipalityName, startDateTime, endDateTime) != null) {
+                    changedValueList.add(getChangedValueForPostOfficeBoxAddressMunicipalityName(municipalityName, startDateTime, endDateTime));
+                }
+            });
+        });
+        return changedValueList;
+    }
+
+    private ChangedValue getChangedValueForPostOfficeBoxAddress(PostOfficeBoxAddress postOfficeBoxAddress,
+                                                                LocalDateTime startDateTime,
+                                                                LocalDateTime endDateTime) {
+        LocalDateTime postOfficeBoxAddressChange = postOfficeBoxAddress.getStatusInfo().getChanged();
+        ChangedValue changedValue = null;
+        if (postOfficeBoxAddressChange.isAfter(startDateTime) && postOfficeBoxAddressChange.isBefore(endDateTime)) {
+            changedValue = new ChangedValue();
+            changedValue.setName(POST_OFFICE_BOX_ADDRESS);
+        }
+        return changedValue;
+    }
+
+    private ChangedValue getChangedValueForPostOfficeBoxAddressPostOffice(PostOffice postOffice,
+                                                                          LocalDateTime startDateTime,
+                                                                          LocalDateTime endDateTime) {
+        LocalDateTime postOfficeChange = postOffice.getStatusInfo().getChanged();
+        ChangedValue changedValue = null;
+        if (postOfficeChange.isAfter(startDateTime) && postOfficeChange.isBefore(endDateTime)) {
+            changedValue = new ChangedValue();
+            changedValue.setName(POST_OFFICE_BOX_ADDRESS_POST_OFFICE);
+        }
+        return changedValue;
+    }
+
+    private ChangedValue getChangedValueForPostOfficeBoxAddressPostOfficeBox(PostOfficeBox postOfficeBox,
+                                                                             LocalDateTime startDateTime,
+                                                                             LocalDateTime endDateTime) {
+        LocalDateTime postOfficeBoxChange = postOfficeBox.getStatusInfo().getChanged();
+        ChangedValue changedValue = null;
+        if (postOfficeBoxChange.isAfter(startDateTime) && postOfficeBoxChange.isBefore(endDateTime)) {
+            changedValue = new ChangedValue();
+            changedValue.setName(POST_OFFICE_BOX_ADDRESS_POST_OFFICE_BOX);
+        }
+        return changedValue;
+    }
+
+    private ChangedValue getChangedValueForPostOfficeBoxAddressAdditionalInformation(PostOfficeBoxAddressAdditionalInformation additionalInformation,
+                                                                                     LocalDateTime startDateTime,
+                                                                                     LocalDateTime endDateTime) {
+        LocalDateTime postOfficeBoxAddressAdditionalInfoChange = additionalInformation.getStatusInfo().getChanged();
+        ChangedValue changedValue = null;
+        if (postOfficeBoxAddressAdditionalInfoChange.isAfter(startDateTime) &&
+                postOfficeBoxAddressAdditionalInfoChange.isBefore(endDateTime)) {
+            changedValue = new ChangedValue();
+            changedValue.setName(POST_OFFICE_BOX_ADDRESS_ADDITIONAL_INFORMATION);
+        }
+        return changedValue;
+    }
+
+    private ChangedValue getChangedValueForPostOfficeBoxAddressMunicipality(PostOfficeBoxAddressMunicipality municipality,
+                                                                            LocalDateTime startDateTime,
+                                                                            LocalDateTime endDateTime) {
+        LocalDateTime postOfficeBoxAddressMunicipalityChange = municipality.getStatusInfo().getChanged();
+        ChangedValue changedValue = null;
+        if (postOfficeBoxAddressMunicipalityChange.isAfter(startDateTime) &&
+                postOfficeBoxAddressMunicipalityChange.isBefore(endDateTime)) {
+            changedValue = new ChangedValue();
+            changedValue.setName(POST_OFFICE_BOX_ADDRESS_MUNICIPALITY);
+        }
+        return changedValue;
+    }
+
+    private ChangedValue getChangedValueForPostOfficeBoxAddressMunicipalityName(PostOfficeBoxAddressMunicipalityName municipalityName,
+                                                                                LocalDateTime startDateTime,
+                                                                                LocalDateTime endDateTime) {
+        LocalDateTime postOfficeBoxAddressMunicipalityNameChange = municipalityName.getStatusInfo().getChanged();
+        ChangedValue changedValue = null;
+        if (postOfficeBoxAddressMunicipalityNameChange.isAfter(startDateTime) &&
+                postOfficeBoxAddressMunicipalityNameChange.isBefore(endDateTime)) {
+            changedValue = new ChangedValue();
+            changedValue.setName(POST_OFFICE_BOX_ADDRESS_MUNICIPALITY_NAME);
+        }
+        return changedValue;
     }
 }

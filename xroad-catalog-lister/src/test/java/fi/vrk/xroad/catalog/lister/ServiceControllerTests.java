@@ -50,7 +50,17 @@ public class ServiceControllerTests {
     TestRestTemplate restTemplate;
 
     @Test
-    public void testGetOrganizationWithOrganizationData() throws JSONException {
+    public void testGetOrganization() throws JSONException {
+        testGetOrganizationWithOrganizationData();
+        testGetOrganizationWithCompanyData();
+
+        // Get Organization not found
+        ResponseEntity<String> response = restTemplate.getForEntity("/api/getOrganization/0-12345", String.class);
+        assertEquals(404, response.getStatusCodeValue());
+        assertNull(response.getBody());
+    }
+
+    private void testGetOrganizationWithOrganizationData() throws JSONException {
         ResponseEntity<String> response = restTemplate.getForEntity("/api/getOrganization/0123456-9", String.class);
         assertNotNull(response.getBody());
         assertEquals(200, response.getStatusCodeValue());
@@ -75,8 +85,7 @@ public class ServiceControllerTests {
         assertEquals(1, organizationData.optJSONArray("webPages").length());
     }
 
-    @Test
-    public void testGetOrganizationWithCompanyData() throws JSONException {
+    private void testGetOrganizationWithCompanyData() throws JSONException {
         ResponseEntity<String> response = restTemplate.getForEntity("/api/getOrganization/1710128-9", String.class);
         assertNotNull(response.getBody());
         assertEquals(200, response.getStatusCodeValue());
@@ -108,14 +117,8 @@ public class ServiceControllerTests {
     }
 
     @Test
-    public void testGetOrganizationNotFound() {
-        ResponseEntity<String> response = restTemplate.getForEntity("/api/getOrganization/0-12345", String.class);
-        assertEquals(404, response.getStatusCodeValue());
-        assertNull(response.getBody());
-    }
-
-    @Test
-    public void testGetOrganizationChangesForCompanyDataOlderValues() throws JSONException {
+    public void testGetOrganizationChanges() throws JSONException {
+        // Get OrganizationChanges for CompanyData older values
         ResponseEntity<String> response = restTemplate
                 .getForEntity("/api/getOrganizationChanges/1710128-9?startDate=2010-01-01&endDate=2022-01-01", String.class);
         assertEquals(200, response.getStatusCodeValue());
@@ -123,60 +126,47 @@ public class ServiceControllerTests {
         JSONArray changedValues = json.optJSONArray("changedValueList");
         assertTrue(json.optBoolean("changed"));
         assertEquals(12, changedValues.length());
-    }
 
-    @Test
-    public void testGetOrganizationChangesForOrganizationDataOlderValues() throws JSONException {
-        ResponseEntity<String> response = restTemplate
+        // Get OrganizationChanges for OrganizationData older values
+        response = restTemplate
                 .getForEntity("/api/getOrganizationChanges/0123456-9?startDate=2010-01-01&endDate=2022-01-01", String.class);
         assertEquals(200, response.getStatusCodeValue());
-        JSONObject json = new JSONObject(response.getBody());
-        JSONArray changedValues = json.optJSONArray("changedValueList");
+        json = new JSONObject(response.getBody());
+        changedValues = json.optJSONArray("changedValueList");
         assertTrue(json.optBoolean("changed"));
         assertEquals(19, changedValues.length());
-    }
 
-    @Test
-    public void testGetOrganizationChangesForCompanyDataNewerValues() throws JSONException {
-        ResponseEntity<String> response = restTemplate
+        // Get OrganizationChanges for CompanyData newer values
+        response = restTemplate
                 .getForEntity("/api/getOrganizationChanges/1710128-9?startDate=2020-09-04&endDate=2022-01-01", String.class);
         assertEquals(200, response.getStatusCodeValue());
-        JSONObject json = new JSONObject(response.getBody());
-        JSONArray changedValues = json.optJSONArray("changedValueList");
+        json = new JSONObject(response.getBody());
+        changedValues = json.optJSONArray("changedValueList");
         assertTrue(json.optBoolean("changed"));
         assertEquals(1, changedValues.length());
-    }
 
-    @Test
-    public void testGetOrganizationChangesForOrganizationDataNewerValues() throws JSONException {
-        ResponseEntity<String> response = restTemplate
+        // Get OrganizationChanges for OrganizationData newer values
+        response = restTemplate
                 .getForEntity("/api/getOrganizationChanges/0123456-9?startDate=2019-12-31&endDate=2022-01-01", String.class);
         assertEquals(200, response.getStatusCodeValue());
-        JSONObject json = new JSONObject(response.getBody());
-        JSONArray changedValues = json.optJSONArray("changedValueList");
+        json = new JSONObject(response.getBody());
+        changedValues = json.optJSONArray("changedValueList");
         assertTrue(json.optBoolean("changed"));
         assertEquals(1, changedValues.length());
-    }
 
-    @Test
-    public void testGetOrganizationChangesWhenDateParameterInWrongFormat() {
-        ResponseEntity<String> response = restTemplate
+        // Get OrganizationChanges when date parameter in wrong format
+        response = restTemplate
                 .getForEntity("/api/getOrganizationChanges/0123456-9?startDate=01-01-2022&endDate=2022-06-01", String.class);
         assertEquals(400, response.getStatusCodeValue());
-        assertEquals("Exception parsing date parameter: Text '01-01-2022' could not be parsed at index 0", response.getBody());
-    }
 
-    @Test
-    public void testGetOrganizationChangesForCompanyDataNotFound() {
-        ResponseEntity<String> response = restTemplate
+        // Get OrganizationChanges for CompanyData not found
+        response = restTemplate
                 .getForEntity("/api/getOrganizationChanges/1710128-9?startDate=2022-01-01&endDate=2022-06-01", String.class);
         assertEquals(204, response.getStatusCodeValue());
         assertNull(response.getBody());
-    }
 
-    @Test
-    public void testGetOrganizationChangesForOrganizationDataNotFound() {
-        ResponseEntity<String> response = restTemplate
+        // Get OrganizationChanges for OrganizationData not found
+        response = restTemplate
                 .getForEntity("/api/getOrganizationChanges/0123456-9?startDate=2022-01-01&endDate=2022-06-01", String.class);
         assertEquals(204, response.getStatusCodeValue());
         assertNull(response.getBody());
@@ -223,118 +213,84 @@ public class ServiceControllerTests {
     }
 
     @Test
-    public void testListErrorsForMemberCode() throws JSONException {
+    public void testListErrors() throws JSONException {
+        // testListErrorsForMemberCode
         ResponseEntity<String> response =
                 restTemplate.getForEntity("/api/listErrors/DEV/GOV/1234?startDate=2014-01-01&endDate=2022-01-01", String.class);
-        assertNotNull(response.getBody());
         assertEquals(200, response.getStatusCodeValue());
-
         JSONObject json = new JSONObject(response.getBody());
         JSONArray errorList = json.getJSONArray("errorLogList");
         assertEquals(2, errorList.length());
-    }
 
-    @Test
-    public void testListErrorsForMemberCodeWithPagination() throws JSONException {
-        ResponseEntity<String> response =
+        // testListErrorsForMemberCodeWithPagination
+        response =
                 restTemplate.getForEntity("/api/listErrors/DEV/GOV/1234?startDate=2014-01-01&endDate=2022-01-01&page=0&limit=100", String.class);
-        assertNotNull(response.getBody());
         assertEquals(200, response.getStatusCodeValue());
-
-        JSONObject json = new JSONObject(response.getBody());
-        JSONArray errorList = json.getJSONArray("errorLogList");
+        json = new JSONObject(response.getBody());
+        errorList = json.getJSONArray("errorLogList");
         assertEquals(2, errorList.length());
-    }
 
-    @Test
-    public void testListErrorsForMemberClass() throws JSONException {
-        ResponseEntity<String> response = restTemplate.getForEntity("/api/listErrors/DEV/GOV?startDate=2014-01-01&endDate=2022-01-01", String.class);
-        assertNotNull(response.getBody());
-        assertEquals(200, response.getStatusCodeValue());
-
-        JSONObject json = new JSONObject(response.getBody());
-        JSONArray errorList = json.getJSONArray("errorLogList");
+        // testListErrorsForMemberClass
+        response = restTemplate.getForEntity("/api/listErrors/DEV/GOV?startDate=2014-01-01&endDate=2022-01-01", String.class);
+        json = new JSONObject(response.getBody());
+        errorList = json.getJSONArray("errorLogList");
         assertEquals(2, errorList.length());
-    }
 
-    @Test
-    public void testListErrorsForMemberClassWithPagination() throws JSONException {
-        ResponseEntity<String> response =
+        // testListErrorsForMemberClassWithPagination
+        response =
                 restTemplate.getForEntity("/api/listErrors/DEV/GOV/1234?startDate=2014-01-01&endDate=2022-01-01&page=0&limit=100", String.class);
-        assertNotNull(response.getBody());
         assertEquals(200, response.getStatusCodeValue());
-
-        JSONObject json = new JSONObject(response.getBody());
-        JSONArray errorList = json.getJSONArray("errorLogList");
+        json = new JSONObject(response.getBody());
+        errorList = json.getJSONArray("errorLogList");
         assertEquals(2, errorList.length());
-    }
 
-    @Test
-    public void testListErrorsForInstance() throws JSONException {
-        ResponseEntity<String> response =
+        // testListErrorsForInstance
+        response =
                 restTemplate.getForEntity("/api/listErrors/DEV?startDate=2014-01-01&endDate=2022-01-01", String.class);
-        assertNotNull(response.getBody());
         assertEquals(200, response.getStatusCodeValue());
-
-        JSONObject json = new JSONObject(response.getBody());
-        JSONArray errorList = json.getJSONArray("errorLogList");
+        json = new JSONObject(response.getBody());
+        errorList = json.getJSONArray("errorLogList");
         assertEquals(3, errorList.length());
-    }
 
-    @Test
-    public void testListErrorsForInstanceWithPagination() throws JSONException {
-        ResponseEntity<String> response =
+        // testListErrorsForInstanceWithPagination
+        response =
                 restTemplate.getForEntity("/api/listErrors?startDate=2014-01-01&endDate=2022-01-01&page=0&limit=100", String.class);
-        assertNotNull(response.getBody());
         assertEquals(200, response.getStatusCodeValue());
-
-        JSONObject json = new JSONObject(response.getBody());
-        JSONArray errorList = json.getJSONArray("errorLogList");
+        json = new JSONObject(response.getBody());
+        errorList = json.getJSONArray("errorLogList");
         assertEquals(6, errorList.length());
-    }
 
-    @Test
-    public void testListErrorsForAll() throws JSONException {
-        ResponseEntity<String> response =
+        // testListErrorsForAll
+        response =
                 restTemplate.getForEntity("/api/listErrors?startDate=2014-01-01&endDate=2022-01-01&page=0&limit=100", String.class);
-        assertNotNull(response.getBody());
         assertEquals(200, response.getStatusCodeValue());
-
-        JSONObject json = new JSONObject(response.getBody());
-        JSONArray errorList = json.getJSONArray("errorLogList");
+        json = new JSONObject(response.getBody());
+        errorList = json.getJSONArray("errorLogList");
         assertEquals(6, errorList.length());
-    }
 
-    @Test
-    public void testListErrorsInvalidDateFormatException() {
-        ResponseEntity<String> response =
+        // testListErrorsForAllWithPagination
+        response =
+                restTemplate.getForEntity("/api/listErrors?startDate=2014-01-01&endDate=2022-01-01&page=0&limit=100", String.class);
+        assertEquals(200, response.getStatusCodeValue());
+        json = new JSONObject(response.getBody());
+        errorList = json.getJSONArray("errorLogList");
+        assertEquals(6, errorList.length());
+
+        // testListErrorsInvalidDateFormatException
+        response =
                 restTemplate.getForEntity("/api/listErrors?startDate=01-01-2014&endDate=2022-01-01", String.class);
         assertEquals(400, response.getStatusCodeValue());
-        assertEquals("Exception parsing date parameter: Text '01-01-2014' could not be parsed at index 0", response.getBody());
-    }
 
-    @Test
-    public void testListErrorsNotFoundException() {
-        ResponseEntity<String> response =
+        // testListErrorsNotFoundException
+        response =
                 restTemplate.getForEntity("/api/listErrors?startDate=2022-01-01&endDate=2022-06-01", String.class);
         assertEquals(204, response.getStatusCodeValue());
         assertNull(response.getBody());
     }
 
     @Test
-    public void testListErrorsForAllWithPagination() throws JSONException {
-        ResponseEntity<String> response =
-                restTemplate.getForEntity("/api/listErrors?startDate=2014-01-01&endDate=2022-01-01&page=0&limit=100", String.class);
-        assertNotNull(response.getBody());
-        assertEquals(200, response.getStatusCodeValue());
-
-        JSONObject json = new JSONObject(response.getBody());
-        JSONArray errorList = json.getJSONArray("errorLogList");
-        assertEquals(6, errorList.length());
-    }
-
-    @Test
     public void testGetDistinctServiceStatistics() throws JSONException {
+        // testGetDistinctServiceStatistics
         ResponseEntity<String> response =
                 restTemplate.getForEntity("/api/getDistinctServiceStatistics?startDate=2014-01-01&endDate=2023-01-01", String.class);
         assertNotNull(response.getBody());
@@ -347,19 +303,14 @@ public class ServiceControllerTests {
         for (int i = 0; i < serviceStatisticsList.length(); i++) {
             assertTrue(serviceStatisticsList.optJSONObject(i).optLong("numberOfDistinctServices") > 0);
         }
-    }
 
-    @Test
-    public void testGetDistinctServiceStatisticsInvalidDateFormatException() {
-        ResponseEntity<String> response =
+        // testGetDistinctServiceStatisticsInvalidDateFormatException
+        response =
                 restTemplate.getForEntity("/api/getDistinctServiceStatistics?startDate=01-01-2014&endDate=2022-01-01", String.class);
         assertEquals(400, response.getStatusCodeValue());
-        assertEquals("Exception parsing date parameter: Text '01-01-2014' could not be parsed at index 0", response.getBody());
-    }
 
-    @Test
-    public void testGetDistinctServiceStatisticsNotFoundException() {
-        ResponseEntity<String> response =
+        // testGetDistinctServiceStatisticsNotFoundException
+        response =
                 restTemplate.getForEntity("/api/getDistinctServiceStatistics?startDate=2023-01-01&endDate=2023-06-01", String.class);
         assertEquals(204, response.getStatusCodeValue());
         assertNull(response.getBody());
@@ -367,6 +318,7 @@ public class ServiceControllerTests {
 
     @Test
     public void testGetServiceStatistics() throws JSONException {
+        // testGetServiceStatistics
         ResponseEntity<String> response =
                 restTemplate.getForEntity("/api/getServiceStatistics?startDate=2014-01-01&endDate=2023-01-01", String.class);
         assertNotNull(response.getBody());
@@ -381,19 +333,14 @@ public class ServiceControllerTests {
             assertTrue(serviceStatisticsList.optJSONObject(i).optLong("numberOfRestServices") > 0);
             assertTrue(serviceStatisticsList.optJSONObject(i).optLong("numberOfOpenApiServices") > 0);
         }
-    }
 
-    @Test
-    public void testGetServiceStatisticsInvalidDateFormatException() {
-        ResponseEntity<String> response =
+        // testGetServiceStatisticsInvalidDateFormatException
+        response =
                 restTemplate.getForEntity("/api/getServiceStatistics?startDate=01-01-2014&endDate=2022-01-01", String.class);
         assertEquals(400, response.getStatusCodeValue());
-        assertEquals("Exception parsing date parameter: Text '01-01-2014' could not be parsed at index 0", response.getBody());
-    }
 
-    @Test
-    public void testGetServiceStatisticsCSV() {
-        ResponseEntity<String> response =
+        // testGetServiceStatisticsCSV
+        response =
                 restTemplate.getForEntity("/api/getServiceStatisticsCSV?startDate=2014-01-01&endDate=2023-01-01", String.class);
         assertNotNull(response.getBody());
         assertEquals(200, response.getStatusCodeValue());
@@ -414,14 +361,11 @@ public class ServiceControllerTests {
             assertTrue(Integer.parseInt(csvRowContent.get(2)) > 0);
             assertTrue(Integer.parseInt(csvRowContent.get(3)) > 0);
         }
-    }
 
-    @Test
-    public void testGetServiceStatisticsCSVInvalidDateFormatException() {
-        ResponseEntity<String> response =
+        // testGetServiceStatisticsCSVInvalidDateFormatException
+        response =
                 restTemplate.getForEntity("/api/getServiceStatisticsCSV?startDate=01-01-2014&endDate=2022-01-01", String.class);
         assertEquals(400, response.getStatusCodeValue());
-        assertEquals("Exception parsing date parameter: Text '01-01-2014' could not be parsed at index 0", response.getBody());
     }
 
     @Test
@@ -467,7 +411,6 @@ public class ServiceControllerTests {
         ResponseEntity<String> response =
                 restTemplate.getForEntity("/api/getListOfServices?startDate=01-01-2014&endDate=2022-01-01", String.class);
         assertEquals(400, response.getStatusCodeValue());
-        assertEquals("Exception parsing date parameter: Text '01-01-2014' could not be parsed at index 0", response.getBody());
     }
 
     @Test
@@ -506,7 +449,6 @@ public class ServiceControllerTests {
         ResponseEntity<String> response =
                 restTemplate.getForEntity("/api/getListOfServicesCSV?startDate=01-01-2014&endDate=2022-01-01", String.class);
         assertEquals(400, response.getStatusCodeValue());
-        assertEquals("Exception parsing date parameter: Text '01-01-2014' could not be parsed at index 0", response.getBody());
     }
 
     @Test

@@ -28,6 +28,8 @@ import org.springframework.ws.soap.SoapHeader;
 import org.springframework.ws.soap.SoapHeaderElement;
 import org.springframework.ws.soap.SoapMessage;
 import org.springframework.ws.soap.server.SoapEndpointInterceptor;
+
+import javax.xml.XMLConstants;
 import javax.xml.soap.SOAPException;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
@@ -64,13 +66,14 @@ public class ServiceEndpointInterceptor implements SoapEndpointInterceptor {
 
 
     protected void transformHeaders(WebServiceMessage reqMessage, WebServiceMessage respMessage)
-            throws TransformerException, SOAPException {
+            throws TransformerException {
 
         SoapHeader reqHeader = getSoapHeader(reqMessage);
         SoapHeader respHeader = getSoapHeader(respMessage);
 
-        TransformerFactory transformerFactory = TransformerFactory
-                .newInstance();
+        TransformerFactory transformerFactory = TransformerFactory.newInstance();
+        transformerFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
+        transformerFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_STYLESHEET, "");
         Transformer transformer = transformerFactory.newTransformer();
 
         Iterator<SoapHeaderElement> iter = reqHeader.examineAllHeaderElements();

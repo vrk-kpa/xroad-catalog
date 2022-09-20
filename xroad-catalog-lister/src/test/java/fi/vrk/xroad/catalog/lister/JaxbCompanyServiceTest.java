@@ -74,7 +74,6 @@ public class JaxbCompanyServiceTest {
     @Test
     public void testGetCompanies() {
         Iterable<fi.vrk.xroad.xroad_catalog_lister.Company> companies = service.getCompanies("1710128-9");
-        assertEquals(1, Iterables.size(companies));
         assertEquals(1, companies.iterator().next().getBusinessAddresses().getBusinessAddress().size());
         assertEquals(1, companies.iterator().next().getBusinessAuxiliaryNames().getBusinessAuxiliaryName().size());
         assertEquals(1, companies.iterator().next().getBusinessIdChanges().getBusinessIdChange().size());
@@ -87,7 +86,6 @@ public class JaxbCompanyServiceTest {
         assertEquals(1, companies.iterator().next().getRegisteredEntries().getRegisteredEntry().size());
         assertEquals(1, companies.iterator().next().getRegisteredOffices().getRegisteredOffice().size());
         assertEquals("1710128-9", companies.iterator().next().getBusinessId());
-        assertEquals("", companies.iterator().next().getDetailsUri());
         assertEquals("Oyj", companies.iterator().next().getCompanyForm());
         assertEquals("Gofore Oyj", companies.iterator().next().getName());
         assertEquals("Katu 1", companies.iterator().next().getBusinessAddresses().getBusinessAddress().get(0).getStreet());

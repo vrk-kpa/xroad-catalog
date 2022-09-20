@@ -50,7 +50,7 @@ public class WsdlCdataInterceptor implements EndpointInterceptor {
         SOAPPart soapPart = soapMessage.getSOAPPart();
         SOAPEnvelope envelope = soapPart.getEnvelope();
         SOAPBody body = envelope.getBody();
-        Iterator responses = body.getChildElements(new QName(
+        Iterator<?> responses = body.getChildElements(new QName(
                 "http://xroad.vrk.fi/xroad-catalog-lister",
                 "GetWsdlResponse"));
         while (responses.hasNext()) {
@@ -75,6 +75,6 @@ public class WsdlCdataInterceptor implements EndpointInterceptor {
 
     @Override
     public void afterCompletion(MessageContext messageContext, Object o, Exception e) throws Exception {
-
+        // not implemented
     }
 }
