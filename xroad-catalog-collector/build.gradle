@@ -110,3 +110,16 @@ test {
 bootRun {
     systemProperty 'spring.config.name', 'collector,catalogdb'
 }
+
+test {
+    finalizedBy jacocoTestReport // report is always generated after tests run
+}
+jacocoTestReport {
+    dependsOn test // tests are required to run before generating the report
+}
+
+jacocoTestReport {
+    reports {
+        xml.enabled true
+    }
+}
