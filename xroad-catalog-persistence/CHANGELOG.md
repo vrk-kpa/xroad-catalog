@@ -2,6 +2,9 @@
 
 All notable changes to this project will be documented in this file.
 
+## 2.0.1 - 2022-09-20
+- fix of major and critical Sonar issues
+
 ## 2.0.0 - 2022-08-02
 - major refacto of REST apis and SOAP endpoints to have start and end date in parameters instead of just one date(since)
 - cleanup of all related code

@@ -43,5 +43,5 @@ public class ListOfServicesResponse implements Serializable {
 
     private List<MemberDataList> memberData;
 
-    private List<SecurityServerInfo> securityServerData;
+    private transient List<SecurityServerInfo> securityServerData;
 }

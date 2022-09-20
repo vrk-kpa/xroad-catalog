@@ -50,7 +50,7 @@ public class ListMethodsActor extends XRoadCatalogActor {
 
     private static AtomicInteger methodCounter = new AtomicInteger(0);
 
-    private static boolean organizationsFetched = false;
+    private boolean organizationsFetched = false;
 
     @Value("${xroad-catalog.security-server-host}")
     private String xroadSecurityServerHost;

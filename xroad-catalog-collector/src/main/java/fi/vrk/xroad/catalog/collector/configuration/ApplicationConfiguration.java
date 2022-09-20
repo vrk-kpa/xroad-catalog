@@ -52,17 +52,12 @@ import org.springframework.web.client.RestTemplate;
 @Slf4j
 public class ApplicationConfiguration extends SpringBootServletInitializer {
 
-    @Autowired
-    private ApplicationContext applicationContext;
-
-    @Autowired
-    private SpringExtension springExtension;
-
     @Value("${xroad-catalog.collector-interval-min}")
     private Long collectorInterval;
 
     @Bean
-    public ActorSystem actorSystem() {
+    public ActorSystem actorSystem(ApplicationContext applicationContext,
+                                   SpringExtension springExtension) {
 
         ActorSystem system = ActorSystem
                 .create("AkkaTaskProcessing", akkaConfiguration());

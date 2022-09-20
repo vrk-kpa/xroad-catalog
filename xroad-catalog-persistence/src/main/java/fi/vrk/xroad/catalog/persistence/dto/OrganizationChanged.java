@@ -43,6 +43,6 @@ public class OrganizationChanged implements Serializable {
 
     private boolean changed;
 
-    List<ChangedValue> changedValueList;
+    private List<ChangedValue> changedValueList;
 
 }

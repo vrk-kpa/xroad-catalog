@@ -48,5 +48,5 @@ public class ErrorLogResponse implements Serializable {
 
     private Integer numberOfPages;
 
-    private List<ErrorLog> errorLogList;
+    private transient List<ErrorLog> errorLogList;
 }

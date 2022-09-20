@@ -41,6 +41,8 @@ import java.util.concurrent.atomic.AtomicReference;
 public class ServiceEndpoint {
     private static final String NAMESPACE_URI = "http://xroad.vrk.fi/xroad-catalog-lister";
 
+    private static final String NOT_FOUND = " not found";
+
     @Autowired
     private CatalogService catalogService;
 
@@ -129,8 +131,7 @@ public class ServiceEndpoint {
         GetWsdlResponse response = new GetWsdlResponse();
         Wsdl wsdl = catalogService.getWsdl(request.getExternalId());
         if (wsdl == null) {
-            throw new CatalogListerRuntimeException("wsdl with external id " + request.getExternalId()
-                    + " not found");
+            throw new CatalogListerRuntimeException("wsdl with external id " + request.getExternalId() + NOT_FOUND);
         }
         response.setWsdl(wsdl.getData());
         return response;
@@ -142,8 +143,7 @@ public class ServiceEndpoint {
         GetOpenAPIResponse response = new GetOpenAPIResponse();
         OpenApi openApi = catalogService.getOpenApi(request.getExternalId());
         if (openApi == null) {
-            throw new CatalogListerRuntimeException("OpenApi with external id " + request.getExternalId()
-                    + " not found");
+            throw new CatalogListerRuntimeException("OpenApi with external id " + request.getExternalId() + NOT_FOUND);
         }
         response.setOpenapi(openApi.getData());
         return response;
@@ -156,8 +156,7 @@ public class ServiceEndpoint {
         response.setOrganizationList(new OrganizationList());
         Iterable<Organization> organizations = jaxbOrganizationService.getOrganizations(request.getBusinessCode());
         if (!organizations.iterator().hasNext()) {
-            throw new CatalogListerRuntimeException("Organizations with businessCode " + request.getBusinessCode()
-                    + " not found");
+            throw new CatalogListerRuntimeException("Organizations with businessCode " + request.getBusinessCode() + NOT_FOUND);
         }
         response.getOrganizationList().getOrganization().addAll(Lists.newArrayList(organizations));
         return response;
@@ -187,8 +186,7 @@ public class ServiceEndpoint {
         response.setCompanyList(new CompanyList());
         Iterable<Company> companies = jaxbCompanyService.getCompanies(request.getBusinessId());
         if (!companies.iterator().hasNext()) {
-            throw new CatalogListerRuntimeException("Companies with businessId " + request.getBusinessId()
-                    + " not found");
+            throw new CatalogListerRuntimeException("Companies with businessId " + request.getBusinessId() + NOT_FOUND);
         }
         response.getCompanyList().getCompany().addAll(Lists.newArrayList(companies));
         return response;
@@ -219,9 +217,11 @@ public class ServiceEndpoint {
         Iterable<ErrorLog> errorLogEntries = jaxbCatalogService.getErrorLog(request.getStartDateTime(), request.getEndDateTime());
         if (errorLogEntries != null && !errorLogEntries.iterator().hasNext()) {
             throw new CatalogListerRuntimeException("ErrorLog entries since "
-                    + request.getStartDateTime().toString() + " until " + request.getEndDateTime().toString() + " not found");
+                    + request.getStartDateTime().toString() + " until " + request.getEndDateTime().toString() + NOT_FOUND);
         }
-        response.getErrorLogList().getErrorLog().addAll(Lists.newArrayList(errorLogEntries));
+        response.getErrorLogList().getErrorLog().addAll(errorLogEntries != null
+                ? Lists.newArrayList(errorLogEntries)
+                : Lists.newArrayList());
         return response;
     }
 }
