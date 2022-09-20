@@ -10,6 +10,7 @@ buildscript {
 plugins {
     id "com.github.hierynomus.license" version "0.13.1"
     id "org.sonarqube" version "3.0"
+    id "jacoco"
 }
 
 apply plugin: 'org.owasp.dependencycheck'
@@ -56,5 +57,15 @@ subprojects {
     ext {
         jacksonVersion="2.8.11"
     }
+}
+
+jacocoTestReport {
+    reports {
+        xml.enabled true
+    }
+}
+test.finalizedBy jacocoTestReport
+tasks.named('sonarqube').configure {
+    dependsOn test
 }
 
