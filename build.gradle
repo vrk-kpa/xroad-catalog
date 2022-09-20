@@ -15,6 +15,7 @@ plugins {
 
 apply plugin: 'org.owasp.dependencycheck'
 apply plugin: 'idea'
+apply plugin: 'java'
 
 idea {
     project {
