@@ -115,9 +115,9 @@ public class CatalogServiceTest {
     @Test
     public void testGetOpenApiMultipleException() {
         try {
-            catalogService.getOpenApi("9999");
+            catalogService.getOpenApi("3004");
         } catch (IllegalStateException e) {
-            assertTrue(e.getMessage().contains("multiple matches found to 9999"));
+            assertTrue(e.getMessage().contains("multiple matches found to 3004"));
         }
     }
 
@@ -536,6 +536,30 @@ public class CatalogServiceTest {
                 service.getServiceCode(),
                 service.getServiceVersion());
         assertNotNull(foundService);
+    }
+
+    @Test
+    public void testGetServiceNullVersion() {
+        Service service = serviceRepository.findOne(8L);
+        Service foundService = catalogService.getService(service.getSubsystem().getMember().getXRoadInstance(),
+                service.getSubsystem().getMember().getMemberClass(),
+                service.getSubsystem().getMember().getMemberCode(),
+                service.getSubsystem().getSubsystemCode(),
+                service.getServiceCode(),
+                service.getServiceVersion());
+        assertNotNull(foundService);
+    }
+
+    @Test
+    public void testGetServices() {
+        Service service = serviceRepository.findOne(1L);
+        List<Service> foundServices = catalogService.getServices(service.getSubsystem().getMember().getXRoadInstance(),
+                service.getSubsystem().getMember().getMemberClass(),
+                service.getSubsystem().getMember().getMemberCode(),
+                service.getSubsystem().getSubsystemCode(),
+                service.getServiceCode());
+        assertNotNull(foundServices);
+        assertEquals(1, foundServices.size());
     }
 
     @Test
