@@ -22,6 +22,8 @@
  */
 package fi.vrk.xroad.catalog.lister;
 
+import fi.vrk.xroad.catalog.persistence.dto.EndpointData;
+import fi.vrk.xroad.catalog.persistence.dto.ServiceEndpointsResponse;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -33,6 +35,8 @@ import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
+
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -511,14 +515,25 @@ public class ServiceControllerTests {
     public void testGetEndpoints() throws JSONException {
         ResponseEntity<String> response = restTemplate.getForEntity("/api/getEndpoints/dev-cs/PUB/11/TestSubSystem12345/testService4", String.class);
         assertEquals(200, response.getStatusCodeValue());
+        ServiceEndpointsResponse endpointsResponse = new ServiceEndpointsResponse();
+        endpointsResponse.setXRoadInstance("xroadInstance");
+        endpointsResponse.setMemberClass("memberClass");
+        endpointsResponse.setMemberCode("memberCode");
+        endpointsResponse.setSubsystemCode("subsystemCode");
+        endpointsResponse.setServiceCode("serviceCode");
+        endpointsResponse.setServiceVersion("serviceVersion");
+        List<EndpointData> endpointList = new ArrayList<>();
+        endpointList.add(EndpointData.builder().method("GET").path("/getServices").build());
+        endpointList.add(EndpointData.builder().method("POST").path("/setServices").build());
+        endpointsResponse.setEndpointList(endpointList);
         JSONObject json = new JSONObject(response.getBody());
         assertEquals(1, json.length());
-        assertEquals("dev-cs", json.optJSONArray("listOfServices").optJSONObject(0).optString("xroadInstance"));
-        assertEquals("PUB", json.optJSONArray("listOfServices").optJSONObject(0).optString("memberClass"));
-        assertEquals("11", json.optJSONArray("listOfServices").optJSONObject(0).optString("memberCode"));
-        assertEquals("TestSubSystem12345", json.optJSONArray("listOfServices").optJSONObject(0).optString("subsystemCode"));
-        assertEquals("testService4", json.optJSONArray("listOfServices").optJSONObject(0).optString("serviceCode"));
-        assertEquals("v1", json.optJSONArray("listOfServices").optJSONObject(0).optString("serviceVersion"));
+        assertEquals("dev-cs", json.optJSONArray("listOfServices").optJSONObject(0).optString(endpointsResponse.getXRoadInstance()));
+        assertEquals("PUB", json.optJSONArray("listOfServices").optJSONObject(0).optString(endpointsResponse.getMemberClass()));
+        assertEquals("11", json.optJSONArray("listOfServices").optJSONObject(0).optString(endpointsResponse.getMemberCode()));
+        assertEquals("TestSubSystem12345", json.optJSONArray("listOfServices").optJSONObject(0).optString(endpointsResponse.getSubsystemCode()));
+        assertEquals("testService4", json.optJSONArray("listOfServices").optJSONObject(0).optString(endpointsResponse.getServiceCode()));
+        assertEquals("v1", json.optJSONArray("listOfServices").optJSONObject(0).optString(endpointsResponse.getServiceVersion()));
         assertEquals(2, json.optJSONArray("listOfServices").optJSONObject(0).optJSONArray("endpointList").length());
     }
 
