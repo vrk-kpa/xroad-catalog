@@ -92,6 +92,11 @@ VALUES (6, 8, '<?xml version="1.0" standalone="no"?><removed-service_7-1-3-alive
 INSERT INTO wsdl (id, service_id, data, external_id, created, changed, fetched,  removed)
 VALUES (7, 9, '<?xml version="1.0" standalone="no"?><removed-service_7-1-4-removed-wsdl/>', '3001', '2016-01-01 00:00:00+02', '2016-01-01 00:00:00+02', '2016-01-01 00:00:00+02', '2016-01-01 00:00:00+02');
 
+INSERT INTO wsdl (id, service_id, data, external_id, created, changed, fetched,  removed)
+VALUES (8, 4, '<?xml version="1.0" standalone="no"?><wsdl-6-1-1-1-changed/>', '9999', '2016-01-01 00:00:00+02', '2017-01-02 00:00:00+02', '2017-01-02 00:00:00+02', NULL);
+INSERT INTO wsdl (id, service_id, data, external_id, created, changed, fetched,  removed)
+VALUES (9, 4, '<?xml version="1.0" standalone="no"?><wsdl-61-1-1-1-changed/>', '9999', '2016-01-01 00:00:00+02', '2017-01-02 00:00:00+02', '2017-01-02 00:00:00+02', NULL);
+
 INSERT INTO open_api (id, service_id, data, external_id, created, changed, fetched, removed)
 VALUES (1, 11, '<openapi>', '3003', '2016-01-01 00:00:00+02', '2016-01-01 00:00:00+02', '2016-01-01 00:00:00+02', '2016-01-01 00:00:00+02');
 INSERT INTO open_api (id, service_id, data, external_id, created, changed, fetched, removed)
@@ -101,6 +106,10 @@ INSERT INTO rest (id, service_id, data, external_id, created, changed, fetched, 
 VALUES (1, 13, '{"endpoint_list": []}}', '3003', '2016-01-01 00:00:00+02', '2016-01-01 00:00:00+02', '2016-01-01 00:00:00+02', NULL);
 INSERT INTO rest (id, service_id, data, external_id, created, changed, fetched, removed)
 VALUES (2, 14, '{"endpoint_list": []}}', '3003', '2016-01-01 00:00:00+02', '2016-01-01 00:00:00+02', '2016-01-01 00:00:00+02', '2016-01-01 00:00:00+02');
+INSERT INTO rest (id, service_id, data, external_id, created, changed, fetched, removed)
+VALUES (3, 1, '{"endpoint_list": []}}', '3003', '2016-01-01 00:00:00+02', '2016-01-01 00:00:00+02', '2016-01-01 00:00:00+02', '2016-01-01 00:00:00+02');
+INSERT INTO rest (id, service_id, data, external_id, created, changed, fetched, removed)
+VALUES (4, 1, '{"endpoint_list": []}}', '3003', '2016-01-01 00:00:00+02', '2016-01-01 00:00:00+02', '2016-01-01 00:00:00+02', '2016-01-01 00:00:00+02');
 
 INSERT INTO endpoint (id, service_id, method, path, created, changed, fetched, removed)
 VALUES (1, 13, 'GET', '/getData', '2016-01-01 00:00:00+02', '2016-01-01 00:00:00+02', '2016-01-01 00:00:00+02', NULL);

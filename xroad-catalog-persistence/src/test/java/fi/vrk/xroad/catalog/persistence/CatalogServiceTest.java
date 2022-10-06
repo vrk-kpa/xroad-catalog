@@ -96,11 +96,48 @@ public class CatalogServiceTest {
     }
 
     @Test
+    public void testGetWsdlMultipleException() {
+        try {
+            catalogService.getWsdl("9999");
+        } catch (IllegalStateException e) {
+            assertTrue(e.getMessage().contains("multiple matches found to 9999"));
+        }
+    }
+
+    @Test
     public void testGetOpenApi() {
         OpenApi openApi = catalogService.getOpenApi("3003");
         assertNotNull(openApi);
         assertEquals("<openapi>", openApi.getData());
         assertEquals(8, openApi.getService().getSubsystem().getId());
+    }
+
+    @Test
+    public void testGetOpenApiMultipleException() {
+        try {
+            catalogService.getOpenApi("9999");
+        } catch (IllegalStateException e) {
+            assertTrue(e.getMessage().contains("multiple matches found to 9999"));
+        }
+    }
+
+    @Test
+    public void testGetRest() {
+        Service service = serviceRepository.findOne(13L);
+        Rest rest = catalogService.getRest(service);
+        assertNotNull(rest);
+        assertEquals("{\"endpoint_list\": []}}", rest.getData());
+        assertEquals(8, rest.getService().getSubsystem().getId());
+    }
+
+    @Test
+    public void testGetRestMultipleException() {
+        try {
+            Service service = serviceRepository.findOne(1L);
+            catalogService.getRest(service);
+        } catch (IllegalStateException e) {
+            assertTrue(e.getMessage().contains("multiple matches found to"));
+        }
     }
 
     @Test
