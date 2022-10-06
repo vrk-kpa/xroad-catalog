@@ -171,7 +171,7 @@ public class MemberRepositoryTest {
         for (Subsystem s: member7.getActiveSubsystems()) {
             allServices7.addAll(s.getAllServices());
         }
-        assertEquals(8, allServices7.size());
+        assertEquals(10, allServices7.size());
         ArrayList<Wsdl> allWsdls7 = new ArrayList<>();
         for (Service s: allServices7) {
             if (s.getWsdl() != null) {

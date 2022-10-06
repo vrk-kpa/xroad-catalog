@@ -30,6 +30,7 @@ import fi.vrk.xroad.catalog.persistence.dto.CompanyData;
 import fi.vrk.xroad.catalog.persistence.dto.DescriptorInfo;
 import fi.vrk.xroad.catalog.persistence.dto.DistinctServiceStatistics;
 import fi.vrk.xroad.catalog.persistence.dto.DistinctServiceStatisticsResponse;
+import fi.vrk.xroad.catalog.persistence.dto.EndpointData;
 import fi.vrk.xroad.catalog.persistence.dto.ErrorLogResponse;
 import fi.vrk.xroad.catalog.persistence.dto.OrganizationChanged;
 import fi.vrk.xroad.catalog.persistence.dto.OrganizationDTO;
@@ -39,12 +40,16 @@ import fi.vrk.xroad.catalog.persistence.dto.SecurityServerInfo;
 import fi.vrk.xroad.catalog.persistence.CatalogService;
 import fi.vrk.xroad.catalog.persistence.dto.ListOfServicesResponse;
 import fi.vrk.xroad.catalog.persistence.dto.MemberDataList;
+import fi.vrk.xroad.catalog.persistence.dto.ServiceEndpointsResponse;
+import fi.vrk.xroad.catalog.persistence.dto.ServiceResponse;
 import fi.vrk.xroad.catalog.persistence.dto.ServiceStatistics;
 import fi.vrk.xroad.catalog.persistence.dto.ServiceStatisticsResponse;
 import fi.vrk.xroad.catalog.persistence.dto.XRoadData;
 import fi.vrk.xroad.catalog.persistence.entity.Company;
 import fi.vrk.xroad.catalog.persistence.entity.ErrorLog;
 import fi.vrk.xroad.catalog.persistence.entity.Organization;
+import fi.vrk.xroad.catalog.persistence.entity.Rest;
+import fi.vrk.xroad.catalog.persistence.entity.Service;
 import fi.vrk.xroad.xroad_catalog_lister.ChangedValue;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
@@ -386,5 +391,55 @@ public class ServiceController {
         } else {
             return ResponseEntity.noContent().build();
         }
+    }
+
+    @GetMapping(path = "/getEndpoints/{xRoadInstance}/{memberClass}/{memberCode}/{subsystemCode}/{serviceCode}", produces = "application/json")
+    public ResponseEntity<ServiceResponse> getEndpoints(@PathVariable String xRoadInstance,
+                                                        @PathVariable String memberClass,
+                                                        @PathVariable String memberCode,
+                                                        @PathVariable String subsystemCode,
+                                                        @PathVariable String serviceCode) {
+        List<ServiceEndpointsResponse> listOfServices = new ArrayList<>();
+        List<Service> services = catalogService.getServices(xRoadInstance, memberClass, memberCode, subsystemCode, serviceCode);
+        services.forEach(service -> listOfServices.add(getServiceEndpointsResponse(service, xRoadInstance, memberClass, memberCode, subsystemCode, serviceCode)));
+        ServiceResponse response = ServiceResponse.builder().listOfServices(listOfServices).build();
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping(path = "/getRest/{xRoadInstance}/{memberClass}/{memberCode}/{subsystemCode}/{serviceCode}", produces = "application/json")
+    public ResponseEntity<ServiceResponse> getRest(@PathVariable String xRoadInstance,
+                                          @PathVariable String memberClass,
+                                          @PathVariable String memberCode,
+                                          @PathVariable String subsystemCode,
+                                          @PathVariable String serviceCode) {
+        List<ServiceEndpointsResponse> listOfServices = new ArrayList<>();
+        List<Service> services = catalogService.getServices(xRoadInstance, memberClass, memberCode, subsystemCode, serviceCode);
+        services.forEach(service -> {
+            Rest rest = catalogService.getRest(service);
+            if (rest != null) {
+                listOfServices.add(getServiceEndpointsResponse(service, xRoadInstance, memberClass, memberCode, subsystemCode, serviceCode));
+            }
+        });
+        return ResponseEntity.ok(ServiceResponse.builder().listOfServices(listOfServices).build());
+    }
+
+    private ServiceEndpointsResponse getServiceEndpointsResponse(Service service,
+                                                                 String xRoadInstance,
+                                                                 String memberClass,
+                                                                 String memberCode,
+                                                                 String subsystemCode,
+                                                                 String serviceCode) {
+        List<EndpointData> endpointDataList = new ArrayList<>();
+        service.getAllEndpoints().forEach(endpoint -> endpointDataList.add(EndpointData.builder()
+                .method(endpoint.getMethod())
+                .path(endpoint.getPath()).build()));
+        return ServiceEndpointsResponse.builder()
+                .xRoadInstance(xRoadInstance)
+                .memberClass(memberClass)
+                .memberCode(memberCode)
+                .subsystemCode(subsystemCode)
+                .serviceCode(serviceCode)
+                .serviceVersion(service.getServiceVersion())
+                .endpointList(endpointDataList).build();
     }
 }

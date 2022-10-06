@@ -25,26 +25,30 @@ package fi.vrk.xroad.catalog.collector.actors;
 import fi.vrk.xroad.catalog.collector.util.ClientTypeUtil;
 import fi.vrk.xroad.catalog.collector.util.Endpoint;
 import fi.vrk.xroad.catalog.collector.util.MethodListUtil;
-import fi.vrk.xroad.catalog.collector.util.XRoadClient;
 import fi.vrk.xroad.catalog.collector.util.XRoadRestServiceIdentifierType;
 import fi.vrk.xroad.catalog.persistence.CatalogService;
 import fi.vrk.xroad.catalog.persistence.entity.ServiceId;
 import fi.vrk.xroad.catalog.persistence.entity.SubsystemId;
 import lombok.extern.slf4j.Slf4j;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
-import java.net.URL;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @Component
 @Scope("prototype")
 @Slf4j
-public class FetchOpenApiActor extends XRoadCatalogActor {
+public class FetchRestActor extends XRoadCatalogActor {
 
-    private static AtomicInteger openApiCounter = new AtomicInteger(0);
+    private static AtomicInteger restCounter = new AtomicInteger(0);
+
+    private static final String METHOD = "method";
+
+    private static final String PATH = "path";
 
     @Value("${xroad-catalog.security-server-host}")
     private String xroadSecurityServerHost;
@@ -67,28 +71,26 @@ public class FetchOpenApiActor extends XRoadCatalogActor {
     @Autowired
     protected CatalogService catalogService;
 
-    private XRoadClient xroadClient;
-
-    @Override
-    public void preStart() throws Exception {
-        xroadClient = new XRoadClient(
-                ClientTypeUtil.toSubsystem(xroadInstance, memberClass, memberCode, subsystemCode),
-                new URL(webservicesEndpoint));
-    }
-
     @Override
     protected boolean handleMessage(Object message) {
         if (message instanceof XRoadRestServiceIdentifierType) {
             XRoadRestServiceIdentifierType service = (XRoadRestServiceIdentifierType) message;
-            log.info("Fetching openApi [{}] {}", openApiCounter.addAndGet(1), ClientTypeUtil.toString(service));
-            String openApi = xroadClient.getOpenApi(service, xroadSecurityServerHost, catalogService);
-            catalogService.saveOpenApi(createSubsystemId(service), createServiceId(service), openApi);
-            List<Endpoint> endpointList = MethodListUtil.getEndpointList(service);
+            log.info("Fetching rest [{}] {}", restCounter.addAndGet(1), ClientTypeUtil.toString(service));
+            List<fi.vrk.xroad.catalog.collector.util.Endpoint> endpointList = MethodListUtil.getEndpointList(service);
+            String endpointData = "{\"endpoint_data\":";
+            JSONArray endPointsJSONArray = new JSONArray();
+            JSONObject endpointJson;
             catalogService.prepareEndpoints(createSubsystemId(service), createServiceId(service));
             for (Endpoint endpoint: endpointList) {
+                endpointJson = new JSONObject();
+                endpointJson.put(METHOD, endpoint.getMethod());
+                endpointJson.put(PATH, endpoint.getPath());
+                endPointsJSONArray.put(endpointJson);
                 catalogService.saveEndpoint(createSubsystemId(service), createServiceId(service), endpoint.getMethod(), endpoint.getPath());
             }
-            log.info("Saved openApi successfully");
+            endpointData += endPointsJSONArray + "}";
+            catalogService.saveRest(createSubsystemId(service), createServiceId(service), endpointData);
+            log.info("Saved rest successfully");
             return true;
         } else {
             return false;

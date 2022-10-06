@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.1.0] - 2022-10-05
+
+# Added
+- added new REST endpoint for listing REST endpoints for basic REST(without OPENAPI) service
+- added new REST endpoint for listing REST endpoints for REST(also OPENAPI) service
+
+# Changed
+- Updated related documentation and schematics
+
 ## [2.0.1] - 2022-09-20
 
 # Changed

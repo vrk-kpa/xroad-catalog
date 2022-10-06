@@ -25,6 +25,7 @@ package fi.vrk.xroad.catalog.collector.actors;
 import fi.vrk.xroad.catalog.collector.util.ClientTypeUtil;
 import fi.vrk.xroad.catalog.collector.util.MethodListUtil;
 import fi.vrk.xroad.catalog.collector.util.XRoadClient;
+import fi.vrk.xroad.catalog.collector.util.XRoadRestServiceIdentifierType;
 import fi.vrk.xroad.catalog.collector.wsimport.ClientType;
 import fi.vrk.xroad.catalog.collector.wsimport.XRoadObjectType;
 import fi.vrk.xroad.catalog.collector.wsimport.XRoadServiceIdentifierType;
@@ -51,6 +52,8 @@ public class ListMethodsActor extends XRoadCatalogActor {
     private static AtomicInteger methodCounter = new AtomicInteger(0);
 
     private boolean organizationsFetched = false;
+
+    private static final String SERVICE_TYPE_REST = "REST";
 
     @Value("${xroad-catalog.security-server-host}")
     private String xroadSecurityServerHost;
@@ -94,16 +97,20 @@ public class ListMethodsActor extends XRoadCatalogActor {
     // supervisor-created pool of list methods actors
     private ActorRef fetchWsdlPoolRef;
     private ActorRef fetchOpenApiPoolRef;
+
+    private ActorRef fetchRestPoolRef;
     private ActorRef fetchOrganizationsPoolRef;
     private ActorRef fetchCompaniesPoolRef;
     private XRoadClient xroadClient;
 
     public ListMethodsActor(ActorRef fetchWsdlPoolRef,
                             ActorRef fetchOpenApiPoolRef,
+                            ActorRef fetchRestPoolRef,
                             ActorRef fetchOrganizationsPoolRef,
                             ActorRef fetchCompaniesPoolRef) {
         this.fetchWsdlPoolRef = fetchWsdlPoolRef;
         this.fetchOpenApiPoolRef = fetchOpenApiPoolRef;
+        this.fetchRestPoolRef = fetchRestPoolRef;
         this.fetchOrganizationsPoolRef = fetchOrganizationsPoolRef;
         this.fetchCompaniesPoolRef = fetchCompaniesPoolRef;
     }
@@ -159,7 +166,7 @@ public class ListMethodsActor extends XRoadCatalogActor {
 
         log.info("{} Handling subsystem {} ", methodCounter, subsystem);
 
-        List<XRoadServiceIdentifierType> restServices = MethodListUtil.methodListFromResponse(clientType,
+        List<XRoadRestServiceIdentifierType> restServices = MethodListUtil.methodListFromResponse(clientType,
                 xroadSecurityServerHost, catalogService);
         log.info("Received all REST methods for client {} ", ClientTypeUtil.toString(clientType));
 
@@ -167,7 +174,7 @@ public class ListMethodsActor extends XRoadCatalogActor {
         log.info("Received all SOAP methods for client {} ", ClientTypeUtil.toString(clientType));
 
         List<Service> services = new ArrayList<>();
-        for (XRoadServiceIdentifierType service : restServices) {
+        for (XRoadRestServiceIdentifierType service : restServices) {
             services.add(new Service(subsystem, service.getServiceCode(), service.getServiceVersion()));
         }
         for (XRoadServiceIdentifierType service : soapServices) {
@@ -180,8 +187,12 @@ public class ListMethodsActor extends XRoadCatalogActor {
             fetchWsdlPoolRef.tell(service, getSender());
         }
 
-        for (XRoadServiceIdentifierType service : restServices) {
-            fetchOpenApiPoolRef.tell(service, getSender());
+        for (XRoadRestServiceIdentifierType service : restServices) {
+            if (service.getServiceType().equalsIgnoreCase(SERVICE_TYPE_REST)) {
+                fetchRestPoolRef.tell(service, getSender());
+            } else {
+                fetchOpenApiPoolRef.tell(service, getSender());
+            }
         }
     }
 }

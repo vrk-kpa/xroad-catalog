@@ -22,9 +22,9 @@ The software consists of three parts:
 * Internal development environment in the AWS: [AWS xroad-catalog](http://xroad-catalog.i.palveluvayla.com)
 * DVV test: [servicerepotest](https://servicerepotest01.csc.fi)
 * DVV production: [servicerepoprod](https://servicerepoprod01.csc.fi)
-* XRoad CS(Central Service): [XRoad cs](https://ice-cs.i.palveluvayla.com:4000)
-* XRoad SS1(Security Server 1): [XRoad ss1](https://ice-ss1.i.palveluvayla.com:4000)
-* XRoad SS1(Security Server 2): [XRoad ss2](https://ice-ss2.i.palveluvayla.com:4000)
+* XRoad CS(Central Service): [XRoad cs](https://catalog-cs.i.palveluvayla.com:4000)
+* XRoad SS1(Security Server 1): [XRoad ss1](https://catalog-ss1.i.palveluvayla.com:4000)
+* XRoad SS1(Security Server 2): [XRoad ss2](https://catalog-ss2.i.palveluvayla.com:4000)
 
 ## Version management
 For versioning, [GitHub Flow](https://guides.github.com/introduction/flow/) is used

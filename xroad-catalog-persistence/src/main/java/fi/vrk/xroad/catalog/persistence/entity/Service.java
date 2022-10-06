@@ -34,7 +34,7 @@ import java.util.Set;
 @Entity
 @Getter
 @Setter
-@ToString(exclude = {"subsystem","wsdls","openApis"})
+@ToString(exclude = {"subsystem","wsdls","openApis", "rests", "endpoints"})
 public class Service {
     @Id
     @Column(nullable = false)
@@ -59,8 +59,13 @@ public class Service {
     @Getter(AccessLevel.NONE) // do not create default getter/setter, we provide a wrapper that hides the collection
     @OneToMany(mappedBy = "service", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private Set<OpenApi> openApis = new HashSet<>();
+    @Getter(AccessLevel.NONE) // do not create default getter/setter, we provide a wrapper that hides the collection
+    @OneToMany(mappedBy = "service", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private Set<Rest> rests = new HashSet<>();
 
-
+    @Getter(AccessLevel.NONE) // do not create default getter/setter, we provide a wrapper that hides the collection
+    @OneToMany(mappedBy = "service", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private Set<Endpoint> endpoints = new HashSet<>();
     public Service() {
         // Empty constructor
     }
@@ -92,7 +97,31 @@ public class Service {
         openApis.clear();
         openApis.add(openApi);
     }
+    public Rest getRest() { return rests.isEmpty() ? null : rests.iterator().next(); }
+
+    public boolean hasRest() { return !rests.isEmpty(); }
+
+    public void setRest(Rest rest) {
+        if (rests == null) {
+            rests = new HashSet<>();
+        }
+        rests.clear();
+        rests.add(rest);
+    }
     public OpenApi getOpenApi() { return openApis.isEmpty() ? null : openApis.iterator().next(); }
+
+    public void setEndpoint(Endpoint endpoint) {
+        if (endpoints == null) {
+            endpoints = new HashSet<>();
+        }
+        endpoints.clear();
+        endpoints.add(endpoint);
+    }
+    public Endpoint getEndpoint() { return endpoints.isEmpty() ? null : endpoints.iterator().next(); }
+
+    public Set<Endpoint> getAllEndpoints() { return endpoints; }
+
+    public boolean hasEndpoint() { return !endpoints.isEmpty(); }
 
     public ServiceId createKey() {
         return new ServiceId(serviceCode, serviceVersion);

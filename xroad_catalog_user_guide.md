@@ -1,25 +1,26 @@
 # X-Road Catalog User Guide
-Version: 2.0.0
+Version: 2.1.0
 Doc. ID: XRDCAT-CONF
 
 ---
 
 ## Version history <!-- omit in toc -->
-| Date       | Version     | Description                                                                      | Author             |
-|------------|-------------|----------------------------------------------------------------------------------|--------------------|
-| 21.07.2021 | 1.0.0       | Initial draft                                                                    | Bert Viikmäe       |
-| 21.07.2021 | 1.0.1       | Add installation section                                                         | Bert Viikmäe       |
-| 22.07.2021 | 1.0.2       | Add X-Road Catalog Collector section                                             | Bert Viikmäe       |
-| 23.07.2021 | 1.0.3       | Add X-Road Catalog Lister section                                                | Bert Viikmäe       |
-| 23.07.2021 | 1.0.4       | Add X-Road Catalog Persistence section                                           | Bert Viikmäe       |
-| 25.08.2021 | 1.0.5       | Add list distinct services endpoint description                                  | Bert Viikmäe       |
-| 02.09.2021 | 1.0.6       | Add list errors endpoint description                                             | Bert Viikmäe       |
-| 22.09.2021 | 1.0.7       | Update heartbeat endpoint description                                            | Bert Viikmäe       |
-| 26.10.2021 | 1.0.8       | Update listErrors endpoint description                                           | Bert Viikmäe       |
-| 27.10.2021 | 1.1.0       | Add listSecurityServers and listDescriptors endpoint descriptions                | Bert Viikmäe       |
-| 15.12.2021 | 1.1.1       | Update listErrors endpoint description                                           | Bert Viikmäe       |
-| 08.02.2022 | 1.2.0       | Add getOrganization and getOrganizationChanges endpoint descriptions             | Bert Viikmäe       |
-| 29.07.2022 | 2.0.0       | Substitute since with start and end date parameter and update related chapters   | Bert Viikmäe       |
+| Date       | Version | Description                                                                    | Author             |
+|------------|---------|--------------------------------------------------------------------------------|--------------------|
+| 21.07.2021 | 1.0.0   | Initial draft                                                                  | Bert Viikmäe       |
+| 21.07.2021 | 1.0.1   | Add installation section                                                       | Bert Viikmäe       |
+| 22.07.2021 | 1.0.2   | Add X-Road Catalog Collector section                                           | Bert Viikmäe       |
+| 23.07.2021 | 1.0.3   | Add X-Road Catalog Lister section                                              | Bert Viikmäe       |
+| 23.07.2021 | 1.0.4   | Add X-Road Catalog Persistence section                                         | Bert Viikmäe       |
+| 25.08.2021 | 1.0.5   | Add list distinct services endpoint description                                | Bert Viikmäe       |
+| 02.09.2021 | 1.0.6   | Add list errors endpoint description                                           | Bert Viikmäe       |
+| 22.09.2021 | 1.0.7   | Update heartbeat endpoint description                                          | Bert Viikmäe       |
+| 26.10.2021 | 1.0.8   | Update listErrors endpoint description                                         | Bert Viikmäe       |
+| 27.10.2021 | 1.1.0   | Add listSecurityServers and listDescriptors endpoint descriptions              | Bert Viikmäe       |
+| 15.12.2021 | 1.1.1   | Update listErrors endpoint description                                         | Bert Viikmäe       |
+| 08.02.2022 | 1.2.0   | Add getOrganization and getOrganizationChanges endpoint descriptions           | Bert Viikmäe       |
+| 29.07.2022 | 2.0.0   | Substitute since with start and end date parameter and update related chapters | Bert Viikmäe       |
+| 04.10.2022 | 2.1.0   | Add getRest and getEndpoints descriptions                                      | Bert Viikmäe       |
 
 ## Table of Contents <!-- omit in toc -->
 
@@ -65,7 +66,9 @@ Doc. ID: XRDCAT-CONF
             * [3.2.3.18 List security servers](#32318-list-security-servers) 
             * [3.2.3.19 List descriptors](#32319-list-descriptors) 
             * [3.2.3.20 Get Organization](#32320-get-organization) 
-            * [3.2.3.21 Get Organization changes](#32321-get-organization-changes)  
+            * [3.2.3.21 Get Organization changes](#32321-get-organization-changes) 
+            * [3.2.3.22 Get endpoints](#32322-get-endpoints) 
+            * [3.2.3.23 Get Rest](#32323-get-rest) 
     * [3.3 X-Road Catalog Persistence](#33-x-road-catalog-persistence)  
         * [3.3.1 Create database](#331-create-database) 
         * [3.3.2 Build](#332-build)   
@@ -2645,6 +2648,112 @@ The response has the following fields:
 **changed** is a boolean value which indicates whether there were any changes in all the data 
 **changedValueList** a list of changed data fields
 **name** the name of the data field which has changes
+
+### 3.2.3.22 Get endpoints
+
+Request
+
+``` $ curl "http://<SERVER_ADDRESS>:8080/api/getEndpoints/<INSTANCE>/<MEMBER_CLASS>/<MEMBER_CODE>/<SUBSYSTEM_CODE>/<SERVICE_CODE>" -H "Content-Type: application/json" ```
+
+
+* SERVER_ADDRESS please use the server address, on which the X-Road Catalog Lister is running on, e.g. localhost
+* INSTANCE name of X-Road instance, e.g. DEV
+* MEMBER_CLASS member class, e.g. GOV
+* MEMBER_CODE member code, e.g. 1234
+* SUBSYSTEM_CODE subsystem code, e.g. TEST
+* SERVICE_CODE service code, e.g. CATALOG_HEARTBEAT
+
+Example request
+``` $ curl "http://localhost:8080/api/getEndpoints/DEV/GOV/1234/TEST/CATALOG_HEARTBEAT" -H "Content-Type: application/json" ```
+
+Response
+
+```json
+{
+  "listOfServices":[
+    {
+      "memberClass":"GOV",
+      "memberCode":"1234",
+      "subsystemCode":"TEST",
+      "serviceCode":"CATALOG_HEARTBEAT",
+      "serviceVersion":null,
+      "endpointList":[
+        {
+          "method":"GET",
+          "path":"/heartbeat"
+        }
+      ],
+      "xroadInstance":"DEV"
+    }
+  ]
+}
+```
+
+
+The response has the following fields:
+
+* xroadInstance
+* memberClass
+* memberCode
+* subsystemCode
+* serviceCode
+* serviceVersion
+* endpointList
+    * method
+    * path
+
+### 3.2.3.23 Get Rest
+
+Request
+
+``` $ curl "http://<SERVER_ADDRESS>:8080/api/getRest/<INSTANCE>/<MEMBER_CLASS>/<MEMBER_CODE>/<SUBSYSTEM_CODE>/<SERVICE_CODE>" -H "Content-Type: application/json" ```
+
+
+* SERVER_ADDRESS please use the server address, on which the X-Road Catalog Lister is running on, e.g. localhost
+* INSTANCE name of X-Road instance, e.g. DEV
+* MEMBER_CLASS member class, e.g. GOV
+* MEMBER_CODE member code, e.g. 1234
+* SUBSYSTEM_CODE subsystem code, e.g. TEST
+* SERVICE_CODE service code, e.g. CATALOG_HEARTBEAT
+
+Example request
+``` $ curl "http://localhost:8080/api/getRest/DEV/GOV/1234/TEST/CATALOG_HEARTBEAT" -H "Content-Type: application/json" ```
+
+Response
+
+```json
+{
+  "listOfServices":[
+    {
+      "memberClass":"GOV",
+      "memberCode":"1234",
+      "subsystemCode":"TEST",
+      "serviceCode":"CATALOG_HEARTBEAT",
+      "serviceVersion":null,
+      "endpointList":[
+        {
+          "method":"GET",
+          "path":"/heartbeat"
+        }
+      ],
+      "xroadInstance":"DEV"
+    }
+  ]
+}
+```
+
+
+The response has the following fields:
+
+* xroadInstance
+* memberClass
+* memberCode
+* subsystemCode
+* serviceCode
+* serviceVersion
+* endpointList
+    * method
+    * path
 
 ### 3.3 X-Road Catalog Persistence
 

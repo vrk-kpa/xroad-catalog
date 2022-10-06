@@ -77,15 +77,15 @@ public class ServiceEndpoint {
         Service service = catalogService.getService(request.getXRoadInstance(),
                 request.getMemberClass(),
                 request.getMemberCode(),
-                request.getServiceCode(),
                 request.getSubsystemCode(),
+                request.getServiceCode(),
                 request.getServiceVersion());
         if (service == null) {
             throw new CatalogListerRuntimeException("Service with xRoadInstance \"" + request.getXRoadInstance()
                     + "\", memberClass \"" + request.getMemberClass()
                     + "\", memberCode \"" + request.getMemberCode()
-                    + "\", serviceCode \"" + request.getServiceCode()
                     + "\", subsystemCode \"" + request.getSubsystemCode()
+                    + "\", serviceCode \"" + request.getServiceCode()
                     + "\" and serviceVersion \"" + request.getServiceVersion() + "\" not found");
         }
         if (service.hasWsdl()) {

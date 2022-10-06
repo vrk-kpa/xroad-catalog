@@ -507,4 +507,33 @@ public class ServiceControllerTests {
                 .optJSONArray("email").optJSONObject(0).optString("email"));
     }
 
+    @Test
+    public void testGetEndpoints() throws JSONException {
+        ResponseEntity<String> response = restTemplate.getForEntity("/api/getEndpoints/dev-cs/PUB/11/TestSubSystem12345/testService4", String.class);
+        assertEquals(200, response.getStatusCodeValue());
+        JSONObject json = new JSONObject(response.getBody());
+        assertEquals(1, json.length());
+        assertEquals("dev-cs", json.optJSONArray("listOfServices").optJSONObject(0).optString("xroadInstance"));
+        assertEquals("PUB", json.optJSONArray("listOfServices").optJSONObject(0).optString("memberClass"));
+        assertEquals("11", json.optJSONArray("listOfServices").optJSONObject(0).optString("memberCode"));
+        assertEquals("TestSubSystem12345", json.optJSONArray("listOfServices").optJSONObject(0).optString("subsystemCode"));
+        assertEquals("testService4", json.optJSONArray("listOfServices").optJSONObject(0).optString("serviceCode"));
+        assertEquals("v1", json.optJSONArray("listOfServices").optJSONObject(0).optString("serviceVersion"));
+        assertEquals(2, json.optJSONArray("listOfServices").optJSONObject(0).optJSONArray("endpointList").length());
+    }
+
+    @Test
+    public void testGetRest() throws JSONException {
+        ResponseEntity<String> response = restTemplate.getForEntity("/api/getRest/dev-cs/PUB/11/TestSubSystem12345/testService4", String.class);
+        assertEquals(200, response.getStatusCodeValue());
+        JSONObject json = new JSONObject(response.getBody());
+        assertEquals(1, json.length());
+        assertEquals("dev-cs", json.optJSONArray("listOfServices").optJSONObject(0).optString("xroadInstance"));
+        assertEquals("PUB", json.optJSONArray("listOfServices").optJSONObject(0).optString("memberClass"));
+        assertEquals("11", json.optJSONArray("listOfServices").optJSONObject(0).optString("memberCode"));
+        assertEquals("TestSubSystem12345", json.optJSONArray("listOfServices").optJSONObject(0).optString("subsystemCode"));
+        assertEquals("testService4", json.optJSONArray("listOfServices").optJSONObject(0).optString("serviceCode"));
+        assertEquals("v1", json.optJSONArray("listOfServices").optJSONObject(0).optString("serviceVersion"));
+        assertEquals(2, json.optJSONArray("listOfServices").optJSONObject(0).optJSONArray("endpointList").length());
+    }
 }
