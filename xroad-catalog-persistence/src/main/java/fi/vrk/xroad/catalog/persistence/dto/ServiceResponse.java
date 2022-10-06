@@ -22,7 +22,6 @@
  */
 package fi.vrk.xroad.catalog.persistence.dto;
 
-import fi.vrk.xroad.catalog.persistence.entity.Endpoint;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;

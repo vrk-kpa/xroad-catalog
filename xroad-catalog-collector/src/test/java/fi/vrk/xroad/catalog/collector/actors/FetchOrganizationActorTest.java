@@ -46,7 +46,10 @@ import static org.mockito.Mockito.verify;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = DevelopmentConfiguration.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@TestPropertySource(properties = {"xroad-catalog.fetch-organizations-limit=3"})
+@TestPropertySource(properties = {
+        "xroad-catalog.fetch-organizations-limit=3",
+        "xroad-catalog.max-organizations-per-request=3"
+})
 @Slf4j
 public class FetchOrganizationActorTest {
 

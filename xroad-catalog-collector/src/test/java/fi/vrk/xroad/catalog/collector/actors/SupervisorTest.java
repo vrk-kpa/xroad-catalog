@@ -62,7 +62,7 @@ public class SupervisorTest {
     @Test
     public void testBasicPlumbing() {
         TestActorRef supervisor = TestActorRef.create(actorSystem, springExtension.props("supervisor"));
-        supervisor.tell(supervisor, ActorRef.noSender());
+        supervisor.tell("StartCollecting", ActorRef.noSender());
     }
 }
 
