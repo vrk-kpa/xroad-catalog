@@ -141,6 +141,16 @@ See [Get organization](../xroad_catalog_user_guide.md#32320-get-organization) in
 A REST endpoint for requesting whether given organization/company has some of its details changed.
 See [Get organization changes](../xroad_catalog_user_guide.md#32321-get-organization-changes) in the [User Guide](../xroad_catalog_user_guide.md#license)
 
+### 21. getEndpoints
+
+A REST endpoint for requesting a list of endpoints for a given REST (also OPENAPI) service or services (when multiple versions exist).
+See [Get endpoints](../xroad_catalog_user_guide.md#32322-get-endpoints) in the [User Guide](../xroad_catalog_user_guide.md#license)
+
+### 22. getRest
+
+A REST endpoint for requesting a list of endpoints for a given REST service (without OPENAPI description) or services (when multiple versions exist).
+See [Get Rest](../xroad_catalog_user_guide.md#32323-get-rest) in the [User Guide](../xroad_catalog_user_guide.md#license)
+
 ## Build RPM Packages on Non-RedHat Platform
  
     $ ../gradlew clean build

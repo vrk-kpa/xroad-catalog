@@ -56,6 +56,13 @@ import java.util.stream.StreamSupport;
 public class CatalogServiceImpl implements CatalogService {
 
     private static final String NOT_FOUND = " not found!";
+
+    private static final String MULTIPLE_MATCHES_FOUND_TO = "multiple matches found to ";
+
+    private static final String SUBSYSTEM_ID_REQUIRED = "subsystemId is required";
+
+    private static final String SERVICE_ID_REQUIRED = "serviceId is required";
+
     @Autowired
     MemberRepository memberRepository;
 
@@ -67,6 +74,12 @@ public class CatalogServiceImpl implements CatalogService {
 
     @Autowired
     OpenApiRepository openApiRepository;
+
+    @Autowired
+    RestRepository restRepository;
+
+    @Autowired
+    EndpointRepository endpointRepository;
 
     @Autowired
     WsdlRepository wsdlRepository;
@@ -108,7 +121,7 @@ public class CatalogServiceImpl implements CatalogService {
     public Wsdl getWsdl(String externalId) {
         List<Wsdl> matches = wsdlRepository.findAnyByExternalId(externalId);
         if (matches.size() > 1) {
-            throw new IllegalStateException("multiple matches found to " + externalId + ": " + matches);
+            throw new IllegalStateException(MULTIPLE_MATCHES_FOUND_TO + externalId + ": " + matches);
         } else if (matches.size() == 1) {
             return matches.iterator().next();
         } else {
@@ -120,7 +133,19 @@ public class CatalogServiceImpl implements CatalogService {
     public OpenApi getOpenApi(String externalId) {
         List<OpenApi> matches = openApiRepository.findAnyByExternalId(externalId);
         if (matches.size() > 1) {
-            throw new IllegalStateException("multiple matches found to " + externalId + ": " + matches);
+            throw new IllegalStateException(MULTIPLE_MATCHES_FOUND_TO + externalId + ": " + matches);
+        } else if (matches.size() == 1) {
+            return matches.iterator().next();
+        } else {
+            return null;
+        }
+    }
+
+    @Override
+    public Rest getRest(Service service) {
+        List<Rest> matches = restRepository.findAnyByService(service);
+        if (matches.size() > 1) {
+            throw new IllegalStateException(MULTIPLE_MATCHES_FOUND_TO + service.getServiceCode() + " serviceCode: " + matches);
         } else if (matches.size() == 1) {
             return matches.iterator().next();
         } else {
@@ -137,10 +162,23 @@ public class CatalogServiceImpl implements CatalogService {
                               String serviceVersion) {
         if (serviceVersion == null) {
             return serviceRepository.findAllByMemberServiceAndSubsystemVersionNull(xRoadInstance,
-                    memberClass, memberCode, serviceCode, subsystemCode);
+                    memberClass, memberCode, subsystemCode, serviceCode);
         }
         return serviceRepository.findAllByMemberServiceAndSubsystemAndVersion(xRoadInstance,
-                memberClass, memberCode, serviceCode, subsystemCode, serviceVersion);
+                memberClass, memberCode, subsystemCode, serviceCode, serviceVersion);
+    }
+
+    @Override
+    public List<Service> getServices(String xRoadInstance,
+                                     String memberClass,
+                                     String memberCode,
+                                     String subsystemCode,
+                                     String serviceCode) {
+        return serviceRepository.findServicesByMemberServiceAndSubsystem(xRoadInstance,
+                memberClass,
+                memberCode,
+                serviceCode,
+                subsystemCode);
     }
 
     @Override
@@ -397,25 +435,9 @@ public class CatalogServiceImpl implements CatalogService {
 
     @Override
     public void saveWsdl(SubsystemId subsystemId, ServiceId serviceId, String wsdlString) {
-        Assert.notNull(subsystemId, "subsystemId is required");
-        Assert.notNull(serviceId, "serviceId is required");
-        Service oldService;
-        // bit ugly this one, would be a little cleaner if
-        // https://jira.spring.io/browse/DATAJPA-209 was resolved
-        if (serviceId.getServiceVersion() == null) {
-            oldService = serviceRepository.findActiveNullVersionByNaturalKey(
-                    subsystemId.getXRoadInstance(),
-                    subsystemId.getMemberClass(), subsystemId.getMemberCode(),
-                    subsystemId.getSubsystemCode(), serviceId.getServiceCode());
-        } else {
-            oldService = serviceRepository.findActiveByNaturalKey(subsystemId.getXRoadInstance(),
-                    subsystemId.getMemberClass(), subsystemId.getMemberCode(),
-                    subsystemId.getSubsystemCode(), serviceId.getServiceCode(),
-                    serviceId.getServiceVersion());
-        }
-        if (oldService == null) {
-            throw new IllegalStateException("service " + serviceId + NOT_FOUND);
-        }
+        Assert.notNull(subsystemId, SUBSYSTEM_ID_REQUIRED);
+        Assert.notNull(serviceId, SERVICE_ID_REQUIRED);
+        Service oldService = getExistingService(subsystemId, serviceId);
         LocalDateTime now = LocalDateTime.now();
         Wsdl wsdl = new Wsdl();
         wsdl.setData(wsdlString);
@@ -447,25 +469,9 @@ public class CatalogServiceImpl implements CatalogService {
 
     @Override
     public void saveOpenApi(SubsystemId subsystemId, ServiceId serviceId, String openApiString) {
-        Assert.notNull(subsystemId, "subsystemId is required");
-        Assert.notNull(serviceId, "serviceId is required");
-        Service oldService;
-        // bit ugly this one, would be a little cleaner if
-        // https://jira.spring.io/browse/DATAJPA-209 was resolved
-        if (serviceId.getServiceVersion() == null) {
-            oldService = serviceRepository.findActiveNullVersionByNaturalKey(
-                    subsystemId.getXRoadInstance(),
-                    subsystemId.getMemberClass(), subsystemId.getMemberCode(),
-                    subsystemId.getSubsystemCode(), serviceId.getServiceCode());
-        } else {
-            oldService = serviceRepository.findActiveByNaturalKey(subsystemId.getXRoadInstance(),
-                    subsystemId.getMemberClass(), subsystemId.getMemberCode(),
-                    subsystemId.getSubsystemCode(), serviceId.getServiceCode(),
-                    serviceId.getServiceVersion());
-        }
-        if (oldService == null) {
-            throw new IllegalStateException("service " + serviceId + NOT_FOUND);
-        }
+        Assert.notNull(subsystemId, SUBSYSTEM_ID_REQUIRED);
+        Assert.notNull(serviceId, SERVICE_ID_REQUIRED);
+        Service oldService = getExistingService(subsystemId, serviceId);
         LocalDateTime now = LocalDateTime.now();
         OpenApi openApi = new OpenApi();
         openApi.setData(openApiString);
@@ -485,14 +491,87 @@ public class CatalogServiceImpl implements CatalogService {
                 oldOpenApi.getStatusInfo().setFetched(now);
             } else {
                 // update existing
-                boolean wsdlChanged = !oldOpenApi.getData().equals(openApi.getData());
-                if (wsdlChanged) {
+                boolean openApiChanged = !oldOpenApi.getData().equals(openApi.getData());
+                if (openApiChanged) {
                     oldOpenApi.getStatusInfo().setChanged(now);
                     oldOpenApi.setData(openApi.getData());
                 }
                 oldOpenApi.getStatusInfo().setFetched(now);
             }
         }
+    }
+
+    @Override
+    public void saveRest(SubsystemId subsystemId, ServiceId serviceId, String restString) {
+        Assert.notNull(subsystemId, SUBSYSTEM_ID_REQUIRED);
+        Assert.notNull(serviceId, SERVICE_ID_REQUIRED);
+        Service oldService = getExistingService(subsystemId, serviceId);
+        LocalDateTime now = LocalDateTime.now();
+        Rest rest = new Rest();
+        rest.setData(restString);
+        Rest oldRest = oldService.getRest();
+        if (oldRest == null) {
+            rest.initializeExternalId();
+            rest.getStatusInfo().setTimestampsForNew(now);
+            oldService.setRest(rest);
+            rest.setService(oldService);
+            restRepository.save(rest);
+        } else {
+            if (oldRest.getStatusInfo().isRemoved()) {
+                // resurrect
+                oldRest.setData(rest.getData());
+                oldRest.getStatusInfo().setChanged(now);
+                oldRest.getStatusInfo().setRemoved(null);
+                oldRest.getStatusInfo().setFetched(now);
+            } else {
+                // update existing
+                boolean restChanged = !oldRest.getData().equals(rest.getData());
+                if (restChanged) {
+                    oldRest.getStatusInfo().setChanged(now);
+                    oldRest.setData(rest.getData());
+                }
+                oldRest.getStatusInfo().setFetched(now);
+            }
+        }
+    }
+
+    @Override
+    public void saveEndpoint(SubsystemId subsystemId, ServiceId serviceId, String method, String path) {
+        Assert.notNull(subsystemId, SUBSYSTEM_ID_REQUIRED);
+        Assert.notNull(serviceId, SERVICE_ID_REQUIRED);
+        Assert.notNull(method, "method is required");
+        Assert.notNull(path, "path is required");
+        Service oldService = getExistingService(subsystemId, serviceId);
+        Endpoint oldEndpoint = endpointRepository.findAnyByServicePathAndMethod(oldService, method, path);
+        if (oldEndpoint != null) {
+            oldEndpoint.getStatusInfo().setChanged(LocalDateTime.now());
+            oldEndpoint.getStatusInfo().setRemoved(null);
+            oldEndpoint.getStatusInfo().setFetched(LocalDateTime.now());
+        } else {
+            Endpoint endpoint = new Endpoint();
+            endpoint.setMethod(method);
+            endpoint.setPath(path);
+            endpoint.getStatusInfo().setTimestampsForNew(LocalDateTime.now());
+            endpoint.getStatusInfo().setRemoved(null);
+            oldService.setEndpoint(endpoint);
+            endpoint.setService(oldService);
+            endpointRepository.save(endpoint);
+        }
+    }
+
+    @Override
+    public void prepareEndpoints(SubsystemId subsystemId, ServiceId serviceId){
+        Assert.notNull(subsystemId, SUBSYSTEM_ID_REQUIRED);
+        Assert.notNull(serviceId, SERVICE_ID_REQUIRED);
+        Service oldService = getExistingService(subsystemId, serviceId);
+        List<Endpoint> oldEndpoints = endpointRepository.findAnyByService(oldService);
+        oldEndpoints.forEach(existingEndpoint -> {
+            if (!existingEndpoint.getStatusInfo().isRemoved()) {
+                existingEndpoint.getStatusInfo().setRemoved(LocalDateTime.now());
+                existingEndpoint.getStatusInfo().setChanged(LocalDateTime.now());
+                existingEndpoint.getStatusInfo().setFetched(LocalDateTime.now());
+            }
+        });
     }
 
     @Override
@@ -571,5 +650,24 @@ public class CatalogServiceImpl implements CatalogService {
                                        LocalDateTime endDate) {
         return (dateToBeChecked.isAfter(startDate) || dateToBeChecked.isEqual(startDate))
                 && (dateToBeChecked.isBefore(endDate) || dateToBeChecked.isEqual(endDate));
+    }
+
+    private Service getExistingService(SubsystemId subsystemId, ServiceId serviceId){
+        Service oldService;
+        if (serviceId.getServiceVersion() == null) {
+            oldService = serviceRepository.findActiveNullVersionByNaturalKey(
+                    subsystemId.getXRoadInstance(),
+                    subsystemId.getMemberClass(), subsystemId.getMemberCode(),
+                    subsystemId.getSubsystemCode(), serviceId.getServiceCode());
+        } else {
+            oldService = serviceRepository.findActiveByNaturalKey(subsystemId.getXRoadInstance(),
+                    subsystemId.getMemberClass(), subsystemId.getMemberCode(),
+                    subsystemId.getSubsystemCode(), serviceId.getServiceCode(),
+                    serviceId.getServiceVersion());
+        }
+        if (oldService == null) {
+            throw new IllegalStateException("service " + serviceId + NOT_FOUND);
+        }
+        return oldService;
     }
 }

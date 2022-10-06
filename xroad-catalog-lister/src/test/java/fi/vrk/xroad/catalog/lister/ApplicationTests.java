@@ -118,7 +118,7 @@ public class ApplicationTests {
 		}
 		assertTrue(thrown);
 		assertEquals(exceptionMessage, "Service with xRoadInstance \"dev-cs\", " +
-				"memberClass \"PUB\", memberCode \"14151328\", serviceCode \"testService123\", subsystemCode \"TestSubSystem\" " +
+				"memberClass \"PUB\", memberCode \"14151328\", subsystemCode \"TestSubSystem\", serviceCode \"testService123\" " +
 				"and serviceVersion \"v1\" not found");
 	}
 

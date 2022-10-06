@@ -52,7 +52,7 @@ public class SubsystemTest {
     public void testGetActiveServices() {
         // 5+6+10 are active, 8+9 are removed
         Subsystem sub = subsystemRepository.findOne(8L);
-        assertEquals(Arrays.asList(5L,6L,10L, 12L),
+        assertEquals(Arrays.asList(5L,6L,10L, 12L, 13L),
                 new ArrayList<Long>(testUtil.getIds(sub.getActiveServices())));
     }
 
@@ -60,7 +60,7 @@ public class SubsystemTest {
     public void testGetAllServices() {
         // 5+6+10 are active, 8+9 are removed
         Subsystem sub = subsystemRepository.findOne(8L);
-        assertEquals(Arrays.asList(5L,6L,8L,9L,10L, 11L, 12L),
+        assertEquals(Arrays.asList(5L,6L,8L,9L,10L, 11L, 12L, 13L, 14L),
                 new ArrayList<Long>(testUtil.getIds(sub.getAllServices())));
     }
 

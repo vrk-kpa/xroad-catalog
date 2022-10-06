@@ -227,3 +227,11 @@ INSERT INTO open_api (id, service_id, data, external_id, created, changed, fetch
 VALUES (7, 16, '<openapi>', '30030', '2020-01-01 00:00:00+02', '2020-01-01 00:00:00+02', '2020-01-01 00:00:00+02', NULL);
 INSERT INTO open_api (id, service_id, data, external_id, created, changed, fetched, removed)
 VALUES (8, 17, '<openapi>', '30030', '2020-01-01 00:00:00+02', '2020-01-01 00:00:00+02', '2020-01-01 00:00:00+02', NULL);
+
+INSERT INTO rest (id, service_id, data, external_id, created, changed, fetched, removed)
+VALUES (1, 6, '{"endpoint_data":[]}', '30030', '2020-01-01 00:00:00+02', '2020-01-01 00:00:00+02', '2020-01-01 00:00:00+02', NULL);
+
+INSERT INTO endpoint (id, service_id, method, path, created, changed, fetched, removed)
+VALUES (1, 6, 'GET', '/getData', '2020-01-01 00:00:00+02', '2020-01-01 00:00:00+02', '2020-01-01 00:00:00+02', NULL);
+INSERT INTO endpoint (id, service_id, method, path, created, changed, fetched, removed)
+VALUES (2, 6, 'POST', '/setData', '2020-01-01 00:00:00+02', '2020-01-01 00:00:00+02', '2020-01-01 00:00:00+02', NULL);

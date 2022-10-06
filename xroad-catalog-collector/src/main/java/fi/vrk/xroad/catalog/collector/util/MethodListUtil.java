@@ -55,28 +55,36 @@ public class MethodListUtil {
         return isTimeBetweenHours(fetchHourAfter, fetchHourBefore);
     }
 
-    public static List<XRoadServiceIdentifierType> methodListFromResponse(ClientType clientType, String host, CatalogService catalogService) {
+    public static List<XRoadRestServiceIdentifierType> methodListFromResponse(ClientType clientType, String host, CatalogService catalogService) {
         final String url = new StringBuilder().append(host).append("/r1/")
                 .append(clientType.getId().getXRoadInstance()).append("/")
                 .append(clientType.getId().getMemberClass()).append("/")
                 .append(clientType.getId().getMemberCode()).append("/")
                 .append(clientType.getId().getSubsystemCode()).append("/listMethods").toString();
 
-        List<XRoadServiceIdentifierType> restServices = new ArrayList<>();
+        List<XRoadRestServiceIdentifierType> restServices = new ArrayList<>();
         JSONObject json = MethodListUtil.getJSON(url, clientType, catalogService);
         if (json != null) {
             JSONArray serviceList = json.getJSONArray("service");
             for (int i = 0; i < serviceList.length(); i++) {
                 JSONObject service = serviceList.getJSONObject(i);
-                XRoadServiceIdentifierType xRoadServiceIdentifierType = new XRoadServiceIdentifierType();
-                xRoadServiceIdentifierType.setMemberCode(service.optString("member_code"));
-                xRoadServiceIdentifierType.setSubsystemCode(service.optString("subsystem_code"));
-                xRoadServiceIdentifierType.setMemberClass(service.optString("member_class"));
-                xRoadServiceIdentifierType.setServiceCode(service.optString("service_code"));
-                xRoadServiceIdentifierType.setServiceVersion(service.has("service_version") ? service.optString("service_version") : null);
-                xRoadServiceIdentifierType.setXRoadInstance(service.optString("xroad_instance"));
-                xRoadServiceIdentifierType.setObjectType(XRoadObjectType.fromValue(service.optString("object_type")));
-                restServices.add(xRoadServiceIdentifierType);
+                XRoadRestServiceIdentifierType xRoadRestServiceIdentifierType = new XRoadRestServiceIdentifierType();
+                xRoadRestServiceIdentifierType.setMemberCode(service.optString("member_code"));
+                xRoadRestServiceIdentifierType.setSubsystemCode(service.optString("subsystem_code"));
+                xRoadRestServiceIdentifierType.setMemberClass(service.optString("member_class"));
+                xRoadRestServiceIdentifierType.setServiceCode(service.optString("service_code"));
+                xRoadRestServiceIdentifierType.setServiceVersion(service.has("service_version") ? service.optString("service_version") : null);
+                xRoadRestServiceIdentifierType.setXRoadInstance(service.optString("xroad_instance"));
+                xRoadRestServiceIdentifierType.setObjectType(XRoadObjectType.fromValue(service.optString("object_type")));
+                xRoadRestServiceIdentifierType.setServiceType(service.has("service_type") ? service.optString("service_type") : null);
+                JSONArray endpointList = service.optJSONArray("endpoint_list");
+                List<Endpoint> endpoints = new ArrayList<>();
+                for (int j = 0; j < endpointList.length(); j++) {
+                    JSONObject endpoint = endpointList.getJSONObject(j);
+                    endpoints.add(Endpoint.builder().method(endpoint.optString("method")).path(endpoint.optString("path")).build());
+                }
+                xRoadRestServiceIdentifierType.setEndpoints(endpoints);
+                restServices.add(xRoadRestServiceIdentifierType);
             }
         }
 
@@ -94,6 +102,14 @@ public class MethodListUtil {
         JSONObject json = MethodListUtil.getJSON(url, clientType, catalogService);
 
         return (json != null) ? json.toString() : "";
+    }
+
+    public static List<fi.vrk.xroad.catalog.collector.util.Endpoint> getEndpointList(XRoadRestServiceIdentifierType service) {
+        List<fi.vrk.xroad.catalog.collector.util.Endpoint> endpointList = new ArrayList<>();
+        for (fi.vrk.xroad.catalog.collector.util.Endpoint endpoint : service.getEndpoints()) {
+            endpointList.add(Endpoint.builder().method(endpoint.getMethod()).path(endpoint.getPath()).build());
+        }
+        return endpointList;
     }
 
     public static ErrorLog createErrorLog(ClientType clientType, String message, String code) {

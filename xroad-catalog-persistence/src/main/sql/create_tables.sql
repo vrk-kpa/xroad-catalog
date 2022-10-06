@@ -127,6 +127,55 @@ CREATE SEQUENCE IF NOT EXISTS open_api_external_id_seq
 
 ALTER SEQUENCE open_api_external_id_seq OWNED BY open_api.external_id;
 
+CREATE TABLE IF NOT EXISTS rest (
+    id BIGSERIAL PRIMARY KEY NOT NULL,
+    service_id BIGSERIAL NOT NULL REFERENCES service(id),
+    data TEXT NOT NULL,
+    external_id TEXT NOT NULL,
+    created TIMESTAMP WITH TIME ZONE NOT NULL,
+    changed TIMESTAMP WITH TIME ZONE NOT NULL,
+    fetched TIMESTAMP WITH TIME ZONE NOT NULL,
+    removed TIMESTAMP WITH TIME ZONE
+                          );
+
+CREATE SEQUENCE IF NOT EXISTS rest_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+ALTER SEQUENCE rest_id_seq OWNED BY rest.id;
+
+CREATE SEQUENCE IF NOT EXISTS rest_external_id_seq
+  START WITH 1
+  INCREMENT BY 1
+  NO MINVALUE
+  NO MAXVALUE
+  CACHE 1;
+
+ALTER SEQUENCE rest_external_id_seq OWNED BY rest.external_id;
+
+CREATE TABLE IF NOT EXISTS endpoint (
+                                    id BIGSERIAL PRIMARY KEY NOT NULL,
+                                    service_id BIGSERIAL NOT NULL REFERENCES service(id),
+    method TEXT NOT NULL,
+    path TEXT NOT NULL,
+    created TIMESTAMP WITH TIME ZONE NOT NULL,
+    changed TIMESTAMP WITH TIME ZONE NOT NULL,
+    fetched TIMESTAMP WITH TIME ZONE NOT NULL,
+    removed TIMESTAMP WITH TIME ZONE
+                          );
+
+CREATE SEQUENCE IF NOT EXISTS endpoint_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+ALTER SEQUENCE endpoint_id_seq OWNED BY endpoint.id;
+
 CREATE TABLE IF NOT EXISTS organization (
     id BIGSERIAL PRIMARY KEY NOT NULL,
     organization_type TEXT NOT NULL,
@@ -846,6 +895,7 @@ ALTER SEQUENCE error_log_id_seq OWNED BY error_log.id;
 
 CREATE UNIQUE INDEX IF NOT EXISTS idx_wsdl_external_id ON wsdl USING btree (external_id);
 CREATE UNIQUE INDEX IF NOT EXISTS idx_open_api_external_id ON open_api USING btree (external_id);
+CREATE UNIQUE INDEX IF NOT EXISTS idx_rest_external_id ON rest USING btree (external_id);
 CREATE UNIQUE INDEX IF NOT EXISTS idx_member_natural_keys ON member(member_code, member_class, x_road_instance);
 CREATE UNIQUE INDEX IF NOT EXISTS idx_service_unique_fields ON service(subsystem_id, service_code, service_version);
 CREATE UNIQUE INDEX IF NOT EXISTS idx_subsystem_unique_fields ON subsystem(member_id, subsystem_code);
@@ -853,6 +903,8 @@ CREATE UNIQUE INDEX IF NOT EXISTS idx_organization_guid ON organization USING bt
 
 CREATE INDEX IF NOT EXISTS idx_wsdl_changed ON wsdl(changed);
 CREATE INDEX IF NOT EXISTS idx_open_api_changed ON open_api(changed);
+CREATE INDEX IF NOT EXISTS idx_rest_changed ON rest(changed);
+CREATE INDEX IF NOT EXISTS idx_endpoint_changed ON endpoint(changed);
 CREATE INDEX IF NOT EXISTS idx_service_changed ON service(changed);
 CREATE INDEX IF NOT EXISTS idx_subsystem_changed ON subsystem(changed);
 CREATE INDEX IF NOT EXISTS idx_member_changed ON member(changed);
@@ -889,6 +941,8 @@ CREATE INDEX IF NOT EXISTS idx_registered_entry_changed ON registered_entry(chan
 CREATE INDEX IF NOT EXISTS idx_business_id_change_changed ON business_id_change(changed);
 CREATE INDEX IF NOT EXISTS idx_wsdl_service_id ON wsdl(service_id);
 CREATE INDEX IF NOT EXISTS idx_open_api_service_id ON open_api(service_id);
+CREATE INDEX IF NOT EXISTS idx_rest_service_id ON rest(service_id);
+CREATE INDEX IF NOT EXISTS idx_endpoint_service_id ON endpoint(service_id);
 CREATE INDEX IF NOT EXISTS idx_organization_description_organization_id ON organization_description(organization_id);
 CREATE INDEX IF NOT EXISTS idx_organization_name_organization_id ON organization_name(organization_id);
 CREATE INDEX IF NOT EXISTS idx_email_organization_id ON email(organization_id);
@@ -912,6 +966,8 @@ ALTER TABLE service OWNER TO xroad_catalog;
 ALTER TABLE subsystem OWNER TO xroad_catalog;
 ALTER TABLE wsdl OWNER TO xroad_catalog;
 ALTER TABLE open_api OWNER TO xroad_catalog;
+ALTER TABLE rest OWNER TO xroad_catalog;
+ALTER TABLE endpoint OWNER TO xroad_catalog;
 ALTER TABLE organization OWNER TO xroad_catalog;
 ALTER TABLE organization_name OWNER TO xroad_catalog;
 ALTER TABLE organization_description OWNER TO xroad_catalog;

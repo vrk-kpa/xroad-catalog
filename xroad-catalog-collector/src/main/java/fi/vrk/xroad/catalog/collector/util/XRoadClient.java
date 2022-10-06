@@ -207,7 +207,7 @@ public class XRoadClient {
         return null;
     }
 
-    public String getOpenApi(XRoadServiceIdentifierType service, String host, CatalogService catalogService) {
+    public String getOpenApi(XRoadRestServiceIdentifierType service, String host, CatalogService catalogService) {
         ClientType clientType = new ClientType();
         XRoadClientIdentifierType xRoadClientIdentifierType = new XRoadClientIdentifierType();
         xRoadClientIdentifierType.setXRoadInstance(service.getXRoadInstance());
@@ -224,7 +224,6 @@ public class XRoadClient {
 
         return MethodListUtil.openApiFromResponse(clientType, host, catalogService);
     }
-
 
     private static Holder<String> queryId() {
         return holder("xroad-catalog-collector-" + UUID.randomUUID());

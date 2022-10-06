@@ -96,10 +96,18 @@ public interface CatalogService {
     /**
      * Returns the full OpenApi object. Only returns active ones, removed are not found.
      * @param externalId id of an OpenAPI
-     * @return Wsdl, if any, null if not found
+     * @return OpenApi, if any, null if not found
      * @throws RuntimeException if multiple matches found.
      */
     OpenApi getOpenApi(String externalId);
+
+    /**
+     * Returns the full Rest object. Only returns active ones, removed are not found.
+     * @param Service a service object
+     * @return Rest, if any, null if not found
+     * @throws RuntimeException if multiple matches found.
+     */
+    Rest getRest(Service service);
 
     /**
      * Returns the full Service object. Only returns active ones, removed are not found.
@@ -118,6 +126,21 @@ public interface CatalogService {
                        String serviceCode,
                        String subsystemCode,
                        String serviceVersion);
+
+    /**
+     * Returns List of full Service objects. Only returns active ones, removed are not found.
+     * @param xRoadInstance X-Road instance identifier
+     * @param memberClass X-Road member class
+     * @param memberCode X-Road member code
+     * @param serviceCode X-Road service code
+     * @param subsystemCode X-Road subsystem code
+     * @return List of Service objects, empty list if not found
+     */
+    List<Service> getServices(String xRoadInstance,
+                              String memberClass,
+                              String memberCode,
+                              String subsystemCode,
+                              String serviceCode);
 
     /**
      * Returns a list of error logs with pagination
@@ -208,6 +231,35 @@ public interface CatalogService {
      * @param openApi the actual openApi
      */
     void saveOpenApi(SubsystemId subsystemId, ServiceId serviceId, String openApi);
+
+    /**
+     * Saves given rest data. The rest can either be a new one, or an update to an existing one.
+     * Updates "changed" field based on whether data is different compared to last time.
+     * @param subsystemId identifier of the subsystem
+     * @param serviceId identifier of the service
+     * @param rest the actual rest
+     */
+    void saveRest(SubsystemId subsystemId, ServiceId serviceId, String rest);
+
+    /**
+     * Saves given rest data. The rest can either be a new one, or an update to an existing one.
+     * Updates "changed" field based on whether data is different compared to last time.
+     * @param subsystemId identifier of the subsystem
+     * @param serviceId identifier of the service
+     * @param method method info
+     * @param path path info
+     */
+    void saveEndpoint(SubsystemId subsystemId, ServiceId serviceId, String method, String path);
+
+    /**
+     * Marks all entries in the Endpoints table as removed
+     * so that when new endpoints are being fetched, those will be marked as non-removed
+     * and when some endpoints are missing in the future, the ones still present in the table
+     * will remain as removed
+     * @param subsystemId identifier of the subsystem
+     * @param serviceId identifier of the service
+     */
+    void prepareEndpoints(SubsystemId subsystemId, ServiceId serviceId);
 
     /**
      * Checks if database is alive

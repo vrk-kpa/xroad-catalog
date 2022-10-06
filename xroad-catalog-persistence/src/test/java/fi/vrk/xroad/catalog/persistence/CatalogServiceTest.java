@@ -82,6 +82,9 @@ public class CatalogServiceTest {
     OpenApiRepository openApiRepository;
 
     @Autowired
+    RestRepository restRepository;
+
+    @Autowired
     TestUtil testUtil;
 
     @Test
@@ -492,8 +495,8 @@ public class CatalogServiceTest {
         Service foundService = catalogService.getService(service.getSubsystem().getMember().getXRoadInstance(),
                 service.getSubsystem().getMember().getMemberClass(),
                 service.getSubsystem().getMember().getMemberCode(),
-                service.getServiceCode(),
                 service.getSubsystem().getSubsystemCode(),
+                service.getServiceCode(),
                 service.getServiceVersion());
         assertNotNull(foundService);
     }
@@ -528,7 +531,7 @@ public class CatalogServiceTest {
         Subsystem checkedSub = subsystemRepository.findOne(8L);
         testUtil.assertAllSame(originalSub.getStatusInfo(), checkedSub.getStatusInfo());
 
-        assertEquals(Arrays.asList(5L, 6L, 8L, 9L, 10L, 11L, 12L),
+        assertEquals(Arrays.asList(5L, 6L, 8L, 9L, 10L, 11L, 12L, 13L, 14L),
                 new ArrayList<>(testUtil.getIds(checkedSub.getAllServices())));
         assertTrue(checkedSub.getActiveServices().isEmpty());
         Service checkedService5 = (Service) testUtil.getEntity(checkedSub.getAllServices(), 5L).get();
@@ -597,6 +600,28 @@ public class CatalogServiceTest {
     }
 
     @Test
+    public void testOverwriteIdenticalRest() {
+        Rest originalRest = restRepository.findOne(1L);
+        Service originalService = originalRest.getService();
+        ServiceId originalServiceId = originalRest.getService().createKey();
+        SubsystemId originalSubsystemId = originalRest.getService().getSubsystem().createKey();
+        // detach, so we dont modify those objects in the next steps
+        testUtil.entityManagerClear();
+
+        catalogService.saveRest(originalSubsystemId, originalServiceId, originalRest.getData());
+        testUtil.entityManagerFlush();
+        testUtil.entityManagerClear();
+
+        Rest checkedRest = restRepository.findOne(1L);
+        assertEquals(originalRest.getExternalId(), checkedRest.getExternalId());
+        assertEquals(originalRest.getData(), checkedRest.getData());
+        assertEquals(originalRest.getExternalId(), checkedRest.getExternalId());
+        assertEquals(originalRest.getService().createKey(), originalServiceId);
+        testUtil.assertFetchedIsOnlyDifferent(originalRest.getStatusInfo(), checkedRest.getStatusInfo());
+        testUtil.assertAllSame(originalService.getStatusInfo(), checkedRest.getService().getStatusInfo());
+    }
+
+    @Test
     public void testOverwriteModifiedWsdl() {
         // "changed" is updated
         // fetched is also updated
@@ -641,6 +666,28 @@ public class CatalogServiceTest {
         testUtil.assertEqualities(originalOpenApi.getStatusInfo(), checkedOpenApi.getStatusInfo(),
                 true, false, true, false);
         testUtil.assertAllSame(originalService.getStatusInfo(), checkedOpenApi.getService().getStatusInfo());
+    }
+
+    @Test
+    public void testOverwriteModifiedRest() {
+        Rest originalRest = restRepository.findOne(1L);
+        Service originalService = originalRest.getService();
+        ServiceId originalServiceId = originalRest.getService().createKey();
+        SubsystemId originalSubsystemId = originalRest.getService().getSubsystem().createKey();
+        // detach, so we dont modify those objects in the next steps
+        testUtil.entityManagerClear();
+
+        catalogService.saveRest(originalSubsystemId, originalServiceId, originalRest.getData() + "-modification");
+        testUtil.entityManagerFlush();
+        testUtil.entityManagerClear();
+
+        Rest checkedRest = restRepository.findOne(1L);
+        assertEquals(originalRest.getExternalId(), checkedRest.getExternalId());
+        assertNotEquals(originalRest.getData(), checkedRest.getData());
+        assertEquals(originalRest.getService().createKey(), originalServiceId);
+        testUtil.assertEqualities(originalRest.getStatusInfo(), checkedRest.getStatusInfo(),
+                true, false, true, false);
+        testUtil.assertAllSame(originalService.getStatusInfo(), checkedRest.getService().getStatusInfo());
     }
 
     @Test
@@ -710,6 +757,43 @@ public class CatalogServiceTest {
     }
 
     @Test
+    public void testSaveNewRest() {
+        // member (5) -> subsystem (6) -> service (3) -> wsdl (*new*)
+        Service oldService = serviceRepository.findOne(13L);
+        ServiceId originalServiceId = oldService.createKey();
+        SubsystemId originalSubsystemId = oldService.getSubsystem().createKey();
+        // detach, so we dont modify those objects in the next steps
+        testUtil.entityManagerClear();
+
+        Service aService = new Service(oldService.getSubsystem(), "code", "version");
+        final String data = "{\"endpoint_list\": []}";
+        Rest newRest = new Rest(aService, data, "1");
+        newRest.initializeExternalId();
+        assertNotNull(newRest.getExternalId());
+        aService.setRest(newRest);
+        assertTrue(aService.hasRest());
+
+        catalogService.saveRest(originalSubsystemId, originalServiceId, data);
+        testUtil.entityManagerFlush();
+        testUtil.entityManagerClear();
+
+        Service checkedService = serviceRepository.findOne(13L);
+        Rest foundRest = catalogService.getRest(checkedService);
+        assertNotNull(foundRest);
+        Rest checkedRest = checkedService.getRest();
+        log.info("externalId [{}]", checkedRest.getExternalId());
+        assertNotNull(checkedRest.getExternalId());
+        assertEquals(data, checkedRest.getData());
+        assertTrue(checkedService.hasRest());
+        assertEquals(checkedRest.getService().createKey(), originalServiceId);
+        assertNotNull(checkedRest.getStatusInfo().getCreated());
+        assertNotNull(checkedRest.getStatusInfo().getChanged());
+        assertNotNull(checkedRest.getStatusInfo().getFetched());
+        assertNull(checkedRest.getStatusInfo().getRemoved());
+        testUtil.assertAllSame(oldService.getStatusInfo(), checkedRest.getService().getStatusInfo());
+    }
+
+    @Test
     public void testResurrectWsdl() {
         // member (7) -> subsystem (8) -> service (9, removed) -> wsdl (7, removed)
         Service oldService = serviceRepository.findOne(9L);
@@ -766,6 +850,34 @@ public class CatalogServiceTest {
     }
 
     @Test
+    public void testResurrectRest() {
+        // member (7) -> subsystem (8) -> service (9, removed) -> wsdl (7, removed)
+        Service oldService = serviceRepository.findOne(14L);
+        // fix test data so that service is not removed
+        oldService.getStatusInfo().setRemoved(null);
+        ServiceId originalServiceId = oldService.createKey();
+        SubsystemId originalSubsystemId = oldService.getSubsystem().createKey();
+        Rest originalRest = oldService.getRest();
+        // detach, so we dont modify those objects in the next steps
+        testUtil.entityManagerFlush();
+        testUtil.entityManagerClear();
+
+        catalogService.saveRest(originalSubsystemId, originalServiceId, originalRest.getData());
+        testUtil.entityManagerFlush();
+        testUtil.entityManagerClear();
+
+        Service checkedService = serviceRepository.findOne(14L);
+        Rest checkedRest = checkedService.getRest();
+        assertEquals(originalRest.getExternalId(), checkedRest.getExternalId());
+        assertEquals(2L, checkedRest.getId());
+        assertEquals(originalRest.getData(), checkedRest.getData());
+        assertEquals(checkedRest.getService().createKey(), originalServiceId);
+        testUtil.assertEqualities(originalRest.getStatusInfo(), checkedRest.getStatusInfo(),
+                true, false, false, false);
+        assertNull(checkedRest.getStatusInfo().getRemoved());
+    }
+
+    @Test
     public void testSaveWsdlFailsForRemovedService() {
         // member (7) -> subsystem (8) -> service (9, removed) -> wsdl (7, removed)
         Service oldService = serviceRepository.findOne(9L);
@@ -794,7 +906,25 @@ public class CatalogServiceTest {
         testUtil.entityManagerClear();
 
         try {
-            catalogService.saveWsdl(originalSubsystemId, originalServiceId, originalOpenApi.getData());
+            catalogService.saveOpenApi(originalSubsystemId, originalServiceId, originalOpenApi.getData());
+            fail("should have throw exception since service is removed");
+        } catch (Exception expected) {
+            // Exception is expected }
+        }
+    }
+
+    @Test
+    public void testSaveRestFailsForRemovedService() {
+        // member (7) -> subsystem (8) -> service (9, removed) -> wsdl (7, removed)
+        Service oldService = serviceRepository.findOne(14L);
+        ServiceId originalServiceId = oldService.createKey();
+        SubsystemId originalSubsystemId = oldService.getSubsystem().createKey();
+        Rest originalRest = oldService.getRest();
+        // detach, so we dont modify those objects in the next steps
+        testUtil.entityManagerClear();
+
+        try {
+            catalogService.saveRest(originalSubsystemId, originalServiceId, originalRest.getData());
             fail("should have throw exception since service is removed");
         } catch (Exception expected) {
             // Exception is expected }
