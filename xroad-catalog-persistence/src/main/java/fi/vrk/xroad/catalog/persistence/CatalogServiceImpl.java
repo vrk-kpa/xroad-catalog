@@ -548,10 +548,13 @@ public class CatalogServiceImpl implements CatalogService {
             oldEndpoint.getStatusInfo().setRemoved(null);
             oldEndpoint.getStatusInfo().setFetched(LocalDateTime.now());
         } else {
-            Endpoint endpoint = new Endpoint(oldService, method, path);
+            Endpoint endpoint = new Endpoint();
+            endpoint.setPath(path);
+            endpoint.setMethod(method);
             endpoint.getStatusInfo().setTimestampsForNew(LocalDateTime.now());
             endpoint.getStatusInfo().setRemoved(null);
             oldService.setEndpoint(endpoint);
+            endpoint.setService(oldService);
             endpointRepository.save(endpoint);
         }
     }
