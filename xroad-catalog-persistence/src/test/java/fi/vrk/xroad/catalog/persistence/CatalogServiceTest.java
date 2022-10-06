@@ -96,6 +96,12 @@ public class CatalogServiceTest {
     }
 
     @Test
+    public void testGetWsdlNotFound() {
+        Wsdl wsdl = catalogService.getWsdl("9899");
+        assertNull(wsdl);
+    }
+
+    @Test
     public void testGetWsdlMultipleException() {
         try {
             catalogService.getWsdl("9999");
@@ -1039,6 +1045,67 @@ public class CatalogServiceTest {
         LocalDateTime endDateTime = LocalDateTime.of(2022, 1, 1, 0, 0);
         List<MemberDataList> members = catalogService.getMemberData(startDateTime, endDateTime);
         assertEquals(2923, members.size());
+    }
+
+    @Test
+    public void testSaveServices() {
+        Service oldService = serviceRepository.findOne(14L);
+        oldService.getStatusInfo().setRemoved(null);
+        SubsystemId originalSubsystemId = oldService.getSubsystem().createKey();
+        Collection<Service> services = new ArrayList<>();
+        Member member = testUtil.createTestMember("newMember");
+        services.add(new Service(new Subsystem(member, originalSubsystemId.getSubsystemCode()), "newService1", "v1"));
+        services.add(new Service(new Subsystem(member, originalSubsystemId.getSubsystemCode()), "newService2", "v1"));
+        catalogService.saveServices(originalSubsystemId, services);
+    }
+
+    @Test
+    public void testSaveServicesSubsystemIdNull() {
+        Service oldService = serviceRepository.findOne(14L);
+        oldService.getStatusInfo().setRemoved(null);
+        SubsystemId originalSubsystemId = oldService.getSubsystem().createKey();
+        Collection<Service> services = new ArrayList<>();
+        Member member = testUtil.createTestMember("newMember");
+        services.add(new Service(new Subsystem(member, originalSubsystemId.getSubsystemCode()), "newService1", "v1"));
+        services.add(new Service(new Subsystem(member, originalSubsystemId.getSubsystemCode()), "newService2", "v1"));
+        try {
+            catalogService.saveServices(null, services);
+        } catch (IllegalStateException e) {
+            assertEquals("subsystem null not found!", e.getMessage());
+        }
+    }
+
+    @Test
+    public void testSaveServicesSubsystemNotFound() {
+        Service oldService = serviceRepository.findOne(14L);
+        oldService.getStatusInfo().setRemoved(null);
+        SubsystemId originalSubsystemId = oldService.getSubsystem().createKey();
+        Collection<Service> services = new ArrayList<>();
+        Member member = testUtil.createTestMember("newMember");
+        services.add(new Service(new Subsystem(member, originalSubsystemId.getSubsystemCode()), "newService1", "v1"));
+        services.add(new Service(new Subsystem(member, originalSubsystemId.getSubsystemCode()), "newService2", "v1"));
+        try {
+            catalogService.saveServices(new SubsystemId("INSTANCE", "CLASS", "CODE", "SUBSYSTEM"), services);
+        } catch (IllegalStateException e) {
+            assertEquals("subsystem SubsystemId(subsystemCode=SUBSYSTEM) not found!", e.getMessage());
+        }
+    }
+
+    @Test
+    public void testPrepareEndpoints() {
+        Service oldService = serviceRepository.findOne(13L);
+        ServiceId originalServiceId = oldService.createKey();
+        SubsystemId originalSubsystemId = oldService.getSubsystem().createKey();
+        Set<Endpoint> endpoints = oldService.getAllEndpoints();
+        endpoints.forEach(endpoint -> {
+            assertFalse(endpoint.getStatusInfo().isRemoved());
+        });
+        catalogService.prepareEndpoints(originalSubsystemId, originalServiceId);
+        oldService = serviceRepository.findOne(13L);
+        endpoints = oldService.getAllEndpoints();
+        endpoints.forEach(endpoint -> {
+            assertTrue(endpoint.getStatusInfo().isRemoved());
+        });
     }
 
 }
