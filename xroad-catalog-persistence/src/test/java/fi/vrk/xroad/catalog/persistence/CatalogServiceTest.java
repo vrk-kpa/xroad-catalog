@@ -113,6 +113,12 @@ public class CatalogServiceTest {
     }
 
     @Test
+    public void testGetOpenApiNotFound() {
+        OpenApi openApi = catalogService.getOpenApi("9899");
+        assertNull(openApi);
+    }
+
+    @Test
     public void testGetOpenApiMultipleException() {
         try {
             catalogService.getOpenApi("3004");
@@ -128,6 +134,13 @@ public class CatalogServiceTest {
         assertNotNull(rest);
         assertEquals("{\"endpoint_list\": []}}", rest.getData());
         assertEquals(8, rest.getService().getSubsystem().getId());
+    }
+
+    @Test
+    public void testGetRestNotFound() {
+        Service service = serviceRepository.findOne(12L);
+        Rest rest = catalogService.getRest(service);
+        assertNull(rest);
     }
 
     @Test
@@ -540,7 +553,7 @@ public class CatalogServiceTest {
 
     @Test
     public void testGetServiceNullVersion() {
-        Service service = serviceRepository.findOne(8L);
+        Service service = serviceRepository.findOne(10L);
         Service foundService = catalogService.getService(service.getSubsystem().getMember().getXRoadInstance(),
                 service.getSubsystem().getMember().getMemberClass(),
                 service.getSubsystem().getMember().getMemberCode(),
