@@ -101,6 +101,8 @@ INSERT INTO open_api (id, service_id, data, external_id, created, changed, fetch
 VALUES (1, 11, '<openapi>', '3003', '2016-01-01 00:00:00+02', '2016-01-01 00:00:00+02', '2016-01-01 00:00:00+02', '2016-01-01 00:00:00+02');
 INSERT INTO open_api (id, service_id, data, external_id, created, changed, fetched, removed)
 VALUES (2, 12, '<openapi>', '3004', '2016-01-01 00:00:00+02', '2016-01-01 00:00:00+02', '2016-01-01 00:00:00+02', NULL);
+INSERT INTO open_api (id, service_id, data, external_id, created, changed, fetched, removed)
+VALUES (3, 13, '<openapi>', '3004', '2016-01-01 00:00:00+02', '2016-01-01 00:00:00+02', '2016-01-01 00:00:00+02', NULL);
 
 INSERT INTO rest (id, service_id, data, external_id, created, changed, fetched, removed)
 VALUES (1, 13, '{"endpoint_list": []}}', '3003', '2016-01-01 00:00:00+02', '2016-01-01 00:00:00+02', '2016-01-01 00:00:00+02', NULL);
