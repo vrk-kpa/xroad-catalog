@@ -1124,7 +1124,7 @@ public class CatalogServiceTest {
 
     @Test
     public void testOverwriteExistingEndpoint() {
-        Service oldService = serviceRepository.findOne(13L);
+        Service oldService = serviceRepository.findOne(12L);
         ServiceId originalServiceId = oldService.createKey();
         SubsystemId originalSubsystemId = oldService.getSubsystem().createKey();
         Endpoint endpoint = endpointRepository.findAnyByServicePathAndMethod(oldService, "POST", "/setOtherData");
@@ -1136,7 +1136,7 @@ public class CatalogServiceTest {
 
     @Test
     public void testSaveEndpointSubsystemIdRequired() {
-        Service oldService = serviceRepository.findOne(13L);
+        Service oldService = serviceRepository.findOne(12L);
         ServiceId originalServiceId = oldService.createKey();
         try {
             catalogService.saveEndpoint(null, originalServiceId, "POST", "/doSomething");
@@ -1147,7 +1147,7 @@ public class CatalogServiceTest {
 
     @Test
     public void testSaveEndpointServiceIdRequired() {
-        Service oldService = serviceRepository.findOne(13L);
+        Service oldService = serviceRepository.findOne(12L);
         SubsystemId originalSubsystemId = oldService.getSubsystem().createKey();
         try {
             catalogService.saveEndpoint(originalSubsystemId, null, "POST", "/doSomething");
@@ -1158,7 +1158,7 @@ public class CatalogServiceTest {
 
     @Test
     public void testSaveEndpointMethodRequired() {
-        Service oldService = serviceRepository.findOne(13L);
+        Service oldService = serviceRepository.findOne(12L);
         ServiceId originalServiceId = oldService.createKey();
         SubsystemId originalSubsystemId = oldService.getSubsystem().createKey();
         try {
@@ -1170,7 +1170,7 @@ public class CatalogServiceTest {
 
     @Test
     public void testSaveEndpointPathRequired() {
-        Service oldService = serviceRepository.findOne(13L);
+        Service oldService = serviceRepository.findOne(12L);
         ServiceId originalServiceId = oldService.createKey();
         SubsystemId originalSubsystemId = oldService.getSubsystem().createKey();
         try {
