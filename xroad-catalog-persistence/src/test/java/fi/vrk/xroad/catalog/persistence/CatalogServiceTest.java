@@ -44,6 +44,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.time.Month;
 import java.util.*;
+import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -83,6 +84,9 @@ public class CatalogServiceTest {
 
     @Autowired
     RestRepository restRepository;
+
+    @Autowired
+    EndpointRepository endpointRepository;
 
     @Autowired
     TestUtil testUtil;
@@ -1057,6 +1061,16 @@ public class CatalogServiceTest {
         services.add(new Service(new Subsystem(member, originalSubsystemId.getSubsystemCode()), "newService1", "v1"));
         services.add(new Service(new Subsystem(member, originalSubsystemId.getSubsystemCode()), "newService2", "v1"));
         catalogService.saveServices(originalSubsystemId, services);
+        Subsystem subsystem = subsystemRepository.findActiveByNaturalKey(originalSubsystemId.getXRoadInstance(),
+                originalSubsystemId.getMemberClass(),
+                originalSubsystemId.getMemberCode(),
+                originalSubsystemId.getSubsystemCode());
+        List<Service> foundServices = subsystem.getAllServices().stream()
+                .filter(service -> service.getServiceCode().equalsIgnoreCase("newService1")).collect(Collectors.toList());
+        assertTrue(foundServices.size() > 0);
+        foundServices = subsystem.getAllServices().stream()
+                .filter(service -> service.getServiceCode().equalsIgnoreCase("newService2")).collect(Collectors.toList());
+        assertTrue(foundServices.size() > 0);
     }
 
     @Test
@@ -1106,6 +1120,64 @@ public class CatalogServiceTest {
         endpoints.forEach(endpoint -> {
             assertTrue(endpoint.getStatusInfo().isRemoved());
         });
+    }
+
+    @Test
+    public void testOverwriteExistingEndpoint() {
+        Service oldService = serviceRepository.findOne(13L);
+        ServiceId originalServiceId = oldService.createKey();
+        SubsystemId originalSubsystemId = oldService.getSubsystem().createKey();
+        Endpoint endpoint = endpointRepository.findAnyByServicePathAndMethod(oldService, "POST", "/setOtherData");
+        assertTrue(endpoint.getStatusInfo().isRemoved());
+        catalogService.saveEndpoint(originalSubsystemId, originalServiceId, "POST", "/setOtherData");
+        endpoint = endpointRepository.findAnyByServicePathAndMethod(oldService, "POST", "/setOtherData");
+        assertFalse(endpoint.getStatusInfo().isRemoved());
+    }
+
+    @Test
+    public void testSaveEndpointSubsystemIdRequired() {
+        Service oldService = serviceRepository.findOne(13L);
+        ServiceId originalServiceId = oldService.createKey();
+        try {
+            catalogService.saveEndpoint(null, originalServiceId, "POST", "/doSomething");
+        } catch (IllegalArgumentException e) {
+            assertEquals("subsystemId is required", e.getMessage());
+        }
+    }
+
+    @Test
+    public void testSaveEndpointServiceIdRequired() {
+        Service oldService = serviceRepository.findOne(13L);
+        SubsystemId originalSubsystemId = oldService.getSubsystem().createKey();
+        try {
+            catalogService.saveEndpoint(originalSubsystemId, null, "POST", "/doSomething");
+        } catch (IllegalArgumentException e) {
+            assertEquals("serviceId is required", e.getMessage());
+        }
+    }
+
+    @Test
+    public void testSaveEndpointMethodRequired() {
+        Service oldService = serviceRepository.findOne(13L);
+        ServiceId originalServiceId = oldService.createKey();
+        SubsystemId originalSubsystemId = oldService.getSubsystem().createKey();
+        try {
+            catalogService.saveEndpoint(originalSubsystemId, originalServiceId, null, "/doSomething");
+        } catch (IllegalArgumentException e) {
+            assertEquals("method is required", e.getMessage());
+        }
+    }
+
+    @Test
+    public void testSaveEndpointPathRequired() {
+        Service oldService = serviceRepository.findOne(13L);
+        ServiceId originalServiceId = oldService.createKey();
+        SubsystemId originalSubsystemId = oldService.getSubsystem().createKey();
+        try {
+            catalogService.saveEndpoint(originalSubsystemId, originalServiceId, "POST", null);
+        } catch (IllegalArgumentException e) {
+            assertEquals("path is required", e.getMessage());
+        }
     }
 
 }

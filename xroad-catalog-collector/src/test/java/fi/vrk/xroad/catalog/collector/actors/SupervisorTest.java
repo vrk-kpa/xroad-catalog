@@ -22,25 +22,22 @@
  */
 package fi.vrk.xroad.catalog.collector.actors;
 
-import akka.actor.Actor;
 import akka.actor.ActorRef;
 import akka.actor.ActorSystem;
 import akka.testkit.TestActorRef;
 import fi.vrk.xroad.catalog.collector.configuration.DevelopmentConfiguration;
 import fi.vrk.xroad.catalog.collector.extension.SpringExtension;
-import fi.vrk.xroad.catalog.collector.wsimport.XRoadObjectType;
-import fi.vrk.xroad.catalog.collector.wsimport.XRoadServiceIdentifierType;
 import fi.vrk.xroad.catalog.persistence.CatalogService;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Matchers;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
+
+import static org.junit.Assert.assertFalse;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = DevelopmentConfiguration.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -59,10 +56,12 @@ public class SupervisorTest {
     @Autowired
     SpringExtension springExtension;
 
+
     @Test
     public void testBasicPlumbing() {
         TestActorRef supervisor = TestActorRef.create(actorSystem, springExtension.props("supervisor"));
         supervisor.tell("StartCollecting", ActorRef.noSender());
+        assertFalse(supervisor.isTerminated());
     }
 }
 
