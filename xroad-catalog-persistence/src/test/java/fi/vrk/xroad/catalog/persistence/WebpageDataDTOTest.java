@@ -32,7 +32,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 @RunWith(SpringRunner.class)
@@ -68,19 +67,19 @@ public class WebpageDataDTOTest {
         assertEquals(value, webpageData1.getValue());
         assertEquals(created, webpageData1.getCreated());
         assertTrue(webpageData1.equals(webpageData2));
-        assertNotNull(webpageData1.hashCode());
+        assertTrue(webpageData1.hashCode() != 0);
         assertEquals(language, webpageData2.getLanguage());
         assertEquals(url, webpageData2.getUrl());
         assertEquals(value, webpageData2.getValue());
         assertEquals(changed, webpageData2.getChanged());
         assertTrue(webpageData2.equals(webpageData3));
-        assertNotNull(webpageData2.hashCode());
+        assertTrue(webpageData2.hashCode() != 0);
         assertEquals(language, webpageData3.getLanguage());
         assertEquals(url, webpageData3.getUrl());
         assertEquals(value, webpageData3.getValue());
         assertEquals(fetched, webpageData3.getFetched());
         assertTrue(webpageData3.equals(webpageData1));
-        assertNotNull(webpageData3.hashCode());
+        assertTrue(webpageData3.hashCode() != 0);
     }
 
 }

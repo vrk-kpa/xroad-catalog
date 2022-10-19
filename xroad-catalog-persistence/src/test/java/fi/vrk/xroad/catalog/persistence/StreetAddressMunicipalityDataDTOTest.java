@@ -35,7 +35,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 @RunWith(SpringRunner.class)
@@ -71,21 +70,21 @@ public class StreetAddressMunicipalityDataDTOTest {
         assertEquals(changed, streetAddressMunicipalityData1.getChanged());
         assertEquals(fetched, streetAddressMunicipalityData1.getFetched());
         assertTrue(streetAddressMunicipalityData1.equals(streetAddressMunicipalityData2));
-        assertNotNull(streetAddressMunicipalityData1.hashCode());
+        assertTrue(streetAddressMunicipalityData1.hashCode() != 0);
         assertEquals(code, streetAddressMunicipalityData2.getCode());
         assertEquals(streetAddressMunicipalityNames, streetAddressMunicipalityData2.getStreetAddressMunicipalityNames());
         assertEquals(created, streetAddressMunicipalityData2.getCreated());
         assertEquals(changed, streetAddressMunicipalityData2.getChanged());
         assertEquals(fetched, streetAddressMunicipalityData2.getFetched());
         assertTrue(streetAddressMunicipalityData2.equals(streetAddressMunicipalityData3));
-        assertNotNull(streetAddressMunicipalityData2.hashCode());
+        assertTrue(streetAddressMunicipalityData2.hashCode() != 0);
         assertEquals(code, streetAddressMunicipalityData3.getCode());
         assertEquals(streetAddressMunicipalityNames, streetAddressMunicipalityData3.getStreetAddressMunicipalityNames());
         assertEquals(created, streetAddressMunicipalityData3.getCreated());
         assertEquals(changed, streetAddressMunicipalityData3.getChanged());
         assertEquals(fetched, streetAddressMunicipalityData3.getFetched());
         assertTrue(streetAddressMunicipalityData3.equals(streetAddressMunicipalityData2));
-        assertNotNull(streetAddressMunicipalityData3.hashCode());
+        assertTrue(streetAddressMunicipalityData3.hashCode() != 0);
     }
 
 }

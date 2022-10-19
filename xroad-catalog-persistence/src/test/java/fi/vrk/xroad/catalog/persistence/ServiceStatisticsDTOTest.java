@@ -32,7 +32,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 
@@ -64,7 +63,7 @@ public class ServiceStatisticsDTOTest {
         assertEquals(numberOfRestServices, serviceStatistics1.getNumberOfRestServices());
         assertEquals(numberOfOpenApiServices, serviceStatistics1.getNumberOfOpenApiServices());
         assertTrue(serviceStatistics1.equals(serviceStatistics2));
-        assertNotNull(serviceStatistics1.hashCode());
+        assertTrue(serviceStatistics1.hashCode() != 0);
         assertTrue(serviceStatistics1.toString().contains("numberOfRestServices"));
         assertEquals(created, serviceStatistics2.getCreated());
         assertEquals(numberOfSoapServices, serviceStatistics2.getNumberOfSoapServices());
@@ -72,14 +71,14 @@ public class ServiceStatisticsDTOTest {
         assertEquals(numberOfOpenApiServices, serviceStatistics2.getNumberOfOpenApiServices());
         assertTrue(serviceStatistics2.equals(serviceStatistics3));
         assertTrue(serviceStatistics2.toString().contains("numberOfSoapServices"));
-        assertNotNull(serviceStatistics2.hashCode());
+        assertTrue(serviceStatistics2.hashCode() != 0);
         assertEquals(created, serviceStatistics3.getCreated());
         assertEquals(numberOfSoapServices, serviceStatistics3.getNumberOfSoapServices());
         assertEquals(numberOfRestServices, serviceStatistics3.getNumberOfRestServices());
         assertEquals(numberOfOpenApiServices, serviceStatistics3.getNumberOfOpenApiServices());
         assertTrue(serviceStatistics3.equals(serviceStatistics1));
         assertTrue(serviceStatistics3.toString().contains("numberOfOpenApiServices"));
-        assertNotNull(serviceStatistics3.hashCode());
+        assertTrue(serviceStatistics3.hashCode() != 0);
     }
 
 }

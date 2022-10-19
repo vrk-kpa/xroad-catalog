@@ -33,7 +33,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 @RunWith(SpringRunner.class)
@@ -69,19 +68,19 @@ public class StreetAddressPostOfficeDataDTOTest {
         assertEquals(changed, streetAddressPostOfficeData1.getChanged());
         assertEquals(fetched, streetAddressPostOfficeData1.getFetched());
         assertTrue(streetAddressPostOfficeData1.equals(streetAddressPostOfficeData2));
-        assertNotNull(streetAddressPostOfficeData1.hashCode());
+        assertTrue(streetAddressPostOfficeData1.hashCode() != 0);
         assertEquals(value, streetAddressPostOfficeData2.getValue());
         assertEquals(created, streetAddressPostOfficeData2.getCreated());
         assertEquals(changed, streetAddressPostOfficeData2.getChanged());
         assertEquals(fetched, streetAddressPostOfficeData2.getFetched());
         assertTrue(streetAddressPostOfficeData2.equals(streetAddressPostOfficeData3));
-        assertNotNull(streetAddressPostOfficeData2.hashCode());
+        assertTrue(streetAddressPostOfficeData2.hashCode() != 0);
         assertEquals(value, streetAddressPostOfficeData3.getValue());
         assertEquals(created, streetAddressPostOfficeData3.getCreated());
         assertEquals(changed, streetAddressPostOfficeData3.getChanged());
         assertEquals(fetched, streetAddressPostOfficeData3.getFetched());
         assertTrue(streetAddressPostOfficeData3.equals(streetAddressPostOfficeData1));
-        assertNotNull(streetAddressPostOfficeData3.hashCode());
+        assertTrue(streetAddressPostOfficeData3.hashCode() != 0);
     }
 
 }
