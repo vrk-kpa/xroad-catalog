@@ -174,6 +174,18 @@ public class ServiceControllerTests {
                 .getForEntity("/api/getOrganizationChanges/0123456-9?startDate=2022-01-01&endDate=2022-06-01", String.class);
         assertEquals(204, response.getStatusCodeValue());
         assertNull(response.getBody());
+
+        // Get OrganizationChanges when business code is invalid
+        response = restTemplate
+                .getForEntity("/api/getOrganizationChanges/0123456-8?startDate=2022-01-01&endDate=2022-06-01", String.class);
+        assertEquals(204, response.getStatusCodeValue());
+        assertNull(response.getBody());
+
+        // Get OrganizationChanges when dates are null
+        response = restTemplate
+                .getForEntity("/api/getOrganizationChanges/0123456-8", String.class);
+        assertEquals(204, response.getStatusCodeValue());
+        assertNull(response.getBody());
     }
 
     @Test
