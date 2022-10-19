@@ -1,0 +1,75 @@
+/**
+ * The MIT License
+ * Copyright (c) 2022, Population Register Centre (VRK)
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
+package fi.vrk.xroad.catalog.persistence;
+
+import fi.vrk.xroad.catalog.persistence.dto.ErrorLogResponse;
+import lombok.extern.slf4j.Slf4j;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.transaction.annotation.Transactional;
+import java.util.ArrayList;
+
+import static org.junit.Assert.assertEquals;
+
+
+@RunWith(SpringRunner.class)
+@SpringBootTest(classes = Application.class)
+@Transactional
+@Slf4j
+public class ErrorLogResponseDTOTest {
+
+    @Test
+    public void testErrorLogResponseDTO() {
+        Integer pageNumber = 1;
+        Integer pageSize = 10;
+        Integer numberOfPages = 2;
+        ErrorLogResponse errorLogResponse1 = new ErrorLogResponse();
+        errorLogResponse1.setPageNumber(pageNumber);
+        errorLogResponse1.setPageSize(pageSize);
+        errorLogResponse1.setNumberOfPages(numberOfPages);
+        errorLogResponse1.setErrorLogList(new ArrayList<>());
+        ErrorLogResponse errorLogResponse2 = new ErrorLogResponse(pageNumber, pageSize, numberOfPages, new ArrayList<>());
+        ErrorLogResponse errorLogResponse3 = ErrorLogResponse.builder().pageNumber(pageNumber).pageSize(pageSize)
+                .numberOfPages(numberOfPages).errorLogList(new ArrayList<>()).build();
+        assertEquals(errorLogResponse1, errorLogResponse2);
+        assertEquals(errorLogResponse1, errorLogResponse3);
+        assertEquals(errorLogResponse2, errorLogResponse3);
+        assertEquals(pageNumber, errorLogResponse1.getPageNumber());
+        assertEquals(pageSize, errorLogResponse1.getPageSize());
+        assertEquals(numberOfPages, errorLogResponse1.getNumberOfPages());
+        assertEquals(0, errorLogResponse1.getErrorLogList().size());
+        assertEquals(pageNumber, errorLogResponse2.getPageNumber());
+        assertEquals(pageSize, errorLogResponse2.getPageSize());
+        assertEquals(numberOfPages, errorLogResponse2.getNumberOfPages());
+        assertEquals(0, errorLogResponse2.getErrorLogList().size());
+        assertEquals(pageNumber, errorLogResponse3.getPageNumber());
+        assertEquals(pageSize, errorLogResponse3.getPageSize());
+        assertEquals(numberOfPages, errorLogResponse3.getNumberOfPages());
+        assertEquals(0, errorLogResponse3.getErrorLogList().size());
+    }
+
+}
+
+

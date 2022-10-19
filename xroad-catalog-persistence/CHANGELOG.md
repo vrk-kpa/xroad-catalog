@@ -2,6 +2,9 @@
 
 All notable changes to this project will be documented in this file.
 
+## 2.1.1 - 2022-10-19
+- added unit tests to improve test coverage
+
 ## 2.1.0 - 2022-10-05
 - added new REST endpoint for listing REST endpoints for basic REST(without OPENAPI) service
 - added new REST endpoint for listing REST endpoints for REST(also OPENAPI) service
