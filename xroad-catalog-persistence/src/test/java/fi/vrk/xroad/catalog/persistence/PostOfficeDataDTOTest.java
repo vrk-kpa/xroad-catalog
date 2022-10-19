@@ -32,6 +32,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 
 
 @RunWith(SpringRunner.class)
@@ -65,16 +66,22 @@ public class PostOfficeDataDTOTest {
         assertEquals(created, postOfficeData1.getCreated());
         assertEquals(changed, postOfficeData1.getChanged());
         assertEquals(fetched, postOfficeData1.getFetched());
+        assertNotEquals(0, postOfficeData1.hashCode());
+        assertEquals(true, postOfficeData1.equals(postOfficeData2));
         assertEquals(language, postOfficeData2.getLanguage());
         assertEquals(value, postOfficeData2.getValue());
         assertEquals(created, postOfficeData2.getCreated());
         assertEquals(changed, postOfficeData2.getChanged());
         assertEquals(fetched, postOfficeData2.getFetched());
+        assertNotEquals(0, postOfficeData2.hashCode());
+        assertEquals(true, postOfficeData2.equals(postOfficeData3));
         assertEquals(language, postOfficeData3.getLanguage());
         assertEquals(value, postOfficeData3.getValue());
         assertEquals(created, postOfficeData3.getCreated());
         assertEquals(changed, postOfficeData3.getChanged());
         assertEquals(fetched, postOfficeData3.getFetched());
+        assertNotEquals(0, postOfficeData3.hashCode());
+        assertEquals(true, postOfficeData3.equals(postOfficeData1));
     }
 
 }

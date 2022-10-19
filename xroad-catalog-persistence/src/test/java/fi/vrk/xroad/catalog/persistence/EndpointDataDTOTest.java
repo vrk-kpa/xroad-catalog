@@ -31,6 +31,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 
 
 @RunWith(SpringRunner.class)
@@ -53,10 +54,16 @@ public class EndpointDataDTOTest {
         assertEquals(endpointData2, endpointData3);
         assertEquals(method, endpointData1.getMethod());
         assertEquals(path, endpointData1.getPath());
+        assertNotEquals(0, endpointData1.hashCode());
+        assertEquals(true, endpointData1.equals(endpointData2));
         assertEquals(method, endpointData2.getMethod());
         assertEquals(path, endpointData2.getPath());
+        assertNotEquals(0, endpointData2.hashCode());
+        assertEquals(true, endpointData2.equals(endpointData3));
         assertEquals(method, endpointData3.getMethod());
         assertEquals(path, endpointData3.getPath());
+        assertNotEquals(0, endpointData3.hashCode());
+        assertEquals(true, endpointData3.equals(endpointData1));
     }
 
 }

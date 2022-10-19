@@ -32,6 +32,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 
 
 @RunWith(SpringRunner.class)
@@ -65,6 +66,12 @@ public class DistinctServiceStatisticsDTOTest {
         assertEquals(numberOfDistinctServices, distinctServiceStatistics3.getNumberOfDistinctServices());
         assertEquals("{\"created\":" + created + ",\"numberOfDistinctServices\":\"" + numberOfDistinctServices + "}",
                 distinctServiceStatistics3.toString());
+        assertNotEquals(0, distinctServiceStatistics1.hashCode());
+        assertEquals(true, distinctServiceStatistics1.equals(distinctServiceStatistics2));
+        assertNotEquals(0, distinctServiceStatistics2.hashCode());
+        assertEquals(true, distinctServiceStatistics2.equals(distinctServiceStatistics3));
+        assertNotEquals(0, distinctServiceStatistics3.hashCode());
+        assertEquals(true, distinctServiceStatistics3.equals(distinctServiceStatistics1));
     }
 
 }

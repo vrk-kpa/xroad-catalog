@@ -32,6 +32,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 
 
 @RunWith(SpringRunner.class)
@@ -60,14 +61,20 @@ public class ServiceDataDTOTest {
         assertEquals(serviceCode, serviceData1.getServiceCode());
         assertEquals(serviceVersion, serviceData1.getServiceVersion());
         assertEquals(active, serviceData1.getActive());
+        assertNotEquals(0, serviceData1.hashCode());
+        assertEquals(true, serviceData1.equals(serviceData2));
         assertEquals(created, serviceData2.getCreated());
         assertEquals(serviceCode, serviceData2.getServiceCode());
         assertEquals(serviceVersion, serviceData2.getServiceVersion());
         assertEquals(active, serviceData2.getActive());
+        assertNotEquals(0, serviceData2.hashCode());
+        assertEquals(true, serviceData2.equals(serviceData3));
         assertEquals(created, serviceData3.getCreated());
         assertEquals(serviceCode, serviceData3.getServiceCode());
         assertEquals(serviceVersion, serviceData3.getServiceVersion());
         assertEquals(active, serviceData3.getActive());
+        assertNotEquals(0, serviceData3.hashCode());
+        assertEquals(true, serviceData3.equals(serviceData1));
     }
 
 }

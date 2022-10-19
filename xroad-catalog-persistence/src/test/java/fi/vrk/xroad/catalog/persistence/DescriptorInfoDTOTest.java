@@ -33,6 +33,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 
 
 @RunWith(SpringRunner.class)
@@ -69,16 +70,22 @@ public class DescriptorInfoDTOTest {
         assertEquals(memberCode, descriptorInfo1.getMemberCode());
         assertEquals(memberName, descriptorInfo1.getMemberName());
         assertEquals(subsystemCode, descriptorInfo1.getSubsystemCode());
+        assertNotEquals(0, descriptorInfo1.hashCode());
+        assertEquals(true, descriptorInfo1.equals(descriptorInfo2));
         assertEquals(xRoadInstance, descriptorInfo2.getXRoadInstance());
         assertEquals(memberClass, descriptorInfo2.getMemberClass());
         assertEquals(memberCode, descriptorInfo2.getMemberCode());
         assertEquals(memberName, descriptorInfo2.getMemberName());
+        assertNotEquals(0, descriptorInfo2.hashCode());
+        assertEquals(true, descriptorInfo2.equals(descriptorInfo3));
         assertEquals(subsystemCode, descriptorInfo2.getSubsystemCode());
         assertEquals(xRoadInstance, descriptorInfo3.getXRoadInstance());
         assertEquals(memberClass, descriptorInfo3.getMemberClass());
         assertEquals(memberCode, descriptorInfo3.getMemberCode());
         assertEquals(memberName, descriptorInfo3.getMemberName());
         assertEquals(subsystemCode, descriptorInfo3.getSubsystemCode());
+        assertNotEquals(0, descriptorInfo3.hashCode());
+        assertEquals(true, descriptorInfo3.equals(descriptorInfo1));
     }
 
 }

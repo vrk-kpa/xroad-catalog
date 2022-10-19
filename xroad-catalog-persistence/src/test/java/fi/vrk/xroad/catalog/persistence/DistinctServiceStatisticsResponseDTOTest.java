@@ -32,6 +32,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 
 
 @RunWith(SpringRunner.class)
@@ -50,6 +51,12 @@ public class DistinctServiceStatisticsResponseDTOTest {
         assertEquals(distinctServiceStatisticsResponse1, distinctServiceStatisticsResponse2);
         assertEquals(distinctServiceStatisticsResponse1, distinctServiceStatisticsResponse3);
         assertEquals(distinctServiceStatisticsResponse2, distinctServiceStatisticsResponse3);
+        assertNotEquals(0, distinctServiceStatisticsResponse1.hashCode());
+        assertEquals(true, distinctServiceStatisticsResponse1.equals(distinctServiceStatisticsResponse2));
+        assertNotEquals(0, distinctServiceStatisticsResponse2.hashCode());
+        assertEquals(true, distinctServiceStatisticsResponse2.equals(distinctServiceStatisticsResponse3));
+        assertNotEquals(0, distinctServiceStatisticsResponse3.hashCode());
+        assertEquals(true, distinctServiceStatisticsResponse3.equals(distinctServiceStatisticsResponse1));
     }
 
 }

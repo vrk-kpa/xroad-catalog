@@ -38,6 +38,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 
 
 @RunWith(SpringRunner.class)
@@ -79,16 +80,22 @@ public class PostOfficeBoxAddressDataDTOTest {
         assertEquals(additionalInformation, postOfficeBoxAddressData1.getAdditionalInformation());
         assertEquals(postOffices, postOfficeBoxAddressData1.getPostOffices());
         assertEquals(postOfficeBoxes, postOfficeBoxAddressData1.getPostOfficeBoxes());
+        assertNotEquals(0, postOfficeBoxAddressData1.hashCode());
+        assertEquals(true, postOfficeBoxAddressData1.equals(postOfficeBoxAddressData2));
         assertEquals(postalCode, postOfficeBoxAddressData2.getPostalCode());
         assertEquals(postOfficeBoxAddressMunicipalities, postOfficeBoxAddressData2.getPostOfficeBoxAddressMunicipalities());
         assertEquals(additionalInformation, postOfficeBoxAddressData2.getAdditionalInformation());
         assertEquals(postOffices, postOfficeBoxAddressData2.getPostOffices());
         assertEquals(postOfficeBoxes, postOfficeBoxAddressData2.getPostOfficeBoxes());
+        assertNotEquals(0, postOfficeBoxAddressData2.hashCode());
+        assertEquals(true, postOfficeBoxAddressData2.equals(postOfficeBoxAddressData3));
         assertEquals(postalCode, postOfficeBoxAddressData3.getPostalCode());
         assertEquals(postOfficeBoxAddressMunicipalities, postOfficeBoxAddressData3.getPostOfficeBoxAddressMunicipalities());
         assertEquals(additionalInformation, postOfficeBoxAddressData3.getAdditionalInformation());
         assertEquals(postOffices, postOfficeBoxAddressData3.getPostOffices());
         assertEquals(postOfficeBoxes, postOfficeBoxAddressData3.getPostOfficeBoxes());
+        assertNotEquals(0, postOfficeBoxAddressData3.hashCode());
+        assertEquals(true, postOfficeBoxAddressData3.equals(postOfficeBoxAddressData1));
     }
 
 }

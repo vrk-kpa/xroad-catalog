@@ -32,6 +32,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 
 
 @RunWith(SpringRunner.class)
@@ -75,16 +76,22 @@ public class RegisteredEntryDataDTOTest {
         assertEquals(register, registeredEntryData1.getRegister());
         assertEquals(language, registeredEntryData1.getLanguage());
         assertEquals(authority, registeredEntryData1.getAuthority());
+        assertNotEquals(0, registeredEntryData1.hashCode());
+        assertEquals(true, registeredEntryData1.equals(registeredEntryData2));
         assertEquals(description, registeredEntryData2.getDescription());
         assertEquals(status, registeredEntryData2.getStatus());
         assertEquals(register, registeredEntryData2.getRegister());
         assertEquals(language, registeredEntryData2.getLanguage());
         assertEquals(authority, registeredEntryData2.getAuthority());
+        assertNotEquals(0, registeredEntryData2.hashCode());
+        assertEquals(true, registeredEntryData2.equals(registeredEntryData3));
         assertEquals(description, registeredEntryData3.getDescription());
         assertEquals(status, registeredEntryData3.getStatus());
         assertEquals(register, registeredEntryData3.getRegister());
         assertEquals(language, registeredEntryData3.getLanguage());
         assertEquals(authority, registeredEntryData3.getAuthority());
+        assertNotEquals(0, registeredEntryData3.hashCode());
+        assertEquals(true, registeredEntryData3.equals(registeredEntryData1));
     }
 
 }

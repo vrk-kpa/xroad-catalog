@@ -32,7 +32,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertNotEquals;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = Application.class)
@@ -66,20 +66,20 @@ public class StreetAddressMunicipalityNameDataDTOTest {
         assertEquals(created, streetAddressMunicipalityNameData1.getCreated());
         assertEquals(changed, streetAddressMunicipalityNameData1.getChanged());
         assertEquals(fetched, streetAddressMunicipalityNameData1.getFetched());
-        assertTrue(streetAddressMunicipalityNameData1.equals(streetAddressMunicipalityNameData2));
-        assertTrue(streetAddressMunicipalityNameData1.hashCode() != 0);
+        assertNotEquals(0, streetAddressMunicipalityNameData1.hashCode());
+        assertEquals(true, streetAddressMunicipalityNameData1.equals(streetAddressMunicipalityNameData2));
         assertEquals(value, streetAddressMunicipalityNameData2.getValue());
         assertEquals(created, streetAddressMunicipalityNameData2.getCreated());
         assertEquals(changed, streetAddressMunicipalityNameData2.getChanged());
         assertEquals(fetched, streetAddressMunicipalityNameData2.getFetched());
-        assertTrue(streetAddressMunicipalityNameData2.equals(streetAddressMunicipalityNameData3));
-        assertTrue(streetAddressMunicipalityNameData2.hashCode() != 0);
+        assertNotEquals(0, streetAddressMunicipalityNameData2.hashCode());
+        assertEquals(true, streetAddressMunicipalityNameData2.equals(streetAddressMunicipalityNameData3));
         assertEquals(value, streetAddressMunicipalityNameData3.getValue());
         assertEquals(created, streetAddressMunicipalityNameData3.getCreated());
         assertEquals(changed, streetAddressMunicipalityNameData3.getChanged());
         assertEquals(fetched, streetAddressMunicipalityNameData3.getFetched());
-        assertTrue(streetAddressMunicipalityNameData3.equals(streetAddressMunicipalityNameData1));
-        assertTrue(streetAddressMunicipalityNameData3.hashCode() != 0);
+        assertNotEquals(0, streetAddressMunicipalityNameData3.hashCode());
+        assertEquals(true, streetAddressMunicipalityNameData3.equals(streetAddressMunicipalityNameData1));
     }
 
 }

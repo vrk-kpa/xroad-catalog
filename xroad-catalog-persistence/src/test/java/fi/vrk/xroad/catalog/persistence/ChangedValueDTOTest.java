@@ -31,6 +31,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 
 
 @RunWith(SpringRunner.class)
@@ -50,8 +51,14 @@ public class ChangedValueDTOTest {
         assertEquals(changedValue1, changedValue3);
         assertEquals(changedValue2, changedValue3);
         assertEquals(name, changedValue1.getName());
+        assertNotEquals(0, changedValue1.hashCode());
+        assertEquals(true, changedValue1.equals(changedValue2));
         assertEquals(name, changedValue2.getName());
+        assertNotEquals(0, changedValue2.hashCode());
+        assertEquals(true, changedValue2.equals(changedValue3));
         assertEquals(name, changedValue3.getName());
+        assertNotEquals(0, changedValue3.hashCode());
+        assertEquals(true, changedValue3.equals(changedValue1));
     }
 
 }

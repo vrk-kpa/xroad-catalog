@@ -32,7 +32,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertNotEquals;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = Application.class)
@@ -66,20 +66,20 @@ public class WebpageDataDTOTest {
         assertEquals(url, webpageData1.getUrl());
         assertEquals(value, webpageData1.getValue());
         assertEquals(created, webpageData1.getCreated());
-        assertTrue(webpageData1.equals(webpageData2));
-        assertTrue(webpageData1.hashCode() != 0);
+        assertNotEquals(0, webpageData1.hashCode());
+        assertEquals(true, webpageData1.equals(webpageData2));
         assertEquals(language, webpageData2.getLanguage());
         assertEquals(url, webpageData2.getUrl());
         assertEquals(value, webpageData2.getValue());
         assertEquals(changed, webpageData2.getChanged());
-        assertTrue(webpageData2.equals(webpageData3));
-        assertTrue(webpageData2.hashCode() != 0);
+        assertNotEquals(0, webpageData2.hashCode());
+        assertEquals(true, webpageData2.equals(webpageData3));
         assertEquals(language, webpageData3.getLanguage());
         assertEquals(url, webpageData3.getUrl());
         assertEquals(value, webpageData3.getValue());
         assertEquals(fetched, webpageData3.getFetched());
-        assertTrue(webpageData3.equals(webpageData1));
-        assertTrue(webpageData3.hashCode() != 0);
+        assertNotEquals(0, webpageData3.hashCode());
+        assertEquals(true, webpageData3.equals(webpageData1));
     }
 
 }

@@ -30,11 +30,11 @@ import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 
 
 @RunWith(SpringRunner.class)
@@ -57,10 +57,16 @@ public class OrganizationChangedDTOTest {
         assertEquals(organizationChanged2, organizationChanged3);
         assertEquals(changed, organizationChanged1.isChanged());
         assertEquals(changedValueList, organizationChanged1.getChangedValueList());
+        assertNotEquals(0, organizationChanged1.hashCode());
+        assertEquals(true, organizationChanged1.equals(organizationChanged2));
         assertEquals(changed, organizationChanged2.isChanged());
         assertEquals(changedValueList, organizationChanged2.getChangedValueList());
+        assertNotEquals(0, organizationChanged2.hashCode());
+        assertEquals(true, organizationChanged2.equals(organizationChanged3));
         assertEquals(changed, organizationChanged3.isChanged());
         assertEquals(changedValueList, organizationChanged3.getChangedValueList());
+        assertNotEquals(0, organizationChanged3.hashCode());
+        assertEquals(true, organizationChanged3.equals(organizationChanged1));
     }
 
 }

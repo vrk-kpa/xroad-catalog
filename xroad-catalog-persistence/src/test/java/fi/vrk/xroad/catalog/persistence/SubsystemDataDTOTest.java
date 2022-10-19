@@ -35,7 +35,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertNotEquals;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = Application.class)
@@ -64,20 +64,20 @@ public class SubsystemDataDTOTest {
         assertEquals(subsystemCode, subsystemData1.getSubsystemCode());
         assertEquals(active, subsystemData1.getActive());
         assertEquals(serviceList, subsystemData1.getServiceList());
-        assertTrue(subsystemData1.equals(subsystemData2));
-        assertTrue(subsystemData1.hashCode() != 0);
+        assertNotEquals(0, subsystemData1.hashCode());
+        assertEquals(true, subsystemData1.equals(subsystemData2));
         assertEquals(created, subsystemData2.getCreated());
         assertEquals(subsystemCode, subsystemData2.getSubsystemCode());
         assertEquals(active, subsystemData2.getActive());
         assertEquals(serviceList, subsystemData2.getServiceList());
-        assertTrue(subsystemData2.equals(subsystemData3));
-        assertTrue(subsystemData2.hashCode() != 0);
+        assertNotEquals(0, subsystemData2.hashCode());
+        assertEquals(true, subsystemData2.equals(subsystemData3));
         assertEquals(created, subsystemData3.getCreated());
         assertEquals(subsystemCode, subsystemData3.getSubsystemCode());
         assertEquals(active, subsystemData3.getActive());
         assertEquals(serviceList, subsystemData3.getServiceList());
-        assertTrue(subsystemData3.equals(subsystemData1));
-        assertTrue(subsystemData3.hashCode() != 0);
+        assertNotEquals(0, subsystemData3.hashCode());
+        assertEquals(true, subsystemData3.equals(subsystemData1));
     }
 
 }

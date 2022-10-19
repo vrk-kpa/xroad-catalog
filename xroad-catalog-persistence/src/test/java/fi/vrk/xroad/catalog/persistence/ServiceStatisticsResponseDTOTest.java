@@ -34,7 +34,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertNotEquals;
 
 
 @RunWith(SpringRunner.class)
@@ -54,14 +54,16 @@ public class ServiceStatisticsResponseDTOTest {
         assertEquals(serviceStatisticsResponse1, serviceStatisticsResponse3);
         assertEquals(serviceStatisticsResponse2, serviceStatisticsResponse3);
         assertEquals(serviceStatisticsList, serviceStatisticsResponse1.getServiceStatisticsList());
-        assertTrue(serviceStatisticsResponse1.equals(serviceStatisticsResponse2));
+        assertNotEquals(0, serviceStatisticsResponse1.hashCode());
+        assertEquals(true, serviceStatisticsResponse1.equals(serviceStatisticsResponse2));
         assertEquals(60, serviceStatisticsResponse1.hashCode());
         assertEquals(serviceStatisticsList, serviceStatisticsResponse2.getServiceStatisticsList());
-        assertTrue(serviceStatisticsResponse2.equals(serviceStatisticsResponse3));
+        assertNotEquals(0, serviceStatisticsResponse2.hashCode());
+        assertEquals(true, serviceStatisticsResponse2.equals(serviceStatisticsResponse3));
         assertEquals(60, serviceStatisticsResponse2.hashCode());
         assertEquals(serviceStatisticsList, serviceStatisticsResponse3.getServiceStatisticsList());
-        assertTrue(serviceStatisticsResponse3.equals(serviceStatisticsResponse1));
-        assertEquals(60, serviceStatisticsResponse3.hashCode());
+        assertNotEquals(0, serviceStatisticsResponse3.hashCode());
+        assertEquals(true, serviceStatisticsResponse3.equals(serviceStatisticsResponse1));
     }
 
 }

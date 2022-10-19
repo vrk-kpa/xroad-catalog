@@ -31,7 +31,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertNotEquals;
 
 
 @RunWith(SpringRunner.class)
@@ -56,8 +56,9 @@ public class SecurityServerInfoDTOTest {
         assertEquals(memberCode, securityServerInfo1.getMemberCode());
         assertEquals("SecurityServerInfo(xRoadInstance=DEV, serverCode=SS1, address=https://ss1, memberClass=GOV, memberCode=1234)",
                 securityServerInfo1.toString());
-        assertTrue(securityServerInfo1.equals(securityServerInfo2));
-        assertEquals(-1539510959, securityServerInfo1.hashCode());
+        assertNotEquals(0, securityServerInfo1.hashCode());
+        assertEquals(true, securityServerInfo1.equals(securityServerInfo2));
+        assertNotEquals(0, securityServerInfo2.hashCode());
     }
 
 }

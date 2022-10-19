@@ -32,6 +32,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 
 
 @RunWith(SpringRunner.class)
@@ -66,16 +67,22 @@ public class PostOfficeBoxAddressAdditionalInformationDataDTOTest {
         assertEquals(created, postOfficeBoxAddressAdditionalInformationData1.getCreated());
         assertEquals(changed, postOfficeBoxAddressAdditionalInformationData1.getChanged());
         assertEquals(fetched, postOfficeBoxAddressAdditionalInformationData1.getFetched());
+        assertNotEquals(0, postOfficeBoxAddressAdditionalInformationData1.hashCode());
+        assertEquals(true, postOfficeBoxAddressAdditionalInformationData1.equals(postOfficeBoxAddressAdditionalInformationData2));
         assertEquals(language, postOfficeBoxAddressAdditionalInformationData2.getLanguage());
         assertEquals(value, postOfficeBoxAddressAdditionalInformationData2.getValue());
         assertEquals(created, postOfficeBoxAddressAdditionalInformationData2.getCreated());
         assertEquals(changed, postOfficeBoxAddressAdditionalInformationData2.getChanged());
         assertEquals(fetched, postOfficeBoxAddressAdditionalInformationData2.getFetched());
+        assertNotEquals(0, postOfficeBoxAddressAdditionalInformationData2.hashCode());
+        assertEquals(true, postOfficeBoxAddressAdditionalInformationData2.equals(postOfficeBoxAddressAdditionalInformationData3));
         assertEquals(language, postOfficeBoxAddressAdditionalInformationData3.getLanguage());
         assertEquals(value, postOfficeBoxAddressAdditionalInformationData3.getValue());
         assertEquals(created, postOfficeBoxAddressAdditionalInformationData3.getCreated());
         assertEquals(changed, postOfficeBoxAddressAdditionalInformationData3.getChanged());
         assertEquals(fetched, postOfficeBoxAddressAdditionalInformationData3.getFetched());
+        assertNotEquals(0, postOfficeBoxAddressAdditionalInformationData3.hashCode());
+        assertEquals(true, postOfficeBoxAddressAdditionalInformationData3.equals(postOfficeBoxAddressAdditionalInformationData1));
     }
 
 }
