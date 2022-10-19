@@ -35,6 +35,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 
 
 @RunWith(SpringRunner.class)
@@ -69,16 +70,22 @@ public class PostOfficeBoxAddressMunicipalityDataDTOTest {
         assertEquals(created, postOfficeBoxAddressMunicipalityData1.getCreated());
         assertEquals(changed, postOfficeBoxAddressMunicipalityData1.getChanged());
         assertEquals(fetched, postOfficeBoxAddressMunicipalityData1.getFetched());
+        assertNotEquals(0, postOfficeBoxAddressMunicipalityData1.hashCode());
+        assertEquals(true, postOfficeBoxAddressMunicipalityData1.equals(postOfficeBoxAddressMunicipalityData2));
         assertEquals(code, postOfficeBoxAddressMunicipalityData2.getCode());
         assertEquals(postOfficeBoxAddressMunicipalityNames, postOfficeBoxAddressMunicipalityData2.getPostOfficeBoxAddressMunicipalityNames());
         assertEquals(created, postOfficeBoxAddressMunicipalityData2.getCreated());
         assertEquals(changed, postOfficeBoxAddressMunicipalityData2.getChanged());
         assertEquals(fetched, postOfficeBoxAddressMunicipalityData2.getFetched());
+        assertNotEquals(0, postOfficeBoxAddressMunicipalityData2.hashCode());
+        assertEquals(true, postOfficeBoxAddressMunicipalityData2.equals(postOfficeBoxAddressMunicipalityData3));
         assertEquals(code, postOfficeBoxAddressMunicipalityData3.getCode());
         assertEquals(postOfficeBoxAddressMunicipalityNames, postOfficeBoxAddressMunicipalityData3.getPostOfficeBoxAddressMunicipalityNames());
         assertEquals(created, postOfficeBoxAddressMunicipalityData3.getCreated());
         assertEquals(changed, postOfficeBoxAddressMunicipalityData3.getChanged());
         assertEquals(fetched, postOfficeBoxAddressMunicipalityData3.getFetched());
+        assertNotEquals(0, postOfficeBoxAddressMunicipalityData3.hashCode());
+        assertEquals(true, postOfficeBoxAddressMunicipalityData3.equals(postOfficeBoxAddressMunicipalityData1));
 
     }
 

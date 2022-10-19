@@ -32,6 +32,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 
 
 @RunWith(SpringRunner.class)
@@ -60,14 +61,20 @@ public class ErrorLogResponseDTOTest {
         assertEquals(pageSize, errorLogResponse1.getPageSize());
         assertEquals(numberOfPages, errorLogResponse1.getNumberOfPages());
         assertEquals(0, errorLogResponse1.getErrorLogList().size());
+        assertNotEquals(0, errorLogResponse1.hashCode());
+        assertEquals(true, errorLogResponse1.equals(errorLogResponse2));
         assertEquals(pageNumber, errorLogResponse2.getPageNumber());
         assertEquals(pageSize, errorLogResponse2.getPageSize());
         assertEquals(numberOfPages, errorLogResponse2.getNumberOfPages());
         assertEquals(0, errorLogResponse2.getErrorLogList().size());
+        assertNotEquals(0, errorLogResponse2.hashCode());
+        assertEquals(true, errorLogResponse2.equals(errorLogResponse3));
         assertEquals(pageNumber, errorLogResponse3.getPageNumber());
         assertEquals(pageSize, errorLogResponse3.getPageSize());
         assertEquals(numberOfPages, errorLogResponse3.getNumberOfPages());
         assertEquals(0, errorLogResponse3.getErrorLogList().size());
+        assertNotEquals(0, errorLogResponse3.hashCode());
+        assertEquals(true, errorLogResponse3.equals(errorLogResponse1));
     }
 
 }

@@ -32,7 +32,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertNotEquals;
 
 
 @RunWith(SpringRunner.class)
@@ -67,22 +67,22 @@ public class StreetAddressAdditionalInformationDataDTOTest {
         assertEquals(created, streetAddressAdditionalInformationData1.getCreated());
         assertEquals(changed, streetAddressAdditionalInformationData1.getChanged());
         assertEquals(fetched, streetAddressAdditionalInformationData1.getFetched());
-        assertTrue(streetAddressAdditionalInformationData1.equals(streetAddressAdditionalInformationData2));
-        assertTrue(streetAddressAdditionalInformationData1.hashCode() != 0);
+        assertNotEquals(0, streetAddressAdditionalInformationData1.hashCode());
+        assertEquals(true, streetAddressAdditionalInformationData1.equals(streetAddressAdditionalInformationData2));
         assertEquals(language, streetAddressAdditionalInformationData2.getLanguage());
         assertEquals(value, streetAddressAdditionalInformationData2.getValue());
         assertEquals(created, streetAddressAdditionalInformationData2.getCreated());
         assertEquals(changed, streetAddressAdditionalInformationData2.getChanged());
         assertEquals(fetched, streetAddressAdditionalInformationData2.getFetched());
-        assertTrue(streetAddressAdditionalInformationData2.equals(streetAddressAdditionalInformationData3));
-        assertTrue(streetAddressAdditionalInformationData2.hashCode() != 0);
+        assertNotEquals(0, streetAddressAdditionalInformationData2.hashCode());
+        assertEquals(true, streetAddressAdditionalInformationData2.equals(streetAddressAdditionalInformationData3));
         assertEquals(language, streetAddressAdditionalInformationData3.getLanguage());
         assertEquals(value, streetAddressAdditionalInformationData3.getValue());
         assertEquals(created, streetAddressAdditionalInformationData3.getCreated());
         assertEquals(changed, streetAddressAdditionalInformationData3.getChanged());
         assertEquals(fetched, streetAddressAdditionalInformationData3.getFetched());
-        assertTrue(streetAddressAdditionalInformationData3.equals(streetAddressAdditionalInformationData2));
-        assertTrue(streetAddressAdditionalInformationData3.hashCode() != 0);
+        assertNotEquals(0, streetAddressAdditionalInformationData3.hashCode());
+        assertEquals(true, streetAddressAdditionalInformationData3.equals(streetAddressAdditionalInformationData1));
     }
 
 }

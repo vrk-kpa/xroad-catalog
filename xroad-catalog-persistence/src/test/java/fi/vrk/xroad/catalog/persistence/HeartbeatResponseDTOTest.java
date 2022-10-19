@@ -33,6 +33,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 
 
 @RunWith(SpringRunner.class)
@@ -67,16 +68,22 @@ public class HeartbeatResponseDTOTest {
         assertEquals(appName, heartbeatResponse1.getAppName());
         assertEquals(appVersion, heartbeatResponse1.getAppVersion());
         assertEquals(systemTime, heartbeatResponse1.getSystemTime());
+        assertNotEquals(0, heartbeatResponse1.hashCode());
+        assertEquals(true, heartbeatResponse1.equals(heartbeatResponse2));
         assertEquals(appWorking, heartbeatResponse2.getAppWorking());
         assertEquals(dbWorking, heartbeatResponse2.getDbWorking());
         assertEquals(appName, heartbeatResponse2.getAppName());
         assertEquals(appVersion, heartbeatResponse2.getAppVersion());
         assertEquals(systemTime, heartbeatResponse2.getSystemTime());
+        assertNotEquals(0, heartbeatResponse2.hashCode());
+        assertEquals(true, heartbeatResponse2.equals(heartbeatResponse3));
         assertEquals(appWorking, heartbeatResponse3.getAppWorking());
         assertEquals(dbWorking, heartbeatResponse3.getDbWorking());
         assertEquals(appName, heartbeatResponse3.getAppName());
         assertEquals(appVersion, heartbeatResponse3.getAppVersion());
         assertEquals(systemTime, heartbeatResponse3.getSystemTime());
+        assertNotEquals(0, heartbeatResponse3.hashCode());
+        assertEquals(true, heartbeatResponse3.equals(heartbeatResponse1));
     }
 
 }

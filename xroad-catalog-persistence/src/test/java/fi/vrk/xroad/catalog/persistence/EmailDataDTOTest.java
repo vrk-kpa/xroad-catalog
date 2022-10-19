@@ -32,6 +32,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 
 
 @RunWith(SpringRunner.class)
@@ -65,12 +66,18 @@ public class EmailDataDTOTest {
         assertEquals(language, emailData1.getLanguage());
         assertEquals(description, emailData1.getDescription());
         assertEquals(value, emailData1.getValue());
+        assertNotEquals(0, emailData1.hashCode());
+        assertEquals(true, emailData1.equals(emailData2));
         assertEquals(language, emailData2.getLanguage());
         assertEquals(description, emailData2.getDescription());
         assertEquals(value, emailData2.getValue());
+        assertNotEquals(0, emailData2.hashCode());
+        assertEquals(true, emailData2.equals(emailData3));
         assertEquals(language, emailData3.getLanguage());
         assertEquals(description, emailData3.getDescription());
         assertEquals(value, emailData3.getValue());
+        assertNotEquals(0, emailData3.hashCode());
+        assertEquals(true, emailData3.equals(emailData1));
     }
 
 }

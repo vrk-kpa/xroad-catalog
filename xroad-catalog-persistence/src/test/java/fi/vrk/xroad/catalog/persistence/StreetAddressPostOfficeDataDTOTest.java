@@ -29,11 +29,10 @@ import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.time.LocalDateTime;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertNotEquals;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = Application.class)
@@ -67,20 +66,20 @@ public class StreetAddressPostOfficeDataDTOTest {
         assertEquals(created, streetAddressPostOfficeData1.getCreated());
         assertEquals(changed, streetAddressPostOfficeData1.getChanged());
         assertEquals(fetched, streetAddressPostOfficeData1.getFetched());
-        assertTrue(streetAddressPostOfficeData1.equals(streetAddressPostOfficeData2));
-        assertTrue(streetAddressPostOfficeData1.hashCode() != 0);
+        assertNotEquals(0, streetAddressPostOfficeData1.hashCode());
+        assertEquals(true, streetAddressPostOfficeData1.equals(streetAddressPostOfficeData2));
         assertEquals(value, streetAddressPostOfficeData2.getValue());
         assertEquals(created, streetAddressPostOfficeData2.getCreated());
         assertEquals(changed, streetAddressPostOfficeData2.getChanged());
         assertEquals(fetched, streetAddressPostOfficeData2.getFetched());
-        assertTrue(streetAddressPostOfficeData2.equals(streetAddressPostOfficeData3));
-        assertTrue(streetAddressPostOfficeData2.hashCode() != 0);
+        assertNotEquals(0, streetAddressPostOfficeData2.hashCode());
+        assertEquals(true, streetAddressPostOfficeData2.equals(streetAddressPostOfficeData3));
         assertEquals(value, streetAddressPostOfficeData3.getValue());
         assertEquals(created, streetAddressPostOfficeData3.getCreated());
         assertEquals(changed, streetAddressPostOfficeData3.getChanged());
         assertEquals(fetched, streetAddressPostOfficeData3.getFetched());
-        assertTrue(streetAddressPostOfficeData3.equals(streetAddressPostOfficeData1));
-        assertTrue(streetAddressPostOfficeData3.hashCode() != 0);
+        assertNotEquals(0, streetAddressPostOfficeData3.hashCode());
+        assertEquals(true, streetAddressPostOfficeData3.equals(streetAddressPostOfficeData1));
     }
 
 }

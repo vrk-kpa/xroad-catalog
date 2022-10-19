@@ -32,6 +32,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 
 
 @RunWith(SpringRunner.class)
@@ -49,6 +50,12 @@ public class DescriptorInfoListDTOTest {
         assertEquals(descriptorInfoList1, descriptorInfoList2);
         assertEquals(descriptorInfoList1, descriptorInfoList3);
         assertEquals(descriptorInfoList2, descriptorInfoList3);
+        assertNotEquals(0, descriptorInfoList1.hashCode());
+        assertEquals(true, descriptorInfoList1.equals(descriptorInfoList2));
+        assertNotEquals(0, descriptorInfoList2.hashCode());
+        assertEquals(true, descriptorInfoList2.equals(descriptorInfoList3));
+        assertNotEquals(0, descriptorInfoList3.hashCode());
+        assertEquals(true, descriptorInfoList3.equals(descriptorInfoList1));
     }
 
 }

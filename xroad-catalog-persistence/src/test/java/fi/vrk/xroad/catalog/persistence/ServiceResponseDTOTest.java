@@ -34,6 +34,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 
 
 @RunWith(SpringRunner.class)
@@ -53,8 +54,14 @@ public class ServiceResponseDTOTest {
         assertEquals(serviceResponse1, serviceResponse3);
         assertEquals(serviceResponse2, serviceResponse3);
         assertEquals(listOfServices, serviceResponse1.getListOfServices());
+        assertNotEquals(0, serviceResponse1.hashCode());
+        assertEquals(true, serviceResponse1.equals(serviceResponse2));
         assertEquals(listOfServices, serviceResponse2.getListOfServices());
+        assertNotEquals(0, serviceResponse2.hashCode());
+        assertEquals(true, serviceResponse2.equals(serviceResponse3));
         assertEquals(listOfServices, serviceResponse3.getListOfServices());
+        assertNotEquals(0, serviceResponse3.hashCode());
+        assertEquals(true, serviceResponse3.equals(serviceResponse1));
     }
 
 }

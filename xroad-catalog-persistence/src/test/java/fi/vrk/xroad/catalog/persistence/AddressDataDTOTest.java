@@ -33,6 +33,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = Application.class)
@@ -69,12 +70,18 @@ public class AddressDataDTOTest {
         assertEquals(type, addressData1.getType());
         assertEquals(country, addressData1.getCountry());
         assertEquals(subType, addressData1.getSubType());
+        assertNotEquals(0, addressData1.hashCode());
+        assertEquals(true, addressData1.equals(addressData2));
         assertEquals(type, addressData2.getType());
         assertEquals(country, addressData2.getCountry());
         assertEquals(subType, addressData2.getSubType());
+        assertNotEquals(0, addressData2.hashCode());
+        assertEquals(true, addressData2.equals(addressData3));
         assertEquals(type, addressData3.getType());
         assertEquals(country, addressData3.getCountry());
         assertEquals(subType, addressData3.getSubType());
+        assertNotEquals(0, addressData3.hashCode());
+        assertEquals(true, addressData3.equals(addressData1));
     }
 
 }

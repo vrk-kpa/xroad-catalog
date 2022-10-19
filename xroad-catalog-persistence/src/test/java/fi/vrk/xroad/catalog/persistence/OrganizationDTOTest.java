@@ -33,6 +33,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 
 
 @RunWith(SpringRunner.class)
@@ -55,10 +56,16 @@ public class OrganizationDTOTest {
         assertEquals(organizationDTO2, organizationDTO3);
         assertEquals(organizationData, organizationDTO1.getOrganizationData());
         assertEquals(companyData, organizationDTO1.getCompanyData());
+        assertNotEquals(0, organizationDTO1.hashCode());
+        assertEquals(true, organizationDTO1.equals(organizationDTO2));
         assertEquals(organizationData, organizationDTO2.getOrganizationData());
         assertEquals(companyData, organizationDTO2.getCompanyData());
+        assertNotEquals(0, organizationDTO2.hashCode());
+        assertEquals(true, organizationDTO2.equals(organizationDTO3));
         assertEquals(organizationData, organizationDTO3.getOrganizationData());
         assertEquals(companyData, organizationDTO3.getCompanyData());
+        assertNotEquals(0, organizationDTO3.hashCode());
+        assertEquals(true, organizationDTO3.equals(organizationDTO1));
     }
 
 }

@@ -32,6 +32,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 
 
 @RunWith(SpringRunner.class)
@@ -66,16 +67,22 @@ public class PostOfficeBoxAddressMunicipalityNameDataDTOTest {
         assertEquals(created, postOfficeBoxAddressMunicipalityNameData1.getCreated());
         assertEquals(changed, postOfficeBoxAddressMunicipalityNameData1.getChanged());
         assertEquals(fetched, postOfficeBoxAddressMunicipalityNameData1.getFetched());
+        assertNotEquals(0, postOfficeBoxAddressMunicipalityNameData1.hashCode());
+        assertEquals(true, postOfficeBoxAddressMunicipalityNameData1.equals(postOfficeBoxAddressMunicipalityNameData2));
         assertEquals(language, postOfficeBoxAddressMunicipalityNameData2.getLanguage());
         assertEquals(value, postOfficeBoxAddressMunicipalityNameData2.getValue());
         assertEquals(created, postOfficeBoxAddressMunicipalityNameData2.getCreated());
         assertEquals(changed, postOfficeBoxAddressMunicipalityNameData2.getChanged());
         assertEquals(fetched, postOfficeBoxAddressMunicipalityNameData2.getFetched());
+        assertNotEquals(0, postOfficeBoxAddressMunicipalityNameData2.hashCode());
+        assertEquals(true, postOfficeBoxAddressMunicipalityNameData2.equals(postOfficeBoxAddressMunicipalityNameData3));
         assertEquals(language, postOfficeBoxAddressMunicipalityNameData3.getLanguage());
         assertEquals(value, postOfficeBoxAddressMunicipalityNameData3.getValue());
         assertEquals(created, postOfficeBoxAddressMunicipalityNameData3.getCreated());
         assertEquals(changed, postOfficeBoxAddressMunicipalityNameData3.getChanged());
         assertEquals(fetched, postOfficeBoxAddressMunicipalityNameData3.getFetched());
+        assertNotEquals(0, postOfficeBoxAddressMunicipalityNameData3.hashCode());
+        assertEquals(true, postOfficeBoxAddressMunicipalityNameData3.equals(postOfficeBoxAddressMunicipalityNameData1));
     }
 
 }

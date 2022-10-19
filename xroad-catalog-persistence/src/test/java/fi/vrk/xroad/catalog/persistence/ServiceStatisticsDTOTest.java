@@ -32,6 +32,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 
 
@@ -62,23 +63,24 @@ public class ServiceStatisticsDTOTest {
         assertEquals(numberOfSoapServices, serviceStatistics1.getNumberOfSoapServices());
         assertEquals(numberOfRestServices, serviceStatistics1.getNumberOfRestServices());
         assertEquals(numberOfOpenApiServices, serviceStatistics1.getNumberOfOpenApiServices());
-        assertTrue(serviceStatistics1.equals(serviceStatistics2));
-        assertTrue(serviceStatistics1.hashCode() != 0);
+        assertNotEquals(0, serviceStatistics1.hashCode());
+        assertEquals(true, serviceStatistics1.equals(serviceStatistics2));
         assertTrue(serviceStatistics1.toString().contains("numberOfRestServices"));
         assertEquals(created, serviceStatistics2.getCreated());
         assertEquals(numberOfSoapServices, serviceStatistics2.getNumberOfSoapServices());
         assertEquals(numberOfRestServices, serviceStatistics2.getNumberOfRestServices());
         assertEquals(numberOfOpenApiServices, serviceStatistics2.getNumberOfOpenApiServices());
-        assertTrue(serviceStatistics2.equals(serviceStatistics3));
+        assertNotEquals(0, serviceStatistics2.hashCode());
+        assertEquals(true, serviceStatistics2.equals(serviceStatistics3));
         assertTrue(serviceStatistics2.toString().contains("numberOfSoapServices"));
-        assertTrue(serviceStatistics2.hashCode() != 0);
         assertEquals(created, serviceStatistics3.getCreated());
         assertEquals(numberOfSoapServices, serviceStatistics3.getNumberOfSoapServices());
         assertEquals(numberOfRestServices, serviceStatistics3.getNumberOfRestServices());
         assertEquals(numberOfOpenApiServices, serviceStatistics3.getNumberOfOpenApiServices());
-        assertTrue(serviceStatistics3.equals(serviceStatistics1));
+        assertNotEquals(0, serviceStatistics3.hashCode());
+        assertEquals(true, serviceStatistics3.equals(serviceStatistics1));
         assertTrue(serviceStatistics3.toString().contains("numberOfOpenApiServices"));
-        assertTrue(serviceStatistics3.hashCode() != 0);
+
     }
 
 }

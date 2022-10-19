@@ -29,10 +29,10 @@ import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.time.LocalDateTime;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = Application.class)
@@ -73,10 +73,16 @@ public class BusinessNameDataDTOTest {
         assertEquals(businessNameData2, businessNameData3);
         assertEquals(name, businessNameData1.getName());
         assertEquals(language, businessNameData1.getLanguage());
+        assertNotEquals(0, businessNameData1.hashCode());
+        assertEquals(true, businessNameData1.equals(businessNameData2));
         assertEquals(name, businessNameData2.getName());
         assertEquals(language, businessNameData2.getLanguage());
+        assertNotEquals(0, businessNameData2.hashCode());
+        assertEquals(true, businessNameData2.equals(businessNameData3));
         assertEquals(name, businessNameData3.getName());
         assertEquals(language, businessNameData3.getLanguage());
+        assertNotEquals(0, businessNameData3.hashCode());
+        assertEquals(true, businessNameData3.equals(businessNameData1));
     }
 
 }

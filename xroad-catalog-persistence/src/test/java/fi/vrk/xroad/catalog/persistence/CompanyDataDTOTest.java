@@ -33,6 +33,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 
 
 @RunWith(SpringRunner.class)
@@ -88,14 +89,20 @@ public class CompanyDataDTOTest {
         assertEquals(companyForm, companyData1.getCompanyForm());
         assertEquals(detailsUri, companyData1.getDetailsUri());
         assertEquals(name, companyData1.getName());
+        assertNotEquals(0, companyData1.hashCode());
+        assertEquals(true, companyData1.equals(companyData2));
         assertEquals(businessCode, companyData2.getBusinessCode());
         assertEquals(companyForm, companyData2.getCompanyForm());
         assertEquals(detailsUri, companyData2.getDetailsUri());
         assertEquals(name, companyData2.getName());
+        assertNotEquals(0, companyData2.hashCode());
+        assertEquals(true, companyData2.equals(companyData3));
         assertEquals(businessCode, companyData3.getBusinessCode());
         assertEquals(companyForm, companyData3.getCompanyForm());
         assertEquals(detailsUri, companyData3.getDetailsUri());
         assertEquals(name, companyData3.getName());
+        assertNotEquals(0, companyData3.hashCode());
+        assertEquals(true, companyData3.equals(companyData1));
     }
 
 }

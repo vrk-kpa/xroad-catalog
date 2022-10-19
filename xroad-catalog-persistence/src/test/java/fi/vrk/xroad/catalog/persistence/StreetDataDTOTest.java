@@ -32,7 +32,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertNotEquals;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = Application.class)
@@ -66,20 +66,20 @@ public class StreetDataDTOTest {
         assertEquals(created, streetData1.getCreated());
         assertEquals(changed, streetData1.getChanged());
         assertEquals(fetched, streetData1.getFetched());
-        assertTrue(streetData1.equals(streetData2));
-        assertTrue(streetData1.hashCode() != 0);
+        assertNotEquals(0, streetData1.hashCode());
+        assertEquals(true, streetData1.equals(streetData2));
         assertEquals(value, streetData2.getValue());
         assertEquals(created, streetData2.getCreated());
         assertEquals(changed, streetData2.getChanged());
         assertEquals(fetched, streetData2.getFetched());
-        assertTrue(streetData2.equals(streetData3));
-        assertTrue(streetData2.hashCode() != 0);
+        assertNotEquals(0, streetData2.hashCode());
+        assertEquals(true, streetData2.equals(streetData3));
         assertEquals(value, streetData3.getValue());
         assertEquals(created, streetData3.getCreated());
         assertEquals(changed, streetData3.getChanged());
         assertEquals(fetched, streetData3.getFetched());
-        assertTrue(streetData3.equals(streetData1));
-        assertTrue(streetData3.hashCode() != 0);
+        assertNotEquals(0, streetData3.hashCode());
+        assertEquals(true, streetData3.equals(streetData1));
     }
 
 }

@@ -35,6 +35,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 
 
 @RunWith(SpringRunner.class)
@@ -57,10 +58,16 @@ public class MemberDataListDTOTest {
         assertEquals(memberDataList2, memberDataList3);
         assertEquals(date, memberDataList1.getDate());
         assertEquals(memberDataList, memberDataList1.getMemberDataList());
+        assertNotEquals(0, memberDataList1.hashCode());
+        assertEquals(true, memberDataList1.equals(memberDataList2));
         assertEquals(date, memberDataList2.getDate());
         assertEquals(memberDataList, memberDataList2.getMemberDataList());
+        assertNotEquals(0, memberDataList2.hashCode());
+        assertEquals(true, memberDataList2.equals(memberDataList3));
         assertEquals(date, memberDataList3.getDate());
         assertEquals(memberDataList, memberDataList3.getMemberDataList());
+        assertNotEquals(0, memberDataList3.hashCode());
+        assertEquals(true, memberDataList3.equals(memberDataList1));
     }
 
 }

@@ -32,6 +32,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 
 
 @RunWith(SpringRunner.class)
@@ -72,10 +73,16 @@ public class CompanyFormDataDTOTest {
         assertEquals(companyFormData2, companyFormData3);
         assertEquals(name, companyFormData1.getName());
         assertEquals(language, companyFormData1.getLanguage());
+        assertNotEquals(0, companyFormData1.hashCode());
+        assertEquals(true, companyFormData1.equals(companyFormData2));
         assertEquals(name, companyFormData2.getName());
         assertEquals(language, companyFormData2.getLanguage());
+        assertNotEquals(0, companyFormData2.hashCode());
+        assertEquals(true, companyFormData2.equals(companyFormData3));
         assertEquals(name, companyFormData3.getName());
         assertEquals(language, companyFormData3.getLanguage());
+        assertNotEquals(0, companyFormData3.hashCode());
+        assertEquals(true, companyFormData3.equals(companyFormData1));
     }
 
 }

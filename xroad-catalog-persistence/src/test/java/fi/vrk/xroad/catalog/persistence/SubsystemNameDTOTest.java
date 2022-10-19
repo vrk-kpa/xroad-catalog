@@ -31,7 +31,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertNotEquals;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = Application.class)
@@ -53,16 +53,16 @@ public class SubsystemNameDTOTest {
         assertEquals(subsystemName2, subsystemName3);
         assertEquals(et, subsystemName1.getEt());
         assertEquals(en, subsystemName1.getEn());
-        assertTrue(subsystemName1.equals(subsystemName2));
-        assertTrue(subsystemName1.hashCode() != 0);
+        assertNotEquals(0, subsystemName1.hashCode());
+        assertEquals(true, subsystemName1.equals(subsystemName2));
         assertEquals(et, subsystemName2.getEt());
         assertEquals(en, subsystemName2.getEn());
-        assertTrue(subsystemName2.equals(subsystemName3));
-        assertTrue(subsystemName2.hashCode() != 0);
+        assertNotEquals(0, subsystemName2.hashCode());
+        assertEquals(true, subsystemName2.equals(subsystemName3));
         assertEquals(et, subsystemName3.getEt());
         assertEquals(en, subsystemName3.getEn());
-        assertTrue(subsystemName3.equals(subsystemName1));
-        assertTrue(subsystemName3.hashCode() != 0);
+        assertNotEquals(0, subsystemName3.hashCode());
+        assertEquals(true, subsystemName3.equals(subsystemName1));
     }
 
 }

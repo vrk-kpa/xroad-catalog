@@ -31,6 +31,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 
 
 @RunWith(SpringRunner.class)
@@ -53,10 +54,16 @@ public class EmailDTOTest {
         assertEquals(email2, email3);
         assertEquals(name, email1.getName());
         assertEquals(email, email1.getEmail());
+        assertNotEquals(0, email1.hashCode());
+        assertEquals(true, email1.equals(email2));
         assertEquals(name, email2.getName());
         assertEquals(email, email2.getEmail());
+        assertNotEquals(0, email2.hashCode());
+        assertEquals(true, email2.equals(email3));
         assertEquals(name, email3.getName());
         assertEquals(email, email3.getEmail());
+        assertNotEquals(0, email3.hashCode());
+        assertEquals(true, email3.equals(email1));
     }
 
 }

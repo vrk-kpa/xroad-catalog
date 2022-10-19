@@ -31,6 +31,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 
 
 @RunWith(SpringRunner.class)
@@ -59,14 +60,20 @@ public class MemberInfoDTOTest {
         assertEquals(memberCode, memberInfo1.getMemberCode());
         assertEquals(name, memberInfo1.getName());
         assertEquals(subsystemCode, memberInfo1.getSubsystemCode());
+        assertNotEquals(0, memberInfo1.hashCode());
+        assertEquals(true, memberInfo1.equals(memberInfo2));
         assertEquals(memberClass, memberInfo2.getMemberClass());
         assertEquals(memberCode, memberInfo2.getMemberCode());
         assertEquals(name, memberInfo2.getName());
         assertEquals(subsystemCode, memberInfo2.getSubsystemCode());
+        assertNotEquals(0, memberInfo2.hashCode());
+        assertEquals(true, memberInfo2.equals(memberInfo3));
         assertEquals(memberClass, memberInfo3.getMemberClass());
         assertEquals(memberCode, memberInfo3.getMemberCode());
         assertEquals(name, memberInfo3.getName());
         assertEquals(subsystemCode, memberInfo3.getSubsystemCode());
+        assertNotEquals(0, memberInfo3.hashCode());
+        assertEquals(true, memberInfo3.equals(memberInfo1));
     }
 
 }
