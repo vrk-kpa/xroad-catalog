@@ -42,7 +42,7 @@ import static org.junit.Assert.assertNotEquals;
 public class OrganizationDescriptionDataDTOTest {
 
     @Test
-    public void testOrganizationDataDTO() {
+    public void testOrganizationDescriptionDataDTO() {
         String language = "FI";
         String type = "type";
         String value = "value";
@@ -86,8 +86,6 @@ public class OrganizationDescriptionDataDTOTest {
         assertEquals(created, organizationDescriptionData3.getCreated());
         assertEquals(changed, organizationDescriptionData3.getChanged());
         assertEquals(fetched, organizationDescriptionData3.getFetched());
-        assertEquals(true, organizationDescriptionData3.equals(organizationDescriptionData1));
-        assertNotEquals(0, organizationDescriptionData3.hashCode());
     }
 
 }
