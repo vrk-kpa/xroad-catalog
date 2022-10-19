@@ -35,7 +35,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 @RunWith(SpringRunner.class)
@@ -66,19 +65,19 @@ public class SubsystemDataDTOTest {
         assertEquals(active, subsystemData1.getActive());
         assertEquals(serviceList, subsystemData1.getServiceList());
         assertTrue(subsystemData1.equals(subsystemData2));
-        assertNotNull(subsystemData1.hashCode());
+        assertTrue(subsystemData1.hashCode() != 0);
         assertEquals(created, subsystemData2.getCreated());
         assertEquals(subsystemCode, subsystemData2.getSubsystemCode());
         assertEquals(active, subsystemData2.getActive());
         assertEquals(serviceList, subsystemData2.getServiceList());
         assertTrue(subsystemData2.equals(subsystemData3));
-        assertNotNull(subsystemData2.hashCode());
+        assertTrue(subsystemData2.hashCode() != 0);
         assertEquals(created, subsystemData3.getCreated());
         assertEquals(subsystemCode, subsystemData3.getSubsystemCode());
         assertEquals(active, subsystemData3.getActive());
         assertEquals(serviceList, subsystemData3.getServiceList());
         assertTrue(subsystemData3.equals(subsystemData1));
-        assertNotNull(subsystemData3.hashCode());
+        assertTrue(subsystemData3.hashCode() != 0);
     }
 
 }

@@ -31,7 +31,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 @RunWith(SpringRunner.class)
@@ -62,19 +61,19 @@ public class XRoadDataDTOTest {
         assertEquals(memberCode, xRoadData1.getMemberCode());
         assertEquals(subsystemCode, xRoadData1.getSubsystemCode());
         assertTrue(xRoadData1.equals(xRoadData2));
-        assertNotNull(xRoadData1.hashCode());
+        assertTrue(xRoadData1.hashCode() != 0);
         assertEquals(xRoadInstance, xRoadData2.getXRoadInstance());
         assertEquals(memberClass, xRoadData2.getMemberClass());
         assertEquals(memberCode, xRoadData2.getMemberCode());
         assertEquals(subsystemCode, xRoadData2.getSubsystemCode());
         assertTrue(xRoadData2.equals(xRoadData3));
-        assertNotNull(xRoadData2.hashCode());
+        assertTrue(xRoadData2.hashCode() != 0);
         assertEquals(xRoadInstance, xRoadData3.getXRoadInstance());
         assertEquals(memberClass, xRoadData3.getMemberClass());
         assertEquals(memberCode, xRoadData3.getMemberCode());
         assertEquals(subsystemCode, xRoadData3.getSubsystemCode());
         assertTrue(xRoadData3.equals(xRoadData1));
-        assertNotNull(xRoadData3.hashCode());
+        assertTrue(xRoadData3.hashCode() != 0);
     }
 
 }

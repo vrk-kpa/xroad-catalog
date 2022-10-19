@@ -32,7 +32,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 
@@ -69,21 +68,21 @@ public class StreetAddressAdditionalInformationDataDTOTest {
         assertEquals(changed, streetAddressAdditionalInformationData1.getChanged());
         assertEquals(fetched, streetAddressAdditionalInformationData1.getFetched());
         assertTrue(streetAddressAdditionalInformationData1.equals(streetAddressAdditionalInformationData2));
-        assertNotNull(streetAddressAdditionalInformationData1.hashCode());
+        assertTrue(streetAddressAdditionalInformationData1.hashCode() != 0);
         assertEquals(language, streetAddressAdditionalInformationData2.getLanguage());
         assertEquals(value, streetAddressAdditionalInformationData2.getValue());
         assertEquals(created, streetAddressAdditionalInformationData2.getCreated());
         assertEquals(changed, streetAddressAdditionalInformationData2.getChanged());
         assertEquals(fetched, streetAddressAdditionalInformationData2.getFetched());
         assertTrue(streetAddressAdditionalInformationData2.equals(streetAddressAdditionalInformationData3));
-        assertNotNull(streetAddressAdditionalInformationData2.hashCode());
+        assertTrue(streetAddressAdditionalInformationData2.hashCode() != 0);
         assertEquals(language, streetAddressAdditionalInformationData3.getLanguage());
         assertEquals(value, streetAddressAdditionalInformationData3.getValue());
         assertEquals(created, streetAddressAdditionalInformationData3.getCreated());
         assertEquals(changed, streetAddressAdditionalInformationData3.getChanged());
         assertEquals(fetched, streetAddressAdditionalInformationData3.getFetched());
         assertTrue(streetAddressAdditionalInformationData3.equals(streetAddressAdditionalInformationData2));
-        assertNotNull(streetAddressAdditionalInformationData3.hashCode());
+        assertTrue(streetAddressAdditionalInformationData3.hashCode() != 0);
     }
 
 }

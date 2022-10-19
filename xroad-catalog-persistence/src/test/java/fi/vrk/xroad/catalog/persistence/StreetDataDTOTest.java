@@ -32,7 +32,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 @RunWith(SpringRunner.class)
@@ -68,19 +67,19 @@ public class StreetDataDTOTest {
         assertEquals(changed, streetData1.getChanged());
         assertEquals(fetched, streetData1.getFetched());
         assertTrue(streetData1.equals(streetData2));
-        assertNotNull(streetData1.hashCode());
+        assertTrue(streetData1.hashCode() != 0);
         assertEquals(value, streetData2.getValue());
         assertEquals(created, streetData2.getCreated());
         assertEquals(changed, streetData2.getChanged());
         assertEquals(fetched, streetData2.getFetched());
         assertTrue(streetData2.equals(streetData3));
-        assertNotNull(streetData2.hashCode());
+        assertTrue(streetData2.hashCode() != 0);
         assertEquals(value, streetData3.getValue());
         assertEquals(created, streetData3.getCreated());
         assertEquals(changed, streetData3.getChanged());
         assertEquals(fetched, streetData3.getFetched());
         assertTrue(streetData3.equals(streetData1));
-        assertNotNull(streetData3.hashCode());
+        assertTrue(streetData3.hashCode() != 0);
     }
 
 }

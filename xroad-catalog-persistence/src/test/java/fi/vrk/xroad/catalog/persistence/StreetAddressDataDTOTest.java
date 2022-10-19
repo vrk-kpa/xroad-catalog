@@ -38,7 +38,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 
@@ -91,21 +90,21 @@ public class StreetAddressDataDTOTest {
         assertEquals(longitude, streetAddressData1.getLongitude());
         assertEquals(coordinateState, streetAddressData1.getCoordinateState());
         assertTrue(streetAddressData1.equals(streetAddressData2));
-        assertNotNull(streetAddressData1.hashCode());
+        assertTrue(streetAddressData1.hashCode() != 0);
         assertEquals(streetNumber, streetAddressData2.getStreetNumber());
         assertEquals(postalCode, streetAddressData2.getPostalCode());
         assertEquals(latitude, streetAddressData2.getLatitude());
         assertEquals(longitude, streetAddressData2.getLongitude());
         assertEquals(coordinateState, streetAddressData2.getCoordinateState());
         assertTrue(streetAddressData2.equals(streetAddressData3));
-        assertNotNull(streetAddressData2.hashCode());
+        assertTrue(streetAddressData2.hashCode() != 0);
         assertEquals(streetNumber, streetAddressData3.getStreetNumber());
         assertEquals(postalCode, streetAddressData3.getPostalCode());
         assertEquals(latitude, streetAddressData3.getLatitude());
         assertEquals(longitude, streetAddressData3.getLongitude());
         assertEquals(coordinateState, streetAddressData3.getCoordinateState());
         assertTrue(streetAddressData3.equals(streetAddressData1));
-        assertNotNull(streetAddressData3.hashCode());
+        assertTrue(streetAddressData3.hashCode() != 0);
     }
 
 }

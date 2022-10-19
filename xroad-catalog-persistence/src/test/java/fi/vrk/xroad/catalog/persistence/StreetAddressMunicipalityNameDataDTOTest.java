@@ -32,7 +32,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 @RunWith(SpringRunner.class)
@@ -68,19 +67,19 @@ public class StreetAddressMunicipalityNameDataDTOTest {
         assertEquals(changed, streetAddressMunicipalityNameData1.getChanged());
         assertEquals(fetched, streetAddressMunicipalityNameData1.getFetched());
         assertTrue(streetAddressMunicipalityNameData1.equals(streetAddressMunicipalityNameData2));
-        assertNotNull(streetAddressMunicipalityNameData1.hashCode());
+        assertTrue(streetAddressMunicipalityNameData1.hashCode() != 0);
         assertEquals(value, streetAddressMunicipalityNameData2.getValue());
         assertEquals(created, streetAddressMunicipalityNameData2.getCreated());
         assertEquals(changed, streetAddressMunicipalityNameData2.getChanged());
         assertEquals(fetched, streetAddressMunicipalityNameData2.getFetched());
         assertTrue(streetAddressMunicipalityNameData2.equals(streetAddressMunicipalityNameData3));
-        assertNotNull(streetAddressMunicipalityNameData2.hashCode());
+        assertTrue(streetAddressMunicipalityNameData2.hashCode() != 0);
         assertEquals(value, streetAddressMunicipalityNameData3.getValue());
         assertEquals(created, streetAddressMunicipalityNameData3.getCreated());
         assertEquals(changed, streetAddressMunicipalityNameData3.getChanged());
         assertEquals(fetched, streetAddressMunicipalityNameData3.getFetched());
         assertTrue(streetAddressMunicipalityNameData3.equals(streetAddressMunicipalityNameData1));
-        assertNotNull(streetAddressMunicipalityNameData3.hashCode());
+        assertTrue(streetAddressMunicipalityNameData3.hashCode() != 0);
     }
 
 }
