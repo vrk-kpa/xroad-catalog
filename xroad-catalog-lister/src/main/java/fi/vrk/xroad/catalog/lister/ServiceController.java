@@ -367,7 +367,7 @@ public class ServiceController {
                         .contentType(org.springframework.http.MediaType.valueOf(MediaType.TEXT_PLAIN))
                         .body(new ByteArrayResource(sw.toString().getBytes()));
             } catch (IOException e) {
-                e.printStackTrace();
+                return ResponseEntity.badRequest().build();
             }
         }
         return ResponseEntity.noContent().build();

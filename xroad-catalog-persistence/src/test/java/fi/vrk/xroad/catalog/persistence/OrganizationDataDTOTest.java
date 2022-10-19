@@ -40,6 +40,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 
 
 @RunWith(SpringRunner.class)
@@ -107,7 +108,8 @@ public class OrganizationDataDTOTest {
         assertEquals(fetched, organizationData3.getFetched());
         assertEquals(organizationType, organizationData3.getOrganizationType());
         assertEquals(publishingStatus, organizationData3.getPublishingStatus());
-        assertEquals(guid, organizationData3.getGuid());
+        assertEquals(true, organizationData3.equals(organizationData1));
+        assertNotEquals(0, organizationData3.hashCode());
     }
 
 }

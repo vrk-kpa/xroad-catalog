@@ -124,7 +124,7 @@ public class ServiceUtil {
         try {
             csvPrinter.printRecord(data);
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new CatalogListerRuntimeException("Exception printing CSV record: " + e.getMessage());
         }
     }
 

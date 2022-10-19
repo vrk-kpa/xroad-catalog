@@ -32,6 +32,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 
 
 @RunWith(SpringRunner.class)
@@ -88,11 +89,12 @@ public class PhoneNumberDataDTOTest {
         assertEquals(isFinnishServiceNumber, phoneNumberData2.isFinnishServiceNumber());
         assertEquals(language, phoneNumberData3.getLanguage());
         assertEquals(additionalInformation, phoneNumberData3.getAdditionalInformation());
-        assertEquals(serviceChargeType, phoneNumberData3.getServiceChargeType());
-        assertEquals(chargeDescription, phoneNumberData3.getChargeDescription());
-        assertEquals(prefixNumber, phoneNumberData3.getPrefixNumber());
-        assertEquals(number, phoneNumberData3.getNumber());
-        assertEquals(isFinnishServiceNumber, phoneNumberData3.isFinnishServiceNumber());
+        assertEquals(true, phoneNumberData1.equals(phoneNumberData2));
+        assertNotEquals(0, phoneNumberData1.hashCode());
+        assertEquals(true, phoneNumberData2.equals(phoneNumberData3));
+        assertNotEquals(0, phoneNumberData2.hashCode());
+        assertEquals(true, phoneNumberData3.equals(phoneNumberData1));
+        assertNotEquals(0, phoneNumberData3.hashCode());
     }
 
 }
