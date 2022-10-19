@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.1.1] - 2022-10-19
+
+# Added
+- added unit tests to improve test coverage
+
 ## [2.1.0] - 2022-10-05
 
 # Added
