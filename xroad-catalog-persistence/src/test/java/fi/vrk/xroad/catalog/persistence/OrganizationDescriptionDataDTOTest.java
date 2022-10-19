@@ -32,6 +32,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 
 
 @RunWith(SpringRunner.class)
@@ -69,18 +70,24 @@ public class OrganizationDescriptionDataDTOTest {
         assertEquals(created, organizationDescriptionData1.getCreated());
         assertEquals(changed, organizationDescriptionData1.getChanged());
         assertEquals(fetched, organizationDescriptionData1.getFetched());
+        assertEquals(true, organizationDescriptionData1.equals(organizationDescriptionData2));
+        assertNotEquals(0, organizationDescriptionData1.hashCode());
         assertEquals(language, organizationDescriptionData2.getLanguage());
         assertEquals(type, organizationDescriptionData2.getType());
         assertEquals(value, organizationDescriptionData2.getValue());
         assertEquals(created, organizationDescriptionData2.getCreated());
         assertEquals(changed, organizationDescriptionData2.getChanged());
         assertEquals(fetched, organizationDescriptionData2.getFetched());
+        assertEquals(true, organizationDescriptionData2.equals(organizationDescriptionData3));
+        assertNotEquals(0, organizationDescriptionData2.hashCode());
         assertEquals(language, organizationDescriptionData3.getLanguage());
         assertEquals(type, organizationDescriptionData3.getType());
         assertEquals(value, organizationDescriptionData3.getValue());
         assertEquals(created, organizationDescriptionData3.getCreated());
         assertEquals(changed, organizationDescriptionData3.getChanged());
         assertEquals(fetched, organizationDescriptionData3.getFetched());
+        assertEquals(true, organizationDescriptionData3.equals(organizationDescriptionData1));
+        assertNotEquals(0, organizationDescriptionData3.hashCode());
     }
 
 }

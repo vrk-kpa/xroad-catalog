@@ -35,6 +35,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 
 
 @RunWith(SpringRunner.class)
@@ -86,7 +87,8 @@ public class MemberDataDTOTest {
         assertEquals(memberCode, memberData3.getMemberCode());
         assertEquals(name, memberData3.getName());
         assertEquals(provider, memberData3.getProvider());
-        assertEquals(subsystemList, memberData3.getSubsystemList());
+        assertEquals(true, memberData3.equals(memberData2));
+        assertNotEquals(0, memberData3.hashCode());
     }
 
 }
