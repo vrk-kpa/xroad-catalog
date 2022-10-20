@@ -228,9 +228,7 @@ public class ServiceController {
                                                          Integer.valueOf(limit),
                                                          startDateTime,
                                                          endDateTime);
-        if (errors == null) {
-            return ResponseEntity.noContent().build();
-        } else if (!errors.hasContent()) {
+        if (!errors.hasContent()) {
             return ResponseEntity.noContent().build();
         } else {
             return ResponseEntity.ok(ErrorLogResponse.builder()
