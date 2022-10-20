@@ -53,7 +53,7 @@ public class ErrorLogRepositoryTest {
         LocalDateTime changedAfter = LocalDateTime.of(2020, Month.JANUARY, 1, 0, 0, 0);
         LocalDateTime changedBefore = LocalDateTime.of(2023, Month.JANUARY, 1, 0, 0, 0);
         Set<ErrorLog> errorLogEntries = errorLogRepository.findAny(changedAfter, changedBefore);
-        assertEquals(6, errorLogEntries.size());
+        assertEquals(7, errorLogEntries.size());
     }
 
     @Test
@@ -113,7 +113,7 @@ public class ErrorLogRepositoryTest {
         Page<ErrorLog> errorLogEntries = errorLogRepository.findAnyByCreated(startDate,
                 endDate, new PageRequest(0, 100));
         assertEquals(1, errorLogEntries.getTotalPages());
-        assertEquals(6, errorLogEntries.getTotalElements());
+        assertEquals(7, errorLogEntries.getTotalElements());
     }
 
 }
