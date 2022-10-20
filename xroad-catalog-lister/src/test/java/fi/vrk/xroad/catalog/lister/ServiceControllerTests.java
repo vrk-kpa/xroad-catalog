@@ -35,7 +35,7 @@ import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
-
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -333,7 +333,7 @@ public class ServiceControllerTests {
     }
 
     @Test
-    public void testGetServiceStatistics() throws JSONException {
+    public void testGetServiceStatistics() throws JSONException, IOException {
         // testGetServiceStatistics
         ResponseEntity<String> response =
                 restTemplate.getForEntity("/api/getServiceStatistics?startDate=2014-01-01&endDate=2023-01-01", String.class);

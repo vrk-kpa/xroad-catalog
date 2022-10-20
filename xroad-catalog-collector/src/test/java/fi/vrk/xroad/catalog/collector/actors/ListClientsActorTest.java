@@ -165,6 +165,51 @@ public class ListClientsActorTest extends TestKit {
                 .filter(m -> member2.equals(m)).findAny().get().getAllSubsystems()));
     }
 
+    @Test
+    public void testOnReceiveWithEmptyMemberList() throws Exception {
+
+        List<ClientType> memberlist = new ArrayList<>();
+
+        memberlist.add(createClientType(XRoadObjectType.MEMBER, "member1", null));
+        memberlist.add(createClientType(XRoadObjectType.SUBSYSTEM, "member1", "sub1"));
+        memberlist.add(createClientType(XRoadObjectType.SUBSYSTEM, "member1", "sub2"));
+        memberlist.add(createClientType(XRoadObjectType.SUBSYSTEM, "member1", "sub3"));
+
+        memberlist.add(createClientType(XRoadObjectType.MEMBER, "member2", null));
+        memberlist.add(createClientType(XRoadObjectType.SUBSYSTEM, "member2", "sssub1"));
+        memberlist.add(createClientType(XRoadObjectType.SUBSYSTEM, "member2", "sssub2"));
+
+        //ClientList cMock = mock(ClientList.class);
+        //PowerMockito.mockStatic(ClientListUtil.class);
+        //when(ClientListUtil.clientListFromResponse(anyString(), anyObject())).thenReturn(cMock);
+        //when(cMock.getMember()).thenReturn(memberlist);
+
+        listClientsActor.onReceive(ListClientsActor.START_COLLECTING);
+
+        Set<Member> expectedMembers = new HashSet<>();
+        Member member1 = new Member("FI", "GOV", "member1", "member1");
+        Set<Subsystem> subsystems = new HashSet<>();
+        subsystems.add(new Subsystem(member1, "sub1"));
+        subsystems.add(new Subsystem(member1, "sub2"));
+        subsystems.add(new Subsystem(member1, "sub3"));
+        member1.setSubsystems(subsystems);
+
+        Member member2 = new Member("FI", "GOV", "member2", "member2");
+        subsystems = new HashSet<>();
+        subsystems.add(new Subsystem(member2, "sssub1"));
+        subsystems.add(new Subsystem(member2, "sssub2"));
+        member2.setSubsystems(subsystems);
+
+        expectedMembers.add(member1);
+        expectedMembers.add(member2);
+
+        // Verify that the save method was called with correct member collection
+        verify(catalogService).saveAllMembersAndSubsystems(argumentCaptor.capture());
+
+        Collection<Member> resultMembers = argumentCaptor.getValue();
+        Assert.assertEquals(0, resultMembers.size());
+    }
+
     protected ClientType createClientType(XRoadObjectType objectType, String memberCode, String subsystemCode) {
         ClientType c = new ClientType();
         XRoadClientIdentifierType xrcit = new XRoadClientIdentifierType();
