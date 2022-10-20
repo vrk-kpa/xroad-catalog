@@ -256,6 +256,9 @@ VALUES (5, 'Service not found6', '500', '2020-05-04 11:41:24.792+03', 'DEV');
 INSERT INTO error_log(id, message, code, created)
 VALUES (6, 'Service not found6', '500', '2020-05-04 11:41:24.792+03');
 
+INSERT INTO error_log(id, message, code, created)
+VALUES (7, 'Service not found7', '500', '2022-01-01 11:41:24.792+03');
+
 INSERT INTO wsdl (id, service_id, data, external_id, created, changed, fetched,  removed)
 VALUES (1, 1, '<?xml version="1.0" standalone="no"?>
 <wsdl:definitions xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"

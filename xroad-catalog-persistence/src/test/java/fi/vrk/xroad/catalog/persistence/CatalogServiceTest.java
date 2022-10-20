@@ -41,6 +41,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.Month;
 import java.util.*;
@@ -53,6 +55,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static org.mockito.Mockito.*;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = Application.class)
@@ -87,6 +90,9 @@ public class CatalogServiceTest {
 
     @Autowired
     EndpointRepository endpointRepository;
+
+    @Autowired
+    ErrorLogRepository errorLogRepository;
 
     @Autowired
     TestUtil testUtil;
@@ -213,7 +219,7 @@ public class CatalogServiceTest {
         XRoadData xRoadData = XRoadData.builder().xRoadInstance(null).memberClass(null).memberCode(null).subsystemCode(null).build();
         Page<ErrorLog> errorLogEntries = catalogService.getErrors(xRoadData, 0, 100, LocalDateTime.parse("2020-01-01T00:00:00"), LocalDateTime.now());
         assertNotNull(errorLogEntries);
-        assertEquals(6, errorLogEntries.getNumberOfElements());
+        assertEquals(7, errorLogEntries.getNumberOfElements());
         assertEquals(1, errorLogEntries.getTotalPages());
     }
 
@@ -1178,6 +1184,23 @@ public class CatalogServiceTest {
         } catch (IllegalArgumentException e) {
             assertEquals("path is required", e.getMessage());
         }
+    }
+
+    @Test
+    public void testDeleteOldErrorLogEntries() {
+        ErrorLog foundErrorLog = errorLogRepository.findOne(7L);
+        assertEquals("Service not found7", foundErrorLog.getMessage());
+        LocalDateTime created = foundErrorLog.getCreated();
+        Duration duration = Duration.between(LocalDateTime.now(), created);
+        long daysBefore = duration.toDays() < 0 ? duration.toDays() * (-1) : duration.toDays();
+        catalogService.deleteOldErrorLogEntries((int)daysBefore);
+        Set<ErrorLog> foundErrorLogs = errorLogRepository.findAny(LocalDateTime.now().minusDays((int) daysBefore + 1), LocalDateTime.now());
+        assertEquals(0, foundErrorLogs.size());
+    }
+
+    @Test
+    public void testCheckDatabaseConnection() {
+        assertTrue(catalogService.checkDatabaseConnection());
     }
 
 }
