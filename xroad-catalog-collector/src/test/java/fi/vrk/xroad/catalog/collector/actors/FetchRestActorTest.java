@@ -75,7 +75,7 @@ public class FetchRestActorTest {
         service.setServiceVersion("v1");
         service.setServiceType("REST");
         List<Endpoint> endpointList = new ArrayList<>();
-        endpointList.add(Endpoint.builder().method("/getServices").path("GET").build());
+        endpointList.add(Endpoint.builder().method("GET").path("/getServices").build());
         service.setEndpoints(endpointList);
         fetchRestActor.tell(service, ActorRef.noSender());
         Mockito.verify(catalogService).saveRest(Matchers.any(), Matchers.any(), Matchers.anyString());

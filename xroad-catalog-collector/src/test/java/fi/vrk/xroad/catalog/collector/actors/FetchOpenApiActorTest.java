@@ -75,7 +75,10 @@ public class FetchOpenApiActorTest {
         service.setServiceVersion("v1");
         service.setServiceType("OPENAPI");
         List<Endpoint> endpointList = new ArrayList<>();
-        endpointList.add(Endpoint.builder().method("/getServices").path("GET").build());
+        Endpoint endpoint = new Endpoint();
+        endpoint.setMethod("GET");
+        endpoint.setPath("/getServices");
+        endpointList.add(endpoint);
         service.setEndpoints(endpointList);
         fetchOpenApiActor.tell(service, ActorRef.noSender());
         Mockito.verify(catalogService).saveOpenApi(Matchers.any(), Matchers.any(), Matchers.anyString());
