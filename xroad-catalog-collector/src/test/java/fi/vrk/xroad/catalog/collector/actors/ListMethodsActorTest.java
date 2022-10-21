@@ -84,7 +84,7 @@ public class ListMethodsActorTest {
         value.setObjectType(XRoadObjectType.SUBSYSTEM);
         clientType.setId(value);
         listMethodsActor.tell(clientType, ActorRef.noSender());
-        verify(catalogService, times(3)).saveServices(any(), any());
+        verify(catalogService, times(1)).saveServices(any(), any());
     }
 }
 
