@@ -54,6 +54,7 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.util.ReflectionTestUtils;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -115,8 +116,64 @@ public class ListClientsActorTest extends TestKit {
     }
 
     @Test
-    public void testOnReceive() throws Exception {
+    public void testOnReceiveWhenFetchUnlimited() throws Exception {
 
+        List<ClientType> memberlist = new ArrayList<>();
+
+        memberlist.add(createClientType(XRoadObjectType.MEMBER, "member1", null));
+        memberlist.add(createClientType(XRoadObjectType.SUBSYSTEM, "member1", "sub1"));
+        memberlist.add(createClientType(XRoadObjectType.SUBSYSTEM, "member1", "sub2"));
+        memberlist.add(createClientType(XRoadObjectType.SUBSYSTEM, "member1", "sub3"));
+
+        memberlist.add(createClientType(XRoadObjectType.MEMBER, "member2", null));
+        memberlist.add(createClientType(XRoadObjectType.SUBSYSTEM, "member2", "sssub1"));
+        memberlist.add(createClientType(XRoadObjectType.SUBSYSTEM, "member2", "sssub2"));
+
+        ClientList cMock = mock(ClientList.class);
+        PowerMockito.mockStatic(ClientListUtil.class);
+        when(ClientListUtil.clientListFromResponse(anyString(), anyObject())).thenReturn(cMock);
+        when(cMock.getMember()).thenReturn(memberlist);
+
+        listClientsActor.onReceive(ListClientsActor.START_COLLECTING);
+
+        Set<Member> expectedMembers = new HashSet<>();
+        Member member1 = new Member("FI", "GOV", "member1", "member1");
+        Set<Subsystem> subsystems = new HashSet<>();
+        subsystems.add(new Subsystem(member1, "sub1"));
+        subsystems.add(new Subsystem(member1, "sub2"));
+        subsystems.add(new Subsystem(member1, "sub3"));
+        member1.setSubsystems(subsystems);
+
+        Member member2 = new Member("FI", "GOV", "member2", "member2");
+        subsystems = new HashSet<>();
+        subsystems.add(new Subsystem(member2, "sssub1"));
+        subsystems.add(new Subsystem(member2, "sssub2"));
+        member2.setSubsystems(subsystems);
+
+        expectedMembers.add(member1);
+        expectedMembers.add(member2);
+
+        // Verify that the save method was called with correct member collection
+        verify(catalogService).saveAllMembersAndSubsystems(argumentCaptor.capture());
+
+        Collection<Member> resultMembers = argumentCaptor.getValue();
+        Assert.assertEquals(HashMultiset.create(expectedMembers), HashMultiset.create(resultMembers));
+
+        Assert.assertEquals(HashMultiset.create(member1.getAllSubsystems()), HashMultiset.create(resultMembers.stream()
+                .filter(m -> member1.equals(m)).findAny().get().getAllSubsystems()));
+
+        Assert.assertEquals(HashMultiset.create(member2.getAllSubsystems()), HashMultiset.create(resultMembers.stream()
+                .filter(m -> member2.equals(m)).findAny().get().getAllSubsystems()));
+    }
+
+    @Test
+    public void testOnReceiveWhenFetchNotUnlimitedButTimeIsInBetween() throws Exception {
+        ReflectionTestUtils.setField(listClientsActor, "host", "http://localhost");
+        ReflectionTestUtils.setField(listClientsActor, "fetchUnlimited", Boolean.FALSE);
+        ReflectionTestUtils.setField(listClientsActor, "fetchTimeAfterHour", 0);
+        ReflectionTestUtils.setField(listClientsActor, "fetchTimeBeforeHour", 23);
+
+        MockitoAnnotations.initMocks(this);
         List<ClientType> memberlist = new ArrayList<>();
 
         memberlist.add(createClientType(XRoadObjectType.MEMBER, "member1", null));
