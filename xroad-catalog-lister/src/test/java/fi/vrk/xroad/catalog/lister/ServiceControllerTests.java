@@ -314,7 +314,7 @@ public class ServiceControllerTests {
 
         JSONObject json = new JSONObject(response.getBody());
         JSONArray serviceStatisticsList = json.getJSONArray("distinctServiceStatisticsList");
-        assertEquals(3288, serviceStatisticsList.length());
+        assertEquals(2558, serviceStatisticsList.length());
 
         for (int i = 0; i < serviceStatisticsList.length(); i++) {
             assertTrue(serviceStatisticsList.optJSONObject(i).optLong("numberOfDistinctServices") > 0);
@@ -345,9 +345,9 @@ public class ServiceControllerTests {
         assertEquals(3288, serviceStatisticsList.length());
 
         for (int i = 0; i < serviceStatisticsList.length(); i++) {
-            assertTrue(serviceStatisticsList.optJSONObject(i).optLong("numberOfSoapServices") > 0);
-            assertTrue(serviceStatisticsList.optJSONObject(i).optLong("numberOfRestServices") > 0);
-            assertTrue(serviceStatisticsList.optJSONObject(i).optLong("numberOfOpenApiServices") > 0);
+            assertTrue(serviceStatisticsList.optJSONObject(i).optLong("numberOfSoapServices") >= 0);
+            assertTrue(serviceStatisticsList.optJSONObject(i).optLong("numberOfRestServices") >= 0);
+            assertTrue(serviceStatisticsList.optJSONObject(i).optLong("numberOfOpenApiServices") >= 0);
         }
 
         // testGetServiceStatisticsInvalidDateFormatException
@@ -373,9 +373,9 @@ public class ServiceControllerTests {
             List<String> csvRowContent = Arrays.asList(csvContent.get(i).split(","));
             assertEquals(4, csvRowContent.size());
             assertEquals(16, csvRowContent.get(0).length());
-            assertTrue(Integer.parseInt(csvRowContent.get(1)) > 0);
-            assertTrue(Integer.parseInt(csvRowContent.get(2)) > 0);
-            assertTrue(Integer.parseInt(csvRowContent.get(3)) > 0);
+            assertTrue(Integer.parseInt(csvRowContent.get(1)) >= 0);
+            assertTrue(Integer.parseInt(csvRowContent.get(2)) >= 0);
+            assertTrue(Integer.parseInt(csvRowContent.get(3)) >= 0);
         }
 
         // testGetServiceStatisticsCSVInvalidDateFormatException

@@ -1046,7 +1046,7 @@ public class CatalogServiceTest {
         LocalDateTime startDateTime = LocalDateTime.of(2014, 1, 1, 0, 0);
         LocalDateTime endDateTime = LocalDateTime.of(2022, 1, 1, 0, 0);
         List<DistinctServiceStatistics> distinctServiceStatistics = catalogService.getDistinctServiceStatistics(startDateTime, endDateTime);
-        assertEquals(2923, distinctServiceStatistics.size());
+        assertEquals(2193, distinctServiceStatistics.size());
     }
 
     @Test
