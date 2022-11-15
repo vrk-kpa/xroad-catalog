@@ -187,7 +187,7 @@ public class CatalogServiceImpl implements CatalogService {
         List<Service> services = serviceRepository.findAllActive();
         LocalDateTime dateInPast = startDateTime;
         while (isDateBetweenDates(dateInPast, startDateTime, endDateTime)) {
-            ServiceStatistics serviceStatistics = createServiceStatistics(services, dateInPast, startDateTime, endDateTime);
+            ServiceStatistics serviceStatistics = createServiceStatistics(services, dateInPast, startDateTime);
             serviceStatisticsList.add(serviceStatistics);
             dateInPast = dateInPast.plusDays(1);
         }
@@ -196,8 +196,7 @@ public class CatalogServiceImpl implements CatalogService {
 
     private ServiceStatistics createServiceStatistics(List<Service> services,
                                                       LocalDateTime dateInPast,
-                                                      LocalDateTime startDateTime,
-                                                      LocalDateTime endDateTime) {
+                                                      LocalDateTime startDateTime) {
         AtomicLong numberOfSoapServices = new AtomicLong();
         AtomicLong numberOfRestServices = new AtomicLong();
         AtomicLong numberOfOpenApiServices = new AtomicLong();
