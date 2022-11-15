@@ -204,7 +204,7 @@ public class CatalogServiceImpl implements CatalogService {
 
         services.forEach(service -> {
             LocalDateTime creationDate = service.getStatusInfo().getCreated();
-            if (isDateBetweenDates(creationDate, startDateTime, endDateTime)) {
+            if (isDateBetweenDates(creationDate, startDateTime, dateInPast)) {
                 if (service.hasOpenApi()) {
                     numberOfOpenApiServices.getAndIncrement();
                 }
@@ -286,8 +286,9 @@ public class CatalogServiceImpl implements CatalogService {
         LocalDateTime dateInPast = startDateTime;
         while (isDateBetweenDates(dateInPast, startDateTime, endDateTime)) {
             AtomicLong totalDistinctServices = new AtomicLong();
+            LocalDateTime finalDateInPast = dateInPast;
             List<Service> servicesBetweenDates = services.stream()
-                    .filter(p -> isDateBetweenDates(p.getStatusInfo().getCreated(), startDateTime, endDateTime))
+                    .filter(p -> isDateBetweenDates(p.getStatusInfo().getCreated(), startDateTime, finalDateInPast))
                     .collect(Collectors.toList());
             if (!servicesBetweenDates.isEmpty()) {
                 totalDistinctServices.set(servicesBetweenDates.stream().map(Service::getServiceCode).collect(Collectors.toList())

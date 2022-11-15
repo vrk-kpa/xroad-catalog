@@ -2,6 +2,9 @@
 
 All notable changes to this project will be documented in this file.
 
+## 2.1.2 - 2022-11-15
+- fixed getServiceStatistics and getDistinctServiceStatistics so that the number of services changes in time as it should
+
 ## 2.1.1 - 2022-10-19
 - added unit tests to improve test coverage
 
