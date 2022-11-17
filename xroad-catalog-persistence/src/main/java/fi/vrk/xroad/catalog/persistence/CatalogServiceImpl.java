@@ -187,7 +187,7 @@ public class CatalogServiceImpl implements CatalogService {
         List<Service> services = serviceRepository.findAllActive();
         LocalDateTime dateInPast = startDateTime;
         while (isDateBetweenDates(dateInPast, startDateTime, endDateTime)) {
-            ServiceStatistics serviceStatistics = createServiceStatistics(services, dateInPast, startDateTime);
+            ServiceStatistics serviceStatistics = createServiceStatistics(services, dateInPast, endDateTime);
             serviceStatisticsList.add(serviceStatistics);
             dateInPast = dateInPast.plusDays(1);
         }
@@ -196,14 +196,14 @@ public class CatalogServiceImpl implements CatalogService {
 
     private ServiceStatistics createServiceStatistics(List<Service> services,
                                                       LocalDateTime dateInPast,
-                                                      LocalDateTime startDateTime) {
+                                                      LocalDateTime endDateTime) {
         AtomicLong numberOfSoapServices = new AtomicLong();
         AtomicLong numberOfRestServices = new AtomicLong();
         AtomicLong numberOfOpenApiServices = new AtomicLong();
 
         services.forEach(service -> {
             LocalDateTime creationDate = service.getStatusInfo().getCreated();
-            if (isDateBetweenDates(creationDate, startDateTime, dateInPast)) {
+            if (creationDate.isBefore(endDateTime)) {
                 if (service.hasOpenApi()) {
                     numberOfOpenApiServices.getAndIncrement();
                 }
@@ -216,12 +216,11 @@ public class CatalogServiceImpl implements CatalogService {
             }
         });
 
-        ServiceStatistics serviceStatistics = ServiceStatistics.builder()
+        return ServiceStatistics.builder()
                 .created(dateInPast)
                 .numberOfRestServices(numberOfRestServices.longValue())
                 .numberOfSoapServices(numberOfSoapServices.longValue())
                 .numberOfOpenApiServices(numberOfOpenApiServices.longValue()).build();
-        return serviceStatistics;
     }
 
     @Override
@@ -285,9 +284,8 @@ public class CatalogServiceImpl implements CatalogService {
         LocalDateTime dateInPast = startDateTime;
         while (isDateBetweenDates(dateInPast, startDateTime, endDateTime)) {
             AtomicLong totalDistinctServices = new AtomicLong();
-            LocalDateTime finalDateInPast = dateInPast;
             List<Service> servicesBetweenDates = services.stream()
-                    .filter(p -> isDateBetweenDates(p.getStatusInfo().getCreated(), startDateTime, finalDateInPast))
+                    .filter(p -> p.getStatusInfo().getCreated().isBefore(endDateTime))
                     .collect(Collectors.toList());
             if (!servicesBetweenDates.isEmpty()) {
                 totalDistinctServices.set(servicesBetweenDates.stream().map(Service::getServiceCode).collect(Collectors.toList())
@@ -314,7 +312,7 @@ public class CatalogServiceImpl implements CatalogService {
             List<MemberData> memberDataList = new ArrayList<>();
             members.forEach(member -> {
                 LocalDateTime creationDate = member.getStatusInfo().getCreated();
-                if (isDateBetweenDates(creationDate, startDateTime, endDateTime)) {
+                if (creationDate.isBefore(endDateTime)) {
                     AtomicReference<Boolean> isProvider = new AtomicReference<>();
                     isProvider.set(Boolean.FALSE);
                     Set<Subsystem> subsystems = member.getAllSubsystems();
@@ -649,7 +647,8 @@ public class CatalogServiceImpl implements CatalogService {
                                        LocalDateTime startDate,
                                        LocalDateTime endDate) {
         return (dateToBeChecked.isAfter(startDate) || dateToBeChecked.isEqual(startDate))
-                && (dateToBeChecked.isBefore(endDate) || dateToBeChecked.isEqual(endDate));
+                && (dateToBeChecked.isBefore(endDate) || dateToBeChecked.isEqual(endDate))
+                && (dateToBeChecked.isBefore(LocalDateTime.now()) || dateToBeChecked.isEqual(LocalDateTime.now()));
     }
 
     private Service getExistingService(SubsystemId subsystemId, ServiceId serviceId){

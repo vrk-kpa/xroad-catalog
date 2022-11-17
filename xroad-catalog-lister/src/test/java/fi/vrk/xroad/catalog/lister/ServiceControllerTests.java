@@ -314,7 +314,7 @@ public class ServiceControllerTests {
 
         JSONObject json = new JSONObject(response.getBody());
         JSONArray serviceStatisticsList = json.getJSONArray("distinctServiceStatisticsList");
-        assertEquals(2558, serviceStatisticsList.length());
+        assertEquals(3243, serviceStatisticsList.length());
 
         for (int i = 0; i < serviceStatisticsList.length(); i++) {
             assertTrue(serviceStatisticsList.optJSONObject(i).optLong("numberOfDistinctServices") > 0);
@@ -342,7 +342,7 @@ public class ServiceControllerTests {
 
         JSONObject json = new JSONObject(response.getBody());
         JSONArray serviceStatisticsList = json.getJSONArray("serviceStatisticsList");
-        assertEquals(3288, serviceStatisticsList.length());
+        assertEquals(3243, serviceStatisticsList.length());
 
         for (int i = 0; i < serviceStatisticsList.length(); i++) {
             assertTrue(serviceStatisticsList.optJSONObject(i).optLong("numberOfSoapServices") >= 0);
@@ -361,7 +361,7 @@ public class ServiceControllerTests {
         assertNotNull(response.getBody());
         assertEquals(200, response.getStatusCodeValue());
         List<String> csvContent = Arrays.asList(response.getBody().split("\r\n"));
-        assertEquals(3289, csvContent.size());
+        assertEquals(3244, csvContent.size());
         List<String> csvHeader = Arrays.asList(csvContent.get(0).split(","));
         assertEquals(4, csvHeader.size());
         assertEquals("Date", csvHeader.get(0));
@@ -394,7 +394,7 @@ public class ServiceControllerTests {
         JSONObject json = new JSONObject(response.getBody());
         JSONArray memberData = json.getJSONArray("memberData");
         JSONArray securityServerData = json.getJSONArray("securityServerData");
-        assertEquals(3288, memberData.length());
+        assertEquals(3243, memberData.length());
         assertEquals(1, securityServerData.length());
 
         for (int i = 0; i < memberData.length(); i++) {
@@ -436,7 +436,7 @@ public class ServiceControllerTests {
         assertNotNull(response.getBody());
         assertEquals(200, response.getStatusCodeValue());
         List<String> csvContent = Arrays.asList(response.getBody().split("\r\n"));
-        assertEquals(69052, csvContent.size());
+        assertEquals(68107, csvContent.size());
         List<String> csvHeader = Arrays.asList(csvContent.get(0).split(","));
         assertEquals(13, csvHeader.size());
         assertEquals("Date", csvHeader.get(0));
