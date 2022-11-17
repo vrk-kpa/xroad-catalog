@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.1.3] - 2022-11-17
+
+# Changed
+- fixed getServiceStatistics and getDistinctServiceStatistics and getListOfServices so that the number of services changes in time as it should
+
 ## [2.1.2] - 2022-11-15
 
 # Changed
