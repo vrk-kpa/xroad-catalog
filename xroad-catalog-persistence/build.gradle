@@ -1,43 +1,60 @@
 buildscript {
-    ext {
-        springBootVersion = '1.5.9.RELEASE'
-    }
     repositories {
         mavenCentral()
-        jcenter()
     }
     dependencies {
         classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
     }
 }
 
-apply plugin: 'java'
-apply plugin: 'maven'
-apply plugin: 'eclipse'
-apply plugin: 'idea'
-apply plugin: 'org.springframework.boot'
-apply plugin: 'jacoco'
+plugins {
+    id "org.springframework.boot" version "${springBootVersion}"
+    id 'java'
+    id 'eclipse'
+    id 'idea'
+    id 'jacoco'
+}
 
 repositories {
     mavenCentral()
 }
 
-sourceCompatibility = 1.8
-targetCompatibility = 1.8
-
 dependencies {
-    compile("org.springframework.boot:spring-boot-starter-data-jpa")
-    compile("com.h2database:h2:1.4.196")
-    compile("org.postgresql:postgresql:42.2.0")
-    compile('com.google.guava:guava:23.6-jre')
-    compileOnly("org.projectlombok:lombok:1.16.18")
-
-    testCompile("org.springframework.boot:spring-boot-starter-test")
-    testCompileOnly 'org.projectlombok:lombok:1.16.18'
+    implementation("org.springframework.boot:spring-boot-starter-data-jpa:${springBootVersion}")
+    implementation("com.h2database:h2:${h2DatabaseVersion}")
+    implementation("org.postgresql:postgresql:${postgreSqlVersion}")
+    implementation("com.google.guava:guava:${guavaVersion}")
+    implementation("org.projectlombok:lombok:${lombokVersion}")
+    annotationProcessor("org.projectlombok:lombok:${lombokVersion}")
+    testImplementation("org.springframework.boot:spring-boot-starter-test:${springBootVersion}")
+    testImplementation("org.projectlombok:lombok:${lombokVersion}")
+    testAnnotationProcessor("org.projectlombok:lombok:${lombokVersion}")
 }
 
-tasks.withType(org.springframework.boot.gradle.run.BootRunTask) {
+
+test {
+    useJUnitPlatform {
+        includeEngines 'junit-jupiter'
+    }
+}
+
+tasks.withType(org.springframework.boot.gradle.tasks.run.BootRun) {
     systemProperty 'spring.profiles.active', System.getProperty('spring.profiles.active', 'default')
+}
+
+bootJar {
+    enabled = false
+}
+
+jar {
+    enabled = true
+    archiveClassifier = ''
+}
+
+
+
+springBoot {
+    mainClass = 'fi.vrk.xroad.catalog.persistence.Application'
 }
 
 test {
@@ -49,7 +66,7 @@ jacocoTestReport {
 
 jacocoTestReport {
     reports {
-        xml.enabled true
+        xml.required = true
     }
 }
 

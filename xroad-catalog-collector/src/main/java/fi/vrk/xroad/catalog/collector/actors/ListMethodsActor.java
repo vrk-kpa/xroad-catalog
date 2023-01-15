@@ -1,24 +1,13 @@
 /**
  * The MIT License
- * Copyright (c) 2022, Population Register Centre (VRK)
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
+ * Copyright (c) 2023- Nordic Institute for Interoperability Solutions (NIIS) Copyright (c) 2016-2022 Finnish Digital Agency
  *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
  *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
+ * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 package fi.vrk.xroad.catalog.collector.actors;
 
@@ -51,8 +40,6 @@ public class ListMethodsActor extends XRoadCatalogActor {
 
     private static AtomicInteger methodCounter = new AtomicInteger(0);
 
-    private boolean organizationsFetched = false;
-
     private static final String SERVICE_TYPE_REST = "REST";
 
     @Value("${xroad-catalog.security-server-host}")
@@ -73,15 +60,6 @@ public class ListMethodsActor extends XRoadCatalogActor {
     @Value("${xroad-catalog.webservices-endpoint}")
     private String webservicesEndpoint;
 
-    @Value("${xroad-catalog.fetch-companies-time-after-hour}")
-    private Integer fetchCompaniesTimeAfterHour;
-
-    @Value("${xroad-catalog.fetch-companies-time-before-hour}")
-    private Integer fetchCompaniesTimeBeforeHour;
-
-    @Value("${xroad-catalog.fetch-companies-run-unlimited}")
-    private Boolean fetchCompaniesUnlimited;
-
     @Value("${xroad-catalog.error-log-length-in-days}")
     private Integer errorLogLengthInDays;
 
@@ -97,22 +75,15 @@ public class ListMethodsActor extends XRoadCatalogActor {
     // supervisor-created pool of list methods actors
     private ActorRef fetchWsdlPoolRef;
     private ActorRef fetchOpenApiPoolRef;
-
     private ActorRef fetchRestPoolRef;
-    private ActorRef fetchOrganizationsPoolRef;
-    private ActorRef fetchCompaniesPoolRef;
     private XRoadClient xroadClient;
 
     public ListMethodsActor(ActorRef fetchWsdlPoolRef,
                             ActorRef fetchOpenApiPoolRef,
-                            ActorRef fetchRestPoolRef,
-                            ActorRef fetchOrganizationsPoolRef,
-                            ActorRef fetchCompaniesPoolRef) {
+                            ActorRef fetchRestPoolRef) {
         this.fetchWsdlPoolRef = fetchWsdlPoolRef;
         this.fetchOpenApiPoolRef = fetchOpenApiPoolRef;
         this.fetchRestPoolRef = fetchRestPoolRef;
-        this.fetchOrganizationsPoolRef = fetchOrganizationsPoolRef;
-        this.fetchCompaniesPoolRef = fetchCompaniesPoolRef;
     }
 
     @Override
@@ -127,8 +98,6 @@ public class ListMethodsActor extends XRoadCatalogActor {
         if (message instanceof ClientType) {
             log.info("{} onReceive {}", methodCounter.addAndGet(1), this.hashCode());
             ClientType clientType = (ClientType) message;
-            fetchOrganizations(clientType);
-            fetchCompanies(clientType);
             flushErrorLogs();
             if (XRoadObjectType.SUBSYSTEM.equals(clientType.getId().getObjectType())) {
                 saveSubsystemsAndServices(clientType);
@@ -136,19 +105,6 @@ public class ListMethodsActor extends XRoadCatalogActor {
             return true;
         } else {
             return false;
-        }
-    }
-
-    private void fetchOrganizations(ClientType clientType) {
-        if (Boolean.FALSE.equals(organizationsFetched)) {
-            fetchOrganizationsPoolRef.tell(clientType, getSelf());
-            organizationsFetched = true;
-        }
-    }
-
-    private void fetchCompanies(ClientType clientType) {
-        if (MethodListUtil.shouldFetchCompanies(fetchCompaniesUnlimited, fetchCompaniesTimeAfterHour, fetchCompaniesTimeBeforeHour)) {
-            fetchCompaniesPoolRef.tell(clientType, getSelf());
         }
     }
 

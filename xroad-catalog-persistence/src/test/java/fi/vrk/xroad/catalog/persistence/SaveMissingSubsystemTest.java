@@ -1,24 +1,13 @@
 /**
  * The MIT License
- * Copyright (c) 2022, Population Register Centre (VRK)
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
+ * Copyright (c) 2023- Nordic Institute for Interoperability Solutions (NIIS) Copyright (c) 2016-2022 Finnish Digital Agency
  *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
  *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
+ * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 package fi.vrk.xroad.catalog.persistence;
 
@@ -29,24 +18,22 @@ import fi.vrk.xroad.catalog.persistence.entity.Wsdl;
 import com.google.common.collect.Lists;
 import fi.vrk.xroad.catalog.persistence.repository.MemberRepository;
 import fi.vrk.xroad.catalog.persistence.repository.SubsystemRepository;
-import lombok.extern.slf4j.Slf4j;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-@RunWith(SpringRunner.class)
-@SpringBootTest(classes = Application.class)
+@SpringBootTest
 @Transactional
-@Slf4j
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class SaveMissingSubsystemTest {
 
     @Autowired
@@ -73,13 +60,13 @@ public class SaveMissingSubsystemTest {
     Subsystem ss2saved;
     Subsystem ss12saved;
 
-    @Before
+    @BeforeAll
     public void init() {
         // member 1: subsystems 1,2 (active) and 12 (removed)
-        original = memberRepository.findOne(1L);
-        ss1original = subsystemRepository.findOne(1L);
-        ss2original = subsystemRepository.findOne(2L);
-        ss12original = subsystemRepository.findOne(12L);
+        original = memberRepository.findById(1L).get();
+        ss1original = subsystemRepository.findById(1L).get();
+        ss2original = subsystemRepository.findById(2L).get();
+        ss12original = subsystemRepository.findById(12L).get();
         originalService = ss1original.getAllServices().iterator().next();
         originalWsdl = originalService.getWsdl();
         ss1original.getAllServices().size();
@@ -109,7 +96,7 @@ public class SaveMissingSubsystemTest {
         testUtil.entityManagerFlush();
         testUtil.entityManagerClear();
 
-        Member checkedMember = memberRepository.findOne(1L);
+        Member checkedMember = memberRepository.findById(1L).get();
         assertNotNull(checkedMember);
         testUtil.assertFetchedIsOnlyDifferent(original.getStatusInfo(),
                 checkedMember.getStatusInfo());
@@ -133,7 +120,7 @@ public class SaveMissingSubsystemTest {
         testUtil.entityManagerFlush();
         testUtil.entityManagerClear();
 
-        Member checkedMember = memberRepository.findOne(1L);
+        Member checkedMember = memberRepository.findById(1L).get();
         assertNotNull(checkedMember);
         testUtil.assertFetchedIsOnlyDifferent(original.getStatusInfo(), checkedMember.getStatusInfo());
         assertEquals(Arrays.asList(1L, 2L, 12L),
@@ -142,7 +129,7 @@ public class SaveMissingSubsystemTest {
                 new ArrayList<Long>(testUtil.getIds(checkedMember.getActiveSubsystems())));
 
         assertEquals(1, ss1original.getAllServices().size());
-        Subsystem ss1now = subsystemRepository.findOne(1L);
+        Subsystem ss1now = subsystemRepository.findById(1L).get();
         assertEquals(1, ss1now.getAllServices().size());
         Service currentService = ss1now.getAllServices().iterator().next();
         testUtil.assertAllSame(originalService.getStatusInfo(), currentService.getStatusInfo());

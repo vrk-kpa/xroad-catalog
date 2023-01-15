@@ -1,3 +1,3 @@
 #!/bin/sh
 set -x
-exec ${JAVA_HOME}/bin/java -Xms128m -Xmx2g -Dspring.profiles.active=base,production -jar /usr/lib/xroad-catalog/xroad-catalog-collector.jar --spring.config.location=/etc/xroad/xroad-catalog/ --spring.config.name=collector,catalogdb
+exec ${JAVA_HOME}/bin/java -Xms128m -Xmx2g -Dspring.profiles.active=base,production -Dspring.profiles.include=$CATALOG_PROFILE -jar /usr/lib/xroad-catalog/xroad-catalog-collector.jar --spring.config.location=/etc/xroad/xroad-catalog/ --spring.config.name=collector,catalogdb

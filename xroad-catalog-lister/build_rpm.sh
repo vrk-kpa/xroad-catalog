@@ -1,4 +1,20 @@
 #!/bin/sh
+
+while getopts ":p:" options; do
+  case "${options}" in
+    p )
+      PROFILE=${OPTARG}
+      ;;
+    \? )
+        exit_abnormal
+      ;;
+  esac
+done
+
+if [ -z "$PROFILE" ]; then
+  PROFILE="default";
+fi
+
 DIR="workspace/xroad-catalog-lister/packages/xroad-catalog-lister/redhat"
 cd $DIR
 
@@ -12,13 +28,14 @@ CMD="-ba"
 
 rm -rf ${ROOT}/RPMS/*
 
-app_version=2.1.3
+app_version=3.0.0
 
 rpmbuild \
     --define "xroad_catalog_version $app_version" \
     --define "rel $RELEASE" \
     --define "snapshot .$SNAPSHOT" \
     --define "_topdir $ROOT" \
+    --define "profile" $PROFILE \
     -${CMD} SPECS/xroad-catalog-lister.spec
 
 

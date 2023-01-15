@@ -8,6 +8,7 @@ PermissionsStartOnly=true
 User=xroad
 Group=xroad
 ExecStart=/usr/share/xroad/bin/xroad-catalog-lister
+EnvironmentFile=/etc/xroad/catalog-profile.properties
 Restart=on-failure
 
 [Install]

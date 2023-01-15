@@ -1,25 +1,24 @@
 buildscript {
-    ext {
-        springBootVersion = '1.5.10.RELEASE'
-    }
     repositories {
         mavenCentral()
-        jcenter()
     }
     dependencies {
         classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
     }
 }
 
-apply plugin: 'java'
-apply plugin: 'maven'
-apply plugin: 'org.springframework.boot'
-apply plugin: 'jacoco'
+plugins {
+    id "org.springframework.boot" version "${springBootVersion}"
+    id 'java'
+    id 'eclipse'
+    id 'idea'
+    id 'jacoco'
+}
 
 description = """"""
 
-sourceCompatibility = 1.8
-targetCompatibility = 1.8
+sourceCompatibility = 11
+targetCompatibility = 11
 
 repositories {
     mavenCentral()
@@ -36,13 +35,19 @@ sourceSets {
     }
 }
 
-jar {
-    baseName = 'xroad-catalog-collector'
-    from project.file('LICENSE.txt')
-    manifest {
-        attributes 'Implementation-Version' : version
-    }
+bootJar {
+    enabled = false
 }
+
+jar {
+    enabled = true
+    archiveClassifier = ''
+}
+
+springBoot {
+    mainClass = 'fi.vrk.xroad.catalog.collector.XRoadCatalogCollector'
+}
+
 
 task wsImport {
     ext.sourcedestdir = "${buildDir}/generated-sources/wsimport"
@@ -73,35 +78,44 @@ task wsImport {
 }
 
 dependencies {
-    compile project(':xroad-catalog-persistence')
+    implementation project(':xroad-catalog-persistence')
 
-    // https://mvnrepository.com/artifact/org.apache.httpcomponents/httpclient
-    compile group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.5'
-
-    compile 'org.json:json:20171018'
-    compile 'org.springframework.boot:spring-boot-starter-web-services'
-    compile "com.fasterxml.jackson.core:jackson-databind:$jacksonVersion"
-    compile 'com.typesafe.akka:akka-actor_2.11:2.4.20'
-    compile 'com.typesafe.akka:akka-slf4j_2.11:2.4.20'
-    compile 'ch.qos.logback:logback-classic:1.2.3'
-    compile 'org.apache.cxf:cxf-rt-frontend-jaxws:3.2.1'
-    compile 'org.apache.cxf:cxf-rt-transports-http:3.2.1'
-    compile 'org.apache.cxf:cxf-core:3.2.1'
-    compileOnly 'org.projectlombok:lombok:1.16.18'
-
-    wsimport "com.sun.xml.ws:jaxws-tools:2.2.10"
-
-    testCompile 'org.springframework.boot:spring-boot-starter-test'
-    testCompile 'org.mockito:mockito-all:2.0.2-beta'
-    testCompile 'com.typesafe.akka:akka-testkit_2.11:2.4.20'
-    testCompile 'org.powermock:powermock-core:1.6.4'
-    testCompile 'org.powermock:powermock-module-junit4:1.6.4'
-    testCompile 'org.powermock:powermock-api-mockito:1.6.4'
-    testCompileOnly 'org.projectlombok:lombok:1.16.18'
-
+    implementation ("javax.annotation:javax.annotation-api:${javaxAnnotationVersion}")
+    implementation ("javax.xml.bind:jaxb-api:${javaxJaxbVersion}")
+    implementation("com.google.guava:guava:${guavaVersion}")
+    implementation("org.apache.httpcomponents:httpclient:${httpClientVersion}")
+    implementation("org.json:json:${jsonVersion}")
+    implementation("org.springframework.boot:spring-boot-starter-web-services:${springBootVersion}")
+    implementation("com.fasterxml.jackson.core:jackson-databind:${jacksonVersion}")
+    implementation("com.typesafe.akka:akka-actor_3:${akkaVersion}")
+    implementation("com.typesafe.akka:akka-slf4j_3:${akkaVersion}")
+    implementation("org.apache.cxf:cxf-rt-frontend-jaxws:${cxfCoreVersion}")
+    implementation("org.apache.cxf:cxf-rt-transports-http:${cxfVersion}")
+    implementation("org.apache.cxf:cxf-core:${cxfCoreVersion}")
+    implementation("org.projectlombok:lombok:${lombokVersion}")
+    annotationProcessor("org.projectlombok:lombok:${lombokVersion}")
+    wsimport("com.sun.xml.ws:jaxws-maven-plugin:${jaxbVersion}")
+    implementation("jakarta.xml.ws:jakarta.xml.ws-api:${jaxbVersion}")
+    implementation("com.sun.xml.ws:jaxws-rt:${jaxbVersion}")
+    implementation("com.sun.xml.ws:jaxws-tools:${jaxbVersion}")
+    testImplementation("org.springframework.boot:spring-boot-starter-test:${springBootVersion}") {
+                exclude group: 'org.mockito', module :'mockito-core'
+    }
+    testImplementation("org.mockito:mockito-inline:${mockitoInlineVersion}")
+    testImplementation("com.typesafe.akka:akka-testkit_3:${akkaVersion}")
+    testImplementation("org.projectlombok:lombok:${lombokVersion}")
+    testAnnotationProcessor("org.projectlombok:lombok:${lombokVersion}")
+    testImplementation("javax.annotation:javax.annotation-api:${javaxAnnotationVersion}")
+    testImplementation("javax.xml.bind:jaxb-api:${javaxJaxbVersion}")
 }
 
 compileJava.dependsOn wsImport
+
+test {
+    useJUnitPlatform {
+        includeEngines 'junit-jupiter'
+    }
+}
 
 test {
     systemProperty 'spring.config.name', 'collector,catalogdb'
@@ -112,14 +126,14 @@ bootRun {
 }
 
 test {
-    finalizedBy jacocoTestReport // report is always generated after tests run
+    finalizedBy jacocoTestReport
 }
 jacocoTestReport {
-    dependsOn test // tests are required to run before generating the report
+    dependsOn test
 }
 
 jacocoTestReport {
     reports {
-        xml.enabled true
+        xml.required = true
     }
 }

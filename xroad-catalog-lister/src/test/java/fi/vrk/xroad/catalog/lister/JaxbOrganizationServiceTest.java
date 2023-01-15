@@ -1,29 +1,18 @@
 /**
  * The MIT License
- * Copyright (c) 2022, Population Register Centre (VRK)
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
+ * Copyright (c) 2023- Nordic Institute for Interoperability Solutions (NIIS) Copyright (c) 2016-2022 Finnish Digital Agency
  *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
  *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
+ * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 package fi.vrk.xroad.catalog.lister;
 
 import com.google.common.collect.Iterables;
-import fi.vrk.xroad.catalog.lister.util.JaxbUtil;
+import fi.vrk.xroad.catalog.lister.util.JaxbServiceUtil;
 import fi.vrk.xroad.catalog.persistence.OrganizationService;
 import fi.vrk.xroad.catalog.persistence.OrganizationServiceImpl;
 import fi.vrk.xroad.catalog.persistence.entity.Address;
@@ -46,8 +35,10 @@ import fi.vrk.xroad.catalog.persistence.entity.StreetAddressMunicipalityName;
 import fi.vrk.xroad.catalog.persistence.entity.StreetAddressPostOffice;
 import fi.vrk.xroad.catalog.persistence.entity.WebPage;
 import fi.vrk.xroad.xroad_catalog_lister.ChangedValue;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
+
 import javax.xml.datatype.XMLGregorianCalendar;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -55,18 +46,21 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-import static org.junit.Assert.assertEquals;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class JaxbOrganizationServiceTest {
 
     JaxbOrganizationServiceImpl service = new JaxbOrganizationServiceImpl();
-    JaxbConverter jaxbConverter = new JaxbConverter();
+    JaxbServiceConverter jaxbServiceConverter = new JaxbServiceConverter();
+    JaxbOrganizationConverter jaxbOrganizationConverter = new JaxbOrganizationConverter();
 
     private OrganizationService organizationService;
     private static final LocalDateTime DATETIME_2016 = LocalDateTime.of(2016, 1, 1, 0, 0);
     private static final LocalDateTime DATETIME_2015 = LocalDateTime.of(2015, 1, 1, 0, 0);
 
-    @Before
+    @BeforeAll
     public void setup() {
         organizationService = new OrganizationServiceImpl() {
             @Override
@@ -79,7 +73,8 @@ public class JaxbOrganizationServiceTest {
             }
         };
         service = new JaxbOrganizationServiceImpl();
-        service.setJaxbConverter(jaxbConverter);
+        service.setJaxbServiceConverter(jaxbServiceConverter);
+        service.setJaxbOrganizationConverter(jaxbOrganizationConverter);
         service.setOrganizationService(organizationService);
     }
 
@@ -117,8 +112,8 @@ public class JaxbOrganizationServiceTest {
 
     @Test
     public void testGetChangedOrganizationValuesAfter2014() {
-        XMLGregorianCalendar changedAfter20141231 = JaxbUtil.toXmlGregorianCalendar(LocalDateTime.of(2014, 12, 31, 0, 0));
-        XMLGregorianCalendar endDateTime = JaxbUtil.toXmlGregorianCalendar(LocalDateTime.of(2022, 12, 31, 0, 0));
+        XMLGregorianCalendar changedAfter20141231 = JaxbServiceUtil.toXmlGregorianCalendar(LocalDateTime.of(2014, 12, 31, 0, 0));
+        XMLGregorianCalendar endDateTime = JaxbServiceUtil.toXmlGregorianCalendar(LocalDateTime.of(2022, 12, 31, 0, 0));
         Iterable<ChangedValue> changedValues = service.getChangedOrganizationValues("abc123456789",
                 changedAfter20141231, endDateTime);
         assertEquals(19, Iterables.size(changedValues));
@@ -126,8 +121,8 @@ public class JaxbOrganizationServiceTest {
 
     @Test
     public void testGetChangedOrganizationValuesAfter2015() {
-        XMLGregorianCalendar changedAfter20151231 = JaxbUtil.toXmlGregorianCalendar(LocalDateTime.of(2015, 12, 31, 0, 0));
-        XMLGregorianCalendar endDateTime = JaxbUtil.toXmlGregorianCalendar(LocalDateTime.of(2022, 12, 31, 0, 0));
+        XMLGregorianCalendar changedAfter20151231 = JaxbServiceUtil.toXmlGregorianCalendar(LocalDateTime.of(2015, 12, 31, 0, 0));
+        XMLGregorianCalendar endDateTime = JaxbServiceUtil.toXmlGregorianCalendar(LocalDateTime.of(2022, 12, 31, 0, 0));
         Iterable<ChangedValue> changedValues = service.getChangedOrganizationValues("abc123456789",
                 changedAfter20151231, endDateTime);
         assertEquals(1, Iterables.size(changedValues));
@@ -136,8 +131,8 @@ public class JaxbOrganizationServiceTest {
 
     @Test
     public void testGetChangedOrganizationValuesAfter2016() {
-        XMLGregorianCalendar changedAfter20160101 = JaxbUtil.toXmlGregorianCalendar(LocalDateTime.of(2016, 1, 1, 0, 0));
-        XMLGregorianCalendar endDateTime = JaxbUtil.toXmlGregorianCalendar(LocalDateTime.of(2022, 12, 31, 0, 0));
+        XMLGregorianCalendar changedAfter20160101 = JaxbServiceUtil.toXmlGregorianCalendar(LocalDateTime.of(2016, 1, 1, 0, 0));
+        XMLGregorianCalendar endDateTime = JaxbServiceUtil.toXmlGregorianCalendar(LocalDateTime.of(2022, 12, 31, 0, 0));
         Iterable<ChangedValue> changedValues = service.getChangedOrganizationValues("abc123456789",
                 changedAfter20160101, endDateTime);
         assertEquals(0, Iterables.size(changedValues));
