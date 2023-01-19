@@ -1,24 +1,13 @@
 /**
  * The MIT License
- * Copyright (c) 2022, Population Register Centre (VRK)
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
+ * Copyright (c) 2023- Nordic Institute for Interoperability Solutions (NIIS) Copyright (c) 2016-2022 Finnish Digital Agency
  *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
  *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
+ * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 package fi.vrk.xroad.catalog.collector.actors;
 
@@ -29,6 +18,7 @@ import fi.vrk.xroad.catalog.collector.extension.SpringExtension;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Profile;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import scala.concurrent.duration.Duration;
@@ -40,21 +30,17 @@ import static akka.actor.SupervisorStrategy.restart;
  * <p/>
  * A router is configured at startup time, managing a pool of task actors.
  */
-@Component
+@Component("CatalogSupervisor")
 @Scope("prototype")
 @Slf4j
-public class Supervisor extends XRoadCatalogActor {
-
-    public static final String START_COLLECTING = "StartCollecting";
+@Profile({"default", "fi"}) // remove, so that this will be used for all profiles
+public class CatalogSupervisor extends XRoadCatalogActor {
 
     public static final String LIST_CLIENTS_ACTOR_ROUTER = "list-clients-actor-router";
     public static final String LIST_METHODS_ACTOR_ROUTER = "list-methods-actor-router";
     public static final String FETCH_WSDL_ACTOR_ROUTER = "fetch-wsdl-actor-router";
     public static final String FETCH_OPENAPI_ACTOR_ROUTER = "fetch-openapi-actor-router";
-
     public static final String FETCH_REST_ACTOR_ROUTER = "fetch-rest-actor-router";
-    public static final String FETCH_ORGANIZATIONS_ACTOR_ROUTER = "fetch-organizations-actor-router";
-    public static final String FETCH_COMPANIES_ACTOR_ROUTER = "fetch-companies-actor-router";
 
     @Autowired
     private SpringExtension springExtension;
@@ -63,10 +49,7 @@ public class Supervisor extends XRoadCatalogActor {
     private ActorRef listMethodsPoolRouter;
     private ActorRef fetchWsdlPoolRouter;
     private ActorRef fetchOpenApiPoolRouter;
-
     private ActorRef fetchRestPoolRouter;
-    private ActorRef fetchOrganizationsPoolRouter;
-    private ActorRef fetchCompaniesPoolRouter;
 
     @Value("${xroad-catalog.list-methods-pool-size}")
     private int listMethodsPoolSize;
@@ -79,12 +62,6 @@ public class Supervisor extends XRoadCatalogActor {
 
     @Value("${xroad-catalog.fetch-rest-pool-size}")
     private int fetchRestPoolSize;
-
-    @Value("${xroad-catalog.fetch-organizations-pool-size}")
-    private int fetchOrganizationsPoolSize;
-
-    @Value("${xroad-catalog.fetch-companies-pool-size}")
-    private int fetchCompaniesPoolSize;
 
     @Override
     public void preStart() throws Exception {
@@ -119,26 +96,11 @@ public class Supervisor extends XRoadCatalogActor {
                         .props(springExtension.props("fetchRestActor")),
                 FETCH_REST_ACTOR_ROUTER);
 
-        fetchOrganizationsPoolRouter = getContext().actorOf(new SmallestMailboxPool(fetchOrganizationsPoolSize)
-                        .withSupervisorStrategy(new OneForOneStrategy(-1,
-                                Duration.Inf(),
-                                (Throwable t) -> restart()))
-                        .props(springExtension.props("fetchOrganizationsActor")),
-                FETCH_ORGANIZATIONS_ACTOR_ROUTER);
-
-        fetchCompaniesPoolRouter = getContext().actorOf(new SmallestMailboxPool(fetchCompaniesPoolSize)
-                        .withSupervisorStrategy(new OneForOneStrategy(-1,
-                                Duration.Inf(),
-                                (Throwable t) -> restart()))
-                        .props(springExtension.props("fetchCompaniesActor")),
-                FETCH_COMPANIES_ACTOR_ROUTER);
-
         listMethodsPoolRouter = getContext().actorOf(new SmallestMailboxPool(listMethodsPoolSize)
                         .withSupervisorStrategy(new OneForOneStrategy(-1,
                                 Duration.Inf(),
                                 (Throwable t) -> restart()))
-                        .props(springExtension.props("listMethodsActor", fetchWsdlPoolRouter, fetchOpenApiPoolRouter,
-                                fetchRestPoolRouter, fetchOrganizationsPoolRouter, fetchCompaniesPoolRouter)),
+                        .props(springExtension.props("listMethodsActor", fetchWsdlPoolRouter, fetchOpenApiPoolRouter, fetchRestPoolRouter)),
                 LIST_METHODS_ACTOR_ROUTER);
 
         listClientsPoolRouter = getContext().actorOf(new SmallestMailboxPool(1)

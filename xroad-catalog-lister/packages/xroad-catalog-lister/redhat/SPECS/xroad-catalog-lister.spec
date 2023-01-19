@@ -9,7 +9,7 @@ Release:            %{rel}%{?snapshot}%{?dist}
 Summary:            X-Road Service Listing
 Group:              Applications/Internet
 License:            MIT
-Requires:           systemd, java-1.8.0-openjdk
+Requires:           systemd, java-11-openjdk
 Requires(post):     systemd
 Requires(preun):    systemd
 Requires(postun):   systemd
@@ -35,6 +35,7 @@ cp -p %{src}/../../../build/libs/xroad-catalog-lister-%{version}.jar %{buildroot
 cp -p %{src}/SOURCES/%{name}.service %{buildroot}%{_unitdir}
 cp -p %{src}/SOURCES/%{name} %{buildroot}/usr/share/xroad/bin
 cp -p %{src}/../../../build/resources/main/lister-production.properties %{buildroot}%{conf}
+cp -p %{src}/../../../build/resources/main/profile.properties %{buildroot}%{conf}
 cp -p %{src}/../../../build/resources/main/version.properties %{buildroot}%{conf}
 
 %clean
@@ -46,6 +47,7 @@ rm -rf %{buildroot}
 %attr(744,xroad,xroad) /usr/share/xroad/bin/%{name}
 %config(noreplace) %{conf}/lister-production.properties
 %attr(644,root,root) %{conf}/version.properties
+%attr(644,root,root) %{conf}/profile.properties
 
 %pre
 if ! id xroad-catalog > /dev/null 2>&1 ; then

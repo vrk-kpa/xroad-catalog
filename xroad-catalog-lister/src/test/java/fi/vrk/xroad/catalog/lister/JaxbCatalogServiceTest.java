@@ -1,49 +1,41 @@
 /**
  * The MIT License
- * Copyright (c) 2022, Population Register Centre (VRK)
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
+ * Copyright (c) 2023- Nordic Institute for Interoperability Solutions (NIIS) Copyright (c) 2016-2022 Finnish Digital Agency
  *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
  *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
+ * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 package fi.vrk.xroad.catalog.lister;
 
 import com.google.common.collect.Iterables;
-import fi.vrk.xroad.catalog.lister.util.JaxbUtil;
+import fi.vrk.xroad.catalog.lister.util.JaxbServiceUtil;
 import fi.vrk.xroad.catalog.persistence.CatalogService;
 import fi.vrk.xroad.catalog.persistence.CatalogServiceImpl;
 import fi.vrk.xroad.catalog.persistence.entity.*;
 import org.apache.commons.beanutils.PropertyUtils;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
+
 import javax.xml.datatype.XMLGregorianCalendar;
 import java.lang.reflect.InvocationTargetException;
 import java.time.LocalDateTime;
 import java.util.*;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class JaxbCatalogServiceTest {
 
     public static final String PROPERTY_MEMBER_CODE = "memberCode";
     public static final String PROPERTY_SUBSYSTEM_CODE = "subsystemCode";
     public static final String PROPERTY_SERVICE_CODE = "serviceCode";
     JaxbCatalogServiceImpl service = new JaxbCatalogServiceImpl();
-    JaxbConverter jaxbConverter = new JaxbConverter();
+    JaxbServiceConverter jaxbServiceConverter = new JaxbServiceConverter();
 
     private CatalogService catalogService;
     private static final LocalDateTime DATETIME_1800 = LocalDateTime.of(1800, 1, 1, 0, 0);
@@ -53,7 +45,7 @@ public class JaxbCatalogServiceTest {
     /**
      * Setup mock CatalogServiceImpl
      */
-    @Before
+    @BeforeAll
     public void setup() {
         catalogService = new CatalogServiceImpl() {
             @Override
@@ -66,15 +58,15 @@ public class JaxbCatalogServiceTest {
             }
         };
         service = new JaxbCatalogServiceImpl();
-        service.setJaxbConverter(jaxbConverter);
+        service.setJaxbServiceConverter(jaxbServiceConverter);
         service.setCatalogService(catalogService);
     }
 
     @Test
     public void testGetAll() throws Exception {
-        XMLGregorianCalendar calendar20150505 = JaxbUtil.toXmlGregorianCalendar(LocalDateTime.of(2015, 5, 5, 0, 0));
-        XMLGregorianCalendar calendar20140505 = JaxbUtil.toXmlGregorianCalendar(LocalDateTime.of(2014, 5, 5, 0, 0));
-        XMLGregorianCalendar endDateTime = JaxbUtil.toXmlGregorianCalendar(LocalDateTime.of(2022, 12, 31, 0, 0));
+        XMLGregorianCalendar calendar20150505 = JaxbServiceUtil.toXmlGregorianCalendar(LocalDateTime.of(2015, 5, 5, 0, 0));
+        XMLGregorianCalendar calendar20140505 = JaxbServiceUtil.toXmlGregorianCalendar(LocalDateTime.of(2014, 5, 5, 0, 0));
+        XMLGregorianCalendar endDateTime = JaxbServiceUtil.toXmlGregorianCalendar(LocalDateTime.of(2022, 12, 31, 0, 0));
         Iterable<fi.vrk.xroad.xroad_catalog_lister.Member> members = service.getAllMembers(calendar20150505, endDateTime);
         assertEquals(2, Iterables.size(members));
         assertEquals(new HashSet<>(Arrays.asList("2", "3")),

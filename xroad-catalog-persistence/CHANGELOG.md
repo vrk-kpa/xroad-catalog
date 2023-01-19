@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## 3.0.0 - 2023-01-15
+- Changed implementation to allow usage of different Spring profiles so that the implementation would be different
+- Updated dependencies
+- Updated documentation
+- 
 ## 2.1.3 - 2022-11-17
 - fixed getServiceStatistics and getDistinctServiceStatistics and getListOfServices so that the number of services changes in time as it should
 - 

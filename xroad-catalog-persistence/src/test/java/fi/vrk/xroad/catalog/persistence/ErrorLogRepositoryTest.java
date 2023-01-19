@@ -1,48 +1,30 @@
 /**
  * The MIT License
- * Copyright (c) 2022, Population Register Centre (VRK)
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
+ * Copyright (c) 2023- Nordic Institute for Interoperability Solutions (NIIS) Copyright (c) 2016-2022 Finnish Digital Agency
  *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
  *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
+ * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 package fi.vrk.xroad.catalog.persistence;
 
 import fi.vrk.xroad.catalog.persistence.entity.ErrorLog;
 import fi.vrk.xroad.catalog.persistence.repository.ErrorLogRepository;
-import lombok.extern.slf4j.Slf4j;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.time.Month;
 import java.util.Set;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@RunWith(SpringRunner.class)
-@SpringBootTest(classes = Application.class)
-@Transactional
-@Slf4j
+@SpringBootTest
 public class ErrorLogRepositoryTest {
 
     @Autowired
@@ -66,7 +48,7 @@ public class ErrorLogRepositoryTest {
                 "GOV",
                 "1234",
                 "TestSubsystem",
-                new PageRequest(0, 100));
+                PageRequest.of(0, 100));
         assertEquals(1, errorLogEntries.getTotalPages());
         assertEquals(1, errorLogEntries.getTotalElements());
     }
@@ -80,7 +62,7 @@ public class ErrorLogRepositoryTest {
                 "DEV",
                 "GOV",
                 "1234",
-                new PageRequest(0, 100));
+                PageRequest.of(0, 100));
         assertEquals(1, errorLogEntries.getTotalPages());
         assertEquals(2, errorLogEntries.getTotalElements());
     }
@@ -91,7 +73,7 @@ public class ErrorLogRepositoryTest {
         LocalDateTime endDate = LocalDateTime.now();
         Page<ErrorLog> errorLogEntries = errorLogRepository.findAnyByMemberClass(startDate,
                 endDate,
-                "DEV", "GOV", new PageRequest(0, 100));
+                "DEV", "GOV", PageRequest.of(0, 100));
         assertEquals(1, errorLogEntries.getTotalPages());
         assertEquals(3, errorLogEntries.getTotalElements());
     }
@@ -101,7 +83,7 @@ public class ErrorLogRepositoryTest {
         LocalDateTime startDate = LocalDateTime.of(2020, Month.JANUARY, 1, 0, 0, 0);
         LocalDateTime endDate = LocalDateTime.now();
         Page<ErrorLog> errorLogEntries = errorLogRepository.findAnyByInstance(startDate,
-                endDate, "DEV", new PageRequest(0, 100));
+                endDate, "DEV", PageRequest.of(0, 100));
         assertEquals(1, errorLogEntries.getTotalPages());
         assertEquals(4, errorLogEntries.getTotalElements());
     }
@@ -111,7 +93,7 @@ public class ErrorLogRepositoryTest {
         LocalDateTime startDate = LocalDateTime.of(2020, Month.JANUARY, 1, 0, 0, 0);
         LocalDateTime endDate = LocalDateTime.now();
         Page<ErrorLog> errorLogEntries = errorLogRepository.findAnyByCreated(startDate,
-                endDate, new PageRequest(0, 100));
+                endDate, PageRequest.of(0, 100));
         assertEquals(1, errorLogEntries.getTotalPages());
         assertEquals(7, errorLogEntries.getTotalElements());
     }

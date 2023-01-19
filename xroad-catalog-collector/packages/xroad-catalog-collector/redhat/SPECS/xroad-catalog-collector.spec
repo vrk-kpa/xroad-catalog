@@ -9,7 +9,7 @@ Release:            %{rel}%{?snapshot}%{?dist}
 Summary:            X-Road Service Listing
 Group:              Applications/Internet
 License:            MIT
-Requires:           systemd, cronie, cronie-anacron, postgresql96, postgresql96-server >= 9.5, java-1.8.0-openjdk
+Requires:           systemd, cronie, cronie-anacron, postgresql96, postgresql96-server >= 9.5, java-11-openjdk
 Requires(post):     systemd
 Requires(preun):    systemd
 Requires(postun):   systemd
@@ -37,7 +37,8 @@ cp -p %{src}/../../../build/libs/xroad-catalog-collector-%{version}.jar %{buildr
 cp -p %{src}/../../../build/resources/main/collector-production.properties %{buildroot}%{conf}
 cp -p %{src}/../../../build/resources/main/catalogdb-production.properties %{buildroot}%{conf}
 cp -p %{src}/../../../build/resources/main/application.conf %{buildroot}%{conf}
-cp -p  ../../../../../xroad-catalog-persistence/src/main/sql/*.sql %{buildroot}/usr/share/xroad/sql
+cp -p  ../../../../../xroad-catalog-persistence/src/main/sql/init_database.sql %{buildroot}/usr/share/xroad/sql
+cp -p  ../../../../../xroad-catalog-persistence/src/main/sql/create_tables_%{profile}.sql %{buildroot}/usr/share/xroad/sql
 #cp -p %{src}/SOURCES/%{name}.cron %{buildroot}/etc/cron.d/%{name}
 cp -p %{src}/SOURCES/%{name} %{buildroot}/usr/share/xroad/bin
 cp -p %{src}/SOURCES/%{name}.service %{buildroot}%{_unitdir}
@@ -53,7 +54,7 @@ rm -rf %{buildroot}
 
 %attr(644, xroad-catalog, xroad-catalog) %{conf}/catalogdb-production.properties
 %attr(644,root,root) /usr/share/xroad/sql/init_database.sql
-%attr(644,root,root) /usr/share/xroad/sql/create_tables.sql
+%attr(644,root,root) /usr/share/xroad/sql/create_tables_%{profile}.sql
 #%attr(755,root,root) /etc/cron.d/%{name}
 %attr(644,root,root) %{_unitdir}/%{name}.service
 %attr(755,xroad,xroad) %{jlib}/%{name}.jar
@@ -73,13 +74,12 @@ systemctl start postgresql-9.6
 #Check if database was already initialized
 if sudo -u postgres psql -lqt |cut -d \| -f 1 | grep -qw xroad_catalog ; then
     echo "Database already exists, creating only non-existing tables"
-    sudo -u postgres psql --file=/usr/share/xroad/sql/create_tables.sql
+    sudo -u postgres psql --file=/usr/share/xroad/sql/create_tables_%{profile}.sql
 else
     echo "Initializing database and creating tables"
     sudo -u postgres psql --file=/usr/share/xroad/sql/init_database.sql
-    sudo -u postgres psql --file=/usr/share/xroad/sql/create_tables.sql
+    sudo -u postgres psql --file=/usr/share/xroad/sql/create_tables_%{profile}.sql
 fi
-
 
 %systemd_post %{name}.service
 

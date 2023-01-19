@@ -1,197 +1,95 @@
 /**
  * The MIT License
- * Copyright (c) 2022, Population Register Centre (VRK)
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
+ * Copyright (c) 2023- Nordic Institute for Interoperability Solutions (NIIS) Copyright (c) 2016-2022 Finnish Digital Agency
  *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
  *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
+ * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 package fi.vrk.xroad.catalog.lister;
 
+import fi.vrk.xroad.catalog.lister.util.ServiceUtil;
 import fi.vrk.xroad.catalog.persistence.dto.EndpointData;
 import fi.vrk.xroad.catalog.persistence.dto.ServiceEndpointsResponse;
+import fi.vrk.xroad.catalog.persistence.entity.Endpoint;
+import fi.vrk.xroad.catalog.persistence.entity.ErrorLog;
+import fi.vrk.xroad.catalog.persistence.entity.Member;
+import fi.vrk.xroad.catalog.persistence.entity.Rest;
+import fi.vrk.xroad.catalog.persistence.entity.Service;
+import fi.vrk.xroad.catalog.persistence.entity.StatusInfo;
+import fi.vrk.xroad.catalog.persistence.entity.Subsystem;
+import fi.vrk.xroad.catalog.persistence.repository.ErrorLogRepository;
+import fi.vrk.xroad.catalog.persistence.repository.MemberRepository;
+import fi.vrk.xroad.catalog.persistence.repository.RestRepository;
+import fi.vrk.xroad.catalog.persistence.repository.ServiceRepository;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit4.SpringRunner;
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.BDDMockito.given;
 
-@RunWith(SpringRunner.class)
 @SpringBootTest(classes = ListerApplication.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @TestPropertySource(properties = {"xroad-catalog.shared-params-file=src/test/resources/shared-params.xml"})
+@ActiveProfiles({"default","fi"})
 public class ServiceControllerTests {
+
+    private static final String xRoadInstance = "DEV";
+    private static final String anotherInstance = "ICE";
+    private static final String memberClass = "GOV";
+    private static final String anotherMemberClass = "COM";
+    private static final String memberCode = "1234";
+    private static final String anotherMemberCode = "12345";
+    private static final String firstSubsystem = "TestSubsystem";
+    private static final String secondSubsystem = "AnotherTestSubsystem";
+    private static final String errorMessage = "Service not found";
 
     @Autowired
     TestRestTemplate restTemplate;
 
-    @Test
-    public void testGetOrganization() throws JSONException {
-        testGetOrganizationWithOrganizationData();
-        testGetOrganizationWithCompanyData();
+    @MockBean
+    ErrorLogRepository errorLogRepository;
 
-        // Get Organization not found
-        ResponseEntity<String> response = restTemplate.getForEntity("/api/getOrganization/0-12345", String.class);
-        assertEquals(404, response.getStatusCodeValue());
-        assertNull(response.getBody());
-    }
+    @MockBean
+    ServiceRepository serviceRepository;
 
-    private void testGetOrganizationWithOrganizationData() throws JSONException {
-        ResponseEntity<String> response = restTemplate.getForEntity("/api/getOrganization/0123456-9", String.class);
-        assertNotNull(response.getBody());
-        assertEquals(200, response.getStatusCodeValue());
-        JSONObject json = new JSONObject(response.getBody());
-        JSONObject organizationData = json.optJSONObject("organizationData");
-        JSONObject companyData = json.optJSONObject("companyData");
-        assertNull(companyData);
-        assertEquals(14, organizationData.length());
-        assertEquals("0123456-9", organizationData.optString("businessCode"));
-        assertEquals("abcdef123456", organizationData.optString("guid"));
-        assertEquals("Municipality", organizationData.optString("organizationType"));
-        assertEquals("Published", organizationData.optString("publishingStatus"));
-        assertNotNull(organizationData.opt("changed"));
-        assertNotNull(organizationData.opt("created"));
-        assertNotNull(organizationData.opt("fetched"));
-        assertNotNull(organizationData.opt("removed"));
-        assertEquals(1, organizationData.optJSONArray("organizationDescriptions").length());
-        assertEquals(1, organizationData.optJSONArray("organizationNames").length());
-        assertEquals(1, organizationData.optJSONArray("addresses").length());
-        assertEquals(1, organizationData.optJSONArray("emails").length());
-        assertEquals(1, organizationData.optJSONArray("phoneNumbers").length());
-        assertEquals(1, organizationData.optJSONArray("webPages").length());
-    }
+    @MockBean
+    MemberRepository memberRepository;
 
-    private void testGetOrganizationWithCompanyData() throws JSONException {
-        ResponseEntity<String> response = restTemplate.getForEntity("/api/getOrganization/1710128-9", String.class);
-        assertNotNull(response.getBody());
-        assertEquals(200, response.getStatusCodeValue());
-        JSONObject json = new JSONObject(response.getBody());
-        JSONObject organizationData = json.optJSONObject("organizationData");
-        JSONObject companyData = json.optJSONObject("companyData");
-        assertNull(organizationData);
-        assertEquals(20, companyData.length());
-        assertNotNull(companyData.opt("changed"));
-        assertNotNull(companyData.opt("created"));
-        assertNotNull(companyData.opt("fetched"));
-        assertNotNull(companyData.opt("removed"));
-        assertNotNull(companyData.opt("registrationDate"));
-        assertEquals("1710128-9", companyData.optString("businessCode"));
-        assertEquals("OYJ", companyData.optString("companyForm"));
-        assertEquals("", companyData.optString("detailsUri"));
-        assertEquals("Gofore Oyj", companyData.optString("name"));
-        assertEquals(1, companyData.optJSONArray("businessAddresses").length());
-        assertEquals(1, companyData.optJSONArray("businessAuxiliaryNames").length());
-        assertEquals(1, companyData.optJSONArray("businessIdChanges").length());
-        assertEquals(1, companyData.optJSONArray("businessLines").length());
-        assertEquals(1, companyData.optJSONArray("businessNames").length());
-        assertEquals(1, companyData.optJSONArray("companyForms").length());
-        assertEquals(1, companyData.optJSONArray("contactDetails").length());
-        assertEquals(1, companyData.optJSONArray("languages").length());
-        assertEquals(1, companyData.optJSONArray("liquidations").length());
-        assertEquals(1, companyData.optJSONArray("registeredEntries").length());
-        assertEquals(1, companyData.optJSONArray("registeredOffices").length());
-    }
-
-    @Test
-    public void testGetOrganizationChanges() throws JSONException {
-        // Get OrganizationChanges for CompanyData older values
-        ResponseEntity<String> response = restTemplate
-                .getForEntity("/api/getOrganizationChanges/1710128-9?startDate=2010-01-01&endDate=2022-01-01", String.class);
-        assertEquals(200, response.getStatusCodeValue());
-        JSONObject json = new JSONObject(response.getBody());
-        JSONArray changedValues = json.optJSONArray("changedValueList");
-        assertTrue(json.optBoolean("changed"));
-        assertEquals(12, changedValues.length());
-
-        // Get OrganizationChanges for OrganizationData older values
-        response = restTemplate
-                .getForEntity("/api/getOrganizationChanges/0123456-9?startDate=2010-01-01&endDate=2022-01-01", String.class);
-        assertEquals(200, response.getStatusCodeValue());
-        json = new JSONObject(response.getBody());
-        changedValues = json.optJSONArray("changedValueList");
-        assertTrue(json.optBoolean("changed"));
-        assertEquals(19, changedValues.length());
-
-        // Get OrganizationChanges for CompanyData newer values
-        response = restTemplate
-                .getForEntity("/api/getOrganizationChanges/1710128-9?startDate=2020-09-04&endDate=2022-01-01", String.class);
-        assertEquals(200, response.getStatusCodeValue());
-        json = new JSONObject(response.getBody());
-        changedValues = json.optJSONArray("changedValueList");
-        assertTrue(json.optBoolean("changed"));
-        assertEquals(1, changedValues.length());
-
-        // Get OrganizationChanges for OrganizationData newer values
-        response = restTemplate
-                .getForEntity("/api/getOrganizationChanges/0123456-9?startDate=2019-12-31&endDate=2022-01-01", String.class);
-        assertEquals(200, response.getStatusCodeValue());
-        json = new JSONObject(response.getBody());
-        changedValues = json.optJSONArray("changedValueList");
-        assertTrue(json.optBoolean("changed"));
-        assertEquals(1, changedValues.length());
-
-        // Get OrganizationChanges when date parameter in wrong format
-        response = restTemplate
-                .getForEntity("/api/getOrganizationChanges/0123456-9?startDate=01-01-2022&endDate=2022-06-01", String.class);
-        assertEquals(400, response.getStatusCodeValue());
-
-        // Get OrganizationChanges for CompanyData not found
-        response = restTemplate
-                .getForEntity("/api/getOrganizationChanges/1710128-9?startDate=2022-01-01&endDate=2022-06-01", String.class);
-        assertEquals(204, response.getStatusCodeValue());
-        assertNull(response.getBody());
-
-        // Get OrganizationChanges for OrganizationData not found
-        response = restTemplate
-                .getForEntity("/api/getOrganizationChanges/0123456-9?startDate=2022-01-01&endDate=2022-06-01", String.class);
-        assertEquals(204, response.getStatusCodeValue());
-        assertNull(response.getBody());
-
-        // Get OrganizationChanges when business code is invalid
-        response = restTemplate
-                .getForEntity("/api/getOrganizationChanges/0123456-8?startDate=2022-01-01&endDate=2022-06-01", String.class);
-        assertEquals(204, response.getStatusCodeValue());
-        assertNull(response.getBody());
-
-        // Get OrganizationChanges when dates are null
-        response = restTemplate
-                .getForEntity("/api/getOrganizationChanges/0123456-8", String.class);
-        assertEquals(204, response.getStatusCodeValue());
-        assertNull(response.getBody());
-    }
+    @MockBean
+    RestRepository restRepository;
 
     @Test
     public void testListErrorsForSubsystem() throws JSONException {
-        ResponseEntity<String> response =
-                restTemplate.getForEntity("/api/listErrors/DEV/GOV/1234/TestSubsystem?startDate=2014-01-01&endDate=2022-01-01", String.class);
+        String startDate = "2014-01-01";
+        String endDate = "2022-01-01";
+        mockFindErrorLogForSubsystem(startDate, endDate);
+        String url = "/api/listErrors/" + xRoadInstance + "/" + memberClass + "/"
+                + memberCode +"/" + firstSubsystem + "?startDate=" + startDate + "&endDate=" + endDate;
+        ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
         assertNotNull(response.getBody());
         assertEquals(200, response.getStatusCodeValue());
 
@@ -200,18 +98,22 @@ public class ServiceControllerTests {
         assertEquals(1, errorList.length());
 
         for (int i = 0; i < errorList.length(); i++) {
-            assertEquals("Service not found", errorList.optJSONObject(i).optString("message"));
-            assertEquals("DEV", errorList.optJSONObject(i).optString("xroadInstance"));
-            assertEquals("GOV", errorList.optJSONObject(i).optString("memberClass"));
-            assertEquals("1234", errorList.optJSONObject(i).optString("memberCode"));
-            assertEquals("TestSubsystem", errorList.optJSONObject(i).optString("subsystemCode"));
+            assertEquals(errorMessage, errorList.optJSONObject(i).optString("message"));
+            assertEquals(xRoadInstance, errorList.optJSONObject(i).optString("xroadInstance"));
+            assertEquals(memberClass, errorList.optJSONObject(i).optString("memberClass"));
+            assertEquals(memberCode, errorList.optJSONObject(i).optString("memberCode"));
+            assertEquals(firstSubsystem, errorList.optJSONObject(i).optString("subsystemCode"));
         }
     }
 
     @Test
     public void testListErrorsForSubsystemWithPagination() throws JSONException {
-        ResponseEntity<String> response =
-                restTemplate.getForEntity("/api/listErrors/DEV/GOV/1234/TestSubsystem?startDate=2014-01-01&endDate=2022-01-01&page=0&limit=100", String.class);
+        String startDate = "2014-01-01";
+        String endDate = "2022-01-01";
+        mockFindErrorLogForSubsystem(startDate, endDate);
+        String url = "/api/listErrors/" + xRoadInstance + "/" + memberClass + "/"
+                + memberCode +"/" + firstSubsystem + "?startDate=" + startDate + "&endDate=" + endDate + "&page=0&limit=100";
+        ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
         assertNotNull(response.getBody());
         assertEquals(200, response.getStatusCodeValue());
 
@@ -220,86 +122,98 @@ public class ServiceControllerTests {
         assertEquals(1, errorList.length());
 
         for (int i = 0; i < errorList.length(); i++) {
-            assertEquals("Service not found", errorList.optJSONObject(i).optString("message"));
-            assertEquals("DEV", errorList.optJSONObject(i).optString("xroadInstance"));
-            assertEquals("GOV", errorList.optJSONObject(i).optString("memberClass"));
-            assertEquals("1234", errorList.optJSONObject(i).optString("memberCode"));
-            assertEquals("TestSubsystem", errorList.optJSONObject(i).optString("subsystemCode"));
+            assertEquals(errorMessage, errorList.optJSONObject(i).optString("message"));
+            assertEquals(xRoadInstance, errorList.optJSONObject(i).optString("xroadInstance"));
+            assertEquals(memberClass, errorList.optJSONObject(i).optString("memberClass"));
+            assertEquals(memberCode, errorList.optJSONObject(i).optString("memberCode"));
+            assertEquals(firstSubsystem, errorList.optJSONObject(i).optString("subsystemCode"));
         }
     }
 
     @Test
     public void testListErrors() throws JSONException {
+        String startDate = "2014-01-01";
+        String endDate = "2022-01-01";
+        mockFindErrorLogForMemberCode(startDate, endDate);
+        mockFindErrorLogForMemberClass(startDate, endDate);
+        mockFindErrorLogForInstance(startDate, endDate);
+        mockFindErrorLogForAll(startDate, endDate);
+
         // testListErrorsForMemberCode
-        ResponseEntity<String> response =
-                restTemplate.getForEntity("/api/listErrors/DEV/GOV/1234?startDate=2014-01-01&endDate=2022-01-01", String.class);
+        String url = "/api/listErrors/" + xRoadInstance + "/" + memberClass + "/" + memberCode + "?startDate=" + startDate + "&endDate=" + endDate;
+        ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
         assertEquals(200, response.getStatusCodeValue());
         JSONObject json = new JSONObject(response.getBody());
         JSONArray errorList = json.getJSONArray("errorLogList");
         assertEquals(2, errorList.length());
 
         // testListErrorsForMemberCodeWithPagination
-        response =
-                restTemplate.getForEntity("/api/listErrors/DEV/GOV/1234?startDate=2014-01-01&endDate=2022-01-01&page=0&limit=100", String.class);
+        url = "/api/listErrors/" + xRoadInstance + "/" + memberClass + "/" + memberCode + "?startDate=" + startDate + "&endDate=" + endDate + "&page=0&limit=100";
+        response = restTemplate.getForEntity(url, String.class);
         assertEquals(200, response.getStatusCodeValue());
         json = new JSONObject(response.getBody());
         errorList = json.getJSONArray("errorLogList");
         assertEquals(2, errorList.length());
 
         // testListErrorsForMemberClass
-        response = restTemplate.getForEntity("/api/listErrors/DEV/GOV?startDate=2014-01-01&endDate=2022-01-01", String.class);
+        url = "/api/listErrors/" + xRoadInstance + "/" + memberClass + "?startDate=" + startDate + "&endDate=" + endDate;
+        response = restTemplate.getForEntity(url, String.class);
         json = new JSONObject(response.getBody());
         errorList = json.getJSONArray("errorLogList");
-        assertEquals(2, errorList.length());
+        assertEquals(3, errorList.length());
 
         // testListErrorsForMemberClassWithPagination
-        response =
-                restTemplate.getForEntity("/api/listErrors/DEV/GOV/1234?startDate=2014-01-01&endDate=2022-01-01&page=0&limit=100", String.class);
-        assertEquals(200, response.getStatusCodeValue());
-        json = new JSONObject(response.getBody());
-        errorList = json.getJSONArray("errorLogList");
-        assertEquals(2, errorList.length());
-
-        // testListErrorsForInstance
-        response =
-                restTemplate.getForEntity("/api/listErrors/DEV?startDate=2014-01-01&endDate=2022-01-01", String.class);
+        url = "/api/listErrors/" + xRoadInstance + "/" + memberClass + "?startDate=" + startDate + "&endDate=" + endDate + "&page=0&limit=100";
+        response = restTemplate.getForEntity(url, String.class);
         assertEquals(200, response.getStatusCodeValue());
         json = new JSONObject(response.getBody());
         errorList = json.getJSONArray("errorLogList");
         assertEquals(3, errorList.length());
 
-        // testListErrorsForInstanceWithPagination
-        response =
-                restTemplate.getForEntity("/api/listErrors?startDate=2014-01-01&endDate=2022-01-01&page=0&limit=100", String.class);
+        // testListErrorsForInstance
+        url = "/api/listErrors/" + xRoadInstance + "?startDate=" + startDate + "&endDate=" + endDate;
+        response = restTemplate.getForEntity(url, String.class);
         assertEquals(200, response.getStatusCodeValue());
         json = new JSONObject(response.getBody());
         errorList = json.getJSONArray("errorLogList");
-        assertEquals(6, errorList.length());
+        assertEquals(4, errorList.length());
+
+        // testListErrorsForInstanceWithPagination
+        url = "/api/listErrors/" + xRoadInstance + "?startDate=" + startDate + "&endDate=" + endDate + "&page=0&limit=100";
+        response = restTemplate.getForEntity(url, String.class);
+        assertEquals(200, response.getStatusCodeValue());
+        json = new JSONObject(response.getBody());
+        errorList = json.getJSONArray("errorLogList");
+        assertEquals(4, errorList.length());
 
         // testListErrorsForAll
-        response =
-                restTemplate.getForEntity("/api/listErrors?startDate=2014-01-01&endDate=2022-01-01&page=0&limit=100", String.class);
+        url = "/api/listErrors?startDate=" + startDate + "&endDate=" + endDate;
+        response = restTemplate.getForEntity(url, String.class);
         assertEquals(200, response.getStatusCodeValue());
         json = new JSONObject(response.getBody());
         errorList = json.getJSONArray("errorLogList");
-        assertEquals(6, errorList.length());
+        assertEquals(5, errorList.length());
 
         // testListErrorsForAllWithPagination
-        response =
-                restTemplate.getForEntity("/api/listErrors?startDate=2014-01-01&endDate=2022-01-01&page=0&limit=100", String.class);
+        url = "/api/listErrors?startDate=" + startDate + "&endDate=" + endDate + "&page=0&limit=100";
+        response = restTemplate.getForEntity(url, String.class);
         assertEquals(200, response.getStatusCodeValue());
         json = new JSONObject(response.getBody());
         errorList = json.getJSONArray("errorLogList");
-        assertEquals(6, errorList.length());
+        assertEquals(5, errorList.length());
 
         // testListErrorsInvalidDateFormatException
-        response =
-                restTemplate.getForEntity("/api/listErrors?startDate=01-01-2014&endDate=2022-01-01", String.class);
+        startDate = "01-01-2014";
+        url = "/api/listErrors?startDate=" + startDate + "&endDate=" + endDate;
+        response = restTemplate.getForEntity(url, String.class);
         assertEquals(400, response.getStatusCodeValue());
 
         // testListErrorsNotFoundException
-        response =
-                restTemplate.getForEntity("/api/listErrors?startDate=2022-01-01&endDate=2022-06-01", String.class);
+        startDate = "2010-01-01";
+        endDate = "2010-06-01";
+        mockErrorLogWithNoContent(startDate, endDate);
+        url = "/api/listErrors?startDate=" + startDate + "&endDate=" + endDate;
+        response = restTemplate.getForEntity(url, String.class);
         assertEquals(204, response.getStatusCodeValue());
         assertNull(response.getBody());
     }
@@ -307,14 +221,17 @@ public class ServiceControllerTests {
     @Test
     public void testGetDistinctServiceStatistics() throws JSONException {
         // testGetDistinctServiceStatistics
-        ResponseEntity<String> response =
-                restTemplate.getForEntity("/api/getDistinctServiceStatistics?startDate=2014-01-01&endDate=2023-01-01", String.class);
+        String startDate = "2014-01-01";
+        String endDate = "2023-01-01";
+        mockServices();
+        String url = "/api/getDistinctServiceStatistics?startDate=" + startDate + "&endDate=" + endDate;
+        ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
         assertNotNull(response.getBody());
         assertEquals(200, response.getStatusCodeValue());
 
         JSONObject json = new JSONObject(response.getBody());
         JSONArray serviceStatisticsList = json.getJSONArray("distinctServiceStatisticsList");
-        assertEquals(3243, serviceStatisticsList.length());
+        assertTrue(serviceStatisticsList.length() > 0);
 
         for (int i = 0; i < serviceStatisticsList.length(); i++) {
             assertTrue(serviceStatisticsList.optJSONObject(i).optLong("numberOfDistinctServices") > 0);
@@ -327,7 +244,7 @@ public class ServiceControllerTests {
 
         // testGetDistinctServiceStatisticsNotFoundException
         response =
-                restTemplate.getForEntity("/api/getDistinctServiceStatistics?startDate=2023-01-01&endDate=2023-06-01", String.class);
+                restTemplate.getForEntity("/api/getDistinctServiceStatistics?startDate=2030-01-01&endDate=2030-06-01", String.class);
         assertEquals(204, response.getStatusCodeValue());
         assertNull(response.getBody());
     }
@@ -335,14 +252,17 @@ public class ServiceControllerTests {
     @Test
     public void testGetServiceStatistics() throws JSONException, IOException {
         // testGetServiceStatistics
-        ResponseEntity<String> response =
-                restTemplate.getForEntity("/api/getServiceStatistics?startDate=2014-01-01&endDate=2023-01-01", String.class);
+        String startDate = "2014-01-01";
+        String endDate = "2023-01-01";
+        mockServices();
+        String url = "/api/getServiceStatistics?startDate=" + startDate + "&endDate=" + endDate;
+        ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
         assertNotNull(response.getBody());
         assertEquals(200, response.getStatusCodeValue());
 
         JSONObject json = new JSONObject(response.getBody());
         JSONArray serviceStatisticsList = json.getJSONArray("serviceStatisticsList");
-        assertEquals(3243, serviceStatisticsList.length());
+        assertTrue(serviceStatisticsList.length() > 0);
 
         for (int i = 0; i < serviceStatisticsList.length(); i++) {
             assertTrue(serviceStatisticsList.optJSONObject(i).optLong("numberOfSoapServices") >= 0);
@@ -351,17 +271,19 @@ public class ServiceControllerTests {
         }
 
         // testGetServiceStatisticsInvalidDateFormatException
-        response =
-                restTemplate.getForEntity("/api/getServiceStatistics?startDate=01-01-2014&endDate=2022-01-01", String.class);
+        startDate = "01-01-2014";
+        url = "/api/getServiceStatistics?startDate=" + startDate + "&endDate=" + endDate;
+        response = restTemplate.getForEntity(url, String.class);
         assertEquals(400, response.getStatusCodeValue());
 
         // testGetServiceStatisticsCSV
-        response =
-                restTemplate.getForEntity("/api/getServiceStatisticsCSV?startDate=2014-01-01&endDate=2023-01-01", String.class);
+        startDate = "2014-01-01";
+        url = "/api/getServiceStatisticsCSV?startDate=" + startDate + "&endDate=" + endDate;
+        response = restTemplate.getForEntity(url, String.class);
         assertNotNull(response.getBody());
         assertEquals(200, response.getStatusCodeValue());
         List<String> csvContent = Arrays.asList(response.getBody().split("\r\n"));
-        assertEquals(3244, csvContent.size());
+        assertTrue(csvContent.size() > 0);
         List<String> csvHeader = Arrays.asList(csvContent.get(0).split(","));
         assertEquals(4, csvHeader.size());
         assertEquals("Date", csvHeader.get(0));
@@ -379,22 +301,27 @@ public class ServiceControllerTests {
         }
 
         // testGetServiceStatisticsCSVInvalidDateFormatException
-        response =
-                restTemplate.getForEntity("/api/getServiceStatisticsCSV?startDate=01-01-2014&endDate=2022-01-01", String.class);
+        startDate = "01-01-2014";
+        endDate = "2022-01-01";
+        url = "/api/getServiceStatisticsCSV?startDate=" + startDate + "&endDate=" + endDate;
+        response = restTemplate.getForEntity(url, String.class);
         assertEquals(400, response.getStatusCodeValue());
     }
 
     @Test
     public void testGetListOfServices() throws JSONException {
-        ResponseEntity<String> response =
-                restTemplate.getForEntity("/api/getListOfServices?startDate=2014-01-01&endDate=2023-01-01", String.class);
+        String startDate = "2014-01-01";
+        String endDate = "2023-01-01";
+        mockMembers();
+        String url = "/api/getListOfServices?startDate=" + startDate + "&endDate=" + endDate;
+        ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
         assertNotNull(response.getBody());
         assertEquals(200, response.getStatusCodeValue());
 
         JSONObject json = new JSONObject(response.getBody());
         JSONArray memberData = json.getJSONArray("memberData");
         JSONArray securityServerData = json.getJSONArray("securityServerData");
-        assertEquals(3243, memberData.length());
+        assertTrue(memberData.length() > 0);
         assertEquals(1, securityServerData.length());
 
         for (int i = 0; i < memberData.length(); i++) {
@@ -402,17 +329,17 @@ public class ServiceControllerTests {
             assertEquals(3, memberDataListJson.length());
             assertEquals(1, memberDataListJson.optJSONObject(0).optJSONArray("subsystemList").length());
 
-            assertEquals("TestSubSystem", memberDataListJson.optJSONObject(0).optJSONArray("subsystemList")
+            assertEquals("TestSubsystem", memberDataListJson.optJSONObject(0).optJSONArray("subsystemList")
                     .optJSONObject(0).optString("subsystemCode"));
-            assertEquals(4, memberDataListJson.optJSONObject(0).optJSONArray("subsystemList")
+            assertEquals(0, memberDataListJson.optJSONObject(0).optJSONArray("subsystemList")
                     .optJSONObject(0).optJSONArray("serviceList").length());
 
-            assertEquals(0, memberDataListJson.optJSONObject(1).optJSONArray("subsystemList").length());
+            assertEquals(1, memberDataListJson.optJSONObject(1).optJSONArray("subsystemList").length());
 
             assertEquals(1, memberDataListJson.optJSONObject(2).optJSONArray("subsystemList").length());
-            assertEquals("TestSubSystem12345", memberDataListJson.optJSONObject(2).optJSONArray("subsystemList")
+            assertEquals("TestSubsystem", memberDataListJson.optJSONObject(2).optJSONArray("subsystemList")
                     .optJSONObject(0).optString("subsystemCode"));
-            assertEquals(15, memberDataListJson.optJSONObject(2).optJSONArray("subsystemList")
+            assertEquals(0, memberDataListJson.optJSONObject(2).optJSONArray("subsystemList")
                     .optJSONObject(0).optJSONArray("serviceList").length());
         }
 
@@ -424,19 +351,24 @@ public class ServiceControllerTests {
 
     @Test
     public void testGetListOfServicesInvalidDaServiceStatisticsCSVteFormatException() {
-        ResponseEntity<String> response =
-                restTemplate.getForEntity("/api/getListOfServices?startDate=01-01-2014&endDate=2022-01-01", String.class);
+        String startDate = "01-01-2014";
+        String endDate = "2022-01-01";
+        String url = "/api/getListOfServices?startDate=" + startDate + "&endDate=" + endDate;
+        ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
         assertEquals(400, response.getStatusCodeValue());
     }
 
     @Test
     public void testGetListOfServicesCSV() {
-        ResponseEntity<String> response =
-                restTemplate.getForEntity("/api/getListOfServicesCSV?startDate=2014-01-01&endDate=2023-01-01", String.class);
+        String startDate = "2014-01-01";
+        String endDate = "2023-01-01";
+        mockMembers();
+        String url = "/api/getListOfServicesCSV?startDate=" + startDate + "&endDate=" + endDate;
+        ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
         assertNotNull(response.getBody());
         assertEquals(200, response.getStatusCodeValue());
         List<String> csvContent = Arrays.asList(response.getBody().split("\r\n"));
-        assertEquals(68107, csvContent.size());
+        assertTrue(csvContent.size() > 0);
         List<String> csvHeader = Arrays.asList(csvContent.get(0).split(","));
         assertEquals(13, csvHeader.size());
         assertEquals("Date", csvHeader.get(0));
@@ -461,16 +393,17 @@ public class ServiceControllerTests {
     }
 
     @Test
-    public void testGetListOfServicesCSVInvalidDaServiceStatisticsCSVteFormatException() {
-        ResponseEntity<String> response =
-                restTemplate.getForEntity("/api/getListOfServicesCSV?startDate=01-01-2014&endDate=2022-01-01", String.class);
+    public void testGetListOfServicesCSVInvalidDateFormatException() {
+        String startDate = "01-01-2014";
+        String endDate = "2022-01-01";
+        String url = "/api/getListOfServicesCSV?startDate=" + startDate + "&endDate=" + endDate;
+        ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
         assertEquals(400, response.getStatusCodeValue());
     }
 
     @Test
     public void testListSecurityServers() throws JSONException {
-        ResponseEntity<String> response =
-                restTemplate.getForEntity("/api/listSecurityServers", String.class);
+        ResponseEntity<String> response = restTemplate.getForEntity("/api/listSecurityServers", String.class);
         assertNotNull(response.getBody());
         assertEquals(200, response.getStatusCodeValue());
         JSONObject json = new JSONObject(response.getBody());
@@ -489,8 +422,7 @@ public class ServiceControllerTests {
 
     @Test
     public void testListDescriptors() throws JSONException {
-        ResponseEntity<String> response =
-                restTemplate.getForEntity("/api/listDescriptors", String.class);
+        ResponseEntity<String> response = restTemplate.getForEntity("/api/listDescriptors", String.class);
         assertNotNull(response.getBody());
         assertEquals(200, response.getStatusCodeValue());
         JSONArray descriptorInfoList = new JSONArray(response.getBody());
@@ -525,7 +457,9 @@ public class ServiceControllerTests {
 
     @Test
     public void testGetEndpoints() throws JSONException {
-        ResponseEntity<String> response = restTemplate.getForEntity("/api/getEndpoints/dev-cs/PUB/11/TestSubSystem12345/testService4", String.class);
+        mockServicesWithEndpointsByMemberServiceAndSubsystem();
+        String url = "/api/getEndpoints/" + xRoadInstance + "/" + memberClass + "/" + memberCode + "/" + firstSubsystem + "/aService";
+        ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
         assertEquals(200, response.getStatusCodeValue());
         ServiceEndpointsResponse endpointsResponse = new ServiceEndpointsResponse();
         endpointsResponse.setXRoadInstance("xroadInstance");
@@ -540,27 +474,269 @@ public class ServiceControllerTests {
         endpointsResponse.setEndpointList(endpointList);
         JSONObject json = new JSONObject(response.getBody());
         assertEquals(1, json.length());
-        assertEquals("dev-cs", json.optJSONArray("listOfServices").optJSONObject(0).optString(endpointsResponse.getXRoadInstance()));
-        assertEquals("PUB", json.optJSONArray("listOfServices").optJSONObject(0).optString(endpointsResponse.getMemberClass()));
-        assertEquals("11", json.optJSONArray("listOfServices").optJSONObject(0).optString(endpointsResponse.getMemberCode()));
-        assertEquals("TestSubSystem12345", json.optJSONArray("listOfServices").optJSONObject(0).optString(endpointsResponse.getSubsystemCode()));
-        assertEquals("testService4", json.optJSONArray("listOfServices").optJSONObject(0).optString(endpointsResponse.getServiceCode()));
+        assertEquals(xRoadInstance, json.optJSONArray("listOfServices").optJSONObject(0).optString(endpointsResponse.getXRoadInstance()));
+        assertEquals(memberClass, json.optJSONArray("listOfServices").optJSONObject(0).optString(endpointsResponse.getMemberClass()));
+        assertEquals(memberCode, json.optJSONArray("listOfServices").optJSONObject(0).optString(endpointsResponse.getMemberCode()));
+        assertEquals(firstSubsystem, json.optJSONArray("listOfServices").optJSONObject(0).optString(endpointsResponse.getSubsystemCode()));
+        assertEquals("aService", json.optJSONArray("listOfServices").optJSONObject(0).optString(endpointsResponse.getServiceCode()));
         assertEquals("v1", json.optJSONArray("listOfServices").optJSONObject(0).optString(endpointsResponse.getServiceVersion()));
-        assertEquals(2, json.optJSONArray("listOfServices").optJSONObject(0).optJSONArray("endpointList").length());
+        assertEquals(1, json.optJSONArray("listOfServices").optJSONObject(0).optJSONArray("endpointList").length());
     }
 
     @Test
     public void testGetRest() throws JSONException {
-        ResponseEntity<String> response = restTemplate.getForEntity("/api/getRest/dev-cs/PUB/11/TestSubSystem12345/testService4", String.class);
+        mockServicesWithRestByMemberServiceAndSubsystem();
+        String url = "/api/getRest/" + xRoadInstance + "/" + memberClass + "/" + memberCode + "/" + firstSubsystem + "/aService";
+        ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
         assertEquals(200, response.getStatusCodeValue());
         JSONObject json = new JSONObject(response.getBody());
         assertEquals(1, json.length());
-        assertEquals("dev-cs", json.optJSONArray("listOfServices").optJSONObject(0).optString("xroadInstance"));
-        assertEquals("PUB", json.optJSONArray("listOfServices").optJSONObject(0).optString("memberClass"));
-        assertEquals("11", json.optJSONArray("listOfServices").optJSONObject(0).optString("memberCode"));
-        assertEquals("TestSubSystem12345", json.optJSONArray("listOfServices").optJSONObject(0).optString("subsystemCode"));
-        assertEquals("testService4", json.optJSONArray("listOfServices").optJSONObject(0).optString("serviceCode"));
+        assertEquals(xRoadInstance, json.optJSONArray("listOfServices").optJSONObject(0).optString("xroadInstance"));
+        assertEquals(memberClass, json.optJSONArray("listOfServices").optJSONObject(0).optString("memberClass"));
+        assertEquals(memberCode, json.optJSONArray("listOfServices").optJSONObject(0).optString("memberCode"));
+        assertEquals(firstSubsystem, json.optJSONArray("listOfServices").optJSONObject(0).optString("subsystemCode"));
+        assertEquals("aService", json.optJSONArray("listOfServices").optJSONObject(0).optString("serviceCode"));
         assertEquals("v1", json.optJSONArray("listOfServices").optJSONObject(0).optString("serviceVersion"));
-        assertEquals(2, json.optJSONArray("listOfServices").optJSONObject(0).optJSONArray("endpointList").length());
+        assertEquals(1, json.optJSONArray("listOfServices").optJSONObject(0).optJSONArray("endpointList").length());
+    }
+
+    private void mockErrorLogWithNoContent(String startDate, String endDate) {
+        List<ErrorLog> errorLogList = new ArrayList<>();
+        Page<ErrorLog> errors = new PageImpl<>(errorLogList, PageRequest.of(0, 100), 1);
+        given(errorLogRepository.findAnyByCreated(ServiceUtil.convertStringToLocalDateTime(startDate),
+                ServiceUtil.convertStringToLocalDateTime(endDate),
+                PageRequest.of(0, 100))).willReturn(errors);
+    }
+
+    private void mockFindErrorLogForSubsystem(String startDate, String endDate) {
+        List<ErrorLog> errorLogList = new ArrayList<>();
+        errorLogList.add(ErrorLog.builder()
+                .xRoadInstance(xRoadInstance)
+                .memberClass(memberClass)
+                .memberCode(memberCode)
+                .subsystemCode(firstSubsystem)
+                .message(errorMessage)
+                .build());
+        Page<ErrorLog> errors = new PageImpl<>(errorLogList, PageRequest.of(0, 100), 20);
+        given(errorLogRepository.findAnyByAllParameters(ServiceUtil.convertStringToLocalDateTime(startDate),
+                ServiceUtil.convertStringToLocalDateTime(endDate),
+                xRoadInstance,
+                memberClass,
+                memberCode,
+                firstSubsystem,
+                PageRequest.of(0, 100))).willReturn(errors);
+    }
+
+    private void mockFindErrorLogForMemberCode(String startDate, String endDate) {
+        List<ErrorLog> errorLogList = new ArrayList<>();
+        errorLogList.add(ErrorLog.builder()
+                .xRoadInstance(xRoadInstance)
+                .memberClass(memberClass)
+                .memberCode(memberCode)
+                .subsystemCode(firstSubsystem)
+                .message(errorMessage)
+                .build());
+        errorLogList.add(ErrorLog.builder()
+                .xRoadInstance(xRoadInstance)
+                .memberClass(memberClass)
+                .memberCode(memberCode)
+                .subsystemCode(secondSubsystem)
+                .message(errorMessage)
+                .build());
+        Page<ErrorLog> errors = new PageImpl<>(errorLogList, PageRequest.of(0, 100), 20);
+        given(errorLogRepository.findAnyByMemberCode(ServiceUtil.convertStringToLocalDateTime(startDate),
+                ServiceUtil.convertStringToLocalDateTime(endDate),
+                xRoadInstance,
+                memberClass,
+                memberCode,
+                PageRequest.of(0, 100))).willReturn(errors);
+    }
+
+    private void mockFindErrorLogForMemberClass(String startDate, String endDate) {
+        List<ErrorLog> errorLogList = new ArrayList<>();
+        errorLogList.add(ErrorLog.builder()
+                .xRoadInstance(xRoadInstance)
+                .memberClass(memberClass)
+                .memberCode(memberCode)
+                .subsystemCode(firstSubsystem)
+                .message(errorMessage)
+                .build());
+        errorLogList.add(ErrorLog.builder()
+                .xRoadInstance(xRoadInstance)
+                .memberClass(memberClass)
+                .memberCode(memberCode)
+                .subsystemCode(secondSubsystem)
+                .message(errorMessage)
+                .build());
+        errorLogList.add(ErrorLog.builder()
+                .xRoadInstance(xRoadInstance)
+                .memberClass(memberClass)
+                .memberCode(anotherMemberCode)
+                .subsystemCode(secondSubsystem)
+                .message(errorMessage)
+                .build());
+        Page<ErrorLog> errors = new PageImpl<>(errorLogList, PageRequest.of(0, 100), 20);
+        given(errorLogRepository.findAnyByMemberClass(ServiceUtil.convertStringToLocalDateTime(startDate),
+                ServiceUtil.convertStringToLocalDateTime(endDate),
+                xRoadInstance,
+                memberClass,
+                PageRequest.of(0, 100))).willReturn(errors);
+    }
+
+    private void mockFindErrorLogForInstance(String startDate, String endDate) {
+        List<ErrorLog> errorLogList = new ArrayList<>();
+        errorLogList.add(ErrorLog.builder()
+                .xRoadInstance(xRoadInstance)
+                .memberClass(memberClass)
+                .memberCode(memberCode)
+                .subsystemCode(firstSubsystem)
+                .message(errorMessage)
+                .build());
+        errorLogList.add(ErrorLog.builder()
+                .xRoadInstance(xRoadInstance)
+                .memberClass(memberClass)
+                .memberCode(memberCode)
+                .subsystemCode(secondSubsystem)
+                .message(errorMessage)
+                .build());
+        errorLogList.add(ErrorLog.builder()
+                .xRoadInstance(xRoadInstance)
+                .memberClass(memberClass)
+                .memberCode(anotherMemberCode)
+                .subsystemCode(secondSubsystem)
+                .message(errorMessage)
+                .build());
+        errorLogList.add(ErrorLog.builder()
+                .xRoadInstance(xRoadInstance)
+                .memberClass(anotherMemberClass)
+                .memberCode(anotherMemberCode)
+                .subsystemCode(secondSubsystem)
+                .message(errorMessage)
+                .build());
+        Page<ErrorLog> errors = new PageImpl<>(errorLogList, PageRequest.of(0, 100), 20);
+        given(errorLogRepository.findAnyByInstance(ServiceUtil.convertStringToLocalDateTime(startDate),
+                ServiceUtil.convertStringToLocalDateTime(endDate),
+                xRoadInstance,
+                PageRequest.of(0, 100))).willReturn(errors);
+    }
+
+    private void mockFindErrorLogForAll(String startDate, String endDate) {
+        List<ErrorLog> errorLogList = new ArrayList<>();
+        errorLogList.add(ErrorLog.builder()
+                .xRoadInstance(xRoadInstance)
+                .memberClass(memberClass)
+                .memberCode(memberCode)
+                .subsystemCode(firstSubsystem)
+                .message(errorMessage)
+                .build());
+        errorLogList.add(ErrorLog.builder()
+                .xRoadInstance(xRoadInstance)
+                .memberClass(memberClass)
+                .memberCode(memberCode)
+                .subsystemCode(secondSubsystem)
+                .message(errorMessage)
+                .build());
+        errorLogList.add(ErrorLog.builder()
+                .xRoadInstance(xRoadInstance)
+                .memberClass(memberClass)
+                .memberCode(anotherMemberCode)
+                .subsystemCode(secondSubsystem)
+                .message(errorMessage)
+                .build());
+        errorLogList.add(ErrorLog.builder()
+                .xRoadInstance(xRoadInstance)
+                .memberClass(anotherMemberClass)
+                .memberCode(anotherMemberCode)
+                .subsystemCode(secondSubsystem)
+                .message(errorMessage)
+                .build());
+        errorLogList.add(ErrorLog.builder()
+                .xRoadInstance(anotherInstance)
+                .memberClass(anotherMemberClass)
+                .memberCode(anotherMemberCode)
+                .subsystemCode(secondSubsystem)
+                .message(errorMessage)
+                .build());
+        Page<ErrorLog> errors = new PageImpl<>(errorLogList, PageRequest.of(0, 100), 20);
+        given(errorLogRepository.findAnyByCreated(ServiceUtil.convertStringToLocalDateTime(startDate),
+                ServiceUtil.convertStringToLocalDateTime(endDate),
+                PageRequest.of(0, 100))).willReturn(errors);
+    }
+
+    private void mockServices() {
+        List<Service> services = new ArrayList<>();
+        LocalDateTime created = LocalDateTime.of(2015, 1, 1, 1, 1);
+        LocalDateTime changed = LocalDateTime.of(2015, 1, 1, 1, 1);
+        LocalDateTime fetched = LocalDateTime.of(2015, 1, 1, 1, 1);
+        Member member = new Member(xRoadInstance, memberClass, memberCode, "memberX");
+        Subsystem subsystem = new Subsystem(member, firstSubsystem);
+        Service firstService = new Service(subsystem, "aService", "v1");
+        firstService.setStatusInfo(new StatusInfo(created, changed, fetched, null));
+        Service secondService = new Service(subsystem, "anotherService", "v1");
+        secondService.setStatusInfo(new StatusInfo(created.plusYears(1), changed, fetched, null));
+        services.add(firstService);
+        services.add(secondService);
+        given(serviceRepository.findAllActive()).willReturn(services);
+    }
+
+    private void mockServicesWithEndpointsByMemberServiceAndSubsystem() {
+        List<Service> services = new ArrayList<>();
+        Member member = new Member(xRoadInstance, memberClass, memberCode, "memberX");
+        Subsystem subsystem = new Subsystem(member, firstSubsystem);
+        Service firstService = new Service(subsystem, "aService", "v1");
+        firstService.setEndpoint(new Endpoint(firstService, "GET", "/getServices"));
+        firstService.setEndpoint(new Endpoint(firstService, "POST", "/setServices"));
+        Service secondService = new Service(subsystem, "anotherService", "v1");
+        secondService.setEndpoint(new Endpoint(secondService, "GET", "/getServices"));
+        secondService.setEndpoint(new Endpoint(secondService, "POST", "/setServices"));
+        services.add(firstService);
+        services.add(secondService);
+        given(serviceRepository.findServicesByMemberServiceAndSubsystem(xRoadInstance,
+                memberClass,
+                memberCode,
+                "aService",
+                firstSubsystem)).willReturn(services);
+    }
+
+    private void mockServicesWithRestByMemberServiceAndSubsystem() {
+        List<Service> services = new ArrayList<>();
+        Member member = new Member(xRoadInstance, memberClass, memberCode, "memberX");
+        Subsystem subsystem = new Subsystem(member, firstSubsystem);
+        Service firstService = new Service(subsystem, "aService", "v1");
+        Service secondService = new Service(subsystem, "anotherService", "v1");
+        Rest rest1 = new Rest(firstService, "data123", "abc12345");
+        Rest rest2 = new Rest(secondService, "data789", "abc11111");
+        firstService.setRest(rest1);
+        secondService.setRest(rest2);
+        firstService.setEndpoint(new Endpoint(firstService, "GET", "/getServices"));
+        firstService.setEndpoint(new Endpoint(firstService, "POST", "/setServices"));
+        services.add(firstService);
+        services.add(secondService);
+        given(serviceRepository.findServicesByMemberServiceAndSubsystem(xRoadInstance,
+                memberClass,
+                memberCode,
+                "aService",
+                firstSubsystem)).willReturn(services);
+        given(restRepository.findAnyByService(firstService)).willReturn(Arrays.asList(rest1));
+    }
+
+    private void mockMembers() {
+        List<Member> members = new ArrayList<>();
+        LocalDateTime created = LocalDateTime.of(2015, 1, 1, 1, 1);
+        LocalDateTime changed = LocalDateTime.of(2015, 1, 1, 1, 1);
+        LocalDateTime fetched = LocalDateTime.of(2015, 1, 1, 1, 1);
+        Member memberX = new Member(xRoadInstance, memberClass, memberCode, "memberX");
+        Member memberY = new Member(xRoadInstance, anotherMemberClass, memberCode, "memberY");
+        Member memberZ = new Member(xRoadInstance, memberClass, anotherMemberCode, "memberZ");
+        memberX.setStatusInfo(new StatusInfo(created, changed, fetched, null));
+        memberY.setStatusInfo(new StatusInfo(created.plusYears(1), changed, fetched, null));
+        memberZ.setStatusInfo(new StatusInfo(created.plusYears(2), changed, fetched, null));
+        memberX.setSubsystems(new HashSet<>(Arrays.asList(new Subsystem(memberX, firstSubsystem))));
+        memberY.setSubsystems(new HashSet<>(Arrays.asList(new Subsystem(memberY, firstSubsystem))));
+        memberZ.setSubsystems(new HashSet<>(Arrays.asList(new Subsystem(memberZ, firstSubsystem))));
+        members.add(memberX);
+        members.add(memberY);
+        members.add(memberZ);
+        given(memberRepository.findAll()).willReturn(new HashSet<>(members));
     }
 }
