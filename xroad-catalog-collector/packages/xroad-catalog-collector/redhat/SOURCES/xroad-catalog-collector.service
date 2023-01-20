@@ -8,7 +8,7 @@ PermissionsStartOnly=true
 User=xroad
 Group=xroad
 ExecStart=/usr/share/xroad/bin/xroad-catalog-collector
-EnvironmentFile=/etc/xroad/catalog-profile.properties
+EnvironmentFile=/etc/xroad/xroad-catalog/catalog-profile.properties
 Restart=on-failure
 
 [Install]
