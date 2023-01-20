@@ -46,7 +46,6 @@ rm -rf %{buildroot}
 %attr(744,xroad,xroad) /usr/share/xroad/bin/%{name}
 %config(noreplace) %{conf}/lister-production.properties
 %attr(644,root,root) %{conf}/version.properties
-%attr(644,root,root) %{conf}/profile.properties
 
 %pre
 if ! id xroad-catalog > /dev/null 2>&1 ; then
