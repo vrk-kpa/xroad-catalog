@@ -36,7 +36,6 @@ mkdir -p %{buildroot}/var/log/xroad/
 cp -p %{src}/../../../build/libs/xroad-catalog-collector-%{version}.jar %{buildroot}%{jlib}/%{name}.jar
 cp -p %{src}/../../../build/resources/main/collector-production.properties %{buildroot}%{conf}
 cp -p %{src}/../../../build/resources/main/catalogdb-production.properties %{buildroot}%{conf}
-cp -p %{src}/../../../build/resources/main/catalog-profile.properties %{buildroot}%{conf}
 cp -p %{src}/../../../build/resources/main/application.conf %{buildroot}%{conf}
 cp -p  ../../../../../xroad-catalog-persistence/src/main/sql/init_database.sql %{buildroot}/usr/share/xroad/sql
 cp -p  ../../../../../xroad-catalog-persistence/src/main/sql/create_tables_%{profile}.sql %{buildroot}/usr/share/xroad/sql
