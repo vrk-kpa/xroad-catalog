@@ -36,7 +36,7 @@ rpmbuild \
     --define "rel $RELEASE" \
     --define "snapshot .$SNAPSHOT" \
     --define "_topdir $ROOT" \
-    --define "profile" $PROFILE \
+    --define "profile $PROFILE" \
     -${CMD} SPECS/xroad-catalog-collector.spec
 
 
