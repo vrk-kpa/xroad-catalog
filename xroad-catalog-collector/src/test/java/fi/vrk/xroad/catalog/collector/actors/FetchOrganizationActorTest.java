@@ -62,5 +62,13 @@ public class FetchOrganizationActorTest {
         fetchOrganizationActor.tell(clientType, ActorRef.noSender());
         verify(organizationService, times(3)).saveOrganization(any());
     }
+
+    @Test
+    public void testBasicPlumbingWithWrongMessageType() {
+        TestActorRef fetchOrganizationActor = TestActorRef.create(actorSystem, springExtension.props("fetchOrganizationsActor"));
+        fetchOrganizationActor.tell("Wrong message type object", ActorRef.noSender());
+        verify(organizationService, times(0)).saveOrganization(any());
+    }
+
 }
 

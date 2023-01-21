@@ -35,7 +35,10 @@ import static org.mockito.Mockito.verify;
 @SpringBootTest(classes = DevelopmentConfiguration.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @TestPropertySource(properties = {
         "xroad-catalog.fetch-organizations-limit=3",
-        "xroad-catalog.max-organizations-per-request=3"
+        "xroad-catalog.max-organizations-per-request=3",
+        "xroad-catalog.fetch-companies-run-unlimited=true",
+        "xroad-catalog.flush-log-time-after-hour=0",
+        "xroad-catalog.flush-log-time-before-hour=23"
 })
 public class OrganizationsActorTest {
 
@@ -70,5 +73,19 @@ public class OrganizationsActorTest {
         listMethodsActor.tell(clientType, ActorRef.noSender());
         verify(catalogService, times(1)).saveServices(any(), any());
     }
+
+    @Test
+    public void testBasicPlumbingWithWrongMessageType() {
+        TestActorRef listMethodsActor = TestActorRef.create(actorSystem,
+                springExtension.props("organizationsActor",
+                        mock(InternalActorRef.class),
+                        mock(InternalActorRef.class),
+                        mock(InternalActorRef.class),
+                        mock(InternalActorRef.class),
+                        mock(InternalActorRef.class)));
+        listMethodsActor.tell("Wrong message type object", ActorRef.noSender());
+        verify(catalogService, times(0)).saveServices(any(), any());
+    }
+
 }
 

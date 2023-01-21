@@ -66,5 +66,13 @@ public class FetchRestActorTest {
         verify(catalogService, times(1)).saveRest(any(), any(), any());
         verify(catalogService, times(1)).saveEndpoint(any(), any(), any(), any());
     }
+
+    @Test
+    public void testBasicPlumbingWithWrongMessageType() {
+        TestActorRef fetchRestActor = TestActorRef.create(actorSystem, springExtension.props("fetchRestActor"));
+        fetchRestActor.tell("Wrong message type object", ActorRef.noSender());
+        verify(catalogService, times(0)).saveRest(any(), any(), any());
+        verify(catalogService, times(0)).saveEndpoint(any(), any(), any(), any());
+    }
 }
 

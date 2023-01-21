@@ -68,5 +68,16 @@ public class ListMethodsActorTest {
         listMethodsActor.tell(clientType, ActorRef.noSender());
         verify(catalogService, times(1)).saveServices(any(), any());
     }
+
+    @Test
+    public void testBasicPlumbingWithWrongMessageType() {
+        TestActorRef listMethodsActor = TestActorRef.create(actorSystem,
+                springExtension.props("listMethodsActor",
+                        mock(InternalActorRef.class),
+                        mock(InternalActorRef.class),
+                        mock(InternalActorRef.class)));
+        listMethodsActor.tell("Wrong message type object", ActorRef.noSender());
+        verify(catalogService, times(0)).saveServices(any(), any());
+    }
 }
 

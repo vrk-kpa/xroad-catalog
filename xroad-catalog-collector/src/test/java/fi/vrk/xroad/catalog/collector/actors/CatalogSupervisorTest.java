@@ -25,7 +25,6 @@ import org.springframework.test.context.TestPropertySource;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
-
 @SpringBootTest(classes = DevelopmentConfiguration.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @TestPropertySource(properties = {"xroad-catalog.webservices-endpoint=http://localhost:${local.server.port}/metaservices"})
 public class CatalogSupervisorTest {
@@ -46,5 +45,13 @@ public class CatalogSupervisorTest {
         supervisor.tell("StartCollecting", ActorRef.noSender());
         assertFalse(supervisor.isTerminated());
     }
+
+    @Test
+    public void testBasicPlumbingWithWrongMessageType() {
+        TestActorRef supervisor = TestActorRef.create(actorSystem, springExtension.props("CatalogSupervisor"));
+        supervisor.tell("", ActorRef.noSender());
+        assertFalse(supervisor.isTerminated());
+    }
+
 }
 

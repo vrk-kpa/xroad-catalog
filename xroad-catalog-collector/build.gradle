@@ -115,24 +115,23 @@ test {
     useJUnitPlatform {
         includeEngines 'junit-jupiter'
     }
-}
-
-test {
     systemProperty 'spring.config.name', 'collector,catalogdb'
+    finalizedBy jacocoTestReport
 }
 
 bootRun {
     systemProperty 'spring.config.name', 'collector,catalogdb'
 }
 
-test {
-    finalizedBy jacocoTestReport
-}
 jacocoTestReport {
     dependsOn test
-}
-
-jacocoTestReport {
+    afterEvaluate {
+        classDirectories.setFrom(files(classDirectories.files.collect {
+            fileTree(dir: it, exclude: [
+                    "**/wsimport/*"
+            ])
+        }))
+    }
     reports {
         xml.required = true
     }
