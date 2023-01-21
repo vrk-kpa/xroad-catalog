@@ -69,5 +69,13 @@ public class FetchOpenApiActorTest {
         verify(catalogService, times(1)).saveOpenApi(any(), any(), any());
         verify(catalogService, times(1)).saveEndpoint(any(), any(), any(), any());
     }
+
+    @Test
+    public void testBasicPlumbingWithWrongMessageType() {
+        TestActorRef fetchOpenApiActor = TestActorRef.create(actorSystem, springExtension.props("fetchOpenApiActor"));
+        fetchOpenApiActor.tell("Wrong message type object", ActorRef.noSender());
+        verify(catalogService, times(0)).saveOpenApi(any(), any(), any());
+        verify(catalogService, times(0)).saveEndpoint(any(), any(), any(), any());
+    }
 }
 

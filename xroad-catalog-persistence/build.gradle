@@ -36,6 +36,7 @@ test {
     useJUnitPlatform {
         includeEngines 'junit-jupiter'
     }
+    finalizedBy jacocoTestReport
 }
 
 tasks.withType(org.springframework.boot.gradle.tasks.run.BootRun) {
@@ -51,22 +52,15 @@ jar {
     archiveClassifier = ''
 }
 
-
-
 springBoot {
     mainClass = 'fi.vrk.xroad.catalog.persistence.Application'
 }
 
-test {
-    finalizedBy jacocoTestReport // report is always generated after tests run
-}
 jacocoTestReport {
-    dependsOn test // tests are required to run before generating the report
-}
-
-jacocoTestReport {
+    dependsOn test
     reports {
         xml.required = true
     }
 }
+
 

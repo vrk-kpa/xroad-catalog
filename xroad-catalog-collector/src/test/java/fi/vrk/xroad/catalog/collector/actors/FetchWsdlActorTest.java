@@ -58,5 +58,12 @@ public class FetchWsdlActorTest {
         fetchWsdlActor.tell(service, ActorRef.noSender());
         verify(catalogService, times(1)).saveWsdl(any(), any(), any());
     }
+
+    @Test
+    public void testBasicPlumbingWithWrongMessageType() {
+        TestActorRef fetchWsdlActor = TestActorRef.create(actorSystem, springExtension.props("fetchWsdlActor"));
+        fetchWsdlActor.tell("Wrong message type object", ActorRef.noSender());
+        verify(catalogService, times(0)).saveWsdl(any(), any(), any());
+    }
 }
 

@@ -16,6 +16,7 @@ import fi.vrk.xroad.catalog.collector.extension.SpringExtension;
 import fi.vrk.xroad.catalog.collector.wsimport.ClientType;
 import fi.vrk.xroad.catalog.collector.wsimport.XRoadClientIdentifierType;
 import fi.vrk.xroad.catalog.collector.wsimport.XRoadObjectType;
+import fi.vrk.xroad.catalog.persistence.CatalogService;
 import fi.vrk.xroad.catalog.persistence.CompanyService;
 import akka.actor.ActorRef;
 import akka.actor.ActorSystem;
@@ -34,6 +35,9 @@ public class FetchCompanyActorTest {
 
     @MockBean
     CompanyService companyService;
+
+    @MockBean
+    CatalogService catalogService;
 
     @Autowired
     ActorSystem actorSystem;
@@ -56,6 +60,23 @@ public class FetchCompanyActorTest {
         clientType.setId(value);
         fetchCompanyActor.tell(clientType, ActorRef.noSender());
         verify(companyService, times(1)).saveCompany(any());
+    }
+
+    @Test
+    public void testBasicPlumbingWithInvalidData() {
+        TestActorRef fetchCompanyActor = TestActorRef.create(actorSystem, springExtension.props("fetchCompaniesActor", null));
+        ClientType clientType = new ClientType();
+        XRoadClientIdentifierType value = new XRoadClientIdentifierType();
+        value.setXRoadInstance("INSTANCE");
+        value.setMemberClass("COM");
+        value.setMemberCode("abc");
+        value.setSubsystemCode("SUBSYSTEM");
+        value.setServiceCode("aService");
+        value.setServiceVersion("v1");
+        value.setObjectType(XRoadObjectType.SERVICE);
+        clientType.setId(value);
+        fetchCompanyActor.tell(clientType, ActorRef.noSender());
+        verify(catalogService, times(1)).saveErrorLog(any());
     }
 
     @Test

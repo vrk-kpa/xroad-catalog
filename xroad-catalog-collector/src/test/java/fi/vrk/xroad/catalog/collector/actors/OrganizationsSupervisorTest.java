@@ -49,5 +49,12 @@ public class OrganizationsSupervisorTest {
         supervisor.tell("StartCollecting", ActorRef.noSender());
         assertFalse(supervisor.isTerminated());
     }
+
+    @Test
+    public void testBasicPlumbingWithWrongMessageType() {
+        TestActorRef supervisor = TestActorRef.create(actorSystem, springExtension.props("OrganizationsSupervisor"));
+        supervisor.tell("", ActorRef.noSender());
+        assertFalse(supervisor.isTerminated());
+    }
 }
 
