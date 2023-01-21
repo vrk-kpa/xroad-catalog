@@ -58,8 +58,9 @@ public class XRoadCatalogCollector {
 
         // Use the Spring Extension to create props for a named actor bean
         String supervisorBeanName = "CatalogSupervisor";
-        if (env.getProperty("spring.profiles.active") != null) {
-            supervisorBeanName = env.getProperty("spring.profiles.active").contains("fi") ? "OrganizationsSupervisor" : "CatalogSupervisor";
+        String profile = env.getProperty("spring.profiles.active");
+        if (profile != null) {
+            supervisorBeanName = profile.contains("fi") ? "OrganizationsSupervisor" : "CatalogSupervisor";
         }
         ActorRef supervisor = system.actorOf(ext.props(supervisorBeanName));
 
