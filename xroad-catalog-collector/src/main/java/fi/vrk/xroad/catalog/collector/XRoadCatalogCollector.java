@@ -60,7 +60,7 @@ public class XRoadCatalogCollector {
         String supervisorBeanName = "CatalogSupervisor";
         String profile = env.getProperty("spring.profiles.active");
         if (profile != null) {
-            supervisorBeanName = env.getProperty("spring.profiles.active").contains("fi") ? "OrganizationsSupervisor" : "CatalogSupervisor";
+            supervisorBeanName = profile.contains("fi") ? "OrganizationsSupervisor" : "CatalogSupervisor";
         }
         ActorRef supervisor = system.actorOf(ext.props(supervisorBeanName));
 
