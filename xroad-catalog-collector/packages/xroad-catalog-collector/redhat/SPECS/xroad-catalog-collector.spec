@@ -9,7 +9,7 @@ Release:            %{rel}%{?snapshot}%{?dist}
 Summary:            X-Road Service Listing
 Group:              Applications/Internet
 License:            MIT
-Requires:           systemd, cronie, cronie-anacron, postgresql96, postgresql96-server >= 9.5, java-11-openjdk
+Requires:           systemd, cronie, cronie-anacron, postgresql, postgresql-server >= 10, java-11-openjdk
 Requires(post):     systemd
 Requires(preun):    systemd
 Requires(postun):   systemd
@@ -68,8 +68,8 @@ fi
 
 %post
 
-PGSETUP_INITDB_OPTIONS="--auth-host=md5 -E UTF8" /usr/pgsql-9.6/bin/postgresql96-setup initdb || return 1
-systemctl start postgresql-9.6
+PGSETUP_INITDB_OPTIONS="--auth-host=md5 -E UTF8" /usr/bin/postgresql-setup initdb || return 1
+systemctl start postgresql
 
 #Check if database was already initialized
 if sudo -u postgres psql -lqt |cut -d \| -f 1 | grep -qw xroad_catalog ; then
