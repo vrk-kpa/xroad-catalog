@@ -1,7 +1,7 @@
 [Unit]
 Description=X-Road Catalog Collector
-Wants=postgresql-9.6.service
-After=network.target postgresql-9.6.service
+Wants=postgresql.service
+After=network.target postgresql.service
 
 [Service]
 PermissionsStartOnly=true
