@@ -5,8 +5,8 @@ After=network.target postgresql.service
 
 [Service]
 PermissionsStartOnly=true
-User=xroad
-Group=xroad
+User=xroad-catalog
+Group=xroad-catalog
 ExecStart=/usr/share/xroad/bin/xroad-catalog-lister
 Restart=on-failure
 

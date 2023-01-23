@@ -47,7 +47,7 @@ cp -p %{src}/SOURCES/%{name}.service %{buildroot}%{_unitdir}
 rm -rf %{buildroot}
 
 %files
-%defattr(600,xroad,xroad,-)
+%defattr(600,xroad-catalog,xroad-catalog,-)
 %config(noreplace) %{conf}/application.conf
 %config(noreplace) %{conf}/collector-production.properties
 %config(noreplace) %{conf}/catalogdb-production.properties
@@ -57,8 +57,8 @@ rm -rf %{buildroot}
 %attr(644,root,root) /usr/share/xroad/sql/create_tables_%{profile}.sql
 #%attr(755,root,root) /etc/cron.d/%{name}
 %attr(644,root,root) %{_unitdir}/%{name}.service
-%attr(755,xroad,xroad) %{jlib}/%{name}.jar
-%attr(744,xroad,xroad) /usr/share/xroad/bin/%{name}
+%attr(755,xroad-catalog,xroad-catalog) %{jlib}/%{name}.jar
+%attr(744,xroad-catalog,xroad-catalog) /usr/share/xroad/bin/%{name}
 
 %pre
 
