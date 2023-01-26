@@ -19,18 +19,14 @@ import akka.event.Logging;
 import akka.event.LoggingAdapter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
 import scala.concurrent.duration.Duration;
 import java.util.concurrent.TimeUnit;
 
 @Slf4j
-@Configuration
-@EnableAutoConfiguration
-@ComponentScan("fi.vrk.xroad.catalog.collector.configuration")
+@SpringBootApplication
 public class XRoadCatalogCollector {
 
     public static void main(String[] args) {

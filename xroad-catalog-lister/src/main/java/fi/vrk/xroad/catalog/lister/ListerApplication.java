@@ -13,9 +13,11 @@ package fi.vrk.xroad.catalog.lister;
 
 import fi.vrk.xroad.catalog.persistence.CatalogService;
 import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
 
 @ComponentScan(basePackageClasses = {ListerApplication.class, CatalogService.class})
+@SpringBootApplication
 public class ListerApplication {
 
     public static void main(String[] args) {

@@ -1,36 +1,25 @@
-buildscript {
-    repositories {
-        mavenCentral()
-    }
-    dependencies {
-        classpath "org.owasp:dependency-check-gradle:${owaspVersion}"
-    }
-}
-
 plugins {
     id "com.github.hierynomus.license" version "${hierynomusLicenseVersion}"
+    id "org.owasp.dependencycheck" version "${owaspVersion}"
     id "org.sonarqube" version "${sonarQubeVersion}"
-    id "jacoco"
+    id 'idea'
+    id 'jacoco'
 }
 
-apply plugin: 'org.owasp.dependencycheck'
-apply plugin: 'idea'
-apply plugin: 'java'
+repositories {
+    mavenCentral()
+}
 
 idea {
     project {
-        //if you want to set specific jdk and language level
         jdkName = '11'
         languageLevel = '11'
     }
     module {
         downloadSources = true
+        excludeDirs -= file(buildDir)
+        buildDir.listFiles({ d, f -> f != 'generated-sources/wsimport' } as FilenameFilter).each { excludeDirs += it }
     }
-}
-
-idea.module {
-    excludeDirs -= file(buildDir)
-    buildDir.listFiles({ d, f -> f != 'generated-sources/wsimport' } as FilenameFilter).each { excludeDirs += it }
 }
 
 wrapper {
