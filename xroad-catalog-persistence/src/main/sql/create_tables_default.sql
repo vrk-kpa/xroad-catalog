@@ -176,18 +176,6 @@ CREATE SEQUENCE IF NOT EXISTS endpoint_id_seq
 
 ALTER SEQUENCE endpoint_id_seq OWNED BY endpoint.id;
 
-CREATE TABLE IF NOT EXISTS organization (
-    id BIGSERIAL PRIMARY KEY NOT NULL,
-    organization_type TEXT NOT NULL,
-    publishing_status TEXT NOT NULL,
-    business_code TEXT NOT NULL,
-    guid TEXT UNIQUE NOT NULL,
-    created TIMESTAMP WITH TIME ZONE NOT NULL,
-    changed TIMESTAMP WITH TIME ZONE NOT NULL,
-    fetched TIMESTAMP WITH TIME ZONE NOT NULL,
-    removed TIMESTAMP WITH TIME ZONE
-);
-
 CREATE TABLE IF NOT EXISTS error_log (
     id BIGSERIAL PRIMARY KEY NOT NULL,
     message TEXT NOT NULL,
@@ -235,5 +223,4 @@ ALTER TABLE wsdl OWNER TO xroad_catalog;
 ALTER TABLE open_api OWNER TO xroad_catalog;
 ALTER TABLE rest OWNER TO xroad_catalog;
 ALTER TABLE endpoint OWNER TO xroad_catalog;
-ALTER TABLE organization OWNER TO xroad_catalog;
 ALTER TABLE error_log OWNER TO xroad_catalog;
