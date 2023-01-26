@@ -31,6 +31,8 @@ rm -rf ${ROOT}/RPMS/*
 
 app_version=3.0.0
 
+echo "Chosen catalog profile = $PROFILE"
+
 rpmbuild \
     --define "xroad_catalog_version $app_version" \
     --define "rel $RELEASE" \
