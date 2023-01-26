@@ -7,7 +7,5 @@ RUN sed -i 's/requiretty/!requiretty/' /etc/sudoers
 
 ARG CATALOG_PROFILE=default
 USER root
-RUN echo $CATALOG_PROFILE
-CMD ["sh", "-c", "echo profile=$CATALOG_PROFILE" ]
-CMD ["sh", "-c", "/workspace/xroad-catalog-collector/build_rpm.sh -p $CATALOG_PROFILE" ]
+RUN /workspace/xroad-catalog-collector/build_rpm.sh -p $CATALOG_PROFILE
 
