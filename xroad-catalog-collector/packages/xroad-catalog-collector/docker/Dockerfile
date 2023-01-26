@@ -6,6 +6,7 @@ RUN yum clean all
 RUN sed -i 's/requiretty/!requiretty/' /etc/sudoers
 
 ARG CATALOG_PROFILE
+ENV CATALOG_PROFILE=${CATALOG_PROFILE}
 USER root
-CMD /workspace/xroad-catalog-collector/build_rpm.sh -p ${CATALOG_PROFILE}
+CMD /workspace/xroad-catalog-collector/build_rpm.sh -p $CATALOG_PROFILE
 
