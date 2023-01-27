@@ -26,6 +26,7 @@ X-Road service listing
 %build
 
 %install
+echo "CATALOG_PROFILE=%{profile}" >> catalog-profile.properties
 mkdir -p %{buildroot}%{jlib}
 mkdir -p %{buildroot}%{_unitdir}
 mkdir -p %{buildroot}%{conf}
@@ -46,7 +47,6 @@ rm -rf %{buildroot}
 %attr(755,xroad-catalog,xroad-catalog) %{jlib}/%{name}.jar
 %attr(744,xroad-catalog,xroad-catalog) /usr/share/xroad/bin/%{name}
 %config(noreplace) %{conf}/lister-production.properties
-%config(noreplace) %{conf}/catalog-profile.properties
 %attr(644,root,root) %{conf}/version.properties
 %attr(644, xroad-catalog, xroad-catalog) %{conf}/catalog-profile.properties
 
