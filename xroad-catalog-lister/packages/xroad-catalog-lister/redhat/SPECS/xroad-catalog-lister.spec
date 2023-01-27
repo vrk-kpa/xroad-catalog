@@ -36,7 +36,7 @@ cp -p %{src}/../../../build/libs/xroad-catalog-lister-%{version}.jar %{buildroot
 cp -p %{src}/SOURCES/%{name}.service %{buildroot}%{_unitdir}
 cp -p %{src}/SOURCES/%{name} %{buildroot}/usr/share/xroad/bin
 cp -p %{src}/../../../build/resources/main/lister-production.properties %{buildroot}%{conf}
-cp -p %{src}/../../../build/resources/main/catalog-profile.properties %{buildroot}%{conf}
+cp -p catalog-profile.properties %{buildroot}%{conf}
 cp -p %{src}/../../../build/resources/main/version.properties %{buildroot}%{conf}
 
 %clean
