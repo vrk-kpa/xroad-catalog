@@ -29,7 +29,7 @@ CMD="-ba"
 
 rm -rf ${ROOT}/RPMS/*
 
-app_version=3.0.1
+app_version=3.0.2
 
 echo "Chosen catalog profile = $PROFILE"
 

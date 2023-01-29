@@ -1,6 +1,5 @@
 # do not repack jars
 %define __jar_repack %{nil}
-# produce .elX dist tag on both centos and redhat
 %define dist %(/usr/lib/rpm/redhat/dist.sh)
 
 Name:               xroad-catalog-lister

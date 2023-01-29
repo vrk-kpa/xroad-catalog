@@ -1,5 +1,5 @@
 # X-Road Catalog User Guide
-Version: 3.0.0
+Version: 3.0.1
 Doc. ID: XRDCAT-CONF
 
 ---
@@ -188,6 +188,8 @@ $ sudo systemctl enable xroad-catalog-collector
 $ sudo systemctl restart xroad-catalog-lister
 $ sudo systemctl restart xroad-catalog-collector
 ```
+### X-Road Catalog installation in Production
+![X-Road Catalog production](xroad_catalog_production.png)
 
 ## 2.3 SSL
 
@@ -278,21 +280,66 @@ $ sudo journalctl -fu xroad-catalog-lister --since="2016-04-07 10:50 --output=ca
 
 Spring profiles are used to configure different implementation/features in X-Road Catalog.
 
+* Docker image is built within a CI/CD pipeline build process
+
+  for X-Road Catalog Collector:
+```
+  docker build -t collector-rpm packages/xroad-catalog-collector/docker --build-arg CATALOG_PROFILE=fi
+```
+
+  for X-Road Catalog Lister:
+```
+docker build -t lister-rpm packages/xroad-catalog-lister/docker --build-arg CATALOG_PROFILE=fi
+```
+
+  Profile value is provided to the respective "Dockerfile" with an argument ```--build-arg CATALOG_PROFILE=fi``` here
+  Then within the "Dockerfile" an environment variable ```CATALOG_PROFILE``` is initalized with that profile value.
+
+* A shell script "build_rpm.sh" is run within a docker container, which takes a ```p``` (profile) parameter as input, which is read from the environment variable ```CATALOG_PROFILE```
+* The shell script "build_rpm.sh" passes on the profile parameter(the script assumes the profile is ```default``` when no value is given with the ```profile``` parameter) 
+  to ```xroad-catalog-collector.spec``` or ```xroad-catalog-lister.spec``` which configures a prepares the creation Systemd service for X-Road Catalog Collector or X-Road Catalog Lister. 
+* Within that ```.spec``` file the catalog profile value will be written to a properties file:
+
+```
+   echo "CATALOG_PROFILE=%{profile}" >> catalog-profile.properties
+```
+
+* Then that file will be copied to ```/etc/xroad/xroad-catalog``` among other properties files 
+* In addition, specific db scripts will be run within that "spec" file according to the value of the ```profile```:
+
+```
+   sudo -u postgres psql --file=/usr/share/xroad/sql/create_tables_%{profile}.sql
+```
+
+* Finally, the profile value will be read from that properties file:
+
+```
+   source /etc/xroad/xroad-catalog/catalog-profile.properties
+```
+
+* Then a Systemd service will be created with the following content
+
+   for X-Road Catalog Collector:
+
+```
+   exec ${JAVA_HOME}/bin/java -Xms128m -Xmx2g -Dspring.profiles.active=base,production -Dspring.profiles.include=$CATALOG_PROFILE -jar /usr/lib/xroad-catalog/xroad-catalog-collector.jar --spring.config.location=/etc/xroad/xroad-catalog/ --spring.config.name=collector,catalogdb
+```
+
+   for X-Road Catalog Lister:
+
+```
+   exec ${JAVA_HOME}/bin/java -Xms128m -Xmx2g -Dserver.port=8070 -Dspring.profiles.active=production -Dspring.profiles.include=$CATALOG_PROFILE -jar /usr/lib/xroad-catalog/xroad-catalog-lister.jar --spring.config.location=/etc/xroad/xroad-catalog/ --spring.config.name=lister,catalogdb
+```
+
 ### 2.6.1 Default profile
 
 The default profile(a profile used for default operation of X-Road Catalog, without any country-specific features)
-The default profile can be set with ```spring.profiles.active=default``` but is active in any case, even when no profile has been set
-
-Additionally, in order for the packages of X-Road Catalog Collector, X-Road Catalog Lister and db tables to be created according to the ```default``` profile,
-there has to be ```catalog-profile.properties``` file in the resources folder of both components with a value ```CATALOG_PROFILE=default```
+The default profile can be set with ```spring.profiles.active=default```
 
 ### 2.6.2 FI profile
 
 The FI profile(an extra profile used in addition to the default profile, which has country specific features)
 The FI profile can be set with ```spring.profiles.active=fi```
-
-Additionally, in order for the packages of X-Road Catalog Collector, X-Road Catalog Lister and db tables to be created according to the ```FI``` profile,
-there has to be ```catalog-profile.properties``` file in the resources folder of both components with a value ```CATALOG_PROFILE=fi```
 
 ## 3. X-Road Catalog
 

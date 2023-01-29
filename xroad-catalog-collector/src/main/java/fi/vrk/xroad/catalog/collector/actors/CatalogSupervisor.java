@@ -33,7 +33,7 @@ import static akka.actor.SupervisorStrategy.restart;
 @Component("CatalogSupervisor")
 @Scope("prototype")
 @Slf4j
-@Profile({"default", "fi"}) // remove, so that this will be used for all profiles
+@Profile("!fi") // remove, so that this will be used for all profiles
 public class CatalogSupervisor extends XRoadCatalogActor {
 
     public static final String LIST_CLIENTS_ACTOR_ROUTER = "list-clients-actor-router";

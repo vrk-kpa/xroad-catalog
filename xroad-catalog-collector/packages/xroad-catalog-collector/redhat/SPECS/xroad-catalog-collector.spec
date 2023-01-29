@@ -1,6 +1,5 @@
 # do not repack jars
 %define __jar_repack %{nil}
-# produce .elX dist tag on both centos and redhat
 %define dist %(/usr/lib/rpm/redhat/dist.sh)
 
 Name:               xroad-catalog-collector
@@ -30,7 +29,6 @@ echo "CATALOG_PROFILE=%{profile}" >> catalog-profile.properties
 mkdir -p %{buildroot}%{jlib}
 mkdir -p %{buildroot}%{conf}
 mkdir -p %{buildroot}%{_unitdir}
-#mkdir -p %{buildroot}/etc/cron.d
 mkdir -p %{buildroot}/usr/share/xroad/bin
 mkdir -p %{buildroot}/usr/share/xroad/sql
 mkdir -p %{buildroot}/var/log/xroad/
@@ -41,7 +39,6 @@ cp -p catalog-profile.properties %{buildroot}%{conf}
 cp -p %{src}/../../../build/resources/main/application.conf %{buildroot}%{conf}
 cp -p  ../../../../../xroad-catalog-persistence/src/main/sql/init_database.sql %{buildroot}/usr/share/xroad/sql
 cp -p  ../../../../../xroad-catalog-persistence/src/main/sql/create_tables_%{profile}.sql %{buildroot}/usr/share/xroad/sql
-#cp -p %{src}/SOURCES/%{name}.cron %{buildroot}/etc/cron.d/%{name}
 cp -p %{src}/SOURCES/%{name} %{buildroot}/usr/share/xroad/bin
 cp -p %{src}/SOURCES/%{name}.service %{buildroot}%{_unitdir}
 
@@ -58,7 +55,6 @@ rm -rf %{buildroot}
 %attr(644, xroad-catalog, xroad-catalog) %{conf}/catalog-profile.properties
 %attr(644,root,root) /usr/share/xroad/sql/init_database.sql
 %attr(644,root,root) /usr/share/xroad/sql/create_tables_%{profile}.sql
-#%attr(755,root,root) /etc/cron.d/%{name}
 %attr(644,root,root) %{_unitdir}/%{name}.service
 %attr(755,xroad-catalog,xroad-catalog) %{jlib}/%{name}.jar
 %attr(744,xroad-catalog,xroad-catalog) /usr/share/xroad/bin/%{name}
@@ -74,7 +70,6 @@ fi
 PGSETUP_INITDB_OPTIONS="--auth-host=md5 -E UTF8" /usr/bin/postgresql-setup initdb || return 1
 systemctl start postgresql
 
-#Check if database was already initialized
 if sudo -u postgres psql -lqt |cut -d \| -f 1 | grep -qw xroad_catalog ; then
     echo "Database already exists, creating only non-existing tables"
     sudo -u postgres psql --file=/usr/share/xroad/sql/create_tables_%{profile}.sql

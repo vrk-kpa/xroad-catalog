@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file.
 
+## 3.0.2 - 2023-01-28
+
+- Updated user guide
+- Updated REST methods in ServiceController and OrganizationController to return HTTP200 with empty content instead of HTTP204
+
+## 3.0.1 - 2023-01-26
+
+- Updated the method how CATALOG_PROFILE is provided and used in Dockerfile and Systemd service creation
+- 
 ## 3.0.0 - 2023-01-15
 - Changed implementation to allow usage of different Spring profiles so that the implementation would be different
 - Updated dependencies
