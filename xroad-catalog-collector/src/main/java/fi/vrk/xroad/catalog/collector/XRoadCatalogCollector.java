@@ -23,11 +23,17 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.env.Environment;
 import scala.concurrent.duration.Duration;
+
+import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
 
 @Slf4j
 @SpringBootApplication
 public class XRoadCatalogCollector {
+
+    private static final String CATALOG_SUPERVISOR = "CatalogSupervisor";
+    private static final String ORGANIZATIONS_SUPERVISOR = "OrganizationsSupervisor";
+    private static final String FI_PROFILE = "fi";
 
     public static void main(String[] args) {
 
@@ -44,23 +50,18 @@ public class XRoadCatalogCollector {
         }
 
         ActorSystem system = context.getBean(ActorSystem.class);
-
         final LoggingAdapter log = Logging.getLogger(system, "Application");
         Long collectorInterval = (Long) context.getBean("getCollectorInterval");
 
         log.info("Starting up catalog collector with collector interval of {}", collectorInterval);
 
         SpringExtension ext = context.getBean(SpringExtension.class);
-
-        // Use the Spring Extension to create props for a named actor bean
-        String supervisorBeanName = "CatalogSupervisor";
-        String profile = env.getProperty("spring.profiles.active");
-        if (profile != null) {
-            supervisorBeanName = profile.contains("fi") ? "OrganizationsSupervisor" : "CatalogSupervisor";
+        String supervisorBeanName = CATALOG_SUPERVISOR;
+        if (Arrays.stream(env.getActiveProfiles()).anyMatch(str -> str.equalsIgnoreCase(FI_PROFILE))) {
+            supervisorBeanName = ORGANIZATIONS_SUPERVISOR;
         }
         ActorRef supervisor = system.actorOf(ext.props(supervisorBeanName));
-
-        system.scheduler().schedule(Duration.Zero(),
+        system.scheduler().scheduleWithFixedDelay(Duration.Zero(),
                 Duration.create(collectorInterval, TimeUnit.MINUTES),
                 supervisor,
                 XRoadCatalogActor.START_COLLECTING,

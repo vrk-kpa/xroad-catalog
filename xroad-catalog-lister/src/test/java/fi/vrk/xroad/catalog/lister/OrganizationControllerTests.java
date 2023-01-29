@@ -138,25 +138,25 @@ public class OrganizationControllerTests {
         // Get OrganizationChanges for CompanyData not found
         response = restTemplate
                 .getForEntity("/api/getOrganizationChanges/" + companyBusinessId + "?startDate=2022-01-01&endDate=2022-06-01", String.class);
-        assertEquals(204, response.getStatusCodeValue());
-        assertNull(response.getBody());
+        assertEquals(200, response.getStatusCodeValue());
+        assertEquals("{\"changed\":false,\"changedValueList\":[]}", response.getBody());
 
         // Get OrganizationChanges for OrganizationData not found
         response = restTemplate
                 .getForEntity("/api/getOrganizationChanges/" + organizationBusinessCode + "?startDate=2022-01-01&endDate=2022-06-01", String.class);
-        assertEquals(204, response.getStatusCodeValue());
-        assertNull(response.getBody());
+        assertEquals(200, response.getStatusCodeValue());
+        assertEquals("{\"changed\":false,\"changedValueList\":[]}", response.getBody());
 
         // Get OrganizationChanges when business code is invalid
         response = restTemplate
                 .getForEntity("/api/getOrganizationChanges/" + organizationBusinessCode + "?startDate=2022-01-01&endDate=2022-06-01", String.class);
-        assertEquals(204, response.getStatusCodeValue());
-        assertNull(response.getBody());
+        assertEquals(200, response.getStatusCodeValue());
+        assertEquals("{\"changed\":false,\"changedValueList\":[]}", response.getBody());
 
         // Get OrganizationChanges when dates are null
         response = restTemplate.getForEntity("/api/getOrganizationChanges/" + organizationBusinessCode, String.class);
-        assertEquals(204, response.getStatusCodeValue());
-        assertNull(response.getBody());
+        assertEquals(200, response.getStatusCodeValue());
+        assertEquals("{\"changed\":false,\"changedValueList\":[]}", response.getBody());
     }
 
     private void testGetOrganizationWithOrganizationData() throws JSONException {

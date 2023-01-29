@@ -137,7 +137,7 @@ public class OrganizationController implements OrganizationOperations {
             }
         }
         if (changedValues == null) {
-            return ResponseEntity.noContent().build();
+            return ResponseEntity.ok(OrganizationChanged.builder().changed(false).changedValueList(new ArrayList<>()).build());
         }
         if (changedValues.iterator().hasNext()) {
             List<fi.vrk.xroad.catalog.persistence.dto.ChangedValue> changedValueList = new ArrayList<>();
@@ -145,9 +145,10 @@ public class OrganizationController implements OrganizationOperations {
                     .name(changedValue.getName())
                     .build()));
             organizationChanged = OrganizationChanged.builder().changed(true).changedValueList(changedValueList).build();
+        } else {
+            organizationChanged = OrganizationChanged.builder().changed(false).changedValueList(new ArrayList<>()).build();
         }
-
-        return organizationChanged != null ? ResponseEntity.ok(organizationChanged) : ResponseEntity.noContent().build();
+        return ResponseEntity.ok(organizationChanged);
     }
 
 }

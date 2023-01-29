@@ -60,6 +60,26 @@ public class ServiceController implements ServiceOperations {
     @Value("${xroad-catalog.shared-params-file}")
     private String sharedParamsFile;
 
+    private static final String CSV_DATE_HEADER = "Date";
+    private static final String CSV_NUMBER_OF_REST_SERVICES_HEADER = "Number of REST services";
+    private static final String CSV_NUMBER_OF_SOAP_SERVICES_HEADER = "Number of SOAP services";
+    private static final String CSV_NUMBER_OF_OPENAPI_SERVICES_HEADER = "Number of OpenApi services";
+    private static final String SERVICE_STATISTICS_REPORT_NAME = "service_statistics_";
+
+    private static final String CSV_XROAD_INSTANCE_HEADER = "XRoad instance";
+    private static final String CSV_MEMBER_CLASS_HEADER = "Member class";
+    private static final String CSV_MEMBER_CODE_HEADER = "Member code";
+    private static final String CSV_MEMBER_NAME_HEADER = "Member name";
+    private static final String CSV_MEMBER_CREATED_HEADER = "Member created";
+    private static final String CSV_SUBSYSTEM_CODE_HEADER = "Subsystem code";
+    private static final String CSV_SUBSYSTEM_CREATED_HEADER = "Subsystem created";
+    private static final String CSV_SUBSYSTEM_ACTIVE_HEADER = "Subsystem active";
+    private static final String CSV_SERVICE_CODE_HEADER = "Service code";
+    private static final String CSV_SERVICE_VERSION_HEADER = "Service version";
+    private static final String CSV_SERVICE_CREATED_HEADER = "Service created";
+    private static final String CSV_SERVICE_ACTIVE_HEADER = "Service active";
+
+    private static final String LIST_OF_SERVICES_REPORT_NAME = "list_of_services_";
     @Autowired
     private CatalogService catalogService;
 
@@ -85,25 +105,9 @@ public class ServiceController implements ServiceOperations {
         } catch(CatalogListerRuntimeException e) {
             return ResponseEntity.badRequest().build();
         }
-        XRoadData xRoadData = XRoadData.builder()
-                .xRoadInstance(xRoadInstance)
-                .memberClass(memberClass)
-                .memberCode(memberCode)
-                .subsystemCode(subsystemCode).build();
-        Page<ErrorLog> errors = catalogService.getErrors(xRoadData,
-                                                         Integer.valueOf(page),
-                                                         Integer.valueOf(limit),
-                                                         startDateTime,
-                                                         endDateTime);
-        if (!errors.hasContent()) {
-            return ResponseEntity.noContent().build();
-        } else {
-            return ResponseEntity.ok(ErrorLogResponse.builder()
-                    .pageNumber(page)
-                    .pageSize(limit)
-                    .numberOfPages(errors.getTotalPages())
-                    .errorLogList(errors.getContent()).build());
-        }
+        XRoadData xRoadData = XRoadData.builder().xRoadInstance(xRoadInstance).memberClass(memberClass).memberCode(memberCode).subsystemCode(subsystemCode).build();
+        Page<ErrorLog> errors = catalogService.getErrors(xRoadData, Integer.valueOf(page), Integer.valueOf(limit), startDateTime, endDateTime);
+        return ResponseEntity.ok(ErrorLogResponse.builder().pageNumber(page).pageSize(limit).numberOfPages(errors.getTotalPages()).errorLogList(errors.getContent()).build());
     }
 
     @Override
@@ -118,11 +122,7 @@ public class ServiceController implements ServiceOperations {
             return ResponseEntity.badRequest().build();
         }
         List<DistinctServiceStatistics> serviceStatisticsList = catalogService.getDistinctServiceStatistics(startDateTime, endDateTime);
-        if (serviceStatisticsList == null || serviceStatisticsList.isEmpty()) {
-            return ResponseEntity.noContent().build();
-        } else {
-            return ResponseEntity.ok(DistinctServiceStatisticsResponse.builder().distinctServiceStatisticsList(serviceStatisticsList).build());
-        }
+        return ResponseEntity.ok(DistinctServiceStatisticsResponse.builder().distinctServiceStatisticsList(serviceStatisticsList).build());
     }
 
     @Override
@@ -137,11 +137,7 @@ public class ServiceController implements ServiceOperations {
             return ResponseEntity.badRequest().build();
         }
         List<ServiceStatistics> serviceStatisticsList = catalogService.getServiceStatistics(startDateTime, endDateTime);
-        if (serviceStatisticsList == null || serviceStatisticsList.isEmpty()) {
-            return ResponseEntity.noContent().build();
-        } else {
-            return ResponseEntity.ok(ServiceStatisticsResponse.builder().serviceStatisticsList(serviceStatisticsList).build());
-        }
+        return ResponseEntity.ok(ServiceStatisticsResponse.builder().serviceStatisticsList(serviceStatisticsList).build());
     }
 
     @Override
@@ -156,28 +152,30 @@ public class ServiceController implements ServiceOperations {
             return ResponseEntity.badRequest().build();
         }
         List<ServiceStatistics> serviceStatisticsList = catalogService.getServiceStatistics(startDateTime, endDateTime);
-        if (serviceStatisticsList != null) {
-            try {
-                StringWriter sw = new StringWriter();
-                CSVPrinter csvPrinter = new CSVPrinter(sw, CSVFormat.DEFAULT
-                        .withHeader("Date", "Number of REST services", "Number of SOAP services", "Number of OpenApi services"));
+        try {
+            StringWriter sw = new StringWriter();
+            CSVPrinter csvPrinter = new CSVPrinter(sw, CSVFormat.DEFAULT
+                    .withHeader(CSV_DATE_HEADER,
+                                CSV_NUMBER_OF_REST_SERVICES_HEADER,
+                                CSV_NUMBER_OF_SOAP_SERVICES_HEADER,
+                                CSV_NUMBER_OF_OPENAPI_SERVICES_HEADER));
+            if (serviceStatisticsList != null) {
                 serviceStatisticsList.forEach(serviceStatistics -> ServiceUtil.printCSVRecord(csvPrinter,
                         Arrays.asList(serviceStatistics.getCreated().toString(),
                                 serviceStatistics.getNumberOfRestServices().toString(),
                                 serviceStatistics.getNumberOfSoapServices().toString(),
                                 serviceStatistics.getNumberOfOpenApiServices().toString())));
-                String reportName = "service_statistics_" + LocalDateTime.now().toString();
-                sw.close();
-                csvPrinter.close();
-                return ResponseEntity.ok()
-                        .header("Content-Disposition", "attachment; filename=" + reportName + ".csv")
-                        .contentType(org.springframework.http.MediaType.parseMediaType("text/csv"))
-                        .body(new ByteArrayResource(sw.toString().getBytes()));
-            } catch (IOException e) {
-                return ResponseEntity.badRequest().build();
             }
+            String reportName = SERVICE_STATISTICS_REPORT_NAME + LocalDateTime.now();
+            sw.close();
+            csvPrinter.close();
+            return ResponseEntity.ok()
+                    .header("Content-Disposition", "attachment; filename=" + reportName + ".csv")
+                    .contentType(org.springframework.http.MediaType.parseMediaType("text/csv"))
+                    .body(new ByteArrayResource(sw.toString().getBytes()));
+        } catch (IOException e) {
+            return ResponseEntity.badRequest().build();
         }
-        return ResponseEntity.noContent().build();
     }
 
     @Override
@@ -193,14 +191,7 @@ public class ServiceController implements ServiceOperations {
         }
         List<SecurityServerInfo> securityServerList = ServiceUtil.getSecurityServerInfoList(sharedParamsParser, sharedParamsFile);
         List<MemberDataList> memberDataList = catalogService.getMemberData(startDateTime, endDateTime);
-        if (memberDataList != null) {
-            return ResponseEntity.ok(ListOfServicesResponse.builder()
-                    .memberData(memberDataList)
-                    .securityServerData(securityServerList)
-                    .build());
-        } else {
-            return ResponseEntity.noContent().build();
-        }
+        return ResponseEntity.ok(ListOfServicesResponse.builder().memberData(memberDataList).securityServerData(securityServerList).build());
     }
 
     @Override
@@ -216,46 +207,45 @@ public class ServiceController implements ServiceOperations {
         }
         List<SecurityServerInfo> securityServerList = ServiceUtil.getSecurityServerInfoList(sharedParamsParser, sharedParamsFile);
         List<MemberDataList> memberDataList = catalogService.getMemberData(startDateTime, endDateTime);
-        if (memberDataList != null) {
-            try {
-                StringWriter sw = new StringWriter();
-                CSVPrinter csvPrinter = new CSVPrinter(sw, CSVFormat.DEFAULT
-                        .withHeader("Date", "XRoad instance", "Member class", "Member code",
-                                "Member name", "Member created", "Subsystem code", "Subsystem created", "Subsystem active",
-                                "Service code", "Service version", "Service created", "Service active"));
+        try {
+            StringWriter sw = new StringWriter();
+            CSVPrinter csvPrinter = new CSVPrinter(sw, CSVFormat.DEFAULT
+                    .withHeader(CSV_DATE_HEADER,
+                            CSV_XROAD_INSTANCE_HEADER,
+                            CSV_MEMBER_CLASS_HEADER,
+                            CSV_MEMBER_CODE_HEADER,
+                            CSV_MEMBER_NAME_HEADER,
+                            CSV_MEMBER_CREATED_HEADER,
+                            CSV_SUBSYSTEM_CODE_HEADER,
+                            CSV_SUBSYSTEM_CREATED_HEADER,
+                            CSV_SUBSYSTEM_ACTIVE_HEADER,
+                            CSV_SERVICE_CODE_HEADER,
+                            CSV_SERVICE_VERSION_HEADER,
+                            CSV_SERVICE_CREATED_HEADER,
+                            CSV_SERVICE_ACTIVE_HEADER));
+            if (memberDataList != null) {
                 ServiceUtil.printListOfServicesCSV(csvPrinter, memberDataList, securityServerList);
-                String reportName = "list_of_services_" + LocalDateTime.now().toString();
-                sw.close();
-                csvPrinter.close();
-                return ResponseEntity.ok()
-                        .header("Content-Disposition", "attachment; filename=" + reportName + ".csv")
-                        .contentType(org.springframework.http.MediaType.valueOf(MediaType.TEXT_PLAIN))
-                        .body(new ByteArrayResource(sw.toString().getBytes()));
-            } catch (IOException e) {
-                return ResponseEntity.badRequest().build();
             }
+            String reportName = LIST_OF_SERVICES_REPORT_NAME + LocalDateTime.now();
+            sw.close();
+            csvPrinter.close();
+            return ResponseEntity.ok()
+                    .header("Content-Disposition", "attachment; filename=" + reportName + ".csv")
+                    .contentType(org.springframework.http.MediaType.valueOf(MediaType.TEXT_PLAIN))
+                    .body(new ByteArrayResource(sw.toString().getBytes()));
+        } catch (IOException e) {
+            return ResponseEntity.badRequest().build();
         }
-        return ResponseEntity.noContent().build();
     }
 
     @Override
     public ResponseEntity<SecurityServerDataList> listSecurityServers() {
-        SecurityServerDataList securityServerDataList = ServiceUtil.getSecurityServerDataList(sharedParamsParser, sharedParamsFile);
-        if (securityServerDataList != null) {
-            return ResponseEntity.ok(securityServerDataList);
-        } else {
-            return ResponseEntity.noContent().build();
-        }
+        return ResponseEntity.ok(ServiceUtil.getSecurityServerDataList(sharedParamsParser, sharedParamsFile));
     }
 
     @Override
     public ResponseEntity<List<DescriptorInfo>> listDescriptors() {
-        List<DescriptorInfo> descriptorInfo = ServiceUtil.getDescriptorInfoList(sharedParamsParser, sharedParamsFile);
-        if (descriptorInfo != null) {
-            return ResponseEntity.ok(descriptorInfo);
-        } else {
-            return ResponseEntity.noContent().build();
-        }
+        return ResponseEntity.ok(ServiceUtil.getDescriptorInfoList(sharedParamsParser, sharedParamsFile));
     }
 
     @Override

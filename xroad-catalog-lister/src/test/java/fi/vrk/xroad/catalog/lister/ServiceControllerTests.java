@@ -48,7 +48,6 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.BDDMockito.given;
 
@@ -214,8 +213,8 @@ public class ServiceControllerTests {
         mockErrorLogWithNoContent(startDate, endDate);
         url = "/api/listErrors?startDate=" + startDate + "&endDate=" + endDate;
         response = restTemplate.getForEntity(url, String.class);
-        assertEquals(204, response.getStatusCodeValue());
-        assertNull(response.getBody());
+        assertEquals(200, response.getStatusCodeValue());
+        assertEquals("{\"pageNumber\":0,\"pageSize\":100,\"numberOfPages\":1,\"errorLogList\":[]}", response.getBody());
     }
 
     @Test
@@ -245,8 +244,8 @@ public class ServiceControllerTests {
         // testGetDistinctServiceStatisticsNotFoundException
         response =
                 restTemplate.getForEntity("/api/getDistinctServiceStatistics?startDate=2030-01-01&endDate=2030-06-01", String.class);
-        assertEquals(204, response.getStatusCodeValue());
-        assertNull(response.getBody());
+        assertEquals(200, response.getStatusCodeValue());
+        assertEquals("{\"distinctServiceStatisticsList\":[]}", response.getBody());
     }
 
     @Test
