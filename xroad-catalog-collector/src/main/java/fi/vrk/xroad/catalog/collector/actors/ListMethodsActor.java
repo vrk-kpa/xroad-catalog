@@ -78,9 +78,7 @@ public class ListMethodsActor extends XRoadCatalogActor {
     private ActorRef fetchRestPoolRef;
     private XRoadClient xroadClient;
 
-    public ListMethodsActor(ActorRef fetchWsdlPoolRef,
-                            ActorRef fetchOpenApiPoolRef,
-                            ActorRef fetchRestPoolRef) {
+    public ListMethodsActor(ActorRef fetchWsdlPoolRef, ActorRef fetchOpenApiPoolRef, ActorRef fetchRestPoolRef) {
         this.fetchWsdlPoolRef = fetchWsdlPoolRef;
         this.fetchOpenApiPoolRef = fetchOpenApiPoolRef;
         this.fetchRestPoolRef = fetchRestPoolRef;
@@ -123,7 +121,7 @@ public class ListMethodsActor extends XRoadCatalogActor {
         log.info("{} Handling subsystem {} ", methodCounter, subsystem);
 
         List<XRoadRestServiceIdentifierType> restServices = MethodListUtil.methodListFromResponse(clientType,
-                xroadSecurityServerHost, catalogService);
+                xroadSecurityServerHost, xroadInstance, memberClass, memberCode, subsystemCode, catalogService);
         log.info("Received all REST methods for client {} ", ClientTypeUtil.toString(clientType));
 
         List<XRoadServiceIdentifierType> soapServices = xroadClient.getMethods(clientType.getId(), catalogService);

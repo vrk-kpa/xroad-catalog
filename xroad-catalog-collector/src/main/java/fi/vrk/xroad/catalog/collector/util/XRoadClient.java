@@ -91,13 +91,10 @@ public class XRoadClient {
     }
 
     public String getWsdl(XRoadServiceIdentifierType service, CatalogService catalogService) {
-
         XRoadServiceIdentifierType serviceIdentifierType = new XRoadServiceIdentifierType();
         copyIdentifierType(serviceIdentifierType, service);
-
         XRoadClientIdentifierType tmpClientId = new XRoadClientIdentifierType();
         copyIdentifierType(tmpClientId, clientId);
-
         serviceIdentifierType.setServiceCode("getWsdl");
         serviceIdentifierType.setServiceVersion("v1");
         serviceIdentifierType.setObjectType(XRoadObjectType.SERVICE);
@@ -139,9 +136,6 @@ public class XRoadClient {
 
 
         if (!(wsdl.value instanceof byte[])) {
-            // Apache CXF does not map the attachment returned by the security server to the wsdl
-            // output parameter due to missing Content-Id header. Extract the attachment from the
-            // response context.
             DataHandler dh = null;
             final Client client = ClientProxy.getClient(metaServicesPort);
             final Collection<Attachment> attachments =
@@ -196,7 +190,13 @@ public class XRoadClient {
         return null;
     }
 
-    public String getOpenApi(XRoadRestServiceIdentifierType service, String host, CatalogService catalogService) {
+    public String getOpenApi(XRoadRestServiceIdentifierType service,
+                             String host,
+                             String xRoadInstance,
+                             String memberClass,
+                             String memberCode,
+                             String subsystemCode,
+                             CatalogService catalogService) {
         ClientType clientType = new ClientType();
         XRoadClientIdentifierType xRoadClientIdentifierType = new XRoadClientIdentifierType();
         xRoadClientIdentifierType.setXRoadInstance(service.getXRoadInstance());
@@ -211,7 +211,7 @@ public class XRoadClient {
         xRoadClientIdentifierType.setObjectType(service.getObjectType());
         clientType.setId(xRoadClientIdentifierType);
 
-        return MethodListUtil.openApiFromResponse(clientType, host, catalogService);
+        return MethodListUtil.openApiFromResponse(clientType, host, xRoadInstance, memberClass, memberCode, subsystemCode, catalogService);
     }
 
     private static Holder<String> queryId() {

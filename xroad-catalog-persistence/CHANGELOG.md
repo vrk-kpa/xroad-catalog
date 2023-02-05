@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## 3.0.3 - 2023-02-05
+
+- Bugfixes, dependency update
+
 ## 3.0.2 - 2023-01-28
 
 - Updated user guide
