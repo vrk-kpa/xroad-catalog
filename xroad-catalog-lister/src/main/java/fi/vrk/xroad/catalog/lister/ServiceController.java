@@ -154,11 +154,10 @@ public class ServiceController implements ServiceOperations {
         List<ServiceStatistics> serviceStatisticsList = catalogService.getServiceStatistics(startDateTime, endDateTime);
         try {
             StringWriter sw = new StringWriter();
-            CSVPrinter csvPrinter = new CSVPrinter(sw, CSVFormat.DEFAULT
-                    .withHeader(CSV_DATE_HEADER,
-                                CSV_NUMBER_OF_REST_SERVICES_HEADER,
-                                CSV_NUMBER_OF_SOAP_SERVICES_HEADER,
-                                CSV_NUMBER_OF_OPENAPI_SERVICES_HEADER));
+            CSVPrinter csvPrinter = new CSVPrinter(sw, CSVFormat.Builder.create().setDelimiter(",").setHeader(CSV_DATE_HEADER,
+                    CSV_NUMBER_OF_REST_SERVICES_HEADER,
+                    CSV_NUMBER_OF_SOAP_SERVICES_HEADER,
+                    CSV_NUMBER_OF_OPENAPI_SERVICES_HEADER).build());
             if (serviceStatisticsList != null) {
                 serviceStatisticsList.forEach(serviceStatistics -> ServiceUtil.printCSVRecord(csvPrinter,
                         Arrays.asList(serviceStatistics.getCreated().toString(),
@@ -209,8 +208,8 @@ public class ServiceController implements ServiceOperations {
         List<MemberDataList> memberDataList = catalogService.getMemberData(startDateTime, endDateTime);
         try {
             StringWriter sw = new StringWriter();
-            CSVPrinter csvPrinter = new CSVPrinter(sw, CSVFormat.DEFAULT
-                    .withHeader(CSV_DATE_HEADER,
+            CSVPrinter csvPrinter = new CSVPrinter(sw, CSVFormat.Builder.create().setDelimiter(",").setHeader(
+                            CSV_DATE_HEADER,
                             CSV_XROAD_INSTANCE_HEADER,
                             CSV_MEMBER_CLASS_HEADER,
                             CSV_MEMBER_CODE_HEADER,
@@ -222,7 +221,7 @@ public class ServiceController implements ServiceOperations {
                             CSV_SERVICE_CODE_HEADER,
                             CSV_SERVICE_VERSION_HEADER,
                             CSV_SERVICE_CREATED_HEADER,
-                            CSV_SERVICE_ACTIVE_HEADER));
+                            CSV_SERVICE_ACTIVE_HEADER).build());
             if (memberDataList != null) {
                 ServiceUtil.printListOfServicesCSV(csvPrinter, memberDataList, securityServerList);
             }

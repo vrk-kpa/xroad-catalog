@@ -152,11 +152,10 @@ public class OrganizationsActor extends XRoadCatalogActor {
                 new Member(clientType.getId().getXRoadInstance(), clientType.getId().getMemberClass(),
                         clientType.getId().getMemberCode(), clientType.getName()),
                 clientType.getId().getSubsystemCode());
-
         log.info("{} Handling subsystem {} ", methodCounter, subsystem);
 
         List<XRoadRestServiceIdentifierType> restServices = MethodListUtil.methodListFromResponse(clientType,
-                xroadSecurityServerHost, catalogService);
+                xroadSecurityServerHost, xroadInstance, memberClass, memberCode, subsystemCode, catalogService);
         log.info("Received all REST methods for client {} ", ClientTypeUtil.toString(clientType));
 
         List<XRoadServiceIdentifierType> soapServices = xroadClient.getMethods(clientType.getId(), catalogService);

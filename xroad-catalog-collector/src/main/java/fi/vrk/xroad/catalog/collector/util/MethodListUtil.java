@@ -44,15 +44,22 @@ public class MethodListUtil {
         return isTimeBetweenHours(fetchHourAfter, fetchHourBefore);
     }
 
-    public static List<XRoadRestServiceIdentifierType> methodListFromResponse(ClientType clientType, String host, CatalogService catalogService) {
+    public static List<XRoadRestServiceIdentifierType> methodListFromResponse(ClientType clientType,
+                                                                              String host,
+                                                                              String xRoadInstance,
+                                                                              String memberClass,
+                                                                              String memberCode,
+                                                                              String subsystemCode,
+                                                                              CatalogService catalogService) {
         final String url = new StringBuilder().append(host).append("/r1/")
                 .append(clientType.getId().getXRoadInstance()).append("/")
                 .append(clientType.getId().getMemberClass()).append("/")
                 .append(clientType.getId().getMemberCode()).append("/")
                 .append(clientType.getId().getSubsystemCode()).append("/listMethods").toString();
 
+        String xRoadClientHeader = createHeader(xRoadInstance, memberClass, memberCode, subsystemCode);
         List<XRoadRestServiceIdentifierType> restServices = new ArrayList<>();
-        JSONObject json = MethodListUtil.getJSON(url, clientType, catalogService);
+        JSONObject json = MethodListUtil.getJSON(url, clientType, xRoadClientHeader, catalogService);
         if (json != null) {
             JSONArray serviceList = json.getJSONArray("service");
             for (int i = 0; i < serviceList.length(); i++) {
@@ -80,7 +87,13 @@ public class MethodListUtil {
         return restServices;
     }
 
-    public static String openApiFromResponse(ClientType clientType, String host, CatalogService catalogService) {
+    public static String openApiFromResponse(ClientType clientType,
+                                             String host,
+                                             String xRoadInstance,
+                                             String memberClass,
+                                             String memberCode,
+                                             String subsystemCode,
+                                             CatalogService catalogService) {
         final String url = new StringBuilder().append(host).append("/r1/")
                 .append(clientType.getId().getXRoadInstance()).append("/")
                 .append(clientType.getId().getMemberClass()).append("/")
@@ -88,7 +101,8 @@ public class MethodListUtil {
                 .append(clientType.getId().getSubsystemCode()).append("/getOpenAPI?serviceCode=")
                 .append(clientType.getId().getServiceCode()).toString();
 
-        JSONObject json = MethodListUtil.getJSON(url, clientType, catalogService);
+        String xRoadClientHeader = createHeader(xRoadInstance, memberClass, memberCode, subsystemCode);
+        JSONObject json = MethodListUtil.getJSON(url, clientType, xRoadClientHeader, catalogService);
 
         return (json != null) ? json.toString() : "";
     }
@@ -128,21 +142,21 @@ public class MethodListUtil {
         return (today.isAfter(fetchTimeFrom) && today.isBefore(fetchTimeTo));
     }
 
-    private static String createHeader(ClientType clientType) {
+    private static String createHeader(String xRoadInstance, String memberClass, String memberCode, String subsystemCode) {
         return new StringBuilder()
-                .append(clientType.getId().getXRoadInstance()).append("/")
-                .append(clientType.getId().getMemberClass()).append("/")
-                .append(clientType.getId().getMemberCode()).append("/")
-                .append(clientType.getId().getSubsystemCode()).toString();
+                .append(xRoadInstance).append("/")
+                .append(memberClass).append("/")
+                .append(memberCode).append("/")
+                .append(subsystemCode).toString();
     }
 
-    private static JSONObject getJSON(String url, ClientType clientType, CatalogService catalogService) {
+    private static JSONObject getJSON(String url, ClientType clientType, String xRoadClientHeader, CatalogService catalogService) {
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
         List<MediaType> mediaTypes = new ArrayList<>();
         mediaTypes.add(MediaType.APPLICATION_JSON);
         headers.setAccept(mediaTypes);
-        headers.set("X-Road-Client", MethodListUtil.createHeader(clientType));
+        headers.set("X-Road-Client", xRoadClientHeader);
         final HttpEntity<String> entity = new HttpEntity<>(headers);
         try {
             ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, entity, String.class);
