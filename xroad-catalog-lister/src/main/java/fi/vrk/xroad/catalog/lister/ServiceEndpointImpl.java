@@ -41,6 +41,9 @@ public class ServiceEndpointImpl implements ServiceEndpoint {
     @PayloadRoot(namespace = NAMESPACE_URI, localPart = "ListMembers")
     @ResponsePayload
     public ListMembersResponse listMembers(@RequestPayload ListMembers request) {
+        if (request.getStartDateTime() == null || request.getEndDateTime() == null) {
+            throw new CatalogListerRuntimeException("startDateTime and endDateTIme parameters are missing");
+        }
         ListMembersResponse response = new ListMembersResponse();
         response.setMemberList(new MemberList());
         Iterable<Member> members = jaxbCatalogService.getAllMembers(request.getStartDateTime(), request.getEndDateTime());
