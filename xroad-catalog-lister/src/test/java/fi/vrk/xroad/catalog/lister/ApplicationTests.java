@@ -11,6 +11,7 @@
  */
 package fi.vrk.xroad.catalog.lister;
 
+import fi.vrk.xroad.catalog.lister.util.JaxbServiceUtil;
 import fi.vrk.xroad.catalog.persistence.CatalogService;
 import fi.vrk.xroad.catalog.persistence.entity.OpenApi;
 import fi.vrk.xroad.catalog.persistence.entity.Service;
@@ -104,6 +105,10 @@ public class ApplicationTests {
 	public void testListServices() {
 		mockMembersForListServices();
 		ListMembers request = new ListMembers();
+		XMLGregorianCalendar startDateTime = JaxbServiceUtil.toXmlGregorianCalendar(LocalDateTime.of(2020, 1, 1, 1, 1));
+		XMLGregorianCalendar endDateTime = JaxbServiceUtil.toXmlGregorianCalendar(LocalDateTime.of(2030, 1, 31, 1, 1));
+		request.setStartDateTime(startDateTime);
+		request.setEndDateTime(endDateTime);
 		ListMembersResponse result = (ListMembersResponse)new WebServiceTemplate(marshaller).marshalSendAndReceive(
 				"http://localhost:" + port + "/ws", request);
 		assertNotNull(result);

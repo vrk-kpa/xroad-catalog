@@ -542,8 +542,8 @@ public class CatalogServiceTest {
         Service foundService = catalogService.getService(service.getSubsystem().getMember().getXRoadInstance(),
                 service.getSubsystem().getMember().getMemberClass(),
                 service.getSubsystem().getMember().getMemberCode(),
-                service.getSubsystem().getSubsystemCode(),
                 service.getServiceCode(),
+                service.getSubsystem().getSubsystemCode(),
                 service.getServiceVersion());
         assertNotNull(foundService);
     }
@@ -554,8 +554,8 @@ public class CatalogServiceTest {
         Service foundService = catalogService.getService(service.getSubsystem().getMember().getXRoadInstance(),
                 service.getSubsystem().getMember().getMemberClass(),
                 service.getSubsystem().getMember().getMemberCode(),
-                service.getSubsystem().getSubsystemCode(),
                 service.getServiceCode(),
+                service.getSubsystem().getSubsystemCode(),
                 service.getServiceVersion());
         assertNotNull(foundService);
     }

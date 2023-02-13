@@ -145,10 +145,10 @@ public class CatalogServiceImpl implements CatalogService {
                               String serviceVersion) {
         if (serviceVersion == null) {
             return serviceRepository.findAllByMemberServiceAndSubsystemVersionNull(xRoadInstance,
-                    memberClass, memberCode, subsystemCode, serviceCode);
+                    memberClass, memberCode, serviceCode, subsystemCode);
         }
         return serviceRepository.findAllByMemberServiceAndSubsystemAndVersion(xRoadInstance,
-                memberClass, memberCode, subsystemCode, serviceCode, serviceVersion);
+                memberClass, memberCode, serviceCode, subsystemCode, serviceVersion);
     }
 
     @Override

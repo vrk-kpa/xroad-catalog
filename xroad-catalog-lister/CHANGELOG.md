@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## [3.0.4] - 2023-02-13
+
+# Changed
+- Bugfixes, updates to Systemd service spec files
+
 ## [3.0.3] - 2023-02-05
 
 # Changed
