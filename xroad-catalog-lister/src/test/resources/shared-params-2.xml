@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ns3:conf xmlns:ns2="http://x-road.eu/xsd/identifiers" xmlns:ns3="http://x-road.eu/xsd/xroad.xsd">
+    <instanceIdentifier>PLAYGROUND</instanceIdentifier>
+    <approvedCA>
+        <name>Test CA</name>
+        <topCA>
+            <cert>MIIFRzCCAy+gAwIBAgIULidVXDUQT2Lhjo3TmW0a9zNhf8MwDQYJKoZIhvcNAQELBQAwKzEXMBUGA1UECgwOWC1Sb2FkIFRlc3QgQ0ExEDAOBgNVBAMMB1Rlc3QgQ0EwHhcNMjAwMTE0MTIxODExWhcNNDAwMTA5MTIxODExWjArMRcwFQYDVQQKDA5YLVJvYWQgVGVzdCBDQTEQMA4GA1UEAwwHVGVzdCBDQTCCAiIwDQYJKoZIhvcNAQEBBQADggIPADCCAgoCggIBAMNdU89mhOyYzveF17r2n5DKJd2QSC5FkjcTrVWD6/XiWpISavGEmGRlxLQk4f8eq+HsfaHc5z+XLTDF9AHpF1wALPeibU1DpxrGTxdyMar9l/5f5klGGjA1xRkyPGB9wEEVb1M3M9OSvmI/AYdOROZnlPGSNmn2Hk+DOML82T+LqYb85LzG1/Yfr1bcWbO9PFi2iB8i4A1oHc2AkOctuEiFY2Rj+Jx1nGTcT154EMNH0t5HtyuMsu+yqWDAdU8D7AhMYs2C0AR0DG3FlMfWWICmrOIADF0876YIdlJE6i00wnqtZcCCEOT3WFxshkW7e7ZuIc7frkZ+pC145hOJLho9xeOHExiFkc+Ys7JxOUsKYleD6/MMTum8qDXr66W6D7s7z0blw2JSsSRztwHc3+0LjnidlTz8mobaC6LENaglEzTky6WyO4aybL5smAnNmynvbTmfNyVEhPxyovuhiZNRjndSV7xtXSx76PuzyQtROE4Qw43/1hYNcahl1ILYqJ9ICiZqYYL7xtqoiBqX+BtPbiaLENKmXdf2lUP6v3Rx1XmplKwa4fnd69KljtFFuhbp1Kj1BDcAJpSZs/vRSLsbuuXhPMSXY3PqOSWtCKcSJ+Ut42wtBuQSJDhu90qeRh0EVoQnSpxRwCx5xXKt0K+5HimrzRdoFSDIuRZPppMLAgMBAAGjYzBhMB0GA1UdDgQWBBSE/IsM1N/N5Y964wjs1duaEW/3SzAfBgNVHSMEGDAWgBSE/IsM1N/N5Y964wjs1duaEW/3SzAPBgNVHRMBAf8EBTADAQH/MA4GA1UdDwEB/wQEAwIBhjANBgkqhkiG9w0BAQsFAAOCAgEAdhTrS4Ll43LlSaJFRDevQ/0c2A+Y6+yjYEIGJ0MIWm3Mw4MOSiIWsLhBfQ+d7Bu/qjsGTgoEwp+cztENUxJkYfUd8nl4ruQaiDYAOMgRU5fGA0vMY6KMhD1XJcm7pDCQfkTzYubroVG+IyWlScCb4To4wDEM+XpdjbBPF8EqoiNnNmtaDukz+Yo6imjdSNwWinxIfAjiytB53Pu9SeuTIaCfmHEL27/Jg+pjHbwInmd5Cy3TPemebQmrARBKKC9PPSrv4zddATRSqBkRP5WUUG/hIsX+JWGqDMhY+zsofJPeF8tfMemfaw3ZMepXmAYA7uK9ZywuhdIyOF0dF8pkANbAlJoudKtI/hLC+VxXOezkKh33V51/ViIdENtJUgYJ+kJsxLTONMBGbAs6BGRcbvVaMVp1HlKX3N3Bg7lvNBZ3jswMUy0NoWdUAgRXHv2rjHg/sTz4oJj2BuCqvWH3uw02PoJ+EX83YiNMEUHheH9V8eCnkyVwDEs04y/KRRCt2YwbB4jO5it4Jy4cXnSIt5rZZNamSHr/R6Nm00GRt0F++toVIzIazdPqRTCtna/awiqacib85dlphcVXwVb+5g6aNgNs7b/L57n9YB6aYL54WsqVEg0JMRqtojFPiRh5Egz3zBlg1faYqmp6rDGsIBLR/Da54qJhoZJEMKK73BU=</cert>
+            <ocsp>
+                <url>http://10.18.150.217:8888</url>
+            </ocsp>
+        </topCA>
+        <certificateProfileInfo>ee.ria.xroad.common.certificateprofile.impl.FiVRKCertificateProfileInfoProvider</certificateProfileInfo>
+    </approvedCA>
+    <approvedTSA>
+        <name>Test TSA</name>
+        <url>http://10.18.150.217:8899</url>
+        <cert>MIIE/DCCAuSgAwIBAgIBAjANBgkqhkiG9w0BAQsFADArMRcwFQYDVQQKDA5YLVJvYWQgVGVzdCBDQTEQMA4GA1UEAwwHVGVzdCBDQTAeFw0yMDAxMTQxMjE4MTJaFw00MDAxMDkxMjE4MTJaMCwxFzAVBgNVBAoMDlgtUm9hZCBUZXN0IENBMREwDwYDVQQDDAhUZXN0IFRTQTCCAiIwDQYJKoZIhvcNAQEBBQADggIPADCCAgoCggIBAJpmrnmsYi0dihh++aK2PtRY4Zw68/4kRhY3US52Acs9iEzrSJ0FfaqeFEPIwEaQHZ4l9sbSTu5P74BtyMugGmqa2KoZHMuO+b2Ki+cfZeDRxZLWJ7AxQ0z21W2QTFpdLX8259epLN6D0qwXWE9iIIiTrWOVuCVxCCP07RGosIA/SkfTk29hvxyl2GumbNwypKSJu/xMskCBGuXAHlFNPZ0GzOhX6IEtvglHh1B64Jd6h6JdlN8aqSdHYrm823f2lB+38RRDsaelw7e4C0ge1wFCUjw+sMtK2OOCGiy/RXR2iWMAMymK9tkCsUaboT2Ca7bbZicWi+UT/MFR+osG7Sy3us7FTgpFmPSOzqt8l3FCwLij2FUZ7+NP2UAKenvEgGEFPuBLp3TpX7vVARj2KX6KFsMyJRWj76xh6TcSdlpxbfPECKMUu05iKRtA0ZksiXGLe4SIpwj9Ev5HLS3HFhmTVFaGeI69AhhSCiF21i82S1FP0tpEKvCTugAXydq+h8ez5VZ1zFtBuVTTBoR/+Dj8NYOGt5uRObNgF668FDgw6dAI6GA5/IHSAvWbhn9MI/cbNK4zqvYvB0y+U2plm46N7XNVukqbJmAOcrBhsTyqxL38jO211fDFrwBuUI/uaA6dKD8iVF71blxBBrgPRmYm93/P1iPy/jnKGYKAlFHbAgMBAAGjKjAoMBYGA1UdJQEB/wQMMAoGCCsGAQUFBwMIMA4GA1UdDwEB/wQEAwIGQDANBgkqhkiG9w0BAQsFAAOCAgEAkbN/+yiOqWtjXeXnyc9WHSxK0O8MTWseUrt75TMkBaxIS0nVmTjuztSm9UsYit2AOa6rKicckrrvTSpf/YQbRrFfG5THydJ/FcI99rCIU7thCS2XpPeF+5sM0zQ7CRoVJp/iqbGX+2hsklg9YvOn37vk2q0PeTk+hxXg9JOpfDFAa6MA1xuRGubjIgipf5UfyYUtQIXrpGDzQLFt608niXiGp/v+E5rmhOSayYeGQZybH1j5uK7vcLWINPMUk7LNm0BIc5bj4S+gFUQG632SDB2eS+fE4fUpTh41gB1YXMe+2kI+1p1/+2wXFnEEa3/QaHa2K8O5z4UnFJ/6AqUsD3FJDNKm8geqwQ6nre/6NYwf3bxMkSfJBBe0Hr/lnH8LX5aIvxk3gjLXYqZYflr5lAnxhlSiZxDZEHE9AcsIEjhD3eX2NRBEcCklH4L0MhHlIO1lNrLaOYhLX/VG/I1keUoY25+rMk+oNyaMe55QQsXRS5p8z2I0540LE0dfZWSIelywZgDjnSXsE7LxSLJ4vPyGVjJT7pDbRT6woTSlea1EezljKrPWzHkMWojj394rThopV8cBfBJQS1SZ8C3XArW72zjD9UtyQn6SirY6zwwDzeTN0vwICDJHSiEzrzBMo730GpGbEKZDaTk712F2Fb2oa18wJttktCp6Tk8I3+I=</cert>
+    </approvedTSA>
+    <member id="id0">
+        <memberClass>
+            <code>ORG</code>
+            <description>Non-profit organizations, associations, institutes</description>
+        </memberClass>
+        <memberCode>2908758-4</memberCode>
+        <name>NIIS</name>
+        <subsystem id="id1">
+            <subsystemCode>TestTopic</subsystemCode>
+        </subsystem>
+        <subsystem id="id2">
+            <subsystemCode>MonitoringClient</subsystemCode>
+        </subsystem>
+        <subsystem id="id3">
+            <subsystemCode>Management</subsystemCode>
+        </subsystem>
+        <subsystem id="id4">
+            <subsystemCode>NotTopic</subsystemCode>
+        </subsystem>
+        <subsystem id="id5">
+            <subsystemCode>DeathOfAPerson</subsystemCode>
+        </subsystem>
+    </member>
+    <member id="id6">
+        <memberClass>
+            <code>COM</code>
+            <description>Commercial</description>
+        </memberClass>
+        <memberCode>1234567-8</memberCode>
+        <name>Test Company</name>
+        <subsystem id="id7">
+            <subsystemCode>hsmtest</subsystemCode>
+        </subsystem>
+        <subsystem id="id8">
+            <subsystemCode>TestClient2</subsystemCode>
+        </subsystem>
+        <subsystem id="id9">
+            <subsystemCode>TestClient</subsystemCode>
+        </subsystem>
+    </member>
+    <member id="id10">
+        <memberClass>
+            <code>GOV</code>
+            <description>Governmental</description>
+        </memberClass>
+        <memberCode>8765432-1</memberCode>
+        <name>Test Agency</name>
+        <subsystem id="id11">
+            <subsystemCode>DeathOfAPersonListener1</subsystemCode>
+        </subsystem>
+        <subsystem id="id12">
+            <subsystemCode>TestService</subsystemCode>
+        </subsystem>
+        <subsystem id="id13">
+            <subsystemCode>Subscriber</subsystemCode>
+        </subsystem>
+    </member>
+    <securityServer>
+        <owner>id0</owner>
+        <serverCode>niisss01</serverCode>
+        <address>10.0.0.1</address>
+        <authCertHash>bPrQTAAtop4p3v53vC0UT9MSDic=</authCertHash>
+        <client>id3</client>
+        <client>id2</client>
+    </securityServer>
+    <securityServer>
+        <owner>id6</owner>
+        <serverCode>testcomss01</serverCode>
+        <address>10.0.0.2</address>
+        <authCertHash>Yt2qndJDtkwcJ4bdbRUg7tf6/eA=</authCertHash>
+        <client>id2</client>
+        <client>id9</client>
+        <client>id12</client>
+    </securityServer>
+    <securityServer>
+        <owner>id10</owner>
+        <serverCode>testagess01</serverCode>
+        <address>10.0.0.3</address>
+        <authCertHash>G757IcygjoRPUVFWcApfEJcqygg=</authCertHash>
+        <authCertHash>bawfz0rKtKmOySMmrr9B19gX5pM=</authCertHash>
+        <client>id6</client>
+    </securityServer>
+    <securityServer>
+        <owner>id0</owner>
+        <serverCode>niisss02</serverCode>
+        <address>10.0.0.4</address>
+        <authCertHash>qbwLX4Ak+L9QgR4Q/rP49NZga1k=</authCertHash>
+    </securityServer>
+    <globalGroup>
+        <groupCode>security-server-owners</groupCode>
+        <description>Security server owners</description>
+        <groupMember ns2:objectType="MEMBER">
+            <ns2:xRoadInstance>PLAYGROUND</ns2:xRoadInstance>
+            <ns2:memberClass>ORG</ns2:memberClass>
+            <ns2:memberCode>2908758-4</ns2:memberCode>
+        </groupMember>
+        <groupMember ns2:objectType="MEMBER">
+            <ns2:xRoadInstance>PLAYGROUND</ns2:xRoadInstance>
+            <ns2:memberClass>COM</ns2:memberClass>
+            <ns2:memberCode>1234567-8</ns2:memberCode>
+        </groupMember>
+        <groupMember ns2:objectType="MEMBER">
+            <ns2:xRoadInstance>PLAYGROUND</ns2:xRoadInstance>
+            <ns2:memberClass>GOV</ns2:memberClass>
+            <ns2:memberCode>8765432-1</ns2:memberCode>
+        </groupMember>
+    </globalGroup>
+    <globalGroup>
+        <groupCode>Test</groupCode>
+        <description>Test</description>
+    </globalGroup>
+    <globalSettings>
+        <memberClass>
+            <code>COM</code>
+            <description>Commercial</description>
+        </memberClass>
+        <memberClass>
+            <code>GOV</code>
+            <description>Governmental</description>
+        </memberClass>
+        <memberClass>
+            <code>ORG</code>
+            <description>Non-profit organizations, associations, institutes</description>
+        </memberClass>
+        <ocspFreshnessSeconds>3600</ocspFreshnessSeconds>
+    </globalSettings>
+</ns3:conf>

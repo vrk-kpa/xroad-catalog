@@ -32,6 +32,8 @@ mkdir -p %{buildroot}%{_unitdir}
 mkdir -p %{buildroot}/usr/share/xroad/bin
 mkdir -p %{buildroot}/usr/share/xroad/sql
 mkdir -p %{buildroot}/var/log/xroad/
+mkdir -p %{buildroot}/usr/share/doc/%{name}
+
 cp -p %{src}/../../../build/libs/xroad-catalog-collector-%{version}.jar %{buildroot}%{jlib}/%{name}.jar
 cp -p %{src}/../../../build/resources/main/collector-production.properties %{buildroot}%{conf}
 cp -p %{src}/../../../build/resources/main/catalogdb-production.properties %{buildroot}%{conf}
@@ -41,6 +43,8 @@ cp -p  ../../../../../xroad-catalog-persistence/src/main/sql/init_database.sql %
 cp -p  ../../../../../xroad-catalog-persistence/src/main/sql/create_tables_%{profile}.sql %{buildroot}/usr/share/xroad/sql
 cp -p %{src}/SOURCES/%{name} %{buildroot}/usr/share/xroad/bin
 cp -p %{src}/SOURCES/%{name}.service %{buildroot}%{_unitdir}
+cp -p %{src}/../../../../LICENSE.txt %{buildroot}/usr/share/doc/%{name}/LICENSE.txt
+cp -p %{src}/../../../../3RD-PARTY-NOTICES.txt %{buildroot}/usr/share/doc/%{name}/3RD-PARTY-NOTICES.txt
 
 %clean
 rm -rf %{buildroot}
@@ -58,6 +62,9 @@ rm -rf %{buildroot}
 %attr(644,root,root) %{_unitdir}/%{name}.service
 %attr(755,xroad-catalog,xroad-catalog) %{jlib}/%{name}.jar
 %attr(744,xroad-catalog,xroad-catalog) /usr/share/xroad/bin/%{name}
+
+%doc /usr/share/doc/%{name}/LICENSE.txt
+%doc /usr/share/doc/%{name}/3RD-PARTY-NOTICES.txt
 
 %pre
 

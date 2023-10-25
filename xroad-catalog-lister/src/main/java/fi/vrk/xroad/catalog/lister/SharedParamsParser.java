@@ -1,7 +1,8 @@
 /**
  * The MIT License
  *
- * Copyright (c) 2023- Nordic Institute for Interoperability Solutions (NIIS) Copyright (c) 2016-2022 Finnish Digital Agency
+ * Copyright (c) 2023- Nordic Institute for Interoperability Solutions (NIIS)
+ * Copyright (c) 2016-2023 Finnish Digital Agency
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
  *
@@ -210,29 +211,15 @@ public class SharedParamsParser {
 
     private SecurityServerData getSecurityServerData(Node securityServer, NodeList members) {
         Element securityServerElement = (Element) securityServer;
-        String owner = securityServerElement.getElementsByTagName(OWNER).item(0).getTextContent();
+        String ownerId = securityServerElement.getElementsByTagName(OWNER).item(0).getTextContent();
         String serverCode = securityServerElement.getElementsByTagName(SERVER_CODE).item(0).getTextContent();
         String address = securityServerElement.getElementsByTagName(ADDRESS).item(0).getTextContent();
-        MemberInfo ownerData = MemberInfo.builder().build();
-        NodeList clientNames = securityServerElement.getElementsByTagName(CLIENT);
-        List<MemberInfo> clients = new ArrayList<>();
-        List<String> clientNamesList = new ArrayList<>();
-        for (int j = 0; j < clientNames.getLength(); j++) {
-            Node member = clientNames.item(j);
-            clientNamesList.add(member.getFirstChild().getNodeValue());
-        }
-        for (int j = 0; j < members.getLength(); j++) {
-            Node member = members.item(j);
-            if (member.getNodeType() == Node.ELEMENT_NODE) {
-                Element memberElement = (Element) member;
-                Element memberClassElement = (Element) memberElement.getElementsByTagName(MEMBER_CLASS).item(0);
-                String memberClass = memberClassElement.getElementsByTagName(CODE).item(0).getTextContent();
-                String memberCode = memberElement.getElementsByTagName(MEMBER_CODE).item(0).getTextContent();
-                String name = memberElement.getElementsByTagName(NAME).item(0).getTextContent();
-                clients = getClients(memberElement, member, clientNamesList, memberClass, memberCode, name);
-                ownerData = getOwnerData(memberElement, owner, memberClass, memberCode, name);
-            }
-        }
+        NodeList clientIds = securityServerElement.getElementsByTagName(CLIENT);
+
+        List<String> clientIdList = getClientIdList(clientIds);
+        MemberInfo ownerData = getOwnerData(members, ownerId);
+        List<MemberInfo> clients = getClients(members, clientIdList);
+
         return SecurityServerData.builder()
                 .owner(ownerData)
                 .serverCode(serverCode)
@@ -240,52 +227,94 @@ public class SharedParamsParser {
                 .clients(clients).build();
     }
 
-    private MemberInfo getOwnerData(Element memberElement,
-                                    String owner,
-                                    String memberClass,
-                                    String memberCode,
-                                    String name) {
-        MemberInfo ownerData = MemberInfo.builder().build();
-        if (memberElement.getAttribute(ID).equals(owner)) {
-            ownerData = MemberInfo.builder()
-                    .memberClass(memberClass)
-                    .memberCode(memberCode)
-                    .subsystemCode(null)
-                    .name(name).build();
+    private List<String> getClientIdList(NodeList clientIds) {
+        List<String> clientIdList = new ArrayList<>();
+        for (int j = 0; j < clientIds.getLength(); j++) {
+            Node member = clientIds.item(j);
+            clientIdList.add(member.getFirstChild().getNodeValue());
         }
-        return ownerData;
+        return clientIdList;
     }
 
-    private List<MemberInfo> getClients(Element memberElement,
-                                        Node member,
-                                        List<String> clientNamesList,
-                                        String memberClass,
-                                        String memberCode,
-                                        String name) {
-        List<MemberInfo> clients = new ArrayList<>();
-        NodeList subsystems = memberElement.getElementsByTagName(SUBSYSTEM);
-        for (int k = 0; k < subsystems.getLength(); k++) {
-            Node subsystem = subsystems.item(k);
+    private MemberInfo getOwnerData(NodeList members, String ownerId) {
+        for (int j = 0; j < members.getLength(); j++) {
+            Node member = members.item(j);
             if (member.getNodeType() == Node.ELEMENT_NODE) {
-                Element subsystemElement = (Element) subsystem;
-                if (clientNamesList.contains(subsystemElement.getAttribute(ID))) {
-                    String subsystemCode =
-                            subsystemElement.getElementsByTagName(SUBSYSTEM_CODE).item(0).getTextContent();
-                    clients.add(MemberInfo.builder()
-                            .memberClass(memberClass)
-                            .memberCode(memberCode)
-                            .subsystemCode(subsystemCode)
-                            .name(name).build());
+                Element memberElement = (Element) member;
+                if (memberElement.getAttribute(ID).equals(ownerId)) {
+                    Element memberClassElement = (Element) memberElement.getElementsByTagName(MEMBER_CLASS).item(0);
+                    String memberClass = memberClassElement.getElementsByTagName(CODE).item(0).getTextContent();
+                    String memberCode = memberElement.getElementsByTagName(MEMBER_CODE).item(0).getTextContent();
+                    String name = memberElement.getElementsByTagName(NAME).item(0).getTextContent();
+                    return buildMemberInfo(memberClass, memberCode, name);
                 }
             }
         }
-        if (clientNamesList.contains(memberElement.getAttribute(ID))) {
-            clients.add(MemberInfo.builder()
-                    .memberClass(memberClass)
-                    .memberCode(memberCode)
-                    .subsystemCode(null)
-                    .name(name).build());
+        return MemberInfo.builder().build();
+    }
+
+
+    private MemberInfo buildMemberInfo(Element memberElement) {
+        return buildSubsystemInfo(memberElement, null);
+    }
+
+    private MemberInfo buildSubsystemInfo(Element memberElement, Element subsystemElement) {
+        Element memberClassElement = (Element) memberElement.getElementsByTagName(MEMBER_CLASS).item(0);
+        String memberClass = memberClassElement.getElementsByTagName(CODE).item(0).getTextContent();
+        String memberCode = memberElement.getElementsByTagName(MEMBER_CODE).item(0).getTextContent();
+        String name = memberElement.getElementsByTagName(NAME).item(0).getTextContent();
+        if (subsystemElement == null) {
+            return buildMemberInfo(memberClass, memberCode, name);
         }
+        String subsystemCode = subsystemElement.getElementsByTagName(SUBSYSTEM_CODE).item(0).getTextContent();
+        return buildSubsystemInfo(memberClass, memberCode, subsystemCode, name);
+    }
+
+    private MemberInfo buildMemberInfo(
+            String memberClass,
+            String memberCode,
+            String name) {
+        return buildSubsystemInfo(memberClass, memberCode, null, name);
+    }
+
+    private MemberInfo buildSubsystemInfo(
+            String memberClass,
+            String memberCode,
+            String subsystemCode,
+            String name) {
+        return MemberInfo.builder()
+                .memberClass(memberClass)
+                .memberCode(memberCode)
+                .subsystemCode(subsystemCode)
+                .name(name).build();
+    }
+
+    private List<MemberInfo> getClients(NodeList members, List<String> clientIdList) {
+        List<MemberInfo> clients = new ArrayList<>();
+        clientIdList.forEach(clientId -> {
+            for (int j = 0; j < members.getLength(); j++) {
+                Node member = members.item(j);
+                if (member.getNodeType() == Node.ELEMENT_NODE) {
+                    Element memberElement = (Element) member;
+                    if (memberElement.getAttribute(ID).equals(clientId)) {
+                        clients.add(buildMemberInfo(memberElement));
+                        break;
+                    }
+
+                    NodeList subsystems = memberElement.getElementsByTagName(SUBSYSTEM);
+                    for (int k = 0; k < subsystems.getLength(); k++) {
+                        Node subsystem = subsystems.item(k);
+                        if (member.getNodeType() == Node.ELEMENT_NODE) {
+                            Element subsystemElement = (Element) subsystem;
+                            if (subsystemElement.getAttribute(ID).equals(clientId)) {
+                                clients.add(buildSubsystemInfo(memberElement, subsystemElement));
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+        });
         return clients;
     }
 }

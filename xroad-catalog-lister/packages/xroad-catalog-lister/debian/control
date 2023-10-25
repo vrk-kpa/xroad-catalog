@@ -1,7 +1,7 @@
 Source: xroad-catalog-lister
 Section: X-Road
 Priority: extra
-Maintainer: Sami Kallio <sami.kallio@gofore.com>
+Maintainer: Nordic Institute for Interoperability Solutions (NIIS) <x-road@niis.org>
 Build-Depends: debhelper (>= 7)
 Standards-Version: 3.8.3
 

@@ -1,5 +1,5 @@
 FROM centos:7
-MAINTAINER "Sami Kallio" <sami.kallio@gofore.com>
+MAINTAINER "Nordic Institute for Interoperability Solutions (NIIS)" <x-road@niis.org>
 
 RUN yum -y install sudo git rpm-build java-11-openjdk-headless
 RUN yum clean all
