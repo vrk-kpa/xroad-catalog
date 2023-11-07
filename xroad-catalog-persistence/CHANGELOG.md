@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## 3.0.5 - 2023-11-07
+
+- Pull latest version from NIIS develop branch
+
 ## 3.0.4 - 2023-02-13
 
 - Bugfixes, updates to systemd service specs

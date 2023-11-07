@@ -28,6 +28,7 @@ dependencies {
 
 
 test {
+    systemProperty 'user.timezone', 'Europe/Helsinki'
     useJUnitPlatform {
         includeEngines 'junit-jupiter'
     }

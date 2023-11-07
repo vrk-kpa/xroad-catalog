@@ -8,7 +8,7 @@ Release:            %{rel}%{?snapshot}%{?dist}
 Summary:            X-Road Service Listing
 Group:              Applications/Internet
 License:            MIT
-Requires:           systemd, java-11-openjdk
+Requires:           systemd, java-11-openjdk, xroad-confclient
 Requires(post):     systemd
 Requires(preun):    systemd
 Requires(postun):   systemd
@@ -31,12 +31,16 @@ mkdir -p %{buildroot}%{_unitdir}
 mkdir -p %{buildroot}%{conf}
 mkdir -p %{buildroot}/usr/share/xroad/bin
 mkdir -p %{buildroot}/var/log/xroad/
+mkdir -p %{buildroot}/usr/share/doc/%{name}
+
 cp -p %{src}/../../../build/libs/xroad-catalog-lister-%{version}.jar %{buildroot}%{jlib}/%{name}.jar
 cp -p %{src}/SOURCES/%{name}.service %{buildroot}%{_unitdir}
 cp -p %{src}/SOURCES/%{name} %{buildroot}/usr/share/xroad/bin
 cp -p %{src}/../../../build/resources/main/lister-production.properties %{buildroot}%{conf}
 cp -p catalog-profile.properties %{buildroot}%{conf}
 cp -p %{src}/../../../build/resources/main/version.properties %{buildroot}%{conf}
+cp -p %{src}/../../../../LICENSE.txt %{buildroot}/usr/share/doc/%{name}/LICENSE.txt
+cp -p %{src}/../../../../3RD-PARTY-NOTICES.txt %{buildroot}/usr/share/doc/%{name}/3RD-PARTY-NOTICES.txt
 
 %clean
 rm -rf %{buildroot}
@@ -49,13 +53,20 @@ rm -rf %{buildroot}
 %attr(644,root,root) %{conf}/version.properties
 %attr(644, xroad-catalog, xroad-catalog) %{conf}/catalog-profile.properties
 
+%doc /usr/share/doc/%{name}/LICENSE.txt
+%doc /usr/share/doc/%{name}/3RD-PARTY-NOTICES.txt
+
 %pre
 if ! id xroad-catalog > /dev/null 2>&1 ; then
     adduser --system --no-create-home --shell /bin/false xroad-catalog
 fi
 
-%post
+%post -p /bin/bash
 %systemd_post %{name}.service
+
+if ! id -nG "xroad-catalog" | grep -qw "^xroad$"; then
+    usermod -a -G xroad xroad-catalog
+fi
 
 %preun
 %systemd_preun %{name}.service
