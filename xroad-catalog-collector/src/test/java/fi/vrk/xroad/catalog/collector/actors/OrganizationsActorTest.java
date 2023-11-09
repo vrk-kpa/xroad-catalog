@@ -36,6 +36,7 @@ import static org.mockito.Mockito.verify;
 @SpringBootTest(classes = DevelopmentConfiguration.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @TestPropertySource(properties = {
         "xroad-catalog.fetch-organizations-limit=3",
+        "xroad-catalog.fetch-companies-limit=3",
         "xroad-catalog.max-organizations-per-request=3",
         "xroad-catalog.fetch-companies-run-unlimited=true",
         "xroad-catalog.flush-log-time-after-hour=0",

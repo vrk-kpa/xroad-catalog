@@ -18,7 +18,6 @@ import akka.actor.ActorRef;
 import akka.actor.ActorSystem;
 import akka.event.Logging;
 import akka.event.LoggingAdapter;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ApplicationContext;
@@ -28,7 +27,6 @@ import scala.concurrent.duration.Duration;
 import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
 
-@Slf4j
 @SpringBootApplication
 public class XRoadCatalogCollector {
 
