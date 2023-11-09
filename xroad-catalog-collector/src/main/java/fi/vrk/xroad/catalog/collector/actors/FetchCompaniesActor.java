@@ -63,13 +63,6 @@ public class FetchCompaniesActor extends XRoadCatalogActor {
                 JSONObject companyJson = OrganizationUtil.getCompany(clientType, fetchCompaniesUrl, businessCode, catalogService);
                 saveData(companyJson.optJSONArray("results"));
             });
-            
-            // for (int i = 0; i < numberOfCompanies; i++) {
-            //     JSONObject company = companiesArray.optJSONObject(i);
-            //     String businessCode = company.optString("businessId");  
-            //     JSONObject companyJson = OrganizationUtil.getCompany(clientType, fetchCompaniesUrl, businessCode, catalogService);
-            //     saveData(companyJson.optJSONArray("results"));
-            // }
             log.info("Successfully saved data for {} companies", numberOfCompanies);
             return true;
         } else {

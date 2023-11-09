@@ -67,23 +67,6 @@ public class FetchCompanyActorTest {
         verify(companyService, times(3)).saveCompany(any());
     }
 
-    // @Test
-    // public void testBasicPlumbingWithInvalidData() {
-    //     TestActorRef fetchCompanyActor = TestActorRef.create(actorSystem, springExtension.props("fetchCompaniesActor", null));
-    //     ClientType clientType = new ClientType();
-    //     XRoadClientIdentifierType value = new XRoadClientIdentifierType();
-    //     value.setXRoadInstance("INSTANCE");
-    //     value.setMemberClass("COM");
-    //     value.setMemberCode("abc");
-    //     value.setSubsystemCode("SUBSYSTEM");
-    //     value.setServiceCode("aService");
-    //     value.setServiceVersion("v1");
-    //     value.setObjectType(XRoadObjectType.SERVICE);
-    //     clientType.setId(value);
-    //     fetchCompanyActor.tell(clientType, ActorRef.noSender());
-    //     verify(catalogService, times(3)).saveErrorLog(any());
-    // }
-
     @Test
     public void testBasicPlumbingWithInvalidMessageType() {
         TestActorRef fetchCompanyActor = TestActorRef.create(actorSystem, springExtension.props("fetchCompaniesActor"));
