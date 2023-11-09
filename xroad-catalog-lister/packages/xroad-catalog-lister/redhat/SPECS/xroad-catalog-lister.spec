@@ -8,7 +8,7 @@ Release:            %{rel}%{?snapshot}%{?dist}
 Summary:            X-Road Service Listing
 Group:              Applications/Internet
 License:            MIT
-Requires:           systemd, java-11-openjdk, xroad-confclient
+Requires:           systemd, java-11-openjdk
 Requires(post):     systemd
 Requires(preun):    systemd
 Requires(postun):   systemd
