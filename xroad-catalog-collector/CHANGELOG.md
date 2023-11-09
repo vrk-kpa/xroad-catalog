@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## [3.0.6] - 2023-11-09
+
+# Changed
+- Refactor fetch of companies
+
 ## [3.0.5] - 2023-11-07
 
 # Changed

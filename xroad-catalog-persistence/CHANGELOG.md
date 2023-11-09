@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## 3.0.6 - 2023-11-09
+
+- Refactor fetch of companies
+
 ## 3.0.5 - 2023-11-07
 
 - Pull latest version from NIIS develop branch

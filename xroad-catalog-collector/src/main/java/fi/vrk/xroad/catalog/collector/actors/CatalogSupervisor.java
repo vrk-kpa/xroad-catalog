@@ -19,7 +19,6 @@ import fi.vrk.xroad.catalog.collector.extension.SpringExtension;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Profile;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import scala.concurrent.duration.Duration;
@@ -34,7 +33,6 @@ import static akka.actor.SupervisorStrategy.restart;
 @Component("CatalogSupervisor")
 @Scope("prototype")
 @Slf4j
-@Profile("!fi") // remove, so that this will be used for all profiles
 public class CatalogSupervisor extends XRoadCatalogActor {
 
     public static final String LIST_CLIENTS_ACTOR_ROUTER = "list-clients-actor-router";
