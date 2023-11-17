@@ -1000,6 +1000,7 @@ http://x-road.eu/xsd/identifiers ">
                 <xs:sequence>
                     <xs:element name="serviceCode" type="xs:string"/>
                     <xs:element name="serviceVersion" type="xs:string"/>
+                    <xs:element name="serviceType" type="xs:string"/>
                     <xs:element name="wsdl" type="tns:WSDL"/>
                     <xs:element name="openapi" type="tns:OPENAPI"/>
                     <xs:element name="created" type="xs:dateTime"/>

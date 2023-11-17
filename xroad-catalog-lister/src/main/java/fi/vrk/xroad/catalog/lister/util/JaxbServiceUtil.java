@@ -26,8 +26,25 @@ import java.util.GregorianCalendar;
 
 public class JaxbServiceUtil {
 
+    private static final String SERVICE_TYPE_SOAP = "SOAP";
+    private static final String SERVICE_TYPE_REST = "REST";
+    private static final String SERVICE_TYPE_OPENAPI = "OPENAPI";
+        private static final String SERVICE_TYPE_UNKNOWN = "UNKNOWN";
+
     private JaxbServiceUtil() {
 
+    }
+
+    public static String determineServiceType(Service service) {
+        if (service.hasWsdl()) {
+            return SERVICE_TYPE_SOAP;
+        } else if (service.hasOpenApi()) {
+            return SERVICE_TYPE_OPENAPI;
+        } else if (service.hasRest()) {
+            return SERVICE_TYPE_REST;
+        } else {
+            return SERVICE_TYPE_UNKNOWN;
+        }
     }
 
     public static fi.vrk.xroad.xroad_catalog_lister.Service convertService(Service service, boolean onlyActiveChildren) {
@@ -38,6 +55,7 @@ public class JaxbServiceUtil {
         cs.setRemoved(toXmlGregorianCalendar(service.getStatusInfo().getRemoved()));
         cs.setServiceCode(service.getServiceCode());
         cs.setServiceVersion(service.getServiceVersion());
+        cs.setServiceType(determineServiceType(service));
         Wsdl wsdl = null;
         if (onlyActiveChildren) {
             if (service.getWsdl() != null && !service.getWsdl().getStatusInfo().isRemoved()) {
