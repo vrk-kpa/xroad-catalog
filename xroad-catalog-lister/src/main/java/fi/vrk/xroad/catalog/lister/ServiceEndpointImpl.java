@@ -98,7 +98,11 @@ public class ServiceEndpointImpl implements ServiceEndpoint {
 
         member.getAllSubsystems().forEach(subsystem -> {
             subsystem.getAllServices().forEach(service ->  {
-                if (service.hasWsdl() || service.hasOpenApi()) {
+                if (service.hasWsdl()) {
+                    isProvider.set(Boolean.TRUE);
+                } else if (service.hasOpenApi()) {
+                    isProvider.set(Boolean.TRUE);
+                } else if (service.hasRest()) {
                     isProvider.set(Boolean.TRUE);
                 }
             });

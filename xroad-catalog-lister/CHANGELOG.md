@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## [3.0.7] - 2023-11-17
+
+# Changed
+- Refactor ListMembers endpoint to have extra field "serviceType"
+
 ## [3.0.6] - 2023-11-09
 
 # Changed
